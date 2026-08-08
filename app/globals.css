@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+:root {
+  /*
+   * Figma specificeert het lettertype als "Avenir LT Pro" (design tokens
+   * typography/font-family/font-family-avenir). Dit is een commercieel
+   * lettertype waarvan doorgaans geen bestand beschikbaar is via de Figma
+   * MCP. Inmiddels zijn er echte bestanden voor alle vier gebruikte
+   * gewichten: 700 (Heavy), 550 (Medium), 350 (Book) en 300 (Light) — zie
+   * `--font-avenir-bold`/`-medium`/`-book`/`-light` in app/fonts.ts,
+   * geladen via next/font/local en toegepast op <html> in layout.tsx. Deze
+   * variabele hier is nu alleen nog de fallback voor het geval een bestand
+   * niet laadt.
+   */
+  --font-avenir: "Avenir LT Pro", "Avenir Next", Avenir, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /*
+   * Zelfde beperking als --font-avenir hierboven, nu voor het displaylettertype
+   * "Memphis LT Std" (typography/font-family/font-family-memphis). Inmiddels
+   * zijn er echte webfont-bestanden (.woff2, uit het a.s.r.-webfonts-pakket)
+   * voor de gewichten 700 (Bold), 500 (Medium) en 300 (Light) — zie
+   * `--font-memphis-bold`/`-medium`/`-light` in app/fonts.ts. Deze variabele
+   * hier is nu alleen nog de fallback voor het geval een bestand niet laadt.
+   */
+  --font-memphis: "Memphis LT Std", Georgia, "Times New Roman", serif;
+}
