@@ -3,8 +3,8 @@ import { Icon } from "./Icon";
 type AlertType = "info" | "warning" | "success" | "error" | "neutral";
 
 type AlertProps = {
-  /** Titeltekst — Figma's eigen "Alert title" is placeholder-demodata, dus geen default. */
-  title: string;
+  /** Titeltekst — verplicht tenzij `showTitle={false}` (dan wordt hij toch niet gerenderd). Figma's eigen "Alert title" is placeholder-demodata, dus geen default. */
+  title?: string;
   /** Beschrijvingstekst — Figma's eigen voorbeeldtekst is placeholder-demodata, dus geen default. */
   description: string;
   type?: AlertType;
