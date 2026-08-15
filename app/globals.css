@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+@theme {
+  /*
+   * Alleen gebruikt door de /duvet-dubois-route: Figma levert dat ontwerp
+   * als drie losse frames (900-1199 / 1200-1439 / 1440+), niet als één
+   * vloeiend responsive systeem. Deze breakpoints matchen exact de
+   * framegrenzen zodat elke sectie precies binnen zijn eigen bereik
+   * zichtbaar is.
+   */
+  --breakpoint-b900: 900px;
+  --breakpoint-b1200: 1200px;
+  --breakpoint-b1440: 1440px;
+}
+
 :root {
   /*
    * Figma specificeert het lettertype als "Avenir LT Pro" (design tokens

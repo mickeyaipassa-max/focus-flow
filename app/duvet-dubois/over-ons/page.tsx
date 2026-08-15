@@ -1,0 +1,28 @@
+import Frame900 from "./components/Frame900";
+import Frame1200 from "./components/Frame1200";
+import Frame1440 from "./components/Frame1440";
+
+/**
+ * Same pattern as /duvet-dubois: three losse Figma-frames (900-1199 /
+ * 1200-1439 / 1440+), 1:1 overgenomen, zichtbaarheidsgrenzen op de
+ * framegrenzen zelf. Breedte/hoogte komt letterlijk uit Figma's eigen
+ * frame-canvas:
+ *   Over ons — 900-1199  → 1024 x 3668
+ *   Over ons — 1200-1439 → 1200 x 3405
+ *   Over ons — 1440+     → 1440 x 3454
+ */
+export default function OverOnsPage() {
+  return (
+    <main>
+      <div className="hidden b900:block b1200:hidden relative w-[1024px] h-[3668px] mx-auto">
+        <Frame900 />
+      </div>
+      <div className="hidden b1200:block b1440:hidden relative w-[1200px] h-[3405px] mx-auto">
+        <Frame1200 />
+      </div>
+      <div className="hidden b1440:block relative w-[1440px] h-[3454px] mx-auto">
+        <Frame1440 />
+      </div>
+    </main>
+  );
+}
