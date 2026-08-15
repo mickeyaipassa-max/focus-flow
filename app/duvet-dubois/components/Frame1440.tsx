@@ -33,23 +33,23 @@ export default function Frame1440() {
               Home
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:60">
-            <p className="[word-break:break-word] font-normal leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="1:61">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:60">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:61">
               Diensten
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:62">
-            <p className="[word-break:break-word] font-normal leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="1:63">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:62">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:63">
               Over ons
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:64">
-            <p className="[word-break:break-word] font-normal leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="1:65">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:64">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:65">
               Nieuws
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:66">
-            <p className="[word-break:break-word] font-normal leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="1:67">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:66">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:67">
               Contact
             </p>
           </div>
@@ -95,8 +95,8 @@ export default function Frame1440() {
           <span className="font-normal leading-[1.4] text-[#d1a97b]">✓</span>
           <span className="font-normal leading-[1.4]">{` Betrouwbare ondersteuning voor iedere ondernemer`}</span>
         </p>
-        <div className="bg-[#e4c5a1] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:79">
-          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="1:80">
+        <div className="group bg-[#e4c5a1] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#f4e3cf] active:bg-[#f4e3cf] transition-colors cursor-pointer" data-node-id="1:79">
+          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:80">
             Plan een vrijblijvend kennismakingsgesprek
           </p>
         </div>
@@ -259,8 +259,8 @@ export default function Frame1440() {
                 </div>
               </div>
             </div>
-            <div className="bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:146">
-              <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="1:147">
+            <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="1:146">
+              <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:147">
                 Alles over Administratie
               </p>
             </div>
@@ -374,8 +374,8 @@ export default function Frame1440() {
                 </div>
               </div>
             </div>
-            <div className="bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:182">
-              <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="1:183">
+            <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="1:182">
+              <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:183">
                 Alles over Administratie
               </p>
             </div>
@@ -474,8 +474,8 @@ export default function Frame1440() {
                 </div>
               </div>
             </div>
-            <div className="bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:215">
-              <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="1:216">
+            <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="1:215">
+              <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:216">
                 Alles over Administratie
               </p>
             </div>
@@ -573,8 +573,8 @@ export default function Frame1440() {
                 </div>
               </div>
             </div>
-            <div className="bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:248">
-              <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="1:249">
+            <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="1:248">
+              <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:249">
                 Alles over Administratie
               </p>
             </div>
@@ -626,8 +626,8 @@ export default function Frame1440() {
           <p className="leading-[1.4] mb-0">{`Ongeacht de fase waarin uw onderneming zich bevindt, `}</p>
           <p className="leading-[1.4]">denken wij graag met u mee. Wilt u weten wat wij voor u kunnen betekenen?</p>
         </div>
-        <div className="bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:257">
-          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="1:258">
+        <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="1:257">
+          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:258">
             Plan een vrijblijvend kennismakingsgesprek
           </p>
         </div>

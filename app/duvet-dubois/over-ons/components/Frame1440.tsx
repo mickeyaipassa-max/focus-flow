@@ -25,13 +25,13 @@ export default function Frame1440() {
     <div className="bg-white relative size-full" data-node-id="2:110" data-name="Over ons — 1440+">
       <div className="absolute content-stretch flex items-center justify-between left-[120px] py-[16px] top-0 w-[1200px]" data-node-id="2:111" data-name="header">
         <div className="content-stretch flex flex-[1_0_0] gap-[7px] items-center justify-end min-w-px relative" data-node-id="2:112" data-name="nav-links-row">
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="32:167" data-name="nav-link-home">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I32:167;2:618">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:167" data-name="nav-link-home">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:167;2:618">
               Home
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="32:169" data-name="nav-link-diensten">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I32:169;2:618">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:169" data-name="nav-link-diensten">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:169;2:618">
               Diensten
             </p>
           </div>
@@ -40,13 +40,13 @@ export default function Frame1440() {
               Over ons
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="32:173" data-name="nav-link-nieuws">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I32:173;2:618">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:173" data-name="nav-link-nieuws">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:173;2:618">
               Nieuws
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="32:175" data-name="nav-link-contact">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I32:175;2:618">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:175" data-name="nav-link-contact">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:175;2:618">
               Contact
             </p>
           </div>
@@ -75,8 +75,8 @@ export default function Frame1440() {
           <p className="leading-[1.4] mb-0">​</p>
           <p className="leading-[1.4]">Wij nemen de tijd om uw onderneming te leren kennen. Zo kunnen we niet alleen uw administratie verzorgen, maar ook meedenken over financiële vraagstukken en fiscale kansen.</p>
         </div>
-        <div className="bg-[#e4c5a1] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="31:116" data-name="hero-cta-button">
-          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I31:116;2:610">
+        <div className="group bg-[#e4c5a1] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#f4e3cf] active:bg-[#f4e3cf] transition-colors cursor-pointer" data-node-id="31:116" data-name="hero-cta-button">
+          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I31:116;2:610">
             Plan een vrijblijvend kennismakingsgesprek
           </p>
         </div>
@@ -348,8 +348,8 @@ export default function Frame1440() {
         </div>
         <div className="h-[48px] relative shrink-0 w-[10px]" data-node-id="8:140" data-name="spacer" />
         <div className="bg-white content-stretch flex items-start justify-center overflow-clip relative shrink-0 w-full" data-node-id="8:141" data-name="cta-row">
-          <div className="bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="31:158" data-name="approach-cta-button">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="I31:158;2:614">
+          <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="31:158" data-name="approach-cta-button">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I31:158;2:614">
               Plan een kennismakingsgesprek
             </p>
           </div>
@@ -489,8 +489,8 @@ export default function Frame1440() {
           <p className="leading-[1.4] mb-0">{`Ongeacht de fase waarin uw onderneming zich bevindt, `}</p>
           <p className="leading-[1.4]">denken wij graag met u mee. Wilt u weten wat wij voor u kunnen betekenen?</p>
         </div>
-        <div className="bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="31:152" data-name="audience-cta-button">
-          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="I31:152;2:614">
+        <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="31:152" data-name="audience-cta-button">
+          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I31:152;2:614">
             Plan een vrijblijvend kennismakingsgesprek
           </p>
         </div>
