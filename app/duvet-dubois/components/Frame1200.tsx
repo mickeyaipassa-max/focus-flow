@@ -22,26 +22,28 @@ const imgMail = "/duvet-dubois/assets/3f32b344-9b92-49e6-8d48-8c3a40479b6d.svg";
 const imgEllipse2 = "/duvet-dubois/assets/74453f72-a459-441b-bc2b-9687df50dbce.svg";
 const imgLine1 = "/duvet-dubois/assets/5a449b0b-b2c8-4a6c-85fa-e8102ea45098.svg";
 
+import Link from "next/link";
+
 export default function Frame1200() {
   return (
     <div className="bg-white relative size-full" data-node-id="1:382" data-name="1200 - 1439">
       <div className="-translate-x-1/2 absolute content-stretch flex items-center justify-between left-1/2 py-[16px] top-0 w-[1000px]" data-node-id="1:383">
         <div className="content-stretch flex flex-[1_0_0] gap-[7px] items-center justify-end min-w-px relative" data-node-id="1:384">
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:385">
+          <Link href="/duvet-dubois" className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:385">
             <p className="[word-break:break-word] font-semibold leading-[normal] not-italic relative shrink-0 text-[#2c4c6d] text-[16px] whitespace-nowrap" data-node-id="1:386">
               Home
             </p>
-          </div>
+          </Link>
           <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:387">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:388">
               Diensten
             </p>
           </div>
-          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:389">
+          <Link href="/duvet-dubois/over-ons" className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:389">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:390">
               Over ons
             </p>
-          </div>
+          </Link>
           <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:391">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:392">
               Nieuws

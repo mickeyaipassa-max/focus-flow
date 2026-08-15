@@ -20,26 +20,28 @@ const imgGroup1 = "/duvet-dubois/assets/61b87e4c-b549-4e4e-ad47-8e0635cc9dff.svg
 const imgGroup2 = "/duvet-dubois/assets/cf937155-6fad-4d1f-ba41-6b32d87297e8.svg";
 const imgFooterDivider = "/duvet-dubois/assets/c320665f-c2fd-429e-886d-fb3b78dfc833.svg";
 
+import Link from "next/link";
+
 export default function Frame1440() {
   return (
     <div className="bg-white relative size-full" data-node-id="2:110" data-name="Over ons — 1440+">
       <div className="absolute content-stretch flex items-center justify-between left-[120px] py-[16px] top-0 w-[1200px]" data-node-id="2:111" data-name="header">
         <div className="content-stretch flex flex-[1_0_0] gap-[7px] items-center justify-end min-w-px relative" data-node-id="2:112" data-name="nav-links-row">
-          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:167" data-name="nav-link-home">
+          <Link href="/duvet-dubois" className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:167" data-name="nav-link-home">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:167;2:618">
               Home
             </p>
-          </div>
+          </Link>
           <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:169" data-name="nav-link-diensten">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:169;2:618">
               Diensten
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="33:175" data-name="nav-link-over-ons">
+          <Link href="/duvet-dubois/over-ons" className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="33:175" data-name="nav-link-over-ons">
             <p className="[word-break:break-word] font-semibold leading-[normal] not-italic relative shrink-0 text-[#2c4c6d] text-[16px] whitespace-nowrap" data-node-id="I33:175;33:168">
               Over ons
             </p>
-          </div>
+          </Link>
           <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:173" data-name="nav-link-nieuws">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:173;2:618">
               Nieuws
