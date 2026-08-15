@@ -24,13 +24,13 @@ export default function Frame900() {
     <div className="bg-white relative size-full" data-node-id="15:328" data-name="Over ons — 900-1199">
       <div className="absolute content-stretch flex items-center justify-between left-0 px-[48px] py-[16px] top-0 w-[1024px]" data-node-id="15:329" data-name="header">
         <div className="content-stretch flex flex-[1_0_0] gap-[7px] items-center justify-end min-w-px relative" data-node-id="15:330" data-name="nav-links-row">
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="32:187" data-name="nav-link-home">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I32:187;2:618">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:187" data-name="nav-link-home">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:187;2:618">
               Home
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="32:189" data-name="nav-link-diensten">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I32:189;2:618">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:189" data-name="nav-link-diensten">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:189;2:618">
               Diensten
             </p>
           </div>
@@ -39,13 +39,13 @@ export default function Frame900() {
               Over ons
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="32:193" data-name="nav-link-nieuws">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I32:193;2:618">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:193" data-name="nav-link-nieuws">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:193;2:618">
               Nieuws
             </p>
           </div>
-          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="32:195" data-name="nav-link-contact">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I32:195;2:618">
+          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:195" data-name="nav-link-contact">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:195;2:618">
               Contact
             </p>
           </div>
@@ -74,8 +74,8 @@ export default function Frame900() {
           <p className="leading-[1.4] mb-0">​</p>
           <p className="leading-[1.4]">Wij nemen de tijd om uw onderneming te leren kennen. Zo kunnen we niet alleen uw administratie verzorgen, maar ook meedenken over financiële vraagstukken en fiscale kansen.</p>
         </div>
-        <div className="bg-[#e4c5a1] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="31:120" data-name="hero-cta-button">
-          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="I31:120;2:610">
+        <div className="group bg-[#e4c5a1] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#f4e3cf] active:bg-[#f4e3cf] transition-colors cursor-pointer" data-node-id="31:120" data-name="hero-cta-button">
+          <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I31:120;2:610">
             Plan een vrijblijvend kennismakingsgesprek
           </p>
         </div>
@@ -313,8 +313,8 @@ export default function Frame900() {
         </div>
         <div className="h-[48px] relative shrink-0 w-[10px]" data-node-id="15:503" data-name="spacer" />
         <div className="bg-white content-stretch flex items-start justify-center overflow-clip relative shrink-0 w-full" data-node-id="15:504" data-name="cta-row">
-          <div className="bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="31:162" data-name="approach-cta-button">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="I31:162;2:614">
+          <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="31:162" data-name="approach-cta-button">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I31:162;2:614">
               Plan een kennismakingsgesprek
             </p>
           </div>
@@ -457,8 +457,8 @@ export default function Frame900() {
           <p className="[word-break:break-word] font-normal leading-[1.4] min-w-full not-italic relative shrink-0 text-[16px] text-black w-[min-content]" data-node-id="2:547">
             Ongeacht de fase waarin uw onderneming zich bevindt, denken wij graag met u mee. Wilt u weten wat wij voor u kunnen betekenen?
           </p>
-          <div className="bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="31:156" data-name="audience-cta-button">
-            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap" data-node-id="I31:156;2:614">
+          <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="31:156" data-name="audience-cta-button">
+            <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I31:156;2:614">
               Plan een vrijblijvend kennismakingsgesprek
             </p>
           </div>
