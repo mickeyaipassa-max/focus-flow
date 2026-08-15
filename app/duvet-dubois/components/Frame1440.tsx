@@ -28,27 +28,27 @@ export default function Frame1440() {
     <div className="bg-white relative size-full" data-node-id="1:55" data-name="1440+">
       <div className="absolute content-stretch flex items-center justify-between left-[120px] py-[16px] top-0 w-[1200px]" data-node-id="1:56">
         <div className="content-stretch flex flex-[1_0_0] gap-[7px] items-center justify-end min-w-px relative" data-node-id="1:57">
-          <div className="content-stretch flex items-center justify-center p-[10px] relative shrink-0" data-node-id="1:58">
+          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:58">
             <p className="[word-break:break-word] font-semibold leading-[normal] not-italic relative shrink-0 text-[#2c4c6d] text-[16px] whitespace-nowrap" data-node-id="1:59">
               Home
             </p>
           </div>
-          <div className="content-stretch flex items-center justify-center p-[10px] relative shrink-0" data-node-id="1:60">
+          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:60">
             <p className="[word-break:break-word] font-normal leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="1:61">
               Diensten
             </p>
           </div>
-          <div className="content-stretch flex items-center justify-center p-[10px] relative shrink-0" data-node-id="1:62">
+          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:62">
             <p className="[word-break:break-word] font-normal leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="1:63">
               Over ons
             </p>
           </div>
-          <div className="content-stretch flex items-center justify-center p-[10px] relative shrink-0" data-node-id="1:64">
+          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:64">
             <p className="[word-break:break-word] font-normal leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="1:65">
               Nieuws
             </p>
           </div>
-          <div className="content-stretch flex items-center justify-center pl-[10px] pr-[23px] py-[10px] relative shrink-0" data-node-id="1:66">
+          <div className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:66">
             <p className="[word-break:break-word] font-normal leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap" data-node-id="1:67">
               Contact
             </p>
