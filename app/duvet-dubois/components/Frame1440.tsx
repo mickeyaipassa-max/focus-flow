@@ -28,6 +28,9 @@ import Link from "next/link";
 export default function Frame1440() {
   return (
     <div className="bg-white relative size-full" data-node-id="1:55" data-name="1440+">
+      <div className="absolute bg-[#2c4c6d] h-[478px] left-[calc(50%-652px)] right-0 rounded-l-[16px] top-[123px]" data-node-id="1:71" />
+      <div className="absolute bg-[#f4f4f4] h-[242px] inset-x-0 rounded-[16px] top-[833px]" data-node-id="1:72" />
+      <div className="relative w-[1440px] h-full mx-auto">
       <div className="absolute content-stretch flex items-center justify-between left-[120px] py-[16px] top-0 w-[1200px]" data-node-id="1:56">
         <div className="content-stretch flex flex-[1_0_0] gap-[7px] items-center justify-end min-w-px relative" data-node-id="1:57">
           <Link href="/duvet-dubois" className="content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0" data-node-id="1:58">
@@ -65,8 +68,6 @@ export default function Frame1440() {
           <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgB209F93Aec712C2A73123246E0C61D0D1} />
         </div>
       </div>
-      <div className="absolute bg-[#2c4c6d] h-[478px] left-[68px] rounded-l-[16px] top-[123px] w-[1372px]" data-node-id="1:71" />
-      <div className="-translate-x-1/2 absolute bg-[#f4f4f4] h-[242px] left-[calc(50%-22px)] rounded-[16px] top-[833px] w-[1544px]" data-node-id="1:72" />
       <div className="absolute h-[581px] left-[757px] rounded-[16px] top-[71px] w-[566px]" data-node-id="1:73">
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full" src={imgRectangle3} />
       </div>
@@ -907,6 +908,7 @@ export default function Frame1440() {
         <p className="[word-break:break-word] font-normal leading-[1.4] not-italic relative shrink-0 text-[#626262] text-[14px] text-right whitespace-nowrap" data-node-id="1:381">
           Copyright 20026
         </p>
+      </div>
       </div>
     </div>
   );

@@ -25,6 +25,8 @@ import Link from "next/link";
 export default function Frame1440() {
   return (
     <div className="bg-white relative size-full" data-node-id="2:110" data-name="Over ons — 1440+">
+      <div className="absolute bg-[#2c4c6d] h-[478px] left-[calc(50%-652px)] right-0 rounded-l-[16px] top-[123px]" data-node-id="2:126" data-name="hero-bg" />
+      <div className="relative w-[1440px] h-full mx-auto">
       <div className="absolute content-stretch flex items-center justify-between left-[120px] py-[16px] top-0 w-[1200px]" data-node-id="2:111" data-name="header">
         <div className="content-stretch flex flex-[1_0_0] gap-[7px] items-center justify-end min-w-px relative" data-node-id="2:112" data-name="nav-links-row">
           <Link href="/duvet-dubois" className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:167" data-name="nav-link-home">
@@ -62,7 +64,6 @@ export default function Frame1440() {
           <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgLogo} />
         </div>
       </div>
-      <div className="absolute bg-[#2c4c6d] h-[478px] left-[68px] rounded-l-[16px] top-[123px] w-[1372px]" data-node-id="2:126" data-name="hero-bg" />
       <div className="absolute h-[581px] left-[757px] rounded-[16px] top-[71px] w-[566px]" data-node-id="2:128" data-name="hero-image-frame">
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full" src={imgHeroImageFrame} />
       </div>
@@ -499,6 +500,7 @@ export default function Frame1440() {
       </div>
       <div className="absolute h-[581px] left-[108px] rounded-[16px] top-[2079px] w-[566px]" data-node-id="2:526" data-name="audience-image">
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full" src={imgAudienceImage} />
+      </div>
       </div>
     </div>
   );

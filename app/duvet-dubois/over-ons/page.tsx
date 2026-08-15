@@ -20,7 +20,7 @@ export default function OverOnsPage() {
       <div className="hidden b1200:block b1440:hidden relative w-[1200px] h-[3405px] mx-auto">
         <Frame1200 />
       </div>
-      <div className="hidden b1440:block relative w-[1440px] h-[3454px] mx-auto">
+      <div className="hidden b1440:block relative w-full h-[3454px]">
         <Frame1440 />
       </div>
     </main>
