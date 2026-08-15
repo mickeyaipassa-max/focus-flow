@@ -350,7 +350,7 @@ export default function Frame1440() {
           </div>
         </div>
         <div className="h-[48px] relative shrink-0 w-[10px]" data-node-id="8:140" data-name="spacer" />
-        <div className="bg-white content-stretch flex items-start justify-center overflow-clip relative shrink-0 w-full" data-node-id="8:141" data-name="cta-row">
+        <div className="content-stretch flex items-start justify-center overflow-clip relative shrink-0 w-full" data-node-id="8:141" data-name="cta-row">
           <div className="group bg-[#2c4c6d] content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#09223e] active:bg-[#09223e] transition-colors cursor-pointer" data-node-id="31:158" data-name="approach-cta-button">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I31:158;2:614">
               Plan een kennismakingsgesprek
