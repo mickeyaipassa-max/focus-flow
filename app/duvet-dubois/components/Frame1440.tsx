@@ -65,7 +65,7 @@ export default function Frame1440() {
           <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgB209F93Aec712C2A73123246E0C61D0D1} />
         </div>
       </div>
-      <div className="absolute bg-[#2c4c6d] h-[478px] left-[68px] rounded-[16px] top-[123px] w-[1504px]" data-node-id="1:71" />
+      <div className="absolute bg-[#2c4c6d] h-[478px] left-[68px] rounded-l-[16px] top-[123px] w-[1372px]" data-node-id="1:71" />
       <div className="-translate-x-1/2 absolute bg-[#f4f4f4] h-[242px] left-[calc(50%-22px)] rounded-[16px] top-[833px] w-[1544px]" data-node-id="1:72" />
       <div className="absolute h-[581px] left-[757px] rounded-[16px] top-[71px] w-[566px]" data-node-id="1:73">
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full" src={imgRectangle3} />

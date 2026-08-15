@@ -18,7 +18,7 @@ const inter = Inter({
  */
 export default function DuvetDuboisLayout({ children }: { children: ReactNode }) {
   return (
-    <div className={`${inter.variable} font-[family-name:var(--font-dd-inter)]`}>
+    <div className={`${inter.variable} overflow-x-hidden font-[family-name:var(--font-dd-inter)]`}>
       {children}
     </div>
   );

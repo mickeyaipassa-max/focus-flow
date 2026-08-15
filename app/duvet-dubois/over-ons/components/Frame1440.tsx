@@ -62,7 +62,7 @@ export default function Frame1440() {
           <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgLogo} />
         </div>
       </div>
-      <div className="absolute bg-[#2c4c6d] h-[478px] left-[68px] rounded-[16px] top-[123px] w-[1302px]" data-node-id="2:126" data-name="hero-bg" />
+      <div className="absolute bg-[#2c4c6d] h-[478px] left-[68px] rounded-l-[16px] top-[123px] w-[1372px]" data-node-id="2:126" data-name="hero-bg" />
       <div className="absolute h-[581px] left-[757px] rounded-[16px] top-[71px] w-[566px]" data-node-id="2:128" data-name="hero-image-frame">
         <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[16px] size-full" src={imgHeroImageFrame} />
       </div>
