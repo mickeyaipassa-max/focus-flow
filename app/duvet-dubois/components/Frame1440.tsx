@@ -1,3 +1,4 @@
+import Link from "next/link";
 const imgB209F93Aec712C2A73123246E0C61D0D1 = "/duvet-dubois/assets/6b06c6be-35aa-48d8-b877-f05c33ba8e90.png";
 const imgRectangle3 = "/duvet-dubois/assets/8843635b-7560-4e9f-8c44-4560de100145.png";
 const imgArguslogov1Oqfagt2Rxcfcdj71Bom6Vjl5Zq1D028Gfx3Fzmiioq1 = "/duvet-dubois/assets/3e503bf1-0668-4130-911b-daae931e551c.png";
@@ -22,9 +23,6 @@ const imgPhone = "/duvet-dubois/assets/e86c8333-56b5-4a54-9c9b-392f2ac3ee79.svg"
 const imgMail = "/duvet-dubois/assets/39eab539-8efc-4e11-b33e-927198a823c7.svg";
 const imgEllipse2 = "/duvet-dubois/assets/1dec92c9-2f9f-4c77-8e6a-9bc0a98b5b5f.svg";
 const imgLine1 = "/duvet-dubois/assets/f3d449fa-2d01-4bf8-ad89-cb9ab4b89de7.svg";
-
-import Link from "next/link";
-
 export default function Frame1440() {
   return (
     <div className="bg-white relative size-full" data-node-id="1:55" data-name="1440+">
@@ -48,11 +46,11 @@ export default function Frame1440() {
               Over ons
             </p>
           </Link>
-          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:64">
+          <Link href="/duvet-dubois/nieuws" className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:64">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:65">
               Nieuws
             </p>
-          </div>
+          </Link>
           <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:66">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:67">
               Contact

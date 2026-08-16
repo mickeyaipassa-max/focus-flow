@@ -1,3 +1,4 @@
+import Link from "next/link";
 const imgLogo = "/duvet-dubois/assets/98825421-1d0a-455e-b8e8-c9a60f485490.png";
 const imgHeroImageFrame = "/duvet-dubois/assets/c0d3cff5-0164-49b3-b985-ea7bbafd753a.png";
 const imgArguslogov1Oqfagt2Rxcfcdj71Bom6Vjl5Zq1D028Gfx3Fzmiioq1 = "/duvet-dubois/assets/37cbd86d-0510-4df9-924c-6b4d6ec19840.png";
@@ -18,9 +19,6 @@ const imgGroup = "/duvet-dubois/assets/c99c1507-374f-4576-a231-3938810c0240.svg"
 const imgGroup1 = "/duvet-dubois/assets/6e9b1a63-917b-4027-a221-7467ccc706c4.svg";
 const imgGroup2 = "/duvet-dubois/assets/50676ca1-d05c-4ab1-b018-e16675b30e12.svg";
 const imgFooterDivider = "/duvet-dubois/assets/a7356647-32e2-43d0-aa93-b336da81a65a.svg";
-
-import Link from "next/link";
-
 export default function Frame1200() {
   return (
     <div className="bg-white relative size-full" data-node-id="15:110" data-name="Over ons — 1200-1439">
@@ -41,11 +39,11 @@ export default function Frame1200() {
               Over ons
             </p>
           </Link>
-          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:183" data-name="nav-link-nieuws">
+          <Link href="/duvet-dubois/nieuws" className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:183" data-name="nav-link-nieuws">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:183;2:618">
               Nieuws
             </p>
-          </div>
+          </Link>
           <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:185" data-name="nav-link-contact">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:185;2:618">
               Contact

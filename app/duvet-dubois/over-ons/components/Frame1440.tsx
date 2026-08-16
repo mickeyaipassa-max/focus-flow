@@ -1,3 +1,4 @@
+import Link from "next/link";
 const imgLogo = "/duvet-dubois/assets/4599f071-f676-4646-85e2-caaadf1f73f8.png";
 const imgHeroImageFrame = "/duvet-dubois/assets/972366bf-5b61-43fb-9360-3b79ba04b518.png";
 const imgArguslogov1Oqfagt2Rxcfcdj71Bom6Vjl5Zq1D028Gfx3Fzmiioq1 = "/duvet-dubois/assets/6e649fd1-8bde-4d8c-a1b5-7dcc4c56eda2.png";
@@ -19,9 +20,6 @@ const imgGroup = "/duvet-dubois/assets/e37419c7-2d13-454f-8790-ea0e6d37bbd7.svg"
 const imgGroup1 = "/duvet-dubois/assets/61b87e4c-b549-4e4e-ad47-8e0635cc9dff.svg";
 const imgGroup2 = "/duvet-dubois/assets/cf937155-6fad-4d1f-ba41-6b32d87297e8.svg";
 const imgFooterDivider = "/duvet-dubois/assets/c320665f-c2fd-429e-886d-fb3b78dfc833.svg";
-
-import Link from "next/link";
-
 export default function Frame1440() {
   return (
     <div className="bg-white relative size-full" data-node-id="2:110" data-name="Over ons — 1440+">
@@ -44,11 +42,11 @@ export default function Frame1440() {
               Over ons
             </p>
           </Link>
-          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:173" data-name="nav-link-nieuws">
+          <Link href="/duvet-dubois/nieuws" className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:173" data-name="nav-link-nieuws">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:173;2:618">
               Nieuws
             </p>
-          </div>
+          </Link>
           <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:175" data-name="nav-link-contact">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:175;2:618">
               Contact
