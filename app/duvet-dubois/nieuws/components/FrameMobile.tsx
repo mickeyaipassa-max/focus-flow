@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 
+import MobileMenu from "../../components/MobileMenu";
+
 const imgLogo = "/duvet-dubois/mobile-assets/nieuws-logo.png";
 const imgNewsImage = "/duvet-dubois/mobile-assets/nieuws-news-image.png";
 const imgAudienceImage = "/duvet-dubois/mobile-assets/nieuws-audience-image.png";
 const imgEllipse = "/duvet-dubois/mobile-assets/nieuws-ellipse-bas.png";
-const imgMenuIcon = "/duvet-dubois/mobile-assets/nieuws-menu-icon.svg";
 const imgSmile = "/duvet-dubois/mobile-assets/nieuws-smile.svg";
 const imgThumbsUp = "/duvet-dubois/mobile-assets/nieuws-thumbs-up.svg";
 const imgShield = "/duvet-dubois/mobile-assets/nieuws-shield.svg";
@@ -59,9 +60,7 @@ export default function FrameMobile() {
               <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgLogo} />
             </div>
           </div>
-          <div className="relative shrink-0 size-[24px]" data-node-id="69:275" data-name="menu-icon">
-            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgMenuIcon} />
-          </div>
+          <MobileMenu />
         </div>
         <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-full" data-node-id="50:1067">
           <div className="[word-break:break-word] content-stretch flex flex-col font-semibold gap-[12px] items-start leading-[normal] not-italic overflow-clip px-[24px] relative shrink-0 text-black w-full" data-node-id="69:422" data-name="page-heading">

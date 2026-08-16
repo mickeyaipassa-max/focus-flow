@@ -1,6 +1,7 @@
+import MobileMenu from "./MobileMenu";
+
 const imgLogo = "/duvet-dubois/mobile-assets/home-logo.png";
 const imgHeroImageFrame = "/duvet-dubois/mobile-assets/home-hero-bg.png";
-const imgMenuIcon = "/duvet-dubois/mobile-assets/home-menu-icon.svg";
 const imgArguslogov1 = "/duvet-dubois/mobile-assets/home-argus-logo.png";
 const imgAfasLogoWebsite1 = "/duvet-dubois/mobile-assets/home-afas-logo.png";
 const imgDownload1 = "/duvet-dubois/mobile-assets/home-abn-amro-logo.svg";
@@ -54,9 +55,7 @@ export default function FrameMobile() {
               <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgLogo} />
             </div>
           </div>
-          <div className="relative shrink-0 size-[24px]" data-node-id="50:236" data-name="menu-icon">
-            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgMenuIcon} />
-          </div>
+          <MobileMenu />
         </div>
         <div className="h-[619px] relative shrink-0 w-[393px]" data-node-id="50:242" data-name="hero-image-frame">
           <div className="absolute inset-0 overflow-hidden pointer-events-none">

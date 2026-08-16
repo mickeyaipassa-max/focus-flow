@@ -1,6 +1,7 @@
+import MobileMenu from "../../components/MobileMenu";
+
 const imgLogo = "/duvet-dubois/mobile-assets/over-ons-logo.png";
 const imgHeroImage = "/duvet-dubois/mobile-assets/over-ons-hero-image.png";
-const imgMenuIcon = "/duvet-dubois/mobile-assets/over-ons-menu-icon.svg";
 const imgPillarIcon1 = "/duvet-dubois/mobile-assets/over-ons-pillar-icon-1.svg";
 const imgPillarIcon2 = "/duvet-dubois/mobile-assets/over-ons-pillar-icon-2.svg";
 const imgPillarIcon3 = "/duvet-dubois/mobile-assets/over-ons-pillar-icon-3.svg";
@@ -28,9 +29,7 @@ export default function FrameMobile() {
               <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgLogo} />
             </div>
           </div>
-          <div className="relative shrink-0 size-[24px]" data-node-id="65:272" data-name="menu-icon">
-            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgMenuIcon} />
-          </div>
+          <MobileMenu />
         </div>
         <div className="content-stretch flex items-center relative shrink-0 w-full" data-node-id="50:1042">
           <div className="flex-[1_0_0] h-[400px] min-w-px relative" data-node-id="66:269" data-name="hero-image">
