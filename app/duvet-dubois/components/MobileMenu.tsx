@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const imgMenuIcon = "/duvet-dubois/mobile-assets/home-menu-icon.svg";
+const imgMenuIcon = "/duvet-dubois/mobile-assets/menu-hamburger-icon.svg";
 const imgCloseIcon = "/duvet-dubois/mobile-assets/menu-close-icon.svg";
 const imgChevronRight = "/duvet-dubois/mobile-assets/menu-chevron-right.svg";
 const imgDivider = "/duvet-dubois/mobile-assets/menu-divider.svg";
