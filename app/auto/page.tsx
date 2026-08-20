@@ -199,7 +199,7 @@ export default function AutoJouwSituatiePage() {
         </div>
       }
       navigation={
-        <div className="flex w-full justify-end">
+        <div className="flex w-full items-start justify-end px-10 py-6">
           <button
             type="button"
             onClick={handleNext}
@@ -214,16 +214,18 @@ export default function AutoJouwSituatiePage() {
     >
       <FunnelSection intro title="Jouw situatie" showRequiredFieldsNote />
 
-      <FunnelSection title="De auto die je wil verzekeren" showDividerAbove>
-        <InputLicensePlate value={kenteken} onChange={setKenteken} state={vehicleState} errorMessage={kentekenError} vehicle={vehicle ?? undefined} />
-        <button
-          type="button"
-          onClick={() => setPremieDialogOpen(true)}
-          className="text-left text-base text-[#0064a8] underline leading-[1.5]"
-          style={{ fontFamily: "var(--font-avenir)" }}
-        >
-          Bereken je premie zonder kenteken
-        </button>
+      <FunnelSection title="De auto die je wil verzekeren">
+        <div className="flex w-full flex-col items-start gap-2">
+          <InputLicensePlate value={kenteken} onChange={setKenteken} state={vehicleState} errorMessage={kentekenError} vehicle={vehicle ?? undefined} />
+          <button
+            type="button"
+            onClick={() => setPremieDialogOpen(true)}
+            className="text-left text-base text-[#0064a8] underline leading-[1.5]"
+            style={{ fontFamily: "var(--font-avenir)" }}
+          >
+            Bereken je premie zonder kenteken
+          </button>
+        </div>
         <Select
           labelText="Aantal kilometers per jaar"
           options={KM_OPTIONS}
@@ -250,34 +252,31 @@ export default function AutoJouwSituatiePage() {
           horizontal
           error={errors.tweedeOfDerde}
         />
-        <div className="flex w-full flex-col items-start gap-4">
-          <p className="w-full text-base text-black leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-            Je hebt alleen schadevrije jaren als je een autoverzekering op jouw naam hebt staan. Je vindt het aantal op het polisblad
-            van je huidige verzekering. Heb je lease gereden? Ook dan bouw je schadevrije jaren op.
-          </p>
-          <button
-            type="button"
-            onClick={() => setSvjDialogOpen(true)}
-            className="text-left text-base text-[#0064a8] underline leading-[1.5]"
-            style={{ fontFamily: "var(--font-avenir)" }}
-          >
-            Meer over schadevrije jaren
-          </button>
-          <Select
-            labelText="Je schadevrije jaren"
-            options={SVJ_OPTIONS}
-            value={schadevrijeJaren}
-            onChange={setSchadevrijeJaren}
-            error={errors.schadevrijeJaren}
-          />
-          <button
-            type="button"
-            className="text-left text-base text-[#0064a8] underline leading-[1.5]"
-            style={{ fontFamily: "var(--font-avenir)" }}
-          >
-            Bereken mijn schadevrije jaren
-          </button>
-        </div>
+        <Select
+          labelText="Je schadevrije jaren"
+          description="Hoe meer schadevrije jaren je hebt, hoe meer korting op je premie. Je bouwt ze op door geen schade te claimen, aan je eigen auto of bij een ander."
+          beforeField={
+            <button
+              type="button"
+              onClick={() => setSvjDialogOpen(true)}
+              className="text-left text-lg text-[#0064a8] underline leading-[1.5]"
+              style={{ fontFamily: "var(--font-avenir)" }}
+            >
+              Meer over schadevrije jaren
+            </button>
+          }
+          options={SVJ_OPTIONS}
+          value={schadevrijeJaren}
+          onChange={setSchadevrijeJaren}
+          error={errors.schadevrijeJaren}
+        />
+        <button
+          type="button"
+          className="text-left text-lg text-black underline leading-[1.5]"
+          style={{ fontFamily: "var(--font-avenir-medium)" }}
+        >
+          Bereken mijn schadevrije jaren
+        </button>
       </FunnelSection>
 
       <FunnelSection title="Je gegevens" showDividerAbove>

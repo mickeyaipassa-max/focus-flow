@@ -205,7 +205,7 @@ export function PremieZonderKentekenDialog({ open, onClose, onSubmit }: PremieZo
               value={value.uitvoering}
               onChange={(v) => set("uitvoering", v)}
               disabled={!value.model}
-              placeholder={value.model ? "Maak een keuze" : "Kies eerst merk en model"}
+              placeholder={value.model ? "Maak een keuze" : value.merk ? "Kies eerst model" : "Kies eerst merk en model"}
             />
           </>
         )}
