@@ -11,6 +11,9 @@ import { CheckboxGroup } from "@/components/CheckboxGroup";
 import { CheckboxCardControlLeftGroup } from "@/components/CheckboxCardControlLeft";
 import { InputPhone } from "@/components/InputPhone";
 import { InputEmail } from "@/components/InputEmail";
+import { InputLicensePlate } from "@/components/InputLicensePlate";
+import { Rating } from "@/components/Rating";
+import { InputDate } from "@/components/InputDate";
 import { FieldsetName } from "@/components/FieldsetName";
 import { Label } from "@/components/Label";
 import { Popover } from "@/components/Popover";
@@ -170,6 +173,28 @@ export default function Home() {
           <InputEmail value="naam@voorbeeld.nl" />
           <InputEmail optional required={false} description="Zodat we contact kunnen opnemen." showInfo />
           <InputEmail error="Vul een geldig e-mailadres in" />
+        </div>
+        <div className="flex flex-wrap items-start gap-6">
+          <InputLicensePlate />
+          <InputLicensePlate value="K - 24 - ASR" state="loading" />
+          <InputLicensePlate
+            value="K - 24 - ASR"
+            state="succes"
+            vehicle={{ makeModel: "Ford Focus", type: "1.0 EcoBoost Titanium", year: "2019", fuel: "Benzine" }}
+          />
+          <InputLicensePlate state="error" errorMessage="Je hebt geen voertuig gevonden met dit kenteken. Controleer of je kenteken goed hebt ingevuld." />
+        </div>
+        <div className="flex flex-wrap items-start gap-6">
+          <InputDate />
+          <InputDate labelText="Geboortedatum (dd-mm-jjjj)" showPickerButton value={new Date(2019, 4, 12)} />
+          <InputDate labelText="Geboortedatum (dd-mm-jjjj)" showPickerButton error="Vul een geldige geboortedatum in" />
+          <InputDate labelText="Periode" showPickerButton range showTodayButton showClearButton rangeValue={{ start: new Date(2026, 9, 5), end: new Date(2026, 9, 12) }} />
+        </div>
+        <div className="flex flex-col items-start gap-6">
+          <Rating score={4.5} ratingNumber="8,1" reviewCount={671} reviewsHref="#" />
+          <Rating score={2.5} ratingNumber="5,4" reviewCount={102} reviewsHref="#" />
+          <Rating score={5} ratingNumber="9,7" reviewCount={38} reviewLink={false} />
+          <Rating score={4.5} ratingNumber="8,1" reviewCount={671} reviewsHref="#" compact />
         </div>
         <div className="flex flex-col items-start gap-6">
           <div className="w-[400px]">

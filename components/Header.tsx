@@ -22,10 +22,28 @@ type HeaderProps = {
    * niet een nieuw component. Heeft voorrang op `chatButton` wanneer gezet.
    */
   phoneNumber?: string;
+  /**
+   * Toont de "ik kies zelf"-sticker naast de titel (Figma: Header Funnel's
+   * "Logo" instance, type="ikz-sticker-arrow-left" — bevestigd bestaande
+   * property, destijds bewust niet gebouwd: "ikz is een label en is
+   * optioneel, wordt niet gebruikt bij verzuim". Wel nodig voor Auto.
+   */
+  ikzSticker?: boolean;
   className?: string;
 };
 
-export function Header({ title, chatButton = true, phoneNumber, className }: HeaderProps) {
+function IkzSticker() {
+  return (
+    <span className="relative inline-flex h-[28px] w-[130px] shrink-0 items-center">
+      <img src="/header/ikz-bg-white.svg" alt="" className="absolute left-1/2 top-1/2 h-[26.7px] w-[127.6px] -translate-x-1/2 -translate-y-1/2" />
+      <img src="/header/ikz-bg-blue.svg" alt="" className="absolute left-1/2 top-1/2 h-[28px] w-[129px] -translate-x-1/2 -translate-y-1/2" />
+      <img src="/header/ikz-check.svg" alt="" className="absolute left-[calc(50%-41px)] top-1/2 h-[13px] w-[13.7px] -translate-x-1/2 -translate-y-1/2" />
+      <img src="/header/ikz-wordmark.svg" alt="ik kies zelf" className="absolute left-[calc(50%+18.4px)] top-1/2 h-[12.1px] w-[71.4px] -translate-x-1/2 -translate-y-1/2" />
+    </span>
+  );
+}
+
+export function Header({ title, chatButton = true, phoneNumber, ikzSticker = false, className }: HeaderProps) {
   const showContactButton = Boolean(phoneNumber) || chatButton;
   return (
     <header className={className ?? "flex w-full justify-center bg-white"}>
@@ -87,13 +105,14 @@ export function Header({ title, chatButton = true, phoneNumber, className }: Hea
         </div>
 
         {/* Title */}
-        <div className="order-2 flex w-full flex-col items-center justify-center min-[900px]:w-auto min-[900px]:min-w-0 min-[900px]:flex-1">
+        <div className="order-2 flex w-full items-center justify-center gap-2 min-[900px]:w-auto min-[900px]:min-w-0 min-[900px]:flex-1">
           <p
-            className="w-full text-center font-bold text-base text-black leading-[1.5] whitespace-nowrap min-[1200px]:text-lg"
+            className="text-center font-bold text-base text-black leading-[1.5] whitespace-nowrap min-[1200px]:text-lg"
             style={{ fontFamily: "var(--font-avenir-bold)" }}
           >
             {title}
           </p>
+          {ikzSticker && <IkzSticker />}
         </div>
       </div>
     </header>
