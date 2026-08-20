@@ -96,13 +96,11 @@ export function Select({
   }
 
   const triggerClasses = (() => {
-    const base =
-      "flex w-full items-center gap-2 rounded-[3px] bg-white text-left " +
-      (compact ? "px-3 py-2" : "h-[51px] px-4 py-3");
+    const base = "flex w-full items-center gap-2 rounded-[3px] text-left " + (compact ? "px-3 py-2" : "h-[51px] px-4 py-3");
     if (disabled) return base + " cursor-not-allowed border border-[#9d9d9d] bg-[#f6f6f7]";
-    if (error) return base + " cursor-pointer border border-[#ce0a1e]";
-    if (open) return base + " cursor-pointer border border-black";
-    return base + " cursor-pointer border border-[#565656] hover:border-2 hover:border-black";
+    if (error) return base + " cursor-pointer border border-[#ce0a1e] bg-white";
+    if (open) return base + " cursor-pointer border border-black bg-white";
+    return base + " cursor-pointer border border-[#565656] bg-white hover:border-2 hover:border-black";
   })();
 
   return (

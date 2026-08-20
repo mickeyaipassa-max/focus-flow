@@ -13,6 +13,7 @@ import { List } from "@/components/List";
 import { Rating } from "@/components/Rating";
 import { Icon } from "@/components/Icon";
 import { useAutoFunnel } from "./funnel-context";
+import { PremieZonderKentekenDialog, type PremieZonderKentekenValue } from "./PremieZonderKentekenDialog";
 
 const AUTO_STEPS = ["Jouw situatie", "Jouw dekking", "Jouw gegevens", "Laatste vragen", "Samenvatting"];
 
@@ -52,9 +53,10 @@ type VehicleState = "default" | "loading" | "succes" | "error";
  * om een echte auto terug te zien komen.
  *
  * Bewust nog niet gebouwd, apart te bespreken:
- * - "Bereken je premie zonder kenteken" opent in Figma een eigen 2-staps
- *   dialoogflow (nodes 8050:70390/70478) — hier alleen een link, nog geen
- *   sub-flow.
+ * - Waar "Ga verder" in de "Bereken je premie zonder kenteken"-dialoog
+ *   (zie ./PremieZonderKentekenDialog.tsx) naartoe moet — Figma toont geen
+ *   vervolgscherm, dus de opgegeven waarden worden nu alleen lokaal
+ *   bewaard, niet verder gebruikt.
  * - "Bereken mijn schadevrije jaren" — geen aparte flow hiervoor
  *   geanalyseerd.
  * - De keuzelijst-opties voor postcode/huisnummer "Toevoeging" (dropdown,
@@ -75,6 +77,8 @@ export default function AutoJouwSituatiePage() {
   const [tweedeOfDerde, setTweedeOfDerde] = useState("");
   const [schadevrijeJaren, setSchadevrijeJaren] = useState("");
   const [svjDialogOpen, setSvjDialogOpen] = useState(false);
+  const [premieDialogOpen, setPremieDialogOpen] = useState(false);
+  const [premieZonderKenteken, setPremieZonderKenteken] = useState<PremieZonderKentekenValue | null>(null);
   const [geboortedatum, setGeboortedatum] = useState<Date | null>(null);
   const [postcode, setPostcode] = useState("");
   const [huisnummer, setHuisnummer] = useState("");
@@ -214,6 +218,7 @@ export default function AutoJouwSituatiePage() {
         <InputLicensePlate value={kenteken} onChange={setKenteken} state={vehicleState} errorMessage={kentekenError} vehicle={vehicle ?? undefined} />
         <button
           type="button"
+          onClick={() => setPremieDialogOpen(true)}
           className="text-left text-base text-[#0064a8] underline leading-[1.5]"
           style={{ fontFamily: "var(--font-avenir)" }}
         >
@@ -392,6 +397,15 @@ export default function AutoJouwSituatiePage() {
           Roy-Data of een leaseverklaring.
         </p>
       </Dialog>
+
+      <PremieZonderKentekenDialog
+        open={premieDialogOpen}
+        onClose={() => setPremieDialogOpen(false)}
+        onSubmit={(value) => {
+          setPremieZonderKenteken(value);
+          setPremieDialogOpen(false);
+        }}
+      />
     </FunnelPageTemplate>
   );
 }
