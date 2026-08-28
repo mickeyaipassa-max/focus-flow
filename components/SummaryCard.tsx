@@ -6,10 +6,10 @@ export type SummaryRowData = {
   label: string;
   value: string;
   /**
-   * Toont een gele Tag-badge (bv. "Gewijzigd"/"Toegevoegd") vóór de waarde,
-   * plus een oranje stip ná het label. In alle 3 bevestigde Figma-instanties
-   * (Dekking, Aanvullende dekking, Nieuwe premie) komen deze twee altijd
-   * samen voor — nooit los — dus hier gebundeld tot één prop i.p.v. twee.
+   * Toont een gele Tag-badge naast het label (bv. "Gewijzigd"/"Toegevoegd").
+   * Stond eerder naast de waarde met een losse oranje stip na het label —
+   * op node 8043:21049 (na de gebruiker's eigen Figma-aanpassing) bevestigd
+   * verhuisd náár het label, stip vervallen.
    */
   badge?: string;
   /** Extra, grijze regel onder de waarde met de oude waarde (bv. "Dit was: Basis"). Bevestigd bij Dekking en Nieuwe premie. */
@@ -68,10 +68,12 @@ function EditButton({ onClick }: { onClick?: () => void }) {
  * Twee volledig losse DOM-structuren per rij, getoond/verborgen op basis van
  * het breekpunt (min-[600px]), i.p.v. één structuur die met utility-classes
  * wordt "omgevouwen". Bevestigd via mcp (node 8036:20816 mobiel vs.
- * 8031:18767 e.a. desktop) dat dit geen simpele stapel/uitlijn-omschakeling
- * is: de Tag verhuist van de waarde náár het label, de "gedempte"-stijl
- * (muted) vervalt volledig op mobiel, en de waardetekst wisselt van vet naar
- * Book — te veel losse assen om betrouwbaar in één set classes te vangen.
+ * 8043:21049 desktop, na de gebruiker's eigen Figma-aanpassing van de
+ * desktopkaart) dat dit geen simpele stapel/uitlijn-omschakeling is: de
+ * "gedempte"-stijl (muted) vervalt volledig op mobiel, en de waardetekst
+ * wisselt van vet naar Book — te veel losse assen om betrouwbaar in één set
+ * classes te vangen. De Tag-naast-het-label-plaatsing is inmiddels wél op
+ * beide breekpunten gelijk (voorheen niet).
  */
 function SummaryRow({ label, value, badge, previousValue, muted }: SummaryRowData) {
   const labelFont = muted ? "var(--font-avenir-book)" : "var(--font-avenir-bold)";
@@ -99,21 +101,18 @@ function SummaryRow({ label, value, badge, previousValue, muted }: SummaryRowDat
           )}
         </div>
       </div>
-      {/* Desktop (≥600px): label links (met stip bij badge), waarde rechts uitgelijnd, badge naast de waarde. */}
+      {/* Desktop (≥600px): badge staat nu naast het lábel (niet meer naast de waarde), geen stip meer. Bij een badge hugt de label+badge-groep zijn eigen breedte i.p.v. de vaste 250px-kolom — die kolom blijft alleen voor badge-loze rijen zoals "Eigen risico". */}
       <div className="hidden w-full items-start gap-4 min-[600px]:flex">
-        <div className="w-[250px] min-w-[160px] shrink-0">
-          <p className={["text-base leading-[1.5]", textColor].join(" ")} style={{ fontFamily: labelFont }}>
+        <div className={badge ? "flex shrink-0 items-center gap-2" : "w-[250px] min-w-[160px] shrink-0"}>
+          <p className={["whitespace-nowrap text-base leading-[1.5]", textColor].join(" ")} style={{ fontFamily: labelFont }}>
             {label}
-            {badge && <span className="text-[#eda50f]"> •</span>}
           </p>
+          {badge && <Tag text={badge} color="yellow" compact />}
         </div>
         <div className="flex min-w-px flex-1 flex-col items-end justify-center gap-1">
-          <div className="flex items-center justify-end gap-2">
-            {badge && <Tag text={badge} color="yellow" compact />}
-            <p className={["whitespace-nowrap text-right text-base leading-[1.5]", textColor].join(" ")} style={{ fontFamily: valueFont }}>
-              {value}
-            </p>
-          </div>
+          <p className={["whitespace-nowrap text-right text-base leading-[1.5]", textColor].join(" ")} style={{ fontFamily: valueFont }}>
+            {value}
+          </p>
           {previousValue && (
             <p className="text-right text-base text-[#565656] leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
               {previousValue}
@@ -127,21 +126,17 @@ function SummaryRow({ label, value, badge, previousValue, muted }: SummaryRowDat
 
 /**
  * Gebaseerd op Figma's "Card Details"-instanties op de bevestigingsstap van
- * de mutatie-funnel (node 8031:18767 "Jouw dekking", 8031:18859
- * "Ingangsdatum", 8031:18899 "Premie") — een duplicaat van CardDetails,
- * omgebouwd naar déze specifieke variant. Bewust weggelaten t.o.v.
- * CardDetails: pictogram-slot, alert-slot, rij-niveau acties en de
- * labelWidth-responsive-variant — geen van deze is in de 3 opgehaalde
- * instanties aangetroffen, dus niet meegenomen (geen aanname).
+ * de mutatie-funnel — oorspronkelijk node 8031:18767 "Jouw dekking",
+ * 8031:18859 "Ingangsdatum", 8031:18899 "Premie" (duplicaat van
+ * CardDetails, omgebouwd naar déze variant); de "Jouw dekking"-kaart is
+ * nadien in Figma zelf herzien naar node 8043:21049 (zie hieronder). Bewust
+ * weggelaten t.o.v. CardDetails: pictogram-slot, alert-slot, rij-niveau
+ * acties en de labelWidth-responsive-variant — geen van deze is aangetroffen,
+ * dus niet meegenomen (geen aanname).
  *
  * Randstijl (wit, rand #ccc, rounded-sm, p-6) is identiek aan CardDetails'
  * `bordered`-variant — dat deel is dus geen verschil, gewoon hetzelfde
  * basiskaartpatroon.
- *
- * De 8px-gap tussen badge en waarde is de meerderheidsvariant (2 van de 3
- * instanties); de "Dekking"-rij wijkt in Figma zelf af met 16px — vermoedelijk
- * een kleine inconsistentie in het bronbestand, hier niet als aparte
- * prop overgenomen om geen ongeteste combinatie te introduceren.
  *
  * Responsive breekpunt: 600px, bevestigd door de gebruiker (niet uit Figma
  * afgeleid — er stond geen tussenliggende viewport, alleen een los
@@ -150,9 +145,13 @@ function SummaryRow({ label, value, badge, previousValue, muted }: SummaryRowDat
  * Onder 600px (node 8036:20816, alleen bevestigd voor "Jouw dekking", maar
  * het rijpatroon zelf is generiek — dezelfde 3 rij-varianten: met badge+"was",
  * zonder badge, met badge zonder "was" — dus toepasbaar op elke kaart):
- * - kaart-gap 16px i.p.v. 24px op desktop (bevestigd, andere token-waarde),
- * - een divider ná elke rij (incl. vóór de Wijzig-knop, die daardoor mee
- *   verschuift van rechtsboven bij de titel naar onderaan de kaart).
+ * kaart-gap 16px i.p.v. 24px op desktop (bevestigd, andere token-waarde).
+ *
+ * Dividers tussen rijen (node 8043:21049, de door de gebruiker herziene
+ * "Jouw dekking"-kaart): ná élke rij op mobiel (incl. vóór de Wijzig-knop,
+ * die daardoor mee verschuift van rechtsboven bij de titel naar onderaan de
+ * kaart) — en, sinds deze herziening, ook op desktop ná élke rij behálve de
+ * laatste (geen trailing divider vóór de knoppenrij/kaartrand op desktop).
  */
 export function SummaryCard({ title, rows, showEdit = false, onEdit, className }: SummaryCardProps) {
   return (
@@ -172,12 +171,16 @@ export function SummaryCard({ title, rows, showEdit = false, onEdit, className }
       </div>
       {rows.length > 0 && (
         <div className="flex w-full flex-col items-start gap-4">
-          {rows.map((row) => (
-            <Fragment key={row.label}>
-              <SummaryRow {...row} />
-              <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)] min-[600px]:hidden" />
-            </Fragment>
-          ))}
+          {rows.map((row, index) => {
+            const isLastRow = index === rows.length - 1;
+            return (
+              <Fragment key={row.label}>
+                <SummaryRow {...row} />
+                {/* Mobiel: na élke rij (ook de laatste, vóór de Wijzig-knop). Desktop (bevestigd op node 8043:21049): na élke rij behálve de laatste. */}
+                <div className={["h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]", isLastRow ? "min-[600px]:hidden" : ""].join(" ")} />
+              </Fragment>
+            );
+          })}
         </div>
       )}
       {showEdit && (
