@@ -124,7 +124,18 @@ export function FunnelPageTemplate({
           <StepIndicator steps={steps} activeStep={activeStep} mobile className="flex w-full items-start justify-center px-6 min-[900px]:hidden" />
           <StepIndicator steps={steps} activeStep={activeStep} className="hidden w-full items-start justify-center min-[900px]:flex min-[1200px]:pl-10" />
 
-          <div className="flex w-full flex-col items-start gap-6 min-[1200px]:flex-row">
+          {/*
+            `items-start` op zichzelf liet de kaart-kolom in kolom-stand
+            (<1200px) breder worden dan zijn eigen ouder: `items-start` stuurt
+            de kruisas-uitlijning, en in `flex-col` is de kruisas horizontaal
+            — dus zonder `items-stretch` sizet elk kind naar zijn éigen
+            inhoudsbreedte i.p.v. te krimpen naar de ouderbreedte. Gemeten:
+            de kaart werd 517px breed in een 375px-brede ouder. `items-stretch`
+            als mobiele basis lost dat op; vanaf 1200px (flex-row) blijft
+            `items-start` nodig zodat de twee kolommen top-uitgelijnd zijn
+            i.p.v. gedwongen gelijke hoogte.
+          */}
+          <div className="flex w-full flex-col items-stretch gap-6 min-[1200px]:flex-row min-[1200px]:items-start">
             <div className="flex min-w-px flex-1 flex-col items-start overflow-hidden rounded-md bg-white shadow-[0px_4px_8px_rgba(0,0,0,0.12)]">
               <div className="flex w-full flex-col items-start gap-10 p-6 min-[1200px]:p-10">{children}</div>
               <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
