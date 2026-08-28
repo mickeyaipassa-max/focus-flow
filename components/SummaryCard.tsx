@@ -12,9 +12,15 @@ export type SummaryRowData = {
    * verhuisd náár het label, stip vervallen.
    */
   badge?: string;
-  /** Extra, grijze regel onder de waarde met de oude waarde (bv. "Dit was: Basis"). Bevestigd bij Dekking en Nieuwe premie. */
+  /** Extra regel onder de waarde met de oude waarde (bv. "Dit was: Basis"). Bevestigd bij Dekking en Nieuwe premie. Zelfde kleur als de waarde zelf (zwart, of grijs bij `muted`) — niet apart grijs, dat was een aanname uit de vorige versie. */
   previousValue?: string;
-  /** Grijze, niet-vetgedrukte label+waarde-stijl voor niet-gewijzigde/informatieve rijen (bevestigd bij "Eigen risico"). */
+  /**
+   * Grijze wáárde-kleur voor niet-gewijzigde/informatieve rijen (bevestigd
+   * bij "Eigen risico"). Beïnvloedt sinds de herziening van node 8043:21049
+   * alléén de waarde, niet meer het label: het label is nu altijd
+   * vetgedrukt/zwart, ook bij "Eigen risico" — dat was voorheen ook grijs
+   * en niet-vet, een aanname die deze herziening rechtzet.
+   */
   muted?: boolean;
 };
 
@@ -76,9 +82,7 @@ function EditButton({ onClick }: { onClick?: () => void }) {
  * beide breekpunten gelijk (voorheen niet).
  */
 function SummaryRow({ label, value, badge, previousValue, muted }: SummaryRowData) {
-  const labelFont = muted ? "var(--font-avenir-book)" : "var(--font-avenir-bold)";
-  const valueFont = muted ? "var(--font-avenir-book)" : "var(--font-avenir-bold)";
-  const textColor = muted ? "text-[#565656]" : "text-black";
+  const valueColor = muted ? "text-[#565656]" : "text-black";
 
   return (
     <>
@@ -101,20 +105,30 @@ function SummaryRow({ label, value, badge, previousValue, muted }: SummaryRowDat
           )}
         </div>
       </div>
-      {/* Desktop (≥600px): badge staat nu naast het lábel (niet meer naast de waarde), geen stip meer. Bij een badge hugt de label+badge-groep zijn eigen breedte i.p.v. de vaste 250px-kolom — die kolom blijft alleen voor badge-loze rijen zoals "Eigen risico". */}
+      {/*
+        Desktop (≥600px), bevestigd op node 8043:21049 (de herziene kaart):
+        - Label is nu áltijd vetgedrukt/zwart, ook bij "Eigen risico" — niet
+          langer gekoppeld aan `muted`. Badge staat naast het lábel (niet
+          meer naast de waarde), geen stip meer. Bij een badge hugt de
+          label+badge-groep zijn eigen breedte i.p.v. de vaste 250px-kolom —
+          die kolom blijft alleen voor badge-loze rijen zoals "Eigen risico".
+        - Waarde (en "was"-regel) is nu áltijd Avenir Book — niet langer vet
+          bij niet-gewijzigde rijen. Alleen de kléur blijft aan `muted`
+          gekoppeld (grijs bij "Eigen risico", zwart bij een badge-rij).
+      */}
       <div className="hidden w-full items-start gap-4 min-[600px]:flex">
         <div className={badge ? "flex shrink-0 items-center gap-2" : "w-[250px] min-w-[160px] shrink-0"}>
-          <p className={["whitespace-nowrap text-base leading-[1.5]", textColor].join(" ")} style={{ fontFamily: labelFont }}>
+          <p className="whitespace-nowrap text-base text-black leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
             {label}
           </p>
           {badge && <Tag text={badge} color="yellow" compact />}
         </div>
         <div className="flex min-w-px flex-1 flex-col items-end justify-center gap-1">
-          <p className={["whitespace-nowrap text-right text-base leading-[1.5]", textColor].join(" ")} style={{ fontFamily: valueFont }}>
+          <p className={["whitespace-nowrap text-right text-base leading-[1.5]", valueColor].join(" ")} style={{ fontFamily: "var(--font-avenir-book)" }}>
             {value}
           </p>
           {previousValue && (
-            <p className="text-right text-base text-[#565656] leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+            <p className={["text-right text-base leading-[1.5]", valueColor].join(" ")} style={{ fontFamily: "var(--font-avenir-book)" }}>
               {previousValue}
             </p>
           )}
