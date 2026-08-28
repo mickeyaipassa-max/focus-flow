@@ -21,6 +21,8 @@ import { DialogDemo } from "@/components/DialogDemo";
 import { Receipt } from "@/components/Receipt";
 import { ReceiptDemo } from "@/components/ReceiptDemo";
 import { Spinner } from "@/components/Spinner";
+import { Tag } from "@/components/Tag";
+import { SummaryCard } from "@/components/SummaryCard";
 
 const DEKKING_OPTIES = [
   { value: "aov", label: "Arbeidsongeschiktheid" },
@@ -52,6 +54,8 @@ const VERZEKERING_OPTIES = [
 
 const VERZUIM_STEPS = ["Jouw bedrijf", "Jouw dekking", "Aanvullende gegevens", "Laatste vragen", "Samenvatting"];
 
+const TAG_COLORS = ["neutral", "yellow", "green", "pink", "blue", "red", "brand"] as const;
+
 export default function Home() {
   return (
     <>
@@ -81,6 +85,74 @@ export default function Home() {
           <Alert type="error" title="Alert title" description="You can use a description to better explain the alert." />
           <Alert type="info" title="Alert title" description="You can use a description to better explain the alert." action />
           <Alert type="warning" showTitle={false} description="You can use a description to better explain the alert." closable={false} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {TAG_COLORS.map((color) => (
+              <Tag key={color} text="Tag" color={color} compact={false} />
+            ))}
+            <Tag text="Tag" color="blur" compact={false} />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {TAG_COLORS.map((color) => (
+              <Tag key={color} text="Tag" color={color} compact={false} icon iconName="person" />
+            ))}
+            <Tag text="Tag" color="blur" compact={false} icon iconName="person" />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {TAG_COLORS.map((color) => (
+              <Tag key={color} text="Tag" color={color} compact />
+            ))}
+            <Tag text="Tag" color="blur" compact />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {TAG_COLORS.map((color) => (
+              <Tag key={color} text="Tag" color={color} compact icon iconName="person" />
+            ))}
+            <Tag text="Tag" color="blur" compact icon iconName="person" />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Tag text="Tag" removable compact={false} />
+            <Tag text="Tag" removable compact />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Tag text="Tag" color="succes" icon compact />
+            <Tag text="Tag" color="error" icon compact />
+            <Tag text="Tag" color="warning" icon compact />
+            <Tag text="Tag" color="info" icon compact />
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Tag text="Tag" color="succes" icon compact={false} />
+            <Tag text="Tag" color="error" icon compact={false} />
+            <Tag text="Tag" color="warning" icon compact={false} />
+            <Tag text="Tag" color="info" icon compact={false} />
+          </div>
+        </div>
+        <div className="flex w-[600px] flex-col gap-4">
+          <SummaryCard
+            title="Jouw dekking"
+            showEdit
+            rows={[
+              { label: "Dekking", value: "Allrisk", badge: "Gewijzigd", previousValue: "Dit was: Basis" },
+              { label: "Eigen risico", value: "€ 100", muted: true },
+              { label: "Aanvullende dekking", value: "Glas", badge: "Toegevoegd" },
+            ]}
+          />
+          <SummaryCard
+            title="Ingangsdatum"
+            rows={[{ label: "De opstalverzekering gaat in per", value: "01 - 10 2026" }]}
+          />
+          <SummaryCard
+            title="Premie"
+            rows={[
+              {
+                label: "Nieuwe premie",
+                value: "€ 7,83 per maand",
+                badge: "Gewijzigd",
+                previousValue: "Dit was: € 4,82 per maand",
+              },
+            ]}
+          />
         </div>
         <CardDetails
           title="Bedrijfsgegevens"
