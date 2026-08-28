@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import { Icon } from "./Icon";
 
 type CheckboxVisualProps = { checked: boolean };
@@ -34,7 +34,8 @@ export function CheckboxVisual({ checked }: CheckboxVisualProps) {
 }
 
 type CheckboxProps = {
-  label: string;
+  /** ReactNode i.p.v. string zodat een vereist-veld-asterisk (bv. `<>Ja, ik ga akkoord <span className="text-[#ce0a1e]">*</span></>`) meegegeven kan worden — zelfde rood `#ce0a1e` als RadioGroup/CheckboxCardControlLeftGroup al gebruiken. */
+  label: ReactNode;
   checked?: boolean;
   onChange?: (checked: boolean) => void;
   name?: string;
