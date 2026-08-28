@@ -10,7 +10,7 @@ import { SummaryCard } from "@/components/SummaryCard";
 import { List } from "@/components/List";
 import { Checkbox } from "@/components/Checkbox";
 import { useMutatieFunnel } from "../funnel-context";
-import { PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_DEKKING, CURRENT_MONTHLY_PRICE, dekkingTitel, berekenNieuwePremie, formatEuro } from "../pricing";
+import { PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_DEKKING, CURRENT_MONTHLY_PRICE, CURRENT_EIGEN_RISICO, dekkingTitel, berekenNieuwePremie, formatEuro } from "../pricing";
 
 const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
 
@@ -51,6 +51,7 @@ export default function MutatieBevestigingPage() {
   const heeftGlas = aanvullendeDekkingen.includes("glas");
   const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas), [dekking, heeftGlas]);
   const isDekkingGewijzigd = dekking !== CURRENT_DEKKING;
+  const isEigenRisicoGewijzigd = eigenRisico !== CURRENT_EIGEN_RISICO;
   const isPremieGewijzigd = Math.abs(nieuwePremie - CURRENT_MONTHLY_PRICE) > 0.001;
 
   function handleSubmit() {
@@ -159,7 +160,13 @@ export default function MutatieBevestigingPage() {
               badge: isDekkingGewijzigd ? "Gewijzigd" : undefined,
               previousValue: isDekkingGewijzigd ? `Dit was: ${dekkingTitel(CURRENT_DEKKING)}` : undefined,
             },
-            { label: "Eigen risico", value: `€ ${eigenRisico}`, muted: true },
+            {
+              label: "Eigen risico",
+              value: `€ ${eigenRisico}`,
+              muted: !isEigenRisicoGewijzigd,
+              badge: isEigenRisicoGewijzigd ? "Gewijzigd" : undefined,
+              previousValue: isEigenRisicoGewijzigd ? `Dit was: € ${CURRENT_EIGEN_RISICO}` : undefined,
+            },
             ...(heeftGlas ? [{ label: "Aanvullende dekking", value: "Glas", badge: "Toegevoegd" }] : []),
           ]}
         />
