@@ -97,8 +97,9 @@ export default function MutatieDekkingPage() {
       ikzSticker
       steps={MUTATIE_STEPS}
       activeStep={0}
+      sidebarClassName="flex w-full flex-col items-start gap-4 rounded-[3px] bg-white p-4 shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)]"
       sidebar={
-        <div className="flex w-full flex-col items-start gap-4 rounded-[3px] bg-white p-4 shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)]">
+        <>
           <div className="flex w-full flex-col items-start gap-4">
             <div className="flex w-full items-start gap-4">
               <img src="/icons/pictogram-house.svg" alt="" className="size-8 shrink-0" />
@@ -156,7 +157,7 @@ export default function MutatieDekkingPage() {
               </p>
             )}
           </div>
-        </div>
+        </>
       }
       navigation={
         <FormNavigation

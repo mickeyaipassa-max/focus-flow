@@ -28,6 +28,14 @@ type FunnelPageTemplateProps = {
    * op de pagina.
    */
   sidebar?: ReactNode;
+  /**
+   * Override voor de className van de `FunnelBox` rond de sidebar. Sommige
+   * funnels hebben hun eigen kaartstijl voor die box (bv. de mutatie-funnels
+   * receipt-kaart: p-4/rounded-sm/shadow-lg i.p.v. FunnelBox's eigen
+   * p-6/rounded-md/shadow-sm-default) — zonder override zou zo'n kaart
+   * dubbel genest ogen (eigen box binnen FunnelBox's eigen box).
+   */
+  sidebarClassName?: string;
   /** De navigatieknoppenrij onderaan de kaart — typisch een `<FormNavigation .../>`. Losse slot i.p.v. doorgeefprops, zodat de afnemer dat component zelf blijft aansturen. */
   navigation: ReactNode;
   className?: string;
@@ -63,6 +71,7 @@ export function FunnelPageTemplate({
   activeStep,
   children,
   sidebar,
+  sidebarClassName,
   navigation,
   className,
 }: FunnelPageTemplateProps) {
@@ -123,8 +132,8 @@ export function FunnelPageTemplate({
             </div>
 
             {sidebar && (
-              <div className="w-full shrink-0 px-6 min-[600px]:px-0 min-[1200px]:w-[397px]">
-                <FunnelBox>{sidebar}</FunnelBox>
+              <div className="w-full shrink-0 px-6 min-[600px]:px-0 min-[1200px]:sticky min-[1200px]:top-10 min-[1200px]:w-[397px]">
+                <FunnelBox className={sidebarClassName}>{sidebar}</FunnelBox>
               </div>
             )}
           </div>
