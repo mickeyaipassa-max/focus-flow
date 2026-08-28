@@ -42,11 +42,21 @@ export function FormNavigation({
 }: FormNavigationProps) {
   const activeCount = [previousStep, nextStep, submit].filter(Boolean).length;
 
+  /**
+   * `stacked=false` (de meerderheid van de aanroepen) betekende voorheen
+   * altijd een horizontale rij, ook op mobiel — waardoor 2 knoppen met tekst
+   * ("Jouw situatie" / "Naar jouw gegevens") niet meer pasten en aan beide
+   * randen werden afgesneden. Nu automatisch gestapeld onder 600px, ongeacht
+   * `stacked`; expliciet `stacked=true` blijft daarboven óók gestapeld (de
+   * bewuste, altijd-verticale variant — nu ongewijzigd in gedrag).
+   */
   const groupAlignment = stacked
     ? "flex-col gap-2"
     : activeCount > 1
-      ? "justify-between"
-      : "justify-end";
+      ? "flex-col gap-2 min-[600px]:flex-row min-[600px]:justify-between"
+      : "flex-col gap-2 min-[600px]:flex-row min-[600px]:justify-end";
+
+  const buttonFullWidth = stacked ? true : "mobile";
 
   return (
     <div
@@ -54,23 +64,25 @@ export function FormNavigation({
         className ??
         [
           "flex w-full bg-white rounded-b-md",
-          stacked ? "flex-col items-start px-6 py-4" : "items-start px-10 py-6",
+          stacked
+            ? "flex-col items-start px-6 py-4"
+            : "flex-col items-start px-6 py-4 min-[600px]:flex-row min-[600px]:px-10 min-[600px]:py-6",
         ].join(" ")
       }
     >
       <div className={["flex w-full items-start", groupAlignment].join(" ")} data-name="Button Group">
         {previousStep && (
-          <Button type="secondary" iconPrepend="arrow-left" onClick={onPrevious} fullWidth={stacked} order={stacked ? 2 : undefined}>
+          <Button type="secondary" iconPrepend="arrow-left" onClick={onPrevious} fullWidth={buttonFullWidth} order={stacked ? 2 : undefined}>
             {previousLabel}
           </Button>
         )}
         {nextStep && (
-          <Button type="primary" iconAppend="arrow-right" onClick={onNext} fullWidth={stacked}>
+          <Button type="primary" iconAppend="arrow-right" onClick={onNext} fullWidth={buttonFullWidth}>
             {nextLabel}
           </Button>
         )}
         {submit && (
-          <Button type="brand" htmlType="submit" onClick={onSubmit} fullWidth={stacked}>
+          <Button type="brand" htmlType="submit" onClick={onSubmit} fullWidth={buttonFullWidth}>
             {submitLabel}
           </Button>
         )}

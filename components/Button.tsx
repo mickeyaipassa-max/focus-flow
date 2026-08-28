@@ -12,8 +12,14 @@ type ButtonProps = {
   iconAppend?: string;
   htmlType?: "button" | "submit";
   onClick?: () => void;
-  /** Laat de knop de volle breedte van zijn ouder vullen (bv. in FormNavigation's stacked-modus). */
-  fullWidth?: boolean;
+  /**
+   * Laat de knop de volle breedte van zijn ouder vullen (bv. in FormNavigation's
+   * stacked-modus). `"mobile"` = volle breedte tot 600px, daarna automatische
+   * breedte — voor FormNavigation's responsieve auto-stack op smalle schermen,
+   * i.t.t. `true` dat altijd volle breedte blijft (de bewuste, altijd-gestapelde
+   * variant).
+   */
+  fullWidth?: boolean | "mobile";
   /** Extra CSS-order, voor layout-herschikking (bv. FormNavigation's stacked-volgorde). */
   order?: number;
   className?: string;
@@ -71,7 +77,12 @@ export function Button({
       type={htmlType}
       onClick={onClick}
       className={
-        className ?? [base, byType[type], fullWidth ? "w-full" : ""].join(" ")
+        className ??
+        [
+          base,
+          byType[type],
+          fullWidth === true ? "w-full" : fullWidth === "mobile" ? "w-full min-[600px]:w-auto" : "",
+        ].join(" ")
       }
       style={{ fontFamily: "var(--font-avenir-medium)", order }}
     >
