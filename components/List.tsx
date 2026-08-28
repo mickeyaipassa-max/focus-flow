@@ -1,9 +1,16 @@
+import type { ReactNode } from "react";
 import { Icon } from "./Icon";
 
 export type ListItemData = {
   /** Vetgedrukt beginstuk van de regel (bv. "Voor je bedrijf:"). Optioneel — niet elk item heeft een label-lead-in. */
   label?: string;
-  text: string;
+  text?: string;
+  /**
+   * Override voor rijke content (bv. ingesloten links) — bevestigd op de
+   * mutatie-funnel "Geef je akkoord"-lijst, waar één item twee losse
+   * hyperlinks bevat. Zonder `content` renders `text`/`label` zoals altijd.
+   */
+  content?: ReactNode;
 };
 
 type ListProps = {
@@ -31,12 +38,16 @@ export function List({ icon, items, className }: ListProps) {
             <Icon name={icon} size="sm" />
           </span>
           <p className="min-w-px flex-1 text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-            {item.label && (
-              <span className="font-bold" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                {item.label}{" "}
-              </span>
+            {item.content ?? (
+              <>
+                {item.label && (
+                  <span className="font-bold" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+                    {item.label}{" "}
+                  </span>
+                )}
+                {item.text}
+              </>
             )}
-            {item.text}
           </p>
         </li>
       ))}

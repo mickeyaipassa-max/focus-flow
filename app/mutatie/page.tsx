@@ -1,44 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
 import { FormNavigation } from "@/components/FormNavigation";
-import { RadioCardBottomGroup, type RadioCardBottomOption } from "@/components/RadioCardBottom";
+import { Button } from "@/components/Button";
+import { RadioCardBottomGroup } from "@/components/RadioCardBottom";
 import { RadioGroup } from "@/components/RadioGroup";
 import { CheckboxCardControlLeftGroup } from "@/components/CheckboxCardControlLeft";
+import { useMutatieFunnel } from "./funnel-context";
+import { DEKKING_OPTIONS, PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_MONTHLY_PRICE, dekkingTitel, berekenNieuwePremie, formatEuro, type DekkingKeuze } from "./pricing";
 
 const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
-
-const DEKKING_OPTIONS: RadioCardBottomOption[] = [
-  {
-    value: "basis",
-    title: "Basis",
-    description: "Opstalverzekering",
-    price: "4,82",
-    features: [
-      { text: "Brand, bliksem en rook", included: true },
-      { text: "Storm, neerslag en lekkage", included: true },
-      { text: "Diefstal, inbraak en vandalisme", included: true },
-      { text: "Tijdelijke woonruimte bij nood", included: true },
-      { text: "Ongelukjes zoals vallen en stoten", included: false },
-    ],
-  },
-  {
-    value: "allrisk",
-    title: "Allrisk",
-    description: "Opstalverzekering",
-    price: "5,20",
-    features: [
-      { text: "Brand, bliksem en rook", included: true },
-      { text: "Storm, neerslag en lekkage", included: true },
-      { text: "Diefstal, inbraak en vandalisme", included: true },
-      { text: "Tijdelijke woonruimte bij nood", included: true },
-      { text: "Ongelukjes zoals vallen en stoten", included: true },
-    ],
-  },
-];
 
 const EIGEN_RISICO_OPTIES = [
   { value: "0", label: "€ 0" },
@@ -46,21 +20,16 @@ const EIGEN_RISICO_OPTIES = [
   { value: "500", label: "€ 500" },
 ];
 
-/** Prijzen per keuze — bevestigd via mcp uit de receipt-instanties (Basis/€0 = huidige polis, Allrisk+Glas = gewijzigd voorbeeld). Geen prijslogica voor andere combinaties is in Figma getoond; dit is dus de enige twee bevestigde uitkomsten, geen uitgebreide prijstabel. */
-const PRICE_BY_DEKKING: Record<string, string> = { basis: "4,82", allrisk: "5,20" };
-const GLAS_PRICE = "2,63";
-const CURRENT_MONTHLY_PRICE = 4.82;
-
-function formatEuro(amount: number): string {
-  return `€ ${amount.toFixed(2).replace(".", ",")}`;
-}
-
 /**
  * Stap 1 van de mutatie-funnel "Dekking wijzigen" (Figma node 8031:10775,
  * de staat vóór wijziging: Basis geselecteerd, Glas uit). Pixel-getrouw
  * opgebouwd uit uitsluitend bestaande componenten (FunnelPageTemplate,
  * RadioGroup, CheckboxCardControlLeftGroup) plus één nieuw component
  * (RadioCardBottomGroup) dat nog niet in dit project bestond.
+ *
+ * Keuzes staan in de gedeelde `MutatieFunnelProvider` (niet lokale
+ * `useState`) zodat de bevestigingsstap ze kan overnemen — "het startpunt
+ * is altijd jouw dekking, neem de wijzigingen mee".
  *
  * De receipt-kaart rechts is hier inline opgebouwd (geen los component,
  * zelfde precedent als Verzuim's sidebar-lijst in app/verzuim/page.tsx) —
@@ -70,24 +39,26 @@ function formatEuro(amount: number): string {
  * geneste "Receipt Box"-kaart eromheen).
  *
  * "Meer informatie"-dialogen (Basis/Allrisk/Glas) zijn in Figma wel
- * aanwezig maar bewust niet meegebouwd in deze stap — expliciet buiten
- * scope van "implementeer de eerste stap".
+ * aanwezig maar bewust niet meegebouwd — buiten scope.
  */
 export default function MutatieDekkingPage() {
   const router = useRouter();
-
-  const [dekking, setDekking] = useState("basis");
-  const [eigenRisico, setEigenRisico] = useState("100");
-  const [aanvullendeDekkingen, setAanvullendeDekkingen] = useState<string[]>([]);
+  const { state, setState } = useMutatieFunnel();
+  const { dekking, eigenRisico, aanvullendeDekkingen } = state;
 
   const heeftGlas = aanvullendeDekkingen.includes("glas");
-  const nieuwePremie = useMemo(() => {
-    const dekkingPrijs = Number.parseFloat(PRICE_BY_DEKKING[dekking].replace(",", "."));
-    const glasPrijs = heeftGlas ? Number.parseFloat(GLAS_PRICE.replace(",", ".")) : 0;
-    return dekkingPrijs + glasPrijs;
-  }, [dekking, heeftGlas]);
-
+  const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas), [dekking, heeftGlas]);
   const isGewijzigd = Math.abs(nieuwePremie - CURRENT_MONTHLY_PRICE) > 0.001;
+
+  function setDekking(value: string) {
+    setState({ ...state, dekking: value as DekkingKeuze });
+  }
+  function setEigenRisico(value: string) {
+    setState({ ...state, eigenRisico: value });
+  }
+  function setAanvullendeDekkingen(values: string[]) {
+    setState({ ...state, aanvullendeDekkingen: values });
+  }
 
   return (
     <FunnelPageTemplate
@@ -114,7 +85,7 @@ export default function MutatieDekkingPage() {
               </p>
               <div className="flex w-full items-start gap-2">
                 <p className="flex-1 text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  {DEKKING_OPTIONS.find((option) => option.value === dekking)?.title}
+                  {dekkingTitel(dekking)}
                 </p>
                 <p className="whitespace-nowrap text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                   € {PRICE_BY_DEKKING[dekking]}
@@ -169,6 +140,10 @@ export default function MutatieDekkingPage() {
         />
       }
     >
+      <Button type="tertiary" iconPrepend="arrow-left" onClick={() => router.push("/")}>
+        Terug naar jouw account
+      </Button>
+
       <FunnelSection intro title="Jouw dekking" showRequiredFieldsNote />
 
       <FunnelSection title="Stel je opstalverzekering samen">

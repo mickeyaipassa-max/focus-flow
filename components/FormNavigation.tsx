@@ -9,8 +9,10 @@ type FormNavigationProps = {
   nextStep?: boolean;
   /** Override voor de knoptekst — Figma's knoplabel is per funnelstap andere content (bv. "Start met premie berekenen" op stap 1), geen vaste "Volgende stap" overal. Default "Volgende stap", gelijk aan de basisvariant. */
   nextLabel?: string;
-  /** Toont de "Aanvraag versturen"-knop (submit). Default false. */
+  /** Toont de submit-knop. Default false. */
   submit?: boolean;
+  /** Override voor de submit-knoptekst — bevestigd op de mutatie-funnel "Bevestiging"-stap ("Aanpassing bevestigen" i.p.v. "Aanvraag versturen"). */
+  submitLabel?: string;
   /** Verticale, volle-breedte knoppen i.p.v. een horizontale rij. Default false. */
   stacked?: boolean;
   /**
@@ -31,6 +33,7 @@ export function FormNavigation({
   nextStep = true,
   nextLabel = "Volgende stap",
   submit = false,
+  submitLabel = "Aanvraag versturen",
   stacked = false,
   onPrevious,
   onNext,
@@ -68,7 +71,7 @@ export function FormNavigation({
         )}
         {submit && (
           <Button type="brand" htmlType="submit" onClick={onSubmit} fullWidth={stacked}>
-            Aanvraag versturen
+            {submitLabel}
           </Button>
         )}
       </div>
