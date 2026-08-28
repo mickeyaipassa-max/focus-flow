@@ -38,6 +38,8 @@ export const GLAS_PRICE = "2,63";
 /** Huidige polis vóór wijziging — bevestigd via Figma's "Dit was: Basis" / "€ 4,82 per maand" op de bevestigingsstap. */
 export const CURRENT_DEKKING: DekkingKeuze = "basis";
 export const CURRENT_MONTHLY_PRICE = 4.82;
+/** Huidig eigen risico vóór wijziging — zelfde waarde als de default state in funnel-context.tsx. Elke wijziging t.o.v. dit bedrag moet een "Gewijzigd"-badge krijgen op de bevestigingsstap, net als Dekking en Premie al doen. */
+export const CURRENT_EIGEN_RISICO = "100";
 
 export function dekkingTitel(dekking: DekkingKeuze): string {
   return DEKKING_OPTIONS.find((option) => option.value === dekking)?.title ?? dekking;
