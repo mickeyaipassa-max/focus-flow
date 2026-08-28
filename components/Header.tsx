@@ -113,10 +113,18 @@ export function Header({ title, chatButton = true, phoneNumber, cancelButton = f
           )}
         </div>
 
-        {/* Title */}
+        {/*
+          Title: `whitespace-nowrap` verwijderd — met een lange titel
+          ("Dekking Opstalverzekering wijzigen") + de 130px-brede
+          ikzSticker samen op één rij past dat niet meer op smalle
+          schermen (bevestigd: 391px content in een 375px rij, dus
+          overflow). Titel mag nu naar 2 regels wrappen; korte,
+          eenwoordstitels (bv. "Verzuimverzekering") wrappen toch niet
+          en zien er ongewijzigd uit.
+        */}
         <div className="order-2 flex w-full items-center justify-center gap-2 min-[900px]:w-auto min-[900px]:min-w-0 min-[900px]:flex-1">
           <p
-            className="text-center font-bold text-base text-black leading-[1.5] whitespace-nowrap min-[1200px]:text-lg"
+            className="text-center font-bold text-base text-black leading-[1.5] min-[1200px]:text-lg"
             style={{ fontFamily: "var(--font-avenir-bold)" }}
           >
             {title}
