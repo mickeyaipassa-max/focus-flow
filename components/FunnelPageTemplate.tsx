@@ -9,6 +9,9 @@ type FunnelPageTemplateProps = {
   chatButton?: boolean;
   /** Doorgegeven aan `Header`; toont een telefoonnummer i.p.v. de Chat-knop (bevestigd op "Jouw bedrijf 1/3"). */
   phoneNumber?: string;
+  /** Doorgegeven aan `Header`; toont "Annuleren" i.p.v. Chat/telefoonnummer (bevestigd op de mutatie-funnel). */
+  cancelButton?: boolean;
+  onCancel?: () => void;
   /** Doorgegeven aan `Header`; toont de "ik kies zelf"-sticker (bevestigd nodig voor de Autoverzekering-funnel, niet voor Verzuim). */
   ikzSticker?: boolean;
   steps: string[];
@@ -53,6 +56,8 @@ export function FunnelPageTemplate({
   headerTitle,
   chatButton,
   phoneNumber,
+  cancelButton,
+  onCancel,
   ikzSticker,
   steps,
   activeStep,
@@ -63,7 +68,14 @@ export function FunnelPageTemplate({
 }: FunnelPageTemplateProps) {
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <Header title={headerTitle} chatButton={chatButton} phoneNumber={phoneNumber} ikzSticker={ikzSticker} />
+      <Header
+        title={headerTitle}
+        chatButton={chatButton}
+        phoneNumber={phoneNumber}
+        cancelButton={cancelButton}
+        onCancel={onCancel}
+        ikzSticker={ikzSticker}
+      />
 
       <main className={className ?? "flex w-full flex-1 justify-center bg-[#fff8e3] py-10"}>
         {/*

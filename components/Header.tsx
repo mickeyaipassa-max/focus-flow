@@ -23,6 +23,14 @@ type HeaderProps = {
    */
   phoneNumber?: string;
   /**
+   * Toont "Annuleren" i.p.v. Chat/telefoonnummer, op hetzelfde knop-slot
+   * (bevestigd op de mutatie-funnel "Dekking wijzigen", node 8031:10688:
+   * zelfde "Chat Button"-slot, nu met close-icoon + "Annuleren"). Heeft
+   * voorrang op zowel `phoneNumber` als `chatButton`.
+   */
+  cancelButton?: boolean;
+  onCancel?: () => void;
+  /**
    * Toont de "ik kies zelf"-sticker naast de titel (Figma: Header Funnel's
    * "Logo" instance, type="ikz-sticker-arrow-left" — bevestigd bestaande
    * property, destijds bewust niet gebouwd: "ikz is een label en is
@@ -43,8 +51,8 @@ function IkzSticker() {
   );
 }
 
-export function Header({ title, chatButton = true, phoneNumber, ikzSticker = false, className }: HeaderProps) {
-  const showContactButton = Boolean(phoneNumber) || chatButton;
+export function Header({ title, chatButton = true, phoneNumber, cancelButton = false, onCancel, ikzSticker = false, className }: HeaderProps) {
+  const showContactButton = cancelButton || Boolean(phoneNumber) || chatButton;
   return (
     <header className={className ?? "flex w-full justify-center bg-white"}>
       {/*
@@ -94,11 +102,12 @@ export function Header({ title, chatButton = true, phoneNumber, ikzSticker = fal
             <div className="order-3 flex shrink-0 items-center justify-end min-[900px]:w-[120px] min-[1200px]:w-[160px]">
               <button
                 type="button"
+                onClick={cancelButton ? onCancel : undefined}
                 className="flex items-center justify-center gap-2 rounded-[4px] border border-transparent px-3 py-2 font-[550] text-base text-black leading-[1.5] underline decoration-solid whitespace-nowrap [text-decoration-skip-ink:none] hover:border-[rgba(0,0,0,0.08)] hover:bg-[rgba(0,0,0,0.08)] hover:no-underline min-[1200px]:px-4 min-[1200px]:py-3 min-[1200px]:text-lg"
                 style={{ fontFamily: "var(--font-avenir-medium)" }}
               >
-                <Icon name={phoneNumber ? "phone" : "chat"} size="md" />
-                {phoneNumber ?? "Chat"}
+                <Icon name={cancelButton ? "close" : phoneNumber ? "phone" : "chat"} size="md" />
+                {cancelButton ? "Annuleren" : (phoneNumber ?? "Chat")}
               </button>
             </div>
           )}

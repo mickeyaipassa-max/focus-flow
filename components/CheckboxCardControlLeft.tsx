@@ -180,6 +180,8 @@ type CheckboxCardControlLeftGroupProps = {
   options: CheckboxCardOption[];
   values: string[];
   onChange?: (values: string[]) => void;
+  /** Toont "Meer informatie" op elke kaart (bevestigd: Figma's `button`-property op "Checkbox Card Control Left", bv. de "Glas"-kaart in de mutatie-funnel). Zonder handler geen link — was tot nu toe niet doorgegeven vanuit de Group-variant. */
+  onMoreInfoClick?: (value: string) => void;
   name?: string;
   className?: string;
 };
@@ -196,6 +198,7 @@ export function CheckboxCardControlLeftGroup({
   options,
   values,
   onChange,
+  onMoreInfoClick,
   name,
   className,
 }: CheckboxCardControlLeftGroupProps) {
@@ -232,6 +235,8 @@ export function CheckboxCardControlLeftGroup({
             value={option.value}
             checked={values.includes(option.value)}
             onChange={(checked) => toggle(option.value, checked)}
+            showMoreInfoButton={Boolean(onMoreInfoClick)}
+            onMoreInfoClick={() => onMoreInfoClick?.(option.value)}
           />
         ))}
       </div>
