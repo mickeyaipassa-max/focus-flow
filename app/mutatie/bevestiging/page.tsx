@@ -9,6 +9,9 @@ import { Button } from "@/components/Button";
 import { SummaryCard } from "@/components/SummaryCard";
 import { List } from "@/components/List";
 import { Checkbox } from "@/components/Checkbox";
+import { Receipt, type ReceiptGroup } from "@/components/Receipt";
+import { ReceiptBar } from "@/components/ReceiptBar";
+import { Dialog } from "@/components/Dialog";
 import { useMutatieFunnel } from "../funnel-context";
 import { PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_DEKKING, CURRENT_MONTHLY_PRICE, CURRENT_EIGEN_RISICO, dekkingTitel, berekenNieuwePremie, formatEuro } from "../pricing";
 
@@ -41,6 +44,12 @@ const INGANGSDATUM = "01 - 10 2026";
  *
  * "Aanpassing bevestigen" navigeert bij succes naar "/" — het successcherm
  * ("Gelukt!") is niet meegebouwd, buiten scope van deze stap.
+ *
+ * De receipt-kaart rechts gebruikt het gedeelde `Receipt`-component (zelfde
+ * precedent en zelfde reden als stap 1, app/mutatie/page.tsx) — inclusief
+ * de `ReceiptBar` + Dialog onder 600px, 1-op-1 op Figma's eigen "Receipt
+ * Bar"/"Receipt Dialog"-componenten gebaseerd (node 8818:509/8818:487,
+ * "Components"-bibliotheek).
  */
 export default function MutatieBevestigingPage() {
   const router = useRouter();
@@ -49,12 +58,24 @@ export default function MutatieBevestigingPage() {
 
   const [akkoord, setAkkoord] = useState(false);
   const [akkoordError, setAkkoordError] = useState(false);
+  const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
 
   const heeftGlas = aanvullendeDekkingen.includes("glas");
   const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas), [dekking, heeftGlas]);
   const isDekkingGewijzigd = dekking !== CURRENT_DEKKING;
   const isEigenRisicoGewijzigd = eigenRisico !== CURRENT_EIGEN_RISICO;
   const isPremieGewijzigd = Math.abs(nieuwePremie - CURRENT_MONTHLY_PRICE) > 0.001;
+
+  const receiptGroups: ReceiptGroup[] = [
+    {
+      title: "Dekking",
+      items: [
+        { label: dekkingTitel(dekking), amount: `€ ${PRICE_BY_DEKKING[dekking]}` },
+        { label: `Eigen risico € ${eigenRisico}` },
+      ],
+    },
+    ...(heeftGlas ? [{ title: "Aanvullende dekkingen", items: [{ label: "Glas", amount: `€ ${GLAS_PRICE}` }] }] : []),
+  ];
 
   function handleSubmit() {
     if (!akkoord) {
@@ -70,66 +91,35 @@ export default function MutatieBevestigingPage() {
       ikzSticker
       steps={MUTATIE_STEPS}
       activeStep={1}
-      sidebarClassName="flex w-full flex-col items-start gap-4 rounded-[3px] bg-white p-4 shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)]"
+      sidebarClassName="w-full"
       sidebar={
         <>
-          <div className="flex w-full flex-col items-start gap-4">
-            <div className="flex w-full items-start gap-4">
-              <img src="/icons/pictogram-house.svg" alt="" className="size-8 shrink-0" />
-              <p className="flex-1 font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                Opstal
-              </p>
-            </div>
-
-            <div className="flex w-full flex-col items-start gap-3">
-              <p className="w-full font-bold text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                Dekking
-              </p>
-              <div className="flex w-full items-start gap-2">
-                <p className="flex-1 text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  {dekkingTitel(dekking)}
-                </p>
-                <p className="whitespace-nowrap text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  € {PRICE_BY_DEKKING[dekking]}
-                </p>
-              </div>
-              <p className="w-full text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                Eigen risico € {eigenRisico}
-              </p>
-            </div>
-
-            {heeftGlas && (
-              <div className="flex w-full flex-col items-start gap-3">
-                <p className="w-full font-bold text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                  Aanvullende dekkingen
-                </p>
-                <div className="flex w-full items-start gap-2">
-                  <p className="flex-1 text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    Glas
-                  </p>
-                  <p className="whitespace-nowrap text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    € {GLAS_PRICE}
-                  </p>
-                </div>
-              </div>
-            )}
+          <div className="w-full min-[600px]:hidden">
+            <ReceiptBar amount={formatEuro(nieuwePremie)} onShowDetails={() => setReceiptDialogOpen(true)} />
           </div>
 
-          <div className="flex w-full flex-col items-start gap-4 rounded-[3px] bg-[#eef4e3] p-3">
-            <div className="flex w-full items-start gap-2">
-              <p className="flex-1 font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                Je gaat betalen per maand
-              </p>
-              <p className="whitespace-nowrap text-right font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                {formatEuro(nieuwePremie)}
-              </p>
-            </div>
-            {isPremieGewijzigd && (
-              <p className="w-full text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                Dit was: {formatEuro(CURRENT_MONTHLY_PRICE)} per maand
-              </p>
-            )}
+          <div className="hidden w-full min-[600px]:block">
+            <Receipt
+              title="Opstal"
+              icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}
+              type="one-section"
+              sections={[{ id: "opstal", groups: receiptGroups }]}
+              summaryLabel="Je gaat betalen per maand"
+              summaryAmount={formatEuro(nieuwePremie)}
+              summaryInfo={isPremieGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
+            />
           </div>
+
+          <Dialog open={receiptDialogOpen} onClose={() => setReceiptDialogOpen(false)} title="Opstal">
+            <Receipt
+              type="one-section"
+              sections={[{ id: "opstal", groups: receiptGroups }]}
+              summaryLabel="Je gaat betalen per maand"
+              summaryAmount={formatEuro(nieuwePremie)}
+              summaryInfo={isPremieGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
+              className="flex w-full flex-col items-start gap-4"
+            />
+          </Dialog>
         </>
       }
       navigation={

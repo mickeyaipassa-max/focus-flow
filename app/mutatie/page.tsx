@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
@@ -9,6 +9,9 @@ import { Button } from "@/components/Button";
 import { RadioCardBottomGroup } from "@/components/RadioCardBottom";
 import { RadioGroup } from "@/components/RadioGroup";
 import { CheckboxCardControlLeftGroup } from "@/components/CheckboxCardControlLeft";
+import { Receipt, type ReceiptGroup } from "@/components/Receipt";
+import { ReceiptBar } from "@/components/ReceiptBar";
+import { Dialog } from "@/components/Dialog";
 import { useMutatieFunnel } from "./funnel-context";
 import { DEKKING_OPTIONS, PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_MONTHLY_PRICE, dekkingTitel, berekenNieuwePremie, formatEuro, type DekkingKeuze } from "./pricing";
 
@@ -31,12 +34,23 @@ const EIGEN_RISICO_OPTIES = [
  * `useState`) zodat de bevestigingsstap ze kan overnemen — "het startpunt
  * is altijd jouw dekking, neem de wijzigingen mee".
  *
- * De receipt-kaart rechts is hier inline opgebouwd (geen los component,
- * zelfde precedent als Verzuim's sidebar-lijst in app/verzuim/page.tsx) —
- * exact nagebouwd uit node 8031:10753 (drie geneste "Funnel Box"-lagen zijn
- * Figma-exportartefacten van hetzelfde component, hier samengevat tot de
- * ene laag die FunnelPageTemplate al automatisch aanbrengt, plus de eigen
- * geneste "Receipt Box"-kaart eromheen).
+ * De receipt-kaart rechts gebruikt het gedeelde `Receipt`-component
+ * (`type="one-section"`, bevestigd via een aparte MCP-fetch van Figma's
+ * "Components"-bibliotheek, node 8926:5568 — hetzelfde bestand als a.s.r.'s
+ * publieke designsysteem-documentatie zelf naar linkt). Eerder stond hier
+ * dupliceerde inline JSX; dat is nu vervangen door het al bestaande,
+ * elders (Verzuim) actief gebruikte component, inclusief een nieuwe
+ * `type="one-section"`-variant daarop (geen accordion-chevron, want hier is
+ * maar één product) — precies zoals Figma's eigen drie Receipt Box-types.
+ *
+ * Onder 600px toont de sidebar Figma's eigen "Receipt Bar" (node 8818:509,
+ * apart bevestigd, incl. de 320-599px-variant) i.p.v. de altijd-volledig-
+ * uitgeklapte Box: een compacte balk met alleen het totaalbedrag, waarvan
+ * "Bekijk details" — exact zoals Figma's componentbeschrijving het stelt —
+ * een Receipt Dialog opent met dezelfde inhoud als de desktop-Box. Dit
+ * verving een eerdere, op a.s.r.'s Storybook-demo gebaseerde aanname
+ * (inline uitklappen i.p.v. een dialoog, en een wit i.p.v. groen gevulde
+ * balk) die bij directe Figma-verificatie onjuist bleek.
  *
  * "Meer informatie"-dialogen (Basis/Allrisk/Glas) zijn in Figma wel
  * aanwezig maar bewust niet meegebouwd — buiten scope.
@@ -49,6 +63,18 @@ export default function MutatieDekkingPage() {
   const heeftGlas = aanvullendeDekkingen.includes("glas");
   const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas), [dekking, heeftGlas]);
   const isGewijzigd = Math.abs(nieuwePremie - CURRENT_MONTHLY_PRICE) > 0.001;
+  const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
+
+  const receiptGroups: ReceiptGroup[] = [
+    {
+      title: "Dekking",
+      items: [
+        { label: dekkingTitel(dekking), amount: `€ ${PRICE_BY_DEKKING[dekking]}` },
+        { label: `Eigen risico € ${eigenRisico}` },
+      ],
+    },
+    ...(heeftGlas ? [{ title: "Aanvullende dekkingen", items: [{ label: "Glas", amount: `€ ${GLAS_PRICE}` }] }] : []),
+  ];
 
   function setDekking(value: string) {
     setState({ ...state, dekking: value as DekkingKeuze });
@@ -68,66 +94,35 @@ export default function MutatieDekkingPage() {
       ikzSticker
       steps={MUTATIE_STEPS}
       activeStep={0}
-      sidebarClassName="flex w-full flex-col items-start gap-4 rounded-[3px] bg-white p-4 shadow-[0px_4px_16px_0px_rgba(0,0,0,0.12)]"
+      sidebarClassName="w-full"
       sidebar={
         <>
-          <div className="flex w-full flex-col items-start gap-4">
-            <div className="flex w-full items-start gap-4">
-              <img src="/icons/pictogram-house.svg" alt="" className="size-8 shrink-0" />
-              <p className="flex-1 font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                Opstal
-              </p>
-            </div>
-
-            <div className="flex w-full flex-col items-start gap-3">
-              <p className="w-full font-bold text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                Dekking
-              </p>
-              <div className="flex w-full items-start gap-2">
-                <p className="flex-1 text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  {dekkingTitel(dekking)}
-                </p>
-                <p className="whitespace-nowrap text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  € {PRICE_BY_DEKKING[dekking]}
-                </p>
-              </div>
-              <p className="w-full text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                Eigen risico € {eigenRisico}
-              </p>
-            </div>
-
-            {heeftGlas && (
-              <div className="flex w-full flex-col items-start gap-3">
-                <p className="w-full font-bold text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                  Aanvullende dekkingen
-                </p>
-                <div className="flex w-full items-start gap-2">
-                  <p className="flex-1 text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    Glas
-                  </p>
-                  <p className="whitespace-nowrap text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    € {GLAS_PRICE}
-                  </p>
-                </div>
-              </div>
-            )}
+          <div className="w-full min-[600px]:hidden">
+            <ReceiptBar amount={formatEuro(nieuwePremie)} onShowDetails={() => setReceiptDialogOpen(true)} />
           </div>
 
-          <div className="flex w-full flex-col items-start gap-4 rounded-[3px] bg-[#eef4e3] p-3">
-            <div className="flex w-full items-start gap-2">
-              <p className="flex-1 font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                Je gaat betalen per maand
-              </p>
-              <p className="whitespace-nowrap text-right font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                {formatEuro(nieuwePremie)}
-              </p>
-            </div>
-            {isGewijzigd && (
-              <p className="w-full text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                Dit was: {formatEuro(CURRENT_MONTHLY_PRICE)} per maand
-              </p>
-            )}
+          <div className="hidden w-full min-[600px]:block">
+            <Receipt
+              title="Opstal"
+              icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}
+              type="one-section"
+              sections={[{ id: "opstal", groups: receiptGroups }]}
+              summaryLabel="Je gaat betalen per maand"
+              summaryAmount={formatEuro(nieuwePremie)}
+              summaryInfo={isGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
+            />
           </div>
+
+          <Dialog open={receiptDialogOpen} onClose={() => setReceiptDialogOpen(false)} title="Opstal">
+            <Receipt
+              type="one-section"
+              sections={[{ id: "opstal", groups: receiptGroups }]}
+              summaryLabel="Je gaat betalen per maand"
+              summaryAmount={formatEuro(nieuwePremie)}
+              summaryInfo={isGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
+              className="flex w-full flex-col items-start gap-4"
+            />
+          </Dialog>
         </>
       }
       navigation={
