@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./Icon";
 
 export type SelectOption = { value: string; label: string };
@@ -25,6 +25,8 @@ type SelectProps = {
   required?: boolean;
   optional?: boolean;
   description?: string;
+  /** Extra inhoud tussen de beschrijving en het veld zelf — bevestigd nodig voor "Je schadevrije jaren" (een link "Meer over schadevrije jaren" hoort daar, binnen hetzelfde Select-blok, vóór de Selectbox). */
+  beforeField?: ReactNode;
   /** Toont de info-knop naast het label (Figma's `popoverButton`). Alleen de knop zelf is geïmplementeerd — Figma toont geen popover-paneelinhoud, dus die is niet gebouwd. */
   showInfo?: boolean;
   onInfoClick?: () => void;
@@ -58,6 +60,7 @@ export function Select({
   required = true,
   optional = false,
   description,
+  beforeField,
   showInfo = false,
   onInfoClick,
   compact = false,
@@ -96,13 +99,11 @@ export function Select({
   }
 
   const triggerClasses = (() => {
-    const base =
-      "flex w-full items-center gap-2 rounded-[3px] bg-white text-left " +
-      (compact ? "px-3 py-2" : "h-[51px] px-4 py-3");
+    const base = "flex w-full items-center gap-2 rounded-[3px] text-left " + (compact ? "px-3 py-2" : "h-[51px] px-4 py-3");
     if (disabled) return base + " cursor-not-allowed border border-[#9d9d9d] bg-[#f6f6f7]";
-    if (error) return base + " cursor-pointer border border-[#ce0a1e]";
-    if (open) return base + " cursor-pointer border border-black";
-    return base + " cursor-pointer border border-[#565656] hover:border-2 hover:border-black";
+    if (error) return base + " cursor-pointer border border-[#ce0a1e] bg-white";
+    if (open) return base + " cursor-pointer border border-black bg-white";
+    return base + " cursor-pointer border border-[#565656] bg-white hover:border-2 hover:border-black";
   })();
 
   return (
@@ -140,6 +141,8 @@ export function Select({
           </p>
         )}
       </div>
+
+      {beforeField}
 
       <div className="relative w-full">
         <button

@@ -9,6 +9,11 @@ type FunnelPageTemplateProps = {
   chatButton?: boolean;
   /** Doorgegeven aan `Header`; toont een telefoonnummer i.p.v. de Chat-knop (bevestigd op "Jouw bedrijf 1/3"). */
   phoneNumber?: string;
+  /** Doorgegeven aan `Header`; toont "Annuleren" i.p.v. Chat/telefoonnummer (bevestigd op de mutatie-funnel). */
+  cancelButton?: boolean;
+  onCancel?: () => void;
+  /** Doorgegeven aan `Header`; toont de "ik kies zelf"-sticker (bevestigd nodig voor de Autoverzekering-funnel, niet voor Verzuim). */
+  ikzSticker?: boolean;
   steps: string[];
   activeStep: number;
   /**
@@ -23,6 +28,14 @@ type FunnelPageTemplateProps = {
    * op de pagina.
    */
   sidebar?: ReactNode;
+  /**
+   * Override voor de className van de `FunnelBox` rond de sidebar. Sommige
+   * funnels hebben hun eigen kaartstijl voor die box (bv. de mutatie-funnels
+   * receipt-kaart: p-4/rounded-sm/shadow-lg i.p.v. FunnelBox's eigen
+   * p-6/rounded-md/shadow-sm-default) — zonder override zou zo'n kaart
+   * dubbel genest ogen (eigen box binnen FunnelBox's eigen box).
+   */
+  sidebarClassName?: string;
   /** De navigatieknoppenrij onderaan de kaart — typisch een `<FormNavigation .../>`. Losse slot i.p.v. doorgeefprops, zodat de afnemer dat component zelf blijft aansturen. */
   navigation: ReactNode;
   className?: string;
@@ -51,16 +64,27 @@ export function FunnelPageTemplate({
   headerTitle,
   chatButton,
   phoneNumber,
+  cancelButton,
+  onCancel,
+  ikzSticker,
   steps,
   activeStep,
   children,
   sidebar,
+  sidebarClassName,
   navigation,
   className,
 }: FunnelPageTemplateProps) {
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <Header title={headerTitle} chatButton={chatButton} phoneNumber={phoneNumber} />
+      <Header
+        title={headerTitle}
+        chatButton={chatButton}
+        phoneNumber={phoneNumber}
+        cancelButton={cancelButton}
+        onCancel={onCancel}
+        ikzSticker={ikzSticker}
+      />
 
       <main className={className ?? "flex w-full flex-1 justify-center bg-[#fff8e3] py-10"}>
         {/*
@@ -108,8 +132,8 @@ export function FunnelPageTemplate({
             </div>
 
             {sidebar && (
-              <div className="w-full shrink-0 px-6 min-[600px]:px-0 min-[1200px]:w-[397px]">
-                <FunnelBox>{sidebar}</FunnelBox>
+              <div className="w-full shrink-0 px-6 min-[600px]:px-0 min-[1200px]:sticky min-[1200px]:top-10 min-[1200px]:w-[397px]">
+                <FunnelBox className={sidebarClassName}>{sidebar}</FunnelBox>
               </div>
             )}
           </div>

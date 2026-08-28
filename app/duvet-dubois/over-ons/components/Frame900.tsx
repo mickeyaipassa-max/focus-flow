@@ -1,3 +1,4 @@
+import Link from "next/link";
 const imgLogo = "/duvet-dubois/assets/6563fe1a-3b9f-47f8-ada1-7f71d3c3a946.png";
 const imgHeroImageFrame = "/duvet-dubois/assets/6320fb9b-af23-4ffe-9c99-813c0117f0bb.png";
 const imgEllipse = "/duvet-dubois/assets/430a2320-6d4b-4ef7-b2bf-a1dd514dbfd6.png";
@@ -18,9 +19,6 @@ const imgGroup1 = "/duvet-dubois/assets/31c057d7-4520-4999-896f-3ca0be69ef18.svg
 const imgGroup2 = "/duvet-dubois/assets/e6c72f89-4ddd-40fc-b77c-a5445d2cc0ac.svg";
 const imgFooterDivider = "/duvet-dubois/assets/8fb2f6d6-66d9-4fd6-b402-7544b4c0605f.svg";
 const imgDownload1 = "/duvet-dubois/assets/a8b6d303-dd5f-48e4-b559-5b76eef7ded4.svg";
-
-import Link from "next/link";
-
 export default function Frame900() {
   return (
     <div className="bg-white relative size-full" data-node-id="15:328" data-name="Over ons — 900-1199">
@@ -41,11 +39,11 @@ export default function Frame900() {
               Over ons
             </p>
           </Link>
-          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:193" data-name="nav-link-nieuws">
+          <Link href="/duvet-dubois/nieuws" className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:193" data-name="nav-link-nieuws">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:193;2:618">
               Nieuws
             </p>
-          </div>
+          </Link>
           <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="32:195" data-name="nav-link-contact">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="I32:195;2:618">
               Contact

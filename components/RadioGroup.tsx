@@ -7,6 +7,8 @@ export type RadioOption = { value: string; label: string };
 
 type RadioGroupProps = {
   labelText: string;
+  /** Optionele toelichting onder het label — zelfde patroon als RadioCardGroup/CheckboxCardControlLeftGroup, hier tot nu toe ontbrekend. */
+  description?: string;
   options: RadioOption[];
   value?: string;
   onChange?: (value: string) => void;
@@ -44,6 +46,7 @@ type RadioGroupProps = {
  */
 export function RadioGroup({
   labelText,
+  description,
   options,
   value,
   onChange,
@@ -73,6 +76,11 @@ export function RadioGroup({
           </span>
         )}
       </legend>
+      {description && (
+        <p className="mb-1 text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+          {description}
+        </p>
+      )}
 
       <div className={horizontal ? "flex w-fit flex-wrap items-start gap-2" : "flex w-full flex-col items-start gap-2"}>
         {options.map((option) => {

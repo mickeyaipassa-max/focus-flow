@@ -1,3 +1,4 @@
+import Link from "next/link";
 const imgB209F93Aec712C2A73123246E0C61D0D1 = "/duvet-dubois/assets/465569b8-d71c-4ec3-9a61-3fc39e9df2c8.png";
 const imgArguslogov1Oqfagt2Rxcfcdj71Bom6Vjl5Zq1D028Gfx3Fzmiioq1 = "/duvet-dubois/assets/487ca3ce-7911-46fb-b325-ecf3f494319e.png";
 const imgAfasLogoWebsite1 = "/duvet-dubois/assets/6f1e7a9e-64ed-4639-9d72-cd3909317e7c.png";
@@ -22,9 +23,6 @@ const imgThumbsUp = "/duvet-dubois/assets/1f0f712f-65ed-48b2-8cd3-0b15c558f49b.s
 const imgShield1 = "/duvet-dubois/assets/dcbd02ec-bc40-4c30-8656-e63543265747.svg";
 const imgMessageSquare = "/duvet-dubois/assets/1f489355-9b7c-4a44-8f55-b4d1d33c3aa0.svg";
 const imgSearch = "/duvet-dubois/assets/5f0ccf4b-9e20-4d40-b286-6e96e04284c2.svg";
-
-import Link from "next/link";
-
 export default function Frame900() {
   return (
     <div className="bg-white relative size-full" data-node-id="1:707" data-name="900-1200">
@@ -45,11 +43,11 @@ export default function Frame900() {
               Over ons
             </p>
           </Link>
-          <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:716">
+          <Link href="/duvet-dubois/nieuws" className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:716">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:717">
               Nieuws
             </p>
-          </div>
+          </Link>
           <div className="group content-stretch flex h-[56px] items-center justify-center px-[24px] py-[10px] relative rounded-[8px] shrink-0 cursor-pointer" data-node-id="1:718">
             <p className="[word-break:break-word] font-medium leading-[normal] not-italic relative shrink-0 text-[16px] text-black whitespace-nowrap group-hover:font-bold group-hover:underline group-active:font-bold group-active:no-underline" data-node-id="1:719">
               Contact
