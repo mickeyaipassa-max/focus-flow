@@ -1,4 +1,6 @@
-import { Fragment } from "react";
+"use client";
+
+import { Fragment, useEffect, useState } from "react";
 import { Icon } from "./Icon";
 
 type StepState = "completed" | "current" | "upcoming";
@@ -43,15 +45,25 @@ function StepSymbol({ state, stepNumber, mobile }: StepSymbolProps) {
   );
 }
 
+/**
+ * Vult (of loopt leeg) met een soepele ease-in-out-animatie i.p.v. in één
+ * keer van kleur te wisselen — op verzoek, zodat je bij het navigeren naar
+ * de volgende stap de balk van links naar rechts groen ziet worden, en bij
+ * teruggaan ziet leeglopen. De grijze track staat vast; alleen de groene
+ * vulling erbovenop animeert in breedte (0% ↔ 100%), dus dit blijft correct
+ * voor funnels met meer dan 2 stappen: alleen het segment waarvan
+ * `completed` daadwerkelijk wisselt animeert, al voltooide segmenten
+ * blijven stabiel groen staan.
+ */
 function StepTrail({ completed, mobile }: { completed: boolean; mobile: boolean }) {
   return (
     <div className={["relative min-w-px flex-1 shrink", mobile ? "h-8" : "h-10"].join(" ")}>
-      <div
-        className={[
-          "-translate-y-1/2 absolute inset-x-0 top-1/2 h-[3px]",
-          completed ? "bg-[#0f865d]" : "bg-[rgba(0,0,0,0.12)]",
-        ].join(" ")}
-      />
+      <div className="-translate-y-1/2 absolute inset-x-0 top-1/2 h-[3px] overflow-hidden rounded-full bg-[rgba(0,0,0,0.12)]">
+        <div
+          className="h-full bg-[#0f865d] transition-[width] duration-500 ease-in-out motion-reduce:transition-none"
+          style={{ width: completed ? "100%" : "0%" }}
+        />
+      </div>
     </div>
   );
 }
@@ -100,6 +112,16 @@ type StepIndicatorProps = {
   overflowLeft?: boolean;
   /** Vervagend randje ná de laatste stap — er staan (nog te doen) stappen buiten beeld rechts. */
   overflowRight?: boolean;
+  /**
+   * Schakelt de vul-animatie van `StepTrail` in en identificeert de funnel
+   * (bv. "mutatie") in `sessionStorage`. Nodig omdat elke stap in dit project
+   * een eigen Next.js-route is: dit component wordt bij elke stap opnieuw
+   * gemount, dus zonder deze brug is er geen "vorige waarde" om vanaf te
+   * animeren — de balk zou anders altijd direct in zijn eindstand
+   * verschijnen. Zonder deze prop (default) is er geen gedragswijziging:
+   * geen animatie, exact zoals voorheen.
+   */
+  animationKey?: string;
   className?: string;
 };
 
@@ -113,8 +135,50 @@ export function StepIndicator({
   onDropdownToggle,
   overflowLeft = false,
   overflowRight = false,
+  animationKey,
   className,
 }: StepIndicatorProps) {
+  /**
+   * Start bij `activeStep` (matcht de server-render, geen hydration-
+   * mismatch) en springt daarna, ná de eerste paint, eerst terug naar de
+   * vórige stap uit `sessionStorage` (indien anders) om vervolgens — via
+   * dubbele `requestAnimationFrame` (garandeert dat de browser de
+   * tussenstap ook echt geschilderd heeft) — weer naar `activeStep` te
+   * animeren. Alleen de trail-vulling gebruikt deze waarde; de cirkels
+   * zelf tonen altijd direct de echte `activeStep`.
+   *
+   * `previousStep` wordt EENMALIG via een `useState`-initializer gelezen
+   * (niet inline in de effect) — anders leest React 18 Strict Mode's
+   * dubbele effect-aanroep (dev-only) bij de tweede keer de waarde terug
+   * die de EERSTE aanroep net zelf wegschreef, waardoor `previousStep`
+   * altijd gelijk aan `activeStep` lijkt en de animatie nooit start. Door
+   * de lezing los te trekken van de schrijfactie (die wél idempotent in de
+   * effect blijft) overleeft de animatie deze dubbele aanroep correct.
+   */
+  const [trailStep, setTrailStep] = useState(activeStep);
+  const [previousStep] = useState<number | null>(() => {
+    if (!animationKey || typeof window === "undefined") return null;
+    const stored = window.sessionStorage.getItem(`step-indicator-${animationKey}`);
+    return stored !== null ? Number(stored) : null;
+  });
+
+  useEffect(() => {
+    if (!animationKey || typeof window === "undefined") return;
+    window.sessionStorage.setItem(`step-indicator-${animationKey}`, String(activeStep));
+
+    if (previousStep === null || previousStep === activeStep) return;
+
+    setTrailStep(previousStep);
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setTrailStep(activeStep));
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [animationKey, activeStep, previousStep]);
+
   function stateFor(index: number): StepState {
     if (completed) return "completed";
     const stepNumber = index + 1;
@@ -145,7 +209,7 @@ export function StepIndicator({
               )}
             </div>
             {index < steps.length - 1 && (
-              <StepTrail completed={completed || index + 1 < activeStep} mobile={mobile} />
+              <StepTrail completed={completed || index + 1 < trailStep} mobile={mobile} />
             )}
           </Fragment>
         );

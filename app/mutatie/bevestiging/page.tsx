@@ -47,6 +47,9 @@ const INGANGSDATUM = "01 - 10 2026";
  * "Aanpassing bevestigen" navigeert bij succes naar "/" — het successcherm
  * ("Gelukt!") is niet meegebouwd, buiten scope van deze stap.
  *
+ * `activeStep={2}` (niet `{1}`): zelfde off-by-one-fix als stap 1
+ * (app/mutatie/page.tsx) — `StepIndicator` is 1-indexed.
+ *
  * De receipt-kaart rechts gebruikt het gedeelde `Receipt`-component (zelfde
  * precedent en zelfde reden als stap 1, app/mutatie/page.tsx) — inclusief
  * de `ReceiptBar` + Dialog onder 600px, 1-op-1 op Figma's eigen "Receipt
@@ -110,7 +113,8 @@ export default function MutatieBevestigingPage() {
       headerTitle="Dekking wijzigen"
       ikzSticker
       steps={MUTATIE_STEPS}
-      activeStep={1}
+      activeStep={2}
+      stepAnimationKey="mutatie"
       sidebarClassName="w-full"
       sidebar={
         <>

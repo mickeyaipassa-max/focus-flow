@@ -16,6 +16,8 @@ type FunnelPageTemplateProps = {
   ikzSticker?: boolean;
   steps: string[];
   activeStep: number;
+  /** Doorgegeven aan `StepIndicator`'s `animationKey` — zet de vul-animatie van de stapper-balk aan bij paginanavigatie tussen stappen. Zonder deze prop (default) ongewijzigd gedrag. */
+  stepAnimationKey?: string;
   /**
    * De formulierkaart-content — normaliter een of meer `FunnelSection`s.
    * Komt overeen met Figma's "Form sections"-slot binnen "Funnel Template".
@@ -69,6 +71,7 @@ export function FunnelPageTemplate({
   ikzSticker,
   steps,
   activeStep,
+  stepAnimationKey,
   children,
   sidebar,
   sidebarClassName,
@@ -121,8 +124,19 @@ export function FunnelPageTemplate({
             weer de labelteksten. De eerdere 600px-grens was dus fout; de
             gelabelde variant loopt pas vanaf 900px.
           */}
-          <StepIndicator steps={steps} activeStep={activeStep} mobile className="flex w-full items-start justify-center px-6 min-[900px]:hidden" />
-          <StepIndicator steps={steps} activeStep={activeStep} className="hidden w-full items-start justify-center min-[900px]:flex min-[1200px]:pl-10" />
+          <StepIndicator
+            steps={steps}
+            activeStep={activeStep}
+            animationKey={stepAnimationKey}
+            mobile
+            className="flex w-full items-start justify-center px-6 min-[900px]:hidden"
+          />
+          <StepIndicator
+            steps={steps}
+            activeStep={activeStep}
+            animationKey={stepAnimationKey}
+            className="hidden w-full items-start justify-center min-[900px]:flex min-[1200px]:pl-10"
+          />
 
           {/*
             `items-start` op zichzelf liet de kaart-kolom in kolom-stand

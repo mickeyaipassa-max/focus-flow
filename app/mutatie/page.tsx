@@ -60,6 +60,13 @@ const EIGEN_RISICO_OPTIES = [
  * kaart i.p.v. een vaste scroll-drempel, zodat het exact klopt ongeacht
  * hoe lang het formulier is.
  *
+ * `activeStep={1}` (niet `{0}`): `StepIndicator` is 1-indexed (zie zijn eigen
+ * prop-doc) — de `{0}` hier was een off-by-one bug die de stap-cirkel nooit
+ * als "current" liet renderen en de vul-animatie tussen stap 1 en 2 nooit
+ * liet triggeren. Ontdekt en hier gefixt bij het bouwen van die animatie;
+ * bewust niet meegenomen in andere funnels (Verzuim/Auto) die dezelfde
+ * 0-indexed aanroep gebruiken — buiten scope van dit verzoek.
+ *
  * "Meer informatie"-dialogen (Basis/Allrisk/Glas) zijn in Figma wel
  * aanwezig maar bewust niet meegebouwd — buiten scope.
  */
@@ -113,7 +120,8 @@ export default function MutatieDekkingPage() {
       onCancel={() => router.push("/")}
       ikzSticker
       steps={MUTATIE_STEPS}
-      activeStep={0}
+      activeStep={1}
+      stepAnimationKey="mutatie"
       sidebarClassName="w-full"
       sidebar={
         <>
