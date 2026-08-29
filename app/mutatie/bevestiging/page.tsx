@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
@@ -52,6 +52,12 @@ const INGANGSDATUM = "01 - 10 2026";
  * de `ReceiptBar` + Dialog onder 600px, 1-op-1 op Figma's eigen "Receipt
  * Bar"/"Receipt Dialog"-componenten gebaseerd (node 8818:509/8818:487,
  * "Components"-bibliotheek).
+ *
+ * Op expliciet verzoek is de Bar `fixed` aan de onderkant (16px marge)
+ * zolang de gebruiker scrolt, en verdwijnt hij zodra de echte Receipt Box
+ * — nu ook op mobiel zichtbaar, net als op de homepage-demo — in beeld
+ * komt vlak vóór de funnel-footer (via `IntersectionObserver`), zelfde
+ * precedent als stap 1.
  */
 export default function MutatieBevestigingPage() {
   const router = useRouter();
@@ -61,6 +67,18 @@ export default function MutatieBevestigingPage() {
   const [akkoord, setAkkoord] = useState(false);
   const [akkoordError, setAkkoordError] = useState(false);
   const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
+
+  const [receiptBoxVisible, setReceiptBoxVisible] = useState(false);
+  const receiptBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = receiptBoxRef.current;
+    if (!el) return;
+    /** `rootMargin` laat de Bar al verdwijnen vlak vóórdat de Box in beeld komt — zelfde precedent als stap 1. */
+    const observer = new IntersectionObserver(([entry]) => setReceiptBoxVisible(entry.isIntersecting), { rootMargin: "0px 0px 100px 0px" });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const heeftGlas = aanvullendeDekkingen.includes("glas");
   const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas), [dekking, heeftGlas]);
@@ -96,11 +114,13 @@ export default function MutatieBevestigingPage() {
       sidebarClassName="w-full"
       sidebar={
         <>
-          <div className="w-full min-[600px]:hidden">
-            <ReceiptBar amount={formatEuro(nieuwePremie)} onShowDetails={() => setReceiptDialogOpen(true)} />
-          </div>
+          {!receiptBoxVisible && (
+            <div className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-6 min-[600px]:hidden">
+              <ReceiptBar amount={formatEuro(nieuwePremie)} onShowDetails={() => setReceiptDialogOpen(true)} />
+            </div>
+          )}
 
-          <div className="hidden w-full min-[600px]:block">
+          <div ref={receiptBoxRef} className="w-full">
             <Receipt
               title="Opstal"
               icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}

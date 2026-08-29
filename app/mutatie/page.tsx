@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
@@ -52,6 +52,14 @@ const EIGEN_RISICO_OPTIES = [
  * (inline uitklappen i.p.v. een dialoog, en een wit i.p.v. groen gevulde
  * balk) die bij directe Figma-verificatie onjuist bleek.
  *
+ * Op expliciet verzoek is de Bar `fixed` aan de onderkant van het scherm
+ * (16px marge) zolang de gebruiker door de pagina scrolt, en verdwijnt hij
+ * zodra de echte Receipt Box — dezelfde kaart als op de homepage-demo,
+ * hier nu ook zichtbaar op mobiel i.p.v. alleen ≥600px — in beeld komt, net
+ * vóór de funnel-footer. Bevestigd via een `IntersectionObserver` op die
+ * kaart i.p.v. een vaste scroll-drempel, zodat het exact klopt ongeacht
+ * hoe lang het formulier is.
+ *
  * "Meer informatie"-dialogen (Basis/Allrisk/Glas) zijn in Figma wel
  * aanwezig maar bewust niet meegebouwd — buiten scope.
  */
@@ -64,6 +72,18 @@ export default function MutatieDekkingPage() {
   const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas), [dekking, heeftGlas]);
   const isGewijzigd = Math.abs(nieuwePremie - CURRENT_MONTHLY_PRICE) > 0.001;
   const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
+
+  const [receiptBoxVisible, setReceiptBoxVisible] = useState(false);
+  const receiptBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = receiptBoxRef.current;
+    if (!el) return;
+    /** `rootMargin` laat de Bar al verdwijnen vlak vóórdat de Box in beeld komt (i.p.v. pas op het exacte moment) — anders overlapt de fixed Bar heel even de "Jouw situatie"-knop erboven. */
+    const observer = new IntersectionObserver(([entry]) => setReceiptBoxVisible(entry.isIntersecting), { rootMargin: "0px 0px 100px 0px" });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const receiptGroups: ReceiptGroup[] = [
     {
@@ -97,11 +117,13 @@ export default function MutatieDekkingPage() {
       sidebarClassName="w-full"
       sidebar={
         <>
-          <div className="w-full min-[600px]:hidden">
-            <ReceiptBar amount={formatEuro(nieuwePremie)} onShowDetails={() => setReceiptDialogOpen(true)} />
-          </div>
+          {!receiptBoxVisible && (
+            <div className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-6 min-[600px]:hidden">
+              <ReceiptBar amount={formatEuro(nieuwePremie)} onShowDetails={() => setReceiptDialogOpen(true)} />
+            </div>
+          )}
 
-          <div className="hidden w-full min-[600px]:block">
+          <div ref={receiptBoxRef} className="w-full">
             <Receipt
               title="Opstal"
               icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}
