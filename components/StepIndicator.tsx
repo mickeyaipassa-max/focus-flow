@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useLayoutEffect, useRef, useState } from "react";
 import { Icon } from "./Icon";
 
 type StepState = "completed" | "current" | "upcoming";
@@ -54,14 +54,51 @@ function StepSymbol({ state, stepNumber, mobile }: StepSymbolProps) {
  * voor funnels met meer dan 2 stappen: alleen het segment waarvan
  * `completed` daadwerkelijk wisselt animeert, al voltooide segmenten
  * blijven stabiel groen staan.
+ *
+ * Gebruikt de Web Animations API (`el.animate(...)`) i.p.v. een CSS
+ * `transition` + React-state die van waarde wisselt. Gemeten met een
+ * frame-voor-frame trace: Next.js wikkelt paginanavigatie in een React
+ * `startTransition`, waardoor de tussenstap (het "oude" breedte-percentage)
+ * nooit een eigen geschilderd frame kreeg — de CSS-transitie had dus niets
+ * om vanaf te animeren en de balk sprong in ~1 frame naar zijn eindstand.
+ * `el.animate()` speelt de animatie rechtstreeks af, los van Reacts
+ * render/commit-volgorde, en is daarmee immuun voor dat probleem.
  */
-function StepTrail({ completed, mobile }: { completed: boolean; mobile: boolean }) {
+function StepTrail({ completed, mobile, animateDirection }: { completed: boolean; mobile: boolean; animateDirection?: "fill" | "drain" }) {
+  const fillRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * `useLayoutEffect` i.p.v. `useEffect`: draait vóór de browser schildert,
+   * i.p.v. erna. `animateDirection` is als dependency meegegeven (i.p.v.
+   * mount-only `[]`) omdat de ouder `previousStep` pas ná zijn eigen
+   * post-hydration layout-effect kent (zie `StepIndicator` hieronder —
+   * nodig om een hydration-mismatch te voorkomen), dus deze prop is bij de
+   * EERSTE render van dit component nog `undefined`. Doordat beide
+   * layout-effects zijn (ouder én kind), lost de hele ketting — lezen,
+   * doorgeven, animatie starten — op vóór de eerste zichtbare paint,
+   * i.p.v. na een merkbare vertraging van een paar honderd ms met gewone
+   * `useEffect`s.
+   */
+  useLayoutEffect(() => {
+    const el = fillRef.current;
+    if (!animateDirection || !el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const keyframes =
+      animateDirection === "fill" ? [{ width: "0%" }, { width: "100%" }] : [{ width: "100%" }, { width: "0%" }];
+    const animation = el.animate(keyframes, { duration: 500, easing: "ease-in-out", fill: "forwards" });
+    // Cancel op cleanup — anders start React 18 Strict Mode's dubbele
+    // effect-aanroep (dev-only) een tweede, overlappende animatie op
+    // hetzelfde element.
+    return () => animation.cancel();
+  }, [animateDirection]);
+
   return (
     <div className={["relative min-w-px flex-1 shrink", mobile ? "h-8" : "h-10"].join(" ")}>
       <div className="-translate-y-1/2 absolute inset-x-0 top-1/2 h-[3px] overflow-hidden rounded-full bg-[rgba(0,0,0,0.12)]">
         <div
-          className="h-full bg-[#0f865d] transition-[width] duration-500 ease-in-out motion-reduce:transition-none"
-          style={{ width: completed ? "100%" : "0%" }}
+          ref={fillRef}
+          className="h-full bg-[#0f865d]"
+          style={animateDirection ? undefined : { width: completed ? "100%" : "0%" }}
         />
       </div>
     </div>
@@ -139,45 +176,41 @@ export function StepIndicator({
   className,
 }: StepIndicatorProps) {
   /**
-   * Start bij `activeStep` (matcht de server-render, geen hydration-
-   * mismatch) en springt daarna, ná de eerste paint, eerst terug naar de
-   * vórige stap uit `sessionStorage` (indien anders) om vervolgens — via
-   * dubbele `requestAnimationFrame` (garandeert dat de browser de
-   * tussenstap ook echt geschilderd heeft) — weer naar `activeStep` te
-   * animeren. Alleen de trail-vulling gebruikt deze waarde; de cirkels
-   * zelf tonen altijd direct de echte `activeStep`.
+   * Start op `null` (matcht de server-render — die kent `sessionStorage`
+   * niet — dus geen hydration-mismatch) en wordt pas ná hydration, in de
+   * effect hieronder, bijgewerkt naar de echte vorige stap. Het lezen
+   * gebeurt eenmalig via `hasReadRef`, los van de (wél idempotente)
+   * schrijfactie erna: anders leest React 18 Strict Mode's dubbele
+   * effect-aanroep (dev-only) bij de tweede keer de waarde terug die de
+   * EERSTE aanroep net zelf al wegschreef, waardoor `previousStep` altijd
+   * gelijk aan `activeStep` zou lijken en de animatie nooit zou starten.
    *
-   * `previousStep` wordt EENMALIG via een `useState`-initializer gelezen
-   * (niet inline in de effect) — anders leest React 18 Strict Mode's
-   * dubbele effect-aanroep (dev-only) bij de tweede keer de waarde terug
-   * die de EERSTE aanroep net zelf wegschreef, waardoor `previousStep`
-   * altijd gelijk aan `activeStep` lijkt en de animatie nooit start. Door
-   * de lezing los te trekken van de schrijfactie (die wél idempotent in de
-   * effect blijft) overleeft de animatie deze dubbele aanroep correct.
+   * `useLayoutEffect` i.p.v. `useEffect`: zie de toelichting bij
+   * `StepTrail` hierboven — laat de hele ketting vóór de eerste paint
+   * oplossen i.p.v. met een merkbare vertraging erna.
    */
-  const [trailStep, setTrailStep] = useState(activeStep);
-  const [previousStep] = useState<number | null>(() => {
-    if (!animationKey || typeof window === "undefined") return null;
-    const stored = window.sessionStorage.getItem(`step-indicator-${animationKey}`);
-    return stored !== null ? Number(stored) : null;
-  });
+  const [previousStep, setPreviousStep] = useState<number | null>(null);
+  const hasReadRef = useRef(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!animationKey || typeof window === "undefined") return;
-    window.sessionStorage.setItem(`step-indicator-${animationKey}`, String(activeStep));
+    const storageKey = `step-indicator-${animationKey}`;
+    if (!hasReadRef.current) {
+      hasReadRef.current = true;
+      const stored = window.sessionStorage.getItem(storageKey);
+      setPreviousStep(stored !== null ? Number(stored) : null);
+    }
+    window.sessionStorage.setItem(storageKey, String(activeStep));
+  }, [animationKey, activeStep]);
 
-    if (previousStep === null || previousStep === activeStep) return;
-
-    setTrailStep(previousStep);
-    let raf2 = 0;
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => setTrailStep(activeStep));
-    });
-    return () => {
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
-    };
-  }, [animationKey, activeStep, previousStep]);
+  /** Alleen het segment waarvan `completed` daadwerkelijk wisselt (t.o.v. `previousStep`) krijgt een richting — de rest blijft statisch. */
+  function trailAnimationFor(index: number): "fill" | "drain" | undefined {
+    if (previousStep === null || previousStep === activeStep) return undefined;
+    const wasCompleted = index + 1 < previousStep;
+    const isCompleted = index + 1 < activeStep;
+    if (wasCompleted === isCompleted) return undefined;
+    return isCompleted ? "fill" : "drain";
+  }
 
   function stateFor(index: number): StepState {
     if (completed) return "completed";
@@ -209,7 +242,11 @@ export function StepIndicator({
               )}
             </div>
             {index < steps.length - 1 && (
-              <StepTrail completed={completed || index + 1 < trailStep} mobile={mobile} />
+              <StepTrail
+                completed={completed || index + 1 < activeStep}
+                mobile={mobile}
+                animateDirection={completed ? undefined : trailAnimationFor(index)}
+              />
             )}
           </Fragment>
         );
