@@ -88,7 +88,7 @@ export default function MutatieDekkingPage() {
 
   return (
     <FunnelPageTemplate
-      headerTitle="Dekking Opstalverzekering wijzigen"
+      headerTitle="Dekking wijzigen"
       cancelButton
       onCancel={() => router.push("/")}
       ikzSticker

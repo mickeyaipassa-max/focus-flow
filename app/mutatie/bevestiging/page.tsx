@@ -37,10 +37,12 @@ const INGANGSDATUM = "01 - 10 2026";
  *
  * Header toont hier bewust geen "Annuleren" (chat-knop, zoals Figma zelf
  * laat zien) — dat verschil met stap 1 blijft, letterlijk uit Figma. De
- * titel was in Figma zelf wél korter op deze stap ("Dekking wijzigen" i.p.v.
- * stap 1's "Dekking Opstalverzekering wijzigen"), maar dat gaf twee
- * verschillende titels in dezelfde funnel — op expliciet verzoek van de
- * gebruiker hier gelijkgetrokken aan stap 1's titel.
+ * titel is "Dekking wijzigen" op beide stappen — Figma zelf toonde die
+ * kortere titel al op deze stap; stap 1 gebruikte eerder de langere
+ * "Dekking Opstalverzekering wijzigen", maar dat gaf twee verschillende
+ * titels in dezelfde funnel. Op expliciet verzoek van de gebruiker eerst
+ * gelijkgetrokken aan stap 1's langere titel, en later — weer op expliciet
+ * verzoek — teruggebracht naar deze kortere variant, nu op beide stappen.
  *
  * "Aanpassing bevestigen" navigeert bij succes naar "/" — het successcherm
  * ("Gelukt!") is niet meegebouwd, buiten scope van deze stap.
@@ -87,7 +89,7 @@ export default function MutatieBevestigingPage() {
 
   return (
     <FunnelPageTemplate
-      headerTitle="Dekking Opstalverzekering wijzigen"
+      headerTitle="Dekking wijzigen"
       ikzSticker
       steps={MUTATIE_STEPS}
       activeStep={1}
