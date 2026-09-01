@@ -23,6 +23,7 @@ import { ReceiptDemo } from "@/components/ReceiptDemo";
 import { Spinner } from "@/components/Spinner";
 import { Tag } from "@/components/Tag";
 import { SummaryCard } from "@/components/SummaryCard";
+import { Toggle } from "@/components/Toggle";
 
 const DEKKING_OPTIES = [
   { value: "aov", label: "Arbeidsongeschiktheid" },
@@ -233,6 +234,10 @@ export default function Home() {
               values={["rechtsbijstand"]}
             />
           </div>
+        </div>
+        <div className="flex items-center gap-6">
+          <Toggle checked={false} aria-label="Uit" />
+          <Toggle checked={true} aria-label="Aan" />
         </div>
         <div className="flex flex-col items-start gap-6">
           <InputPhone />
