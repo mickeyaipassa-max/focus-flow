@@ -24,6 +24,8 @@ import { Spinner } from "@/components/Spinner";
 import { Tag } from "@/components/Tag";
 import { SummaryCard } from "@/components/SummaryCard";
 import { Toggle } from "@/components/Toggle";
+import { ProductSelectCard } from "@/components/ProductSelectCard";
+import { ProductSelectCardDemo } from "@/components/ProductSelectCardDemo";
 
 const DEKKING_OPTIES = [
   { value: "aov", label: "Arbeidsongeschiktheid" },
@@ -238,6 +240,21 @@ export default function Home() {
         <div className="flex items-center gap-6">
           <Toggle checked={false} aria-label="Uit" />
           <Toggle checked={true} aria-label="Aan" />
+        </div>
+        <div className="flex w-[600px] flex-col items-start gap-4">
+          <ProductSelectCardDemo />
+          <ProductSelectCard
+            icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}
+            title="Opstal"
+            description={
+              <>
+                Dekt schade aan je huis.
+                <br />
+                Vanaf € 4,82 p/m
+              </>
+            }
+            selected={true}
+          />
         </div>
         <div className="flex flex-col items-start gap-6">
           <InputPhone />
