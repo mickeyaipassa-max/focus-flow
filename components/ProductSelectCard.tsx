@@ -13,6 +13,15 @@ type ProductSelectCardProps = {
   onSelectedChange?: (selected: boolean) => void;
   /** Zonder handler geen "Meer informatie"-link — bevestigd via Figma's Button-instance op deze kaart (Code Connect: type="text", iconAppend, compact), maar niet elk gebruik hoeft 'm te tonen. */
   onMoreInfoClick?: () => void;
+  /**
+   * Bevestigd géén vaste eigenschap van de kaart: bij hergebruik van dit
+   * component in de woonverzekeringen-funnel (3 kaarten, node 1:4300) bleek
+   * `iconAppend` per instance te verschillen — alleen Opstal had 'm daar
+   * (`true`), Inboedel/Aansprakelijkheid niet (`false`). Default `true`
+   * behoudt het bestaande, apart bevestigde gedrag van de losstaande
+   * "Product select card" (node 1:5617, ProductSelectCardDemo).
+   */
+  showMoreInfoChevron?: boolean;
   className?: string;
 };
 
@@ -31,11 +40,11 @@ type ProductSelectCardProps = {
  * hendel-cirkel. Het huis-pictogram zelf (voorbeeldinhoud in Figma) is een
  * vrije `icon`-slot, geen vast onderdeel van dit component.
  *
- * De "Meer informatie"-link (chevron-icoon inbegrepen) zat niet in de
- * eerste `get_design_context`-fetch — pas zichtbaar geworden via een aparte
- * `get_metadata`-check die een extra "Button"-child blootlegde die de
- * gegenereerde referentiecode had overgeslagen. Bevestigd via Code Connect
- * als Button `type="text"`, `compact`, `iconAppend` — maar bestaande
+ * De "Meer informatie"-link zat niet in de eerste `get_design_context`-fetch
+ * — pas zichtbaar geworden via een aparte `get_metadata`-check die een
+ * extra "Button"-child blootlegde die de gegenereerde referentiecode had
+ * overgeslagen. Bevestigd via Code Connect als Button `type="text"`,
+ * `compact`, `iconAppend` (zie `showMoreInfoChevron`) — maar bestaande
  * `Button.tsx` heeft geen compact-formaat (vaste text-lg/24px-icoon), dus
  * hier inline opgebouwd op de bevestigde 16px/medium/underline-stijl,
  * zelfde precedent als CheckboxCardControlLeft's eigen "Meer informatie".
@@ -44,7 +53,16 @@ type ProductSelectCardProps = {
  * (`0px_4px_16px_rgba(0,0,0,0.12)`) i.p.v. de standaard grijze
  * 16%-opacity-rand — letterlijk overgenomen, geen eigen invulling.
  */
-export function ProductSelectCard({ icon, title, description, selected, onSelectedChange, onMoreInfoClick, className }: ProductSelectCardProps) {
+export function ProductSelectCard({
+  icon,
+  title,
+  description,
+  selected,
+  onSelectedChange,
+  onMoreInfoClick,
+  showMoreInfoChevron = true,
+  className,
+}: ProductSelectCardProps) {
   return (
     <div
       className={
@@ -73,7 +91,7 @@ export function ProductSelectCard({ icon, title, description, selected, onSelect
                 <span className="font-[550] text-base text-black underline leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
                   Meer informatie
                 </span>
-                <Icon name="chevron-right-sm" size="sm" />
+                {showMoreInfoChevron && <Icon name="chevron-right-sm" size="sm" />}
               </button>
             )}
           </div>
