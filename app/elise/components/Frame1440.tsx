@@ -27,14 +27,14 @@ const imgPortrait = "/elise/assets/portrait-large.png";
  * neerkomt op een gewone gecentreerde `object-cover`-crop, geen
  * speciaal ankerpunt nodig).
  *
- * Headline en quote-kader staan op Figma's eigen absolute px-positie
- * t.o.v. de volle-breedte hero zelf (niet t.o.v. de 1300px-kolom, en
- * ook niet gecapt op een maximumbreedte) — op élke viewportbreedte
- * dezelfde vaste afstand tot de rand van de hero, precies zoals bij
- * Frame1200.tsx. Kader rechts-verankerd i.p.v. links, zelfde reden als
- * bij Frame1200.tsx (anders valt het bij de smalste viewport van dit
- * bereik alweer buiten beeld). Referentiewaarden bij 1799px: headline
- * links=250px, kader rechts=249px (1799 - 1277 - 273).
+ * Headline + quote-kader ("Frame 11", node 13:247) zitten in Figma in
+ * dezelfde 1300px-body als Frame 7 eronder (zelfde breedte, zelfde
+ * marge — geverifieerd via MCP). Het is een flex-rij (gap-187px,
+ * items-end, justify-end) met de headline-wrapper als flex-1 (vult de
+ * resterende ruimte: 1300 - 187 - 273 = 840px, headline-tekst zelf
+ * vast 766px daarbinnen) en het quote-kader als shrink-0 vast op
+ * 273px. Dus: beide bewegen mee met de 1300px-bodykolom, niet los
+ * verankerd aan de viewportrand (dat was de vorige, foute aanpak).
  *
  * Quote-kader is hier de "grote" variant (p-40, 24px tekst, tracking
  * 4.32, één regel) — niet de kleinere p-24/18px-variant uit
@@ -60,20 +60,27 @@ export default function Frame1440() {
             BY ELISE
           </p>
           <div
-            className="absolute left-[250px] top-[459px] h-[323px] w-[766px] text-[64px] font-light leading-[1.11] text-white tracking-[11.52px]"
-            data-node-id="13:239"
+            className="absolute left-1/2 top-[459px] flex h-[468px] w-[1300px] -translate-x-1/2 items-end justify-end gap-[187px]"
+            data-node-id="13:247"
           >
-            <p>Create from </p>
-            <p>presence, </p>
-            <p>not pressure</p>
-          </div>
-          <div
-            className="absolute right-[249px] top-[654px] flex h-[273px] items-end justify-end bg-white p-[40px]"
-            data-node-id="13:244"
-          >
-            <p className="w-[193px] text-right text-[24px] font-light uppercase tracking-[4.32px] text-black">
-              There is freedom in being seen without performing
-            </p>
+            <div className="flex h-full flex-1 items-start" data-node-id="13:248">
+              <div
+                className="h-[323px] w-[766px] text-[64px] font-light leading-[1.11] text-white tracking-[11.52px]"
+                data-node-id="13:239"
+              >
+                <p>Create from </p>
+                <p>presence, </p>
+                <p>not pressure</p>
+              </div>
+            </div>
+            <div
+              className="flex h-[273px] shrink-0 items-end justify-end bg-white p-[40px]"
+              data-node-id="13:244"
+            >
+              <p className="w-[193px] text-right text-[24px] font-light uppercase tracking-[4.32px] text-black">
+                There is freedom in being seen without performing
+              </p>
+            </div>
           </div>
         </div>
         <div className="h-[92px] w-full" />
