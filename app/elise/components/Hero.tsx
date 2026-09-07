@@ -7,11 +7,10 @@ const imgBanner = "/elise/assets/banner.png";
  * (original_width/height 1920×1379). Daaronder volgt nog 114px effen
  * achtergrondkleur voordat "Behind the Surface" begint (1493 - 1379).
  *
- * Fotocontainer: `aspect-[1920/1379]` (breedte fluid, hoogte volgt
- * automatisch mee, geen vaste px) en `object-top`. Rekenwerk (bronfoto
- * 1022×1290 "cover" in een 1920×1379-vlak) komt uit op exact dezelfde
- * schaal als Figma's eigen 187.46%-transform, met alle crop verticaal
- * vanaf onderen — vandaar object-top i.p.v. de CSS-default (center).
+ * Fotocontainer: `h-[1379px] w-full` — vaste hoogte, alleen de breedte
+ * is fluid. De foto zelf gebruikt `object-cover object-top` om die box
+ * altijd te vullen (crop past zich aan de breedte aan, hoogte blijft
+ * exact Figma's 1379px), zelfde crop-ankerpunt als Figma (vanaf boven).
  *
  * Wordmark, headline (5:28) en quote-kader (5:39) liggen op Figma's
  * eigen absolute px-positie t.o.v. de volle-breedte hero (niet t.o.v.
@@ -27,7 +26,7 @@ const imgBanner = "/elise/assets/banner.png";
 export default function Hero() {
   return (
     <section className="relative w-full" data-node-id="5:26">
-      <div className="relative aspect-[1920/1379] w-full overflow-hidden">
+      <div className="relative h-[1379px] w-full overflow-hidden">
         <img
           alt=""
           src={imgBanner}

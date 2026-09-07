@@ -29,10 +29,10 @@ const imgPortrait = "/elise/assets/portrait-large.png";
  *
  * get_screenshot op node 8:147 bevestigt de zichtbare (horizontaal wél
  * geclipte, want Frame8 is met een bewuste bleed 1488px breed tegen een
- * 1439px-frame) grootte: 1439×950px. Vandaar hier `aspect-[1439/950]`
- * i.p.v. de doos-eigen 2804/1790 — dezelfde methode als bij Hero.tsx
- * (fluid breedte, hoogte volgt automatisch mee, geen vaste px), maar nu
- * zónder `object-top`: deze crop is gecentreerd, niet vanaf boven.
+ * 1439px-frame) grootte: 1439×950px. Fotocontainer krijgt daarom een
+ * vaste hoogte `h-[950px] w-full` (alleen de breedte is fluid, niet de
+ * hoogte) i.p.v. de doos-eigen 2804/1790-verhouding, zonder `object-top`:
+ * deze crop is gecentreerd, niet vanaf boven.
  *
  * Headline (5:140) en quote-kader (5:142) zijn in dezelfde Figma-update
  * verplaatst: headline nu 64px/tracking 11.52px op top-434 (was
@@ -50,7 +50,7 @@ export default function Frame1200() {
   return (
     <>
       <section className="relative w-full" data-node-id="5:132">
-        <div className="relative aspect-[1439/950] w-full overflow-hidden">
+        <div className="relative h-[950px] w-full overflow-hidden">
           <img
             alt=""
             src={imgBanner}
