@@ -15,11 +15,18 @@ const imgPortrait = "/elise/assets/portrait-large.png";
  * gecentreerde `object-cover` (geen top-anchor: geen asymmetrische crop
  * meer zoals in een eerdere versie).
  *
- * Headline (5:140) en quote-kader (5:142) staan op Figma's eigen
- * absolute px-positie t.o.v. de volle-breedte hero (niet t.o.v. de
- * vaste 1200px-inhoudskolom, die tussen 1200-1439px zelf recentreert)
- * — ongewijzigd t.o.v. de vorige build (left-131 / top-434 voor de
- * headline, right-117 voor het kader t.o.v. de rechterrand).
+ * Headline (5:140) en quote-kader (5:142) staan in Figma op absolute
+ * px-posities t.o.v. de volle 1439/1440px-frame — maar geverifieerd
+ * (net als bij Frame1440.tsx / node 13:247) dat die waarden neerkomen
+ * op een vaste positie t.o.v. de 1200px-body (Frame 7), niet t.o.v. de
+ * viewport: frame-links 131px - bodymarge 120px = 11px vanaf de
+ * bodylinkerrand voor de headline; frame-links 1081px - bodymarge
+ * 120px = 961px vanaf de bodylinkerrand voor het kader (rechterrand
+ * kader = 961+241=1202, 2px voorbij de bodyrand — Figma's eigen
+ * afronding, vergelijkbaar met andere frames). Anders dan bij
+ * Frame1440.tsx is dit hier geen flex-rij in Figma — headline en
+ * kader zijn losse, onafhankelijk gepositioneerde elementen, alleen
+ * beide t.o.v. dezelfde 1200px-bodykolom.
  *
  * Nieuw: persoonlijke verjaardagstekst (11:185) onderaan de hero-
  * wrapper, letterlijk uit Figma overgenomen — 92px marge erboven,
@@ -41,21 +48,23 @@ export default function Frame1200() {
           >
             BY ELISE
           </p>
-          <div
-            className="absolute left-[131px] top-[434px] h-[323px] w-[766px] text-[64px] font-light leading-[1.11] text-white tracking-[11.52px]"
-            data-node-id="5:140"
-          >
-            <p>Create from </p>
-            <p>presence, </p>
-            <p>not pressure</p>
-          </div>
-          <div
-            className="absolute right-[117px] top-[757px] flex items-end justify-end bg-white p-[24px]"
-            data-node-id="5:142"
-          >
-            <div className="w-[193px] text-right text-[18px] font-light uppercase tracking-[0.9px] text-black">
-              <p className="leading-[1.2]">There is freedom </p>
-              <p className="leading-[1.2]">in being seen without performing</p>
+          <div className="absolute left-1/2 top-0 h-full w-[1200px] -translate-x-1/2">
+            <div
+              className="absolute left-[11px] top-[434px] h-[323px] w-[766px] text-[64px] font-light leading-[1.11] text-white tracking-[11.52px]"
+              data-node-id="5:140"
+            >
+              <p>Create from </p>
+              <p>presence, </p>
+              <p>not pressure</p>
+            </div>
+            <div
+              className="absolute left-[961px] top-[757px] flex items-end justify-end bg-white p-[24px]"
+              data-node-id="5:142"
+            >
+              <div className="w-[193px] text-right text-[18px] font-light uppercase tracking-[0.9px] text-black">
+                <p className="leading-[1.2]">There is freedom </p>
+                <p className="leading-[1.2]">in being seen without performing</p>
+              </div>
             </div>
           </div>
         </div>
