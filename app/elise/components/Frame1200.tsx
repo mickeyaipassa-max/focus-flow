@@ -17,41 +17,53 @@ const imgPortrait = "/elise/assets/portrait-large.png";
  * Hergebruikt dezelfde brondown-beeldbestanden als de 1440+-route:
  * identieke foto's (zelfde crop-percentages in Figma bevestigen dit),
  * Figma exporteerde alleen een andere resolutie per frame.
+ *
+ * De banner-foto (5:112) is, net als bij de 1440+ Hero, een oversized
+ * fill-blok dat door het frame wordt afgesneden tot een zichtbaar beeld
+ * van 1436×895px (geverifieerd met get_screenshot op node 5:112),
+ * gevolgd door 92px effen achtergrond (expliciete Figma auto-layout
+ * gap) voordat "Behind the Surface" begint. Vaste hoogte + center-crop
+ * `object-cover` was dus dubbel fout — nu `aspect-[1439/895]` (fluid
+ * breedte, hoogte volgt mee) plus `object-top`, zelfde rekenwerk als
+ * bij Hero.tsx.
  */
 export default function Frame1200() {
   return (
     <>
-      <section className="relative h-[987px] w-full overflow-hidden" data-node-id="5:132">
-        <img
-          alt=""
-          src={imgBanner}
-          className="pointer-events-none absolute inset-0 size-full object-cover"
-        />
-        <div className="relative mx-auto h-full w-[1200px]">
-          <p
-            className="absolute left-1/2 top-[45px] h-[64px] w-[575px] -translate-x-1/2 text-center text-[32px] font-light text-white tracking-[40.32px]"
-            data-node-id="5:114"
-          >
-            BY ELISE
-          </p>
-          <div
-            className="absolute left-[11.5px] top-[500px] h-[323px] w-[1403px] text-[72px] font-light leading-[1.11] text-white tracking-[12.96px]"
-            data-node-id="5:140"
-          >
-            <p>Create from </p>
-            <p>presence, </p>
-            <p>not pressure</p>
-          </div>
-          <div
-            className="absolute left-[961.5px] top-[607px] flex items-end justify-end bg-white p-[24px]"
-            data-node-id="5:142"
-          >
-            <div className="w-[193px] text-right text-[18px] font-light uppercase tracking-[0.9px] text-black">
-              <p className="leading-[1.2]">There is freedom </p>
-              <p className="leading-[1.2]">in being seen without performing</p>
+      <section className="relative w-full" data-node-id="5:132">
+        <div className="relative aspect-[1439/895] w-full overflow-hidden">
+          <img
+            alt=""
+            src={imgBanner}
+            className="pointer-events-none absolute inset-0 size-full object-cover object-top"
+          />
+          <div className="relative mx-auto h-full w-[1200px]">
+            <p
+              className="absolute left-1/2 top-[45px] h-[64px] w-[575px] -translate-x-1/2 text-center text-[32px] font-light text-white tracking-[40.32px]"
+              data-node-id="5:114"
+            >
+              BY ELISE
+            </p>
+            <div
+              className="absolute left-[11.5px] top-[500px] h-[323px] w-[1403px] text-[72px] font-light leading-[1.11] text-white tracking-[12.96px]"
+              data-node-id="5:140"
+            >
+              <p>Create from </p>
+              <p>presence, </p>
+              <p>not pressure</p>
+            </div>
+            <div
+              className="absolute left-[961.5px] top-[607px] flex items-end justify-end bg-white p-[24px]"
+              data-node-id="5:142"
+            >
+              <div className="w-[193px] text-right text-[18px] font-light uppercase tracking-[0.9px] text-black">
+                <p className="leading-[1.2]">There is freedom </p>
+                <p className="leading-[1.2]">in being seen without performing</p>
+              </div>
             </div>
           </div>
         </div>
+        <div className="h-[92px] w-full" />
       </section>
 
       <div className="mx-auto w-[1200px]">
