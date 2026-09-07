@@ -37,3 +37,20 @@
    */
   --font-memphis: "Memphis LT Std", Georgia, "Times New Roman", serif;
 }
+
+@layer base {
+  /*
+   * Tailwind v4's preflight laat knoppen op hun browser-default `cursor:
+   * default` staan (i.p.v. het oudere `cursor: pointer`). Al onze eigen
+   * <button>-componenten (Wijzig/Downloaden-knoppen, Tile, tertiary Button,
+   * Footer-links, "Meer informatie", enz.) zijn functioneel klikbare
+   * links/acties, dus hier project-breed teruggezet — deze `@layer base`-regel
+   * staat lager in de cascade dan Tailwind's utility-classes, dus een
+   * component met een eigen `cursor-not-allowed`/`cursor-default` (bv.
+   * Select's disabled-staat) blijft gewoon werken.
+   */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
