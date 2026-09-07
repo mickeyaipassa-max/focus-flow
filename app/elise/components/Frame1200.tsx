@@ -36,8 +36,15 @@ const imgPortrait = "/elise/assets/portrait-large.png";
  *
  * Headline (5:140) en quote-kader (5:142) zijn in dezelfde Figma-update
  * verplaatst: headline nu 64px/tracking 11.52px op top-434 (was
- * 72px/12.96px/500), kader op top-757 (was 607). Horizontale
- * kolom-relatieve posities (11.5px / 961.5px) bleven ongewijzigd.
+ * 72px/12.96px/500), kader op top-757 (was 607).
+ *
+ * Beide staan op Figma's eigen absolute px-positie t.o.v. de volle-
+ * breedte hero (niet t.o.v. de vaste 1200px-inhoudskolom hieronder, die
+ * tussen 1200-1439px zelf recentreert). Zo verschuiven ze niet mee als
+ * de kolom van marge verandert — vaste afstand tot de rand van de fótó,
+ * net als bij de 1440+ Hero. Kader rechts-verankerd (`right-[117px]`,
+ * = 1439 - 1081 - 241) i.p.v. links, anders viel het bij 1200px breed
+ * alweer buiten beeld (left-1081 + 241 = 1322 > 1200).
  */
 export default function Frame1200() {
   return (
@@ -49,29 +56,27 @@ export default function Frame1200() {
             src={imgBanner}
             className="pointer-events-none absolute inset-0 size-full object-cover"
           />
-          <div className="relative mx-auto h-full w-[1200px]">
-            <p
-              className="absolute left-1/2 top-[45px] h-[64px] w-[575px] -translate-x-1/2 text-center text-[32px] font-light text-white tracking-[40.32px]"
-              data-node-id="5:114"
-            >
-              BY ELISE
-            </p>
-            <div
-              className="absolute left-[11.5px] top-[434px] h-[323px] w-[766px] text-[64px] font-light leading-[1.11] text-white tracking-[11.52px]"
-              data-node-id="5:140"
-            >
-              <p>Create from </p>
-              <p>presence, </p>
-              <p>not pressure</p>
-            </div>
-            <div
-              className="absolute left-[961.5px] top-[757px] flex items-end justify-end bg-white p-[24px]"
-              data-node-id="5:142"
-            >
-              <div className="w-[193px] text-right text-[18px] font-light uppercase tracking-[0.9px] text-black">
-                <p className="leading-[1.2]">There is freedom </p>
-                <p className="leading-[1.2]">in being seen without performing</p>
-              </div>
+          <p
+            className="absolute left-1/2 top-[45px] h-[64px] w-[575px] -translate-x-1/2 text-center text-[32px] font-light text-white tracking-[40.32px]"
+            data-node-id="5:114"
+          >
+            BY ELISE
+          </p>
+          <div
+            className="absolute left-[131px] top-[434px] h-[323px] w-[766px] text-[64px] font-light leading-[1.11] text-white tracking-[11.52px]"
+            data-node-id="5:140"
+          >
+            <p>Create from </p>
+            <p>presence, </p>
+            <p>not pressure</p>
+          </div>
+          <div
+            className="absolute right-[117px] top-[757px] flex items-end justify-end bg-white p-[24px]"
+            data-node-id="5:142"
+          >
+            <div className="w-[193px] text-right text-[18px] font-light uppercase tracking-[0.9px] text-black">
+              <p className="leading-[1.2]">There is freedom </p>
+              <p className="leading-[1.2]">in being seen without performing</p>
             </div>
           </div>
         </div>
