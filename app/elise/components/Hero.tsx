@@ -30,7 +30,7 @@ export default function Hero() {
           BY ELISE
         </p>
         <div
-          className="absolute left-[31px] top-[470px] h-[323px] w-[1403px] text-[80px] font-light leading-[1.15] text-white tracking-[14.4px]"
+          className="absolute left-[31px] top-[470px] h-[323px] w-[1403px] text-[80px] font-light leading-[normal] text-white tracking-[14.4px]"
           data-node-id="5:28"
         >
           <p>Create from </p>
