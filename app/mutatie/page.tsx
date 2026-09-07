@@ -1,202 +1,163 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
-import { FunnelSection } from "@/components/FunnelSection";
-import { FormNavigation } from "@/components/FormNavigation";
 import { Button } from "@/components/Button";
-import { RadioCardBottomGroup } from "@/components/RadioCardBottom";
-import { RadioGroup } from "@/components/RadioGroup";
-import { CheckboxCardControlLeftGroup } from "@/components/CheckboxCardControlLeft";
-import { Receipt, type ReceiptGroup } from "@/components/Receipt";
-import { ReceiptBar } from "@/components/ReceiptBar";
-import { Dialog } from "@/components/Dialog";
-import { useMutatieFunnel } from "./funnel-context";
-import { DEKKING_OPTIONS, PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_MONTHLY_PRICE, dekkingTitel, berekenNieuwePremie, formatEuro, type DekkingKeuze } from "./pricing";
-
-const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
-
-const EIGEN_RISICO_OPTIES = [
-  { value: "0", label: "€ 0" },
-  { value: "100", label: "€ 100" },
-  { value: "500", label: "€ 500" },
-];
+import { Icon } from "@/components/Icon";
+import { CardDetails } from "@/components/CardDetails";
+import { Tile } from "@/components/Tile";
 
 /**
- * Stap 1 van de mutatie-funnel "Dekking wijzigen" (Figma node 8031:10775,
- * de staat vóór wijziging: Basis geselecteerd, Glas uit). Pixel-getrouw
- * opgebouwd uit uitsluitend bestaande componenten (FunnelPageTemplate,
- * RadioGroup, CheckboxCardControlLeftGroup) plus één nieuw component
- * (RadioCardBottomGroup) dat nog niet in dit project bestond.
+ * "Klantdetail + uitleg" (Figma node 8233:24257, bestand "Mutatie funnels").
+ * Geen funnelstap in de gebruikelijke zin — geen Step Indicator, sidebar of
+ * vorige/volgende-navigatie — maar een losstaande polisdetailpagina voor een
+ * bestaande "Opstal verzekering", van waaruit de klant via losse "Wijzig"-
+ * knoppen de mutatie-funnel ("Dekking wijzigen", `/mutatie/dekking-wijzigen`)
+ * in kan. Dit is op verzoek het entry point van de mutatie-funnel geworden —
+ * stap 1 "Dekking wijzigen" (voorheen op deze route) staat nu op zijn eigen
+ * `/mutatie/dekking-wijzigen`, met bijbehorende terug-links hierheen.
  *
- * Keuzes staan in de gedeelde `MutatieFunnelProvider` (niet lokale
- * `useState`) zodat de bevestigingsstap ze kan overnemen — "het startpunt
- * is altijd jouw dekking, neem de wijzigingen mee".
+ * Volledig opgebouwd uit bestaande componenten (Button `type="tertiary"` voor
+ * "Hulp", CardDetails 4x, Icon, Logo-precedent) plus twee nieuwe: `Tile` (de
+ * "Ga snel naar"-rijen) en CardDetails' nieuwe `downloadable`-rijvariant (voor
+ * "Documenten voor deze verzekering") en waarde-loze rij (voor "Mijn Schades").
  *
- * De receipt-kaart rechts gebruikt het gedeelde `Receipt`-component
- * (`type="one-section"`, bevestigd via een aparte MCP-fetch van Figma's
- * "Components"-bibliotheek, node 8926:5568 — hetzelfde bestand als a.s.r.'s
- * publieke designsysteem-documentatie zelf naar linkt). Eerder stond hier
- * dupliceerde inline JSX; dat is nu vervangen door het al bestaande,
- * elders (Verzuim) actief gebruikte component, inclusief een nieuwe
- * `type="one-section"`-variant daarop (geen accordion-chevron, want hier is
- * maar één product) — precies zoals Figma's eigen drie Receipt Box-types.
+ * Op verzoek gecorrigeerd t.o.v. Figma's letterlijke content:
+ * - Hero-pictogram was een auto-icoon (`vast/vast/1004-autoverzekering`,
+ *   overduidelijk een kopieerfout uit een sjabloon) — vervangen door het al
+ *   bestaande `pictogram-house.svg` (opstal), zelfde asset als de
+ *   woonverzekeringen-funnel.
+ * - "Bouwjaar"-waarde was `!980` — gecorrigeerd naar `1980`.
+ * - Het lege "partners"-icoonslot naast het "wijzer 1"-logo in de footer is
+ *   op verzoek weggelaten (geen vervangende inhoud gevonden in Figma).
+ * - Het verborgen alternatieve blok "Frame 686" (ander adres, 3 knoppen, een
+ *   reviews-widget) stond niet in de zichtbare schermstaat en is op verzoek
+ *   niet meegebouwd.
  *
- * Onder 600px toont de sidebar Figma's eigen "Receipt Bar" (node 8818:509,
- * apart bevestigd, incl. de 320-599px-variant) i.p.v. de altijd-volledig-
- * uitgeklapte Box: een compacte balk met alleen het totaalbedrag, waarvan
- * "Bekijk details" — exact zoals Figma's componentbeschrijving het stelt —
- * een Receipt Dialog opent met dezelfde inhoud als de desktop-Box. Dit
- * verving een eerdere, op a.s.r.'s Storybook-demo gebaseerde aanname
- * (inline uitklappen i.p.v. een dialoog, en een wit i.p.v. groen gevulde
- * balk) die bij directe Figma-verificatie onjuist bleek.
+ * De 224px-desktoppadding uit Figma (1448px-canvas) komt overeen met een
+ * 1000px-inhoudskolom — hier als `max-w-[1000px] mx-auto` met `px-4`-fallback
+ * op smalle schermen, want er is geen apart mobiel Figma-scherm voor dit
+ * component gevonden (net als bij de woonverzekeringen-funnel bewust niet
+ * verzonnen).
  *
- * Op expliciet verzoek is de Bar `fixed` aan de onderkant van het scherm
- * (16px marge) zolang de gebruiker door de pagina scrolt, en verdwijnt hij
- * zodra de echte Receipt Box — dezelfde kaart als op de homepage-demo,
- * hier nu ook zichtbaar op mobiel i.p.v. alleen ≥600px — in beeld komt, net
- * vóór de funnel-footer. Bevestigd via een `IntersectionObserver` op die
- * kaart i.p.v. een vaste scroll-drempel, zodat het exact klopt ongeacht
- * hoe lang het formulier is.
+ * Nog niet gekoppeld (geen bijbehorende flow/bestand bevestigd in Figma):
+ * "Wijzig" op "De verzekering is voor", alle "Downloaden"-knoppen, en de
+ * "Opzeggen"/"Contact met a.s.r."-tegels — knoppen zijn wel zichtbaar,
+ * conform Figma, maar zonder eigen bestemming (`onClick` bewust leeg).
  *
- * `activeStep={1}` (niet `{0}`): `StepIndicator` is 1-indexed (zie zijn eigen
- * prop-doc) — de `{0}` hier was een off-by-one bug die de stap-cirkel nooit
- * als "current" liet renderen en de vul-animatie tussen stap 1 en 2 nooit
- * liet triggeren. Ontdekt en hier gefixt bij het bouwen van die animatie;
- * bewust niet meegenomen in andere funnels (Verzuim/Auto) die dezelfde
- * 0-indexed aanroep gebruiken — buiten scope van dit verzoek.
- *
- * "Meer informatie"-dialogen (Basis/Allrisk/Glas) zijn in Figma wel
- * aanwezig maar bewust niet meegebouwd — buiten scope.
+ * Op verzoek: "Wijzig" op "Basis dekking" en "Eigen risico" gaat naar de
+ * eerste stap van de mutatie-funnel "Dekking wijzigen" (`/mutatie/dekking-wijzigen`)
+ * — dat scherm regelt precies deze twee velden (RadioGroup voor eigen risico,
+ * dekkingskeuze). "De verzekering is voor" heeft geen overeenkomstige flow
+ * in Figma en blijft daarom bewust ongekoppeld.
  */
-export default function MutatieDekkingPage() {
+export default function KlantdetailUitlegPage() {
   const router = useRouter();
-  const { state, setState } = useMutatieFunnel();
-  const { dekking, eigenRisico, aanvullendeDekkingen } = state;
-
-  const heeftGlas = aanvullendeDekkingen.includes("glas");
-  const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas), [dekking, heeftGlas]);
-  const isGewijzigd = Math.abs(nieuwePremie - CURRENT_MONTHLY_PRICE) > 0.001;
-  const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
-
-  const [receiptBoxVisible, setReceiptBoxVisible] = useState(false);
-  const receiptBoxRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = receiptBoxRef.current;
-    if (!el) return;
-    /** `rootMargin` laat de Bar al verdwijnen vlak vóórdat de Box in beeld komt (i.p.v. pas op het exacte moment) — anders overlapt de fixed Bar heel even de "Jouw situatie"-knop erboven. */
-    const observer = new IntersectionObserver(([entry]) => setReceiptBoxVisible(entry.isIntersecting), { rootMargin: "0px 0px 100px 0px" });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  const receiptGroups: ReceiptGroup[] = [
-    {
-      title: "Dekking",
-      items: [
-        { label: dekkingTitel(dekking), amount: `€ ${PRICE_BY_DEKKING[dekking]}` },
-        { label: `Eigen risico € ${eigenRisico}` },
-      ],
-    },
-    ...(heeftGlas ? [{ title: "Aanvullende dekkingen", items: [{ label: "Glas", amount: `€ ${GLAS_PRICE}` }] }] : []),
-  ];
-
-  function setDekking(value: string) {
-    setState({ ...state, dekking: value as DekkingKeuze });
-  }
-  function setEigenRisico(value: string) {
-    setState({ ...state, eigenRisico: value });
-  }
-  function setAanvullendeDekkingen(values: string[]) {
-    setState({ ...state, aanvullendeDekkingen: values });
-  }
 
   return (
-    <FunnelPageTemplate
-      headerTitle="Dekking wijzigen"
-      cancelButton
-      onCancel={() => router.push("/")}
-      ikzSticker
-      steps={MUTATIE_STEPS}
-      activeStep={1}
-      stepAnimationKey="mutatie"
-      sidebarClassName="w-full"
-      sidebar={
-        <>
-          {!receiptBoxVisible && (
-            <div className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-6 min-[600px]:hidden">
-              <ReceiptBar amount={formatEuro(nieuwePremie)} onShowDetails={() => setReceiptDialogOpen(true)} />
-            </div>
-          )}
+    <div className="flex w-full flex-col items-start gap-10 bg-[#fff8e3]">
+      <div className="flex h-[72px] w-full items-center justify-end bg-white px-4 py-[26px]">
+        <Button type="tertiary" iconPrepend="comment">
+          Hulp
+        </Button>
+      </div>
 
-          <div ref={receiptBoxRef} className="w-full">
-            <Receipt
-              title="Opstal"
-              icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}
-              type="one-section"
-              sections={[{ id: "opstal", groups: receiptGroups }]}
-              summaryLabel="Je gaat betalen per maand"
-              summaryAmount={formatEuro(nieuwePremie)}
-              summaryInfo={isGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
-            />
+      <div className="mx-auto flex w-full max-w-[1000px] flex-col items-center gap-8 px-4">
+        <div className="flex flex-col items-center gap-6">
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex size-32 items-center justify-center rounded-full border-[3px] border-[#46c2e6] bg-[#f6f6f7]">
+              <img src="/icons/pictogram-house.svg" alt="" className="size-16" />
+            </div>
+            <img src="/header/ikz-sticker-arrow-up.svg" alt="Ik kies zelf" className="h-[37px] w-[124px]" />
           </div>
 
-          <Dialog open={receiptDialogOpen} onClose={() => setReceiptDialogOpen(false)} title="Opstal">
-            <Receipt
-              type="one-section"
-              sections={[{ id: "opstal", groups: receiptGroups }]}
-              summaryLabel="Je gaat betalen per maand"
-              summaryAmount={formatEuro(nieuwePremie)}
-              summaryInfo={isGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
-              className="flex w-full flex-col items-start gap-4"
-            />
-          </Dialog>
-        </>
-      }
-      navigation={
-        <FormNavigation
-          previousStep
-          previousLabel="Jouw situatie"
-          nextLabel="Naar jouw gegevens"
-          onPrevious={() => router.push("/")}
-          onNext={() => router.push("/mutatie/bevestiging")}
-        />
-      }
-    >
-      <Button type="tertiary" iconPrepend="arrow-left" onClick={() => router.push("/")}>
-        Terug naar jouw account
-      </Button>
+          <div className="flex flex-col items-center gap-3 text-center">
+            <p className="text-[40px] text-black leading-[1.2]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+              Opstal verzekering
+            </p>
+            <p
+              className="text-base text-black leading-[28px] tracking-[0.18px]"
+              style={{ fontFamily: "var(--font-avenir-medium)" }}
+            >
+              Archimedeslaan 10, Polisnr. 56765965
+            </p>
+          </div>
+        </div>
 
-      <FunnelSection intro title="Jouw dekking" showRequiredFieldsNote />
+        <div className="flex w-full flex-col gap-4 rounded-md bg-white p-10 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.12)]">
+          <CardDetails
+            title="De basis"
+            cardActionEdit={false}
+            rows={[
+              { label: "Polisnummer", value: "7586645060" },
+              { label: "Basis dekking", value: "€ 104,75 per maand", editable: true, onEdit: () => router.push("/mutatie/dekking-wijzigen") },
+              { label: "Eigen risico", value: "€ 100", editable: true, onEdit: () => router.push("/mutatie/dekking-wijzigen") },
+              { label: "De verzekering is voor", value: "Archimedeslaan 10, 3584 BA, Utrecht", editable: true },
+            ]}
+          />
+          <CardDetails
+            title="Documenten voor deze verzekering"
+            cardActionEdit={false}
+            rows={[
+              { label: "Schademeldformulier", downloadable: true },
+              { label: "Je polisblad", downloadable: true },
+              { label: "Opstal voorwaarden", downloadable: true },
+              { label: "Algemene voorwaarden", downloadable: true },
+            ]}
+          />
+          <CardDetails
+            title="Premie"
+            cardActionEdit={false}
+            rows={[
+              { label: "Premie (inclusief 21% assurantiebelasting)", value: "€ 4,82" },
+              { label: "Betaaltermijn", value: "Per maand" },
+            ]}
+          />
+          <CardDetails
+            title="Details"
+            cardActionEdit={false}
+            rows={[
+              { label: "Oppervlakte", value: "120 m²" },
+              { label: "Bouwjaar", value: "1980" },
+              { label: "Soort woning", value: "Koopwoning" },
+              { label: "Gebruik woning", value: "Particulier" },
+              { label: "Ingangsdatum verzekering", value: "05-09-2025" },
+            ]}
+          />
+          <CardDetails title="Mijn Schades" cardActionEdit={false} rows={[{ label: "Geen lopende schades" }]} />
+        </div>
 
-      <FunnelSection title="Stel je opstalverzekering samen">
-        <RadioCardBottomGroup labelText="Kies je dekking" options={DEKKING_OPTIONS} value={dekking} onChange={setDekking} />
+        <div className="flex w-full flex-col items-start gap-4">
+          <p className="w-full font-bold text-base text-black leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+            Ga snel naar
+          </p>
+          <div className="flex w-full flex-col gap-2">
+            <Tile icon={<img src="/icons/pictogram-opzeggen.svg" alt="" className="size-8" />} title="Opzeggen" />
+            <Tile icon={<Icon name="chat" size="lg" />} title="Contact met a.s.r." />
+          </div>
+        </div>
+      </div>
 
-        <RadioGroup
-          labelText="Kies je eigen risico"
-          description="Dit is het bedrag dat wij aftrekken van een schadevergoeding. Hoe hoger je eigen risico, hoe minder je per maand betaalt."
-          options={EIGEN_RISICO_OPTIES}
-          value={eigenRisico}
-          onChange={setEigenRisico}
-        />
-
-        <CheckboxCardControlLeftGroup
-          labelText="Welke aanvullende dekking wil je?"
-          options={[
-            {
-              value: "glas",
-              title: "Glas",
-              description: "Vergoeding voor de kosten van nieuwe ruiten en herstel van beschadigd schilderwerk.",
-              price: GLAS_PRICE,
-            },
-          ]}
-          values={aanvullendeDekkingen}
-          onChange={setAanvullendeDekkingen}
-          onMoreInfoClick={() => {}}
-        />
-      </FunnelSection>
-    </FunnelPageTemplate>
+      <div className="flex w-full flex-col items-center bg-white">
+        <div className="flex w-full max-w-[1200px] flex-col gap-4 px-4 py-8">
+          <div className="flex w-full items-center justify-end">
+            <img src="/footer/wijzer-1.svg" alt="Wijzer in geldzaken" className="size-11" />
+          </div>
+          <div className="h-px w-full bg-[#f6f6f7]" />
+          <div className="flex w-full flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-start gap-6 text-[#2a292e] text-xs leading-[17px]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+              <p>disclaimer</p>
+              <p>privacyverklaring</p>
+              <p>cookies</p>
+              <p>fraudebeleid</p>
+              <p>beleggingsbeleid</p>
+              <p>meldpunt digitale kwetsbaarheden</p>
+            </div>
+            <p className="text-[#9d9d9d] text-xs leading-[16px]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+              © a.s.r.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
