@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 /**
@@ -27,9 +28,13 @@ const slides: string[][] = [
 
 const FADE_MS = 900;
 
+const LAST_INDEX = slides.length - 1;
+
 export default function BdayPage() {
+  const router = useRouter();
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setRevealed(true));
@@ -37,8 +42,21 @@ export default function BdayPage() {
   }, []);
 
   const goNext = useCallback(() => {
-    setIndex((current) => Math.min(current + 1, slides.length - 1));
-  }, []);
+    if (index >= LAST_INDEX) {
+      setLeaving(true);
+      return;
+    }
+    setIndex((current) => current + 1);
+  }, [index]);
+
+  // Na de laatste slide fadet het scherm eerst naar zwart (zelfde
+  // FADE_MS als de slide-transities) voor naar /elise wordt genavigeerd
+  // — geen abrupte sprong naar de andere pagina.
+  useEffect(() => {
+    if (!leaving) return;
+    const timeout = setTimeout(() => router.push("/elise"), FADE_MS);
+    return () => clearTimeout(timeout);
+  }, [leaving, router]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -57,7 +75,7 @@ export default function BdayPage() {
       onClick={goNext}
     >
       {slides.map((lines, i) => {
-        const active = revealed && i === index;
+        const active = revealed && i === index && !leaving;
         return (
           <div
             key={i}
