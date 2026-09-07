@@ -1,11 +1,11 @@
-const imgBanner = "/elise/assets/banner.png";
+const imgBanner = "/elise/assets/banner-1200.png";
 const imgGallery1 = "/elise/assets/gallery-1.png";
 const imgGallery2 = "/elise/assets/gallery-2.png";
 const imgGallery3 = "/elise/assets/gallery-3.png";
 const imgPortrait = "/elise/assets/portrait-large.png";
 
 /**
- * Figma-node 5:111 ("MacBook Air - 1"), voor viewport 1200–1439px.
+ * Figma-node 5:111 ("1200 - 1439"), voor viewport 1200–1439px.
  * Zelfde aanpak als de 1440+ variant (Hero/Gallery/Quote/ImageText):
  * body-content vast op 1200px, gecentreerd — alleen de hero (banner-foto
  * met wordmark/headline/quote erover) breekt daaruit en loopt edge-to-
@@ -14,28 +14,40 @@ const imgPortrait = "/elise/assets/portrait-large.png";
  * die zijn hier 1:1 overgenomen, niet berekend of geschaald vanuit de
  * andere breakpoint.
  *
- * Hergebruikt dezelfde brondown-beeldbestanden als de 1440+-route:
- * identieke foto's (zelfde crop-percentages in Figma bevestigen dit),
- * Figma exporteerde alleen een andere resolutie per frame.
+ * Hergebruikt dezelfde brondown-beeldbestanden als de 1440+-route voor
+ * galerij en portret (identieke foto's, Figma exporteerde alleen een
+ * andere resolutie per frame).
  *
- * De banner-foto (5:112) is, net als bij de 1440+ Hero, een oversized
- * fill-blok dat door het frame wordt afgesneden tot een zichtbaar beeld
- * van 1436×895px (geverifieerd met get_screenshot op node 5:112),
- * gevolgd door 92px effen achtergrond (expliciete Figma auto-layout
- * gap) voordat "Behind the Surface" begint. Vaste hoogte + center-crop
- * `object-cover` was dus dubbel fout — nu `aspect-[1439/895]` (fluid
- * breedte, hoogte volgt mee) plus `object-top`, zelfde rekenwerk als
- * bij Hero.tsx.
+ * BELANGRIJK — herverifieerd via MCP op 2026-09-07: de designer heeft
+ * de banner-foto van dit specifieke breakpoint (node 5:132/8:147) in
+ * Figma vervangen door een schone fluid "fill": `aspect-[2804/1790]`
+ * (= de doos se eigen 1488×949.9-verhouding) met gewone gecentreerde
+ * `object-cover`, zonder de handmatige crop-percentages/offsets die
+ * het 1440+ frame nog wel gebruikt. Frame8's eigen top-offset staat nu
+ * ook op 0 (was -116) — geen verticale clipping meer, dus geen
+ * "verborgen" stuk beeld.
+ *
+ * get_screenshot op node 8:147 bevestigt de zichtbare (horizontaal wél
+ * geclipte, want Frame8 is met een bewuste bleed 1488px breed tegen een
+ * 1439px-frame) grootte: 1439×950px. Vandaar hier `aspect-[1439/950]`
+ * i.p.v. de doos-eigen 2804/1790 — dezelfde methode als bij Hero.tsx
+ * (fluid breedte, hoogte volgt automatisch mee, geen vaste px), maar nu
+ * zónder `object-top`: deze crop is gecentreerd, niet vanaf boven.
+ *
+ * Headline (5:140) en quote-kader (5:142) zijn in dezelfde Figma-update
+ * verplaatst: headline nu 64px/tracking 11.52px op top-434 (was
+ * 72px/12.96px/500), kader op top-757 (was 607). Horizontale
+ * kolom-relatieve posities (11.5px / 961.5px) bleven ongewijzigd.
  */
 export default function Frame1200() {
   return (
     <>
       <section className="relative w-full" data-node-id="5:132">
-        <div className="relative aspect-[1439/895] w-full overflow-hidden">
+        <div className="relative aspect-[1439/950] w-full overflow-hidden">
           <img
             alt=""
             src={imgBanner}
-            className="pointer-events-none absolute inset-0 size-full object-cover object-top"
+            className="pointer-events-none absolute inset-0 size-full object-cover"
           />
           <div className="relative mx-auto h-full w-[1200px]">
             <p
@@ -45,7 +57,7 @@ export default function Frame1200() {
               BY ELISE
             </p>
             <div
-              className="absolute left-[11.5px] top-[500px] h-[323px] w-[1403px] text-[72px] font-light leading-[1.11] text-white tracking-[12.96px]"
+              className="absolute left-[11.5px] top-[434px] h-[323px] w-[766px] text-[64px] font-light leading-[1.11] text-white tracking-[11.52px]"
               data-node-id="5:140"
             >
               <p>Create from </p>
@@ -53,7 +65,7 @@ export default function Frame1200() {
               <p>not pressure</p>
             </div>
             <div
-              className="absolute left-[961.5px] top-[607px] flex items-end justify-end bg-white p-[24px]"
+              className="absolute left-[961.5px] top-[757px] flex items-end justify-end bg-white p-[24px]"
               data-node-id="5:142"
             >
               <div className="w-[193px] text-right text-[18px] font-light uppercase tracking-[0.9px] text-black">

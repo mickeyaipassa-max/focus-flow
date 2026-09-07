@@ -9,7 +9,7 @@ import Frame1200 from "./components/Frame1200";
  * responsive gedrag verzonnen. Er bestaat geen ontwerp onder 1200px,
  * dus daaronder wordt niets getoond.
  *
- *   5:111 ("MacBook Air - 1", 1200–1439px) → Frame1200
+ *   5:111 ("1200 - 1439", 1200–1439px)     → Frame1200
  *   4:2   ("Slide 16:9 - 3", 1440px+)      → Hero/Gallery/Quote/ImageText
  *
  * Beide volgen hetzelfde patroon: body-content in een vaste kolom
@@ -23,7 +23,7 @@ export default function ElisePage() {
       <div
         className="hidden b1200:block b1440:hidden bg-[#ECEBE5]"
         data-node-id="5:111"
-        data-name="MacBook Air - 1"
+        data-name="1200 - 1439"
       >
         <Frame1200 />
       </div>
