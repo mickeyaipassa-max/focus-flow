@@ -1,4 +1,4 @@
-const imgBanner = "/elise/assets/banner-1200.png";
+const imgBanner = "/elise/assets/banner-hero.png";
 const imgGallery1 = "/elise/assets/gallery-1.png";
 const imgGallery2 = "/elise/assets/gallery-2.png";
 const imgGallery3 = "/elise/assets/gallery-3.png";
@@ -6,51 +6,30 @@ const imgPortrait = "/elise/assets/portrait-large.png";
 
 /**
  * Figma-node 5:111 ("1200 - 1439"), voor viewport 1200–1439px.
- * Zelfde aanpak als de 1440+ variant (Hero/Gallery/Quote/ImageText):
- * body-content vast op 1200px, gecentreerd — alleen de hero (banner-foto
- * met wordmark/headline/quote erover) breekt daaruit en loopt edge-to-
- * edge over de volledige viewportbreedte. Figma geeft dit breakpoint
- * eigen, kleinere maten (fontsize/tracking/gap) t.o.v. de 1440+-versie —
- * die zijn hier 1:1 overgenomen, niet berekend of geschaald vanuit de
- * andere breakpoint.
+ * Herverifieerd via MCP op 2026-09-07 (opnieuw gewijzigd sinds de vorige
+ * build): Frame8 heeft geen bleed/offset meer (was -22/-116, nu 0/0,
+ * breedte exact gelijk aan het frame) — de banner-foto is dus een
+ * gewone `aspect-[2804/1790]`-fill zonder clipping-berekening. Bij
+ * referentiebreedte 1440px komt dat uit op hoogte 919px — vaste hoogte
+ * i.p.v. aspect-ratio (bewuste keuze, zie Frame1440.tsx), gewone
+ * gecentreerde `object-cover` (geen top-anchor: geen asymmetrische crop
+ * meer zoals in een eerdere versie).
  *
- * Hergebruikt dezelfde brondown-beeldbestanden als de 1440+-route voor
- * galerij en portret (identieke foto's, Figma exporteerde alleen een
- * andere resolutie per frame).
+ * Headline (5:140) en quote-kader (5:142) staan op Figma's eigen
+ * absolute px-positie t.o.v. de volle-breedte hero (niet t.o.v. de
+ * vaste 1200px-inhoudskolom, die tussen 1200-1439px zelf recentreert)
+ * — ongewijzigd t.o.v. de vorige build (left-131 / top-434 voor de
+ * headline, right-117 voor het kader t.o.v. de rechterrand).
  *
- * BELANGRIJK — herverifieerd via MCP op 2026-09-07: de designer heeft
- * de banner-foto van dit specifieke breakpoint (node 5:132/8:147) in
- * Figma vervangen door een schone fluid "fill": `aspect-[2804/1790]`
- * (= de doos se eigen 1488×949.9-verhouding) met gewone gecentreerde
- * `object-cover`, zonder de handmatige crop-percentages/offsets die
- * het 1440+ frame nog wel gebruikt. Frame8's eigen top-offset staat nu
- * ook op 0 (was -116) — geen verticale clipping meer, dus geen
- * "verborgen" stuk beeld.
- *
- * get_screenshot op node 8:147 bevestigt de zichtbare (horizontaal wél
- * geclipte, want Frame8 is met een bewuste bleed 1488px breed tegen een
- * 1439px-frame) grootte: 1439×950px. Fotocontainer krijgt daarom een
- * vaste hoogte `h-[950px] w-full` (alleen de breedte is fluid, niet de
- * hoogte) i.p.v. de doos-eigen 2804/1790-verhouding, zonder `object-top`:
- * deze crop is gecentreerd, niet vanaf boven.
- *
- * Headline (5:140) en quote-kader (5:142) zijn in dezelfde Figma-update
- * verplaatst: headline nu 64px/tracking 11.52px op top-434 (was
- * 72px/12.96px/500), kader op top-757 (was 607).
- *
- * Beide staan op Figma's eigen absolute px-positie t.o.v. de volle-
- * breedte hero (niet t.o.v. de vaste 1200px-inhoudskolom hieronder, die
- * tussen 1200-1439px zelf recentreert). Zo verschuiven ze niet mee als
- * de kolom van marge verandert — vaste afstand tot de rand van de fótó,
- * net als bij de 1440+ Hero. Kader rechts-verankerd (`right-[117px]`,
- * = 1439 - 1081 - 241) i.p.v. links, anders viel het bij 1200px breed
- * alweer buiten beeld (left-1081 + 241 = 1322 > 1200).
+ * Nieuw: persoonlijke verjaardagstekst (11:185) onderaan de hero-
+ * wrapper, letterlijk uit Figma overgenomen — 92px marge erboven,
+ * 80px marge eronder (Figma's eigen pb-[80px] op Frame8).
  */
 export default function Frame1200() {
   return (
     <>
       <section className="relative w-full" data-node-id="5:132">
-        <div className="relative h-[950px] w-full overflow-hidden">
+        <div className="relative h-[919px] w-full overflow-hidden">
           <img
             alt=""
             src={imgBanner}
@@ -149,6 +128,14 @@ export default function Frame1200() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div
+        className="mx-auto mt-[92px] w-[1000px] pb-[80px] text-[20px] font-light tracking-[3.6px] text-black"
+        data-node-id="11:185"
+      >
+        <p className="leading-[1.11]">Geloof een beetje meer in jezelf. Ik doe het in ieder geval al. ❤️</p>
+        <p className="leading-[1.11]">Gefeliciteerd je verjaardag! Liefs Mick, Koda en Roku</p>
       </div>
     </>
   );
