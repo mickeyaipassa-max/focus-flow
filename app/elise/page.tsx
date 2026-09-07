@@ -29,7 +29,7 @@ export default function ElisePage() {
       </div>
       <div className="hidden b1440:block bg-[#ECEBE5]" data-node-id="4:2" data-name="Slide 16:9 - 3">
         <Hero />
-        <div className="mx-auto w-[1600px]">
+        <div className="mx-auto w-full max-w-[1600px]">
           <Gallery />
           <Quote />
           <ImageText />
