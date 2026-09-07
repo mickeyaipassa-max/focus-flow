@@ -48,10 +48,10 @@ const INGANGSDATUM = "01 - 10 2026";
  * ("Gelukt!") is niet meegebouwd, buiten scope van deze stap.
  *
  * `activeStep={2}` (niet `{1}`): zelfde off-by-one-fix als stap 1
- * (app/mutatie/page.tsx) — `StepIndicator` is 1-indexed.
+ * (app/mutatie/dekking-wijzigen/page.tsx) — `StepIndicator` is 1-indexed.
  *
  * De receipt-kaart rechts gebruikt het gedeelde `Receipt`-component (zelfde
- * precedent en zelfde reden als stap 1, app/mutatie/page.tsx) — inclusief
+ * precedent en zelfde reden als stap 1, app/mutatie/dekking-wijzigen/page.tsx) — inclusief
  * de `ReceiptBar` + Dialog onder 600px, 1-op-1 op Figma's eigen "Receipt
  * Bar"/"Receipt Dialog"-componenten gebaseerd (node 8818:509/8818:487,
  * "Components"-bibliotheek).
@@ -155,12 +155,12 @@ export default function MutatieBevestigingPage() {
           nextStep={false}
           submit
           submitLabel="Aanpassing bevestigen"
-          onPrevious={() => router.push("/mutatie")}
+          onPrevious={() => router.push("/mutatie/dekking-wijzigen")}
           onSubmit={handleSubmit}
         />
       }
     >
-      <Button type="tertiary" iconPrepend="arrow-left" onClick={() => router.push("/mutatie")}>
+      <Button type="tertiary" iconPrepend="arrow-left" onClick={() => router.push("/mutatie/dekking-wijzigen")}>
         Dekking wijzigen
       </Button>
 
@@ -170,7 +170,7 @@ export default function MutatieBevestigingPage() {
         <SummaryCard
           title="Jouw dekking"
           showEdit
-          onEdit={() => router.push("/mutatie")}
+          onEdit={() => router.push("/mutatie/dekking-wijzigen")}
           rows={[
             {
               label: "Dekking",

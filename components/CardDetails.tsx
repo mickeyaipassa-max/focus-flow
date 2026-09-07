@@ -3,13 +3,17 @@ import { Icon } from "./Icon";
 
 export type DetailRowData = {
   label: string;
-  value: string;
+  /** Optioneel: sommige rijen (bv. "Geen lopende schades") tonen alleen een label, geen aparte waardekolom — bevestigd via Figma's "Klantdetail + uitleg"-kaart "Mijn Schades". */
+  value?: string;
   /** Toont een "Wijzig"-knop op deze rij (Figma's `rowLevelEditing`, hier per rij i.p.v. kaartbreed). */
   editable?: boolean;
   /** Toont een "Verwijderen"-knop op deze rij. */
   removable?: boolean;
+  /** Toont een "Downloaden"-knop op deze rij — bevestigd via Figma's "Documenten voor deze verzekering"-kaart. */
+  downloadable?: boolean;
   onEdit?: () => void;
   onRemove?: () => void;
+  onDownload?: () => void;
 };
 
 type CardDetailsProps = {
@@ -97,18 +101,22 @@ function DetailRow({
   labelWidthClass,
   editable,
   removable,
+  downloadable,
   onEdit,
   onRemove,
+  onDownload,
 }: {
   label: string;
-  value: string;
+  value?: string;
   labelWidthClass: string;
   editable?: boolean;
   removable?: boolean;
+  downloadable?: boolean;
   onEdit?: () => void;
   onRemove?: () => void;
+  onDownload?: () => void;
 }) {
-  const hasActions = editable || removable;
+  const hasActions = editable || removable || downloadable;
 
   const labelEl = (
     <p
@@ -118,7 +126,7 @@ function DetailRow({
       {label}
     </p>
   );
-  const valueEl = (
+  const valueEl = value !== undefined && (
     <p
       className="w-full font-[350] text-black text-base leading-[1.5] min-[900px]:min-w-px min-[900px]:flex-1"
       style={{ fontFamily: "var(--font-avenir-book)" }}
@@ -138,13 +146,14 @@ function DetailRow({
 
   return (
     <div className="flex w-full items-center gap-6 min-[900px]:items-start">
-      <div className="flex min-w-px flex-1 flex-col gap-1 min-[900px]:contents">
+      <div className={["flex min-w-px flex-1 items-center gap-1 min-[900px]:contents", value === undefined ? "" : "flex-col"].join(" ")}>
         {labelEl}
         {valueEl}
       </div>
       <div className="flex shrink-0 items-center gap-2 min-[900px]:gap-4">
         {editable && <ActionButton icon="edit" label="Wijzig" onClick={onEdit} responsive />}
         {removable && <ActionButton icon="delete" label="Verwijderen" onClick={onRemove} responsive />}
+        {downloadable && <ActionButton icon="download" label="Downloaden" onClick={onDownload} responsive />}
       </div>
     </div>
   );
@@ -173,7 +182,7 @@ export function CardDetails({
   className,
 }: CardDetailsProps) {
   const labelWidthClass = labelWidth === "md" ? "min-[900px]:w-[320px]" : "min-[900px]:w-[240px]";
-  const isRowLevelEditing = rows.some((row) => row.editable || row.removable);
+  const isRowLevelEditing = rows.some((row) => row.editable || row.removable || row.downloadable);
 
   return (
     <div
@@ -220,8 +229,10 @@ export function CardDetails({
                   labelWidthClass={labelWidthClass}
                   editable={row.editable}
                   removable={row.removable}
+                  downloadable={row.downloadable}
                   onEdit={row.onEdit}
                   onRemove={row.onRemove}
+                  onDownload={row.onDownload}
                 />
               </Fragment>
             ))}
