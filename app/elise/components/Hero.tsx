@@ -19,6 +19,14 @@ const imgBanner = "/elise/assets/banner.png";
  * exact dezelfde schaal als Figma's eigen 187.46%-transform, met alle
  * crop verticaal vanaf onderen — vandaar object-top i.p.v. de
  * CSS-default (center).
+ *
+ * De 1600px-kolom zelf is `w-full max-w-[1600px]`: krimpt mee tussen
+ * 1440–1599px i.p.v. hard afgesneden te worden, vast op 1600px vanaf
+ * 1600px viewport. Het quote-kader (5:39) stond origineel op een
+ * links-offset (1325px) die uitgaat van de volle 1600px-breedte — bij
+ * een smallere kolom viel het kader daardoor buiten beeld. Nu
+ * rechts-uitgelijnd (`right-[2px]`, exact Figma's eigen rechtermarge)
+ * zodat het op elke kolombreedte tegen de rand blijft staan.
  */
 export default function Hero() {
   return (
@@ -29,7 +37,7 @@ export default function Hero() {
           src={imgBanner}
           className="pointer-events-none absolute inset-0 size-full object-cover object-top"
         />
-        <div className="relative mx-auto h-full w-[1600px]">
+        <div className="relative mx-auto h-full w-full max-w-[1600px]">
           <p
             className="absolute left-1/2 top-[45px] h-[64px] w-[575px] -translate-x-1/2 text-center text-[32px] font-light text-white tracking-[40.32px]"
             data-node-id="5:23"
@@ -45,7 +53,7 @@ export default function Hero() {
             <p>not pressure</p>
           </div>
           <div
-            className="absolute left-[1325px] top-[970px] flex h-[273px] w-[273px] items-end justify-end bg-white p-[40px]"
+            className="absolute right-[2px] top-[970px] flex h-[273px] w-[273px] items-end justify-end bg-white p-[40px]"
             data-node-id="5:39"
           >
             <p className="w-[193px] text-right text-[24px] font-light uppercase tracking-[4.32px] text-black">
