@@ -3,11 +3,13 @@
 @theme {
   /*
    * Gebruikt door /duvet-dubois en /elise: Figma levert die ontwerpen als
-   * losse frames per breedte (900-1199 / 1200-1439 / 1440+), niet als één
-   * vloeiend responsive systeem. Deze breakpoints matchen exact de
-   * framegrenzen zodat elke sectie precies binnen zijn eigen bereik
-   * zichtbaar is.
+   * losse frames per breedte (0-599 / 900-1199 / 1200-1439 / 1440+), niet
+   * als één vloeiend responsive systeem. Deze breakpoints matchen exact
+   * de framegrenzen zodat elke sectie precies binnen zijn eigen bereik
+   * zichtbaar is. /elise heeft bewust een gat tussen 600-1199px (geen
+   * ontwerp voor dat bereik).
    */
+  --breakpoint-b600: 600px;
   --breakpoint-b900: 900px;
   --breakpoint-b1200: 1200px;
   --breakpoint-b1440: 1440px;
