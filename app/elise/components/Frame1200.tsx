@@ -6,27 +6,25 @@ const imgPortrait = "/elise/assets/portrait-large.png";
 
 /**
  * Figma-node 5:111 ("1200 - 1439"), voor viewport 1200–1439px.
- * Herverifieerd via MCP op 2026-09-07 (opnieuw gewijzigd sinds de vorige
- * build): Frame8 heeft geen bleed/offset meer (was -22/-116, nu 0/0,
- * breedte exact gelijk aan het frame) — de banner-foto is dus een
- * gewone `aspect-[2804/1790]`-fill zonder clipping-berekening. Bij
- * referentiebreedte 1440px komt dat uit op hoogte 919px — vaste hoogte
- * i.p.v. aspect-ratio (bewuste keuze, zie Frame1440.tsx), gewone
- * gecentreerde `object-cover` (geen top-anchor: geen asymmetrische crop
- * meer zoals in een eerdere versie).
+ * Herverifieerd via MCP op 2026-09-08 (opnieuw gewijzigd sinds de vorige
+ * build): banner-foto is wéér een nieuwe hoogte — bij referentiebreedte
+ * 1440px nu 826px (was 919px, was daarvoor 950px) — nog steeds een
+ * gewone fill zonder clipping-berekening, vaste hoogte i.p.v.
+ * aspect-ratio (bewuste keuze, zie Frame1440.tsx), gecentreerde
+ * `object-cover` (geen top-anchor nodig, rekenwerk klopt met een
+ * gewone centered crop).
  *
- * Headline (5:140) en quote-kader (5:142) staan in Figma op absolute
- * px-posities t.o.v. de volle 1439/1440px-frame — maar geverifieerd
- * (net als bij Frame1440.tsx / node 13:247) dat die waarden neerkomen
- * op een vaste positie t.o.v. de 1200px-body (Frame 7), niet t.o.v. de
- * viewport: frame-links 131px - bodymarge 120px = 11px vanaf de
- * bodylinkerrand voor de headline; frame-links 1081px - bodymarge
- * 120px = 961px vanaf de bodylinkerrand voor het kader (rechterrand
- * kader = 961+241=1202, 2px voorbij de bodyrand — Figma's eigen
- * afronding, vergelijkbaar met andere frames). Anders dan bij
- * Frame1440.tsx is dit hier geen flex-rij in Figma — headline en
- * kader zijn losse, onafhankelijk gepositioneerde elementen, alleen
- * beide t.o.v. dezelfde 1200px-bodykolom.
+ * Headline + quote-kader zijn op 2026-09-08 in Figma herbouwd als
+ * "Frame 11" (node 39:270), genest ín Frame 8 (overlay op de foto, net
+ * als bij het 1440-1799-frame) — structureel identiek aan node 13:247:
+ * een flex-rij (gap-187px, items-end, justify-end) die exact de
+ * bodybreedte (1200px) vult, op `top-[274px]` (frame8-relatief, dus
+ * relatief aan de fotocontainer). Headline-wrapper is flex-1 (vult wat
+ * overblijft: 1200 - 187 - 273 = 740px, headline-tekst zelf vast 766px
+ * daarbinnen), quote-kader is shrink-0 vast op 273px — en gebruikt nu
+ * de "grote" variant (p-40, 24px tekst, tracking 4.32, één regel
+ * zonder harde afbreking), niet meer de eerdere kleine p-24/18px-
+ * variant met handmatige regelafbreking.
  *
  * Nieuw: persoonlijke verjaardagstekst (11:185) onderaan de hero-
  * wrapper, letterlijk uit Figma overgenomen — 92px marge erboven,
@@ -36,7 +34,7 @@ export default function Frame1200() {
   return (
     <>
       <section className="relative w-full" data-node-id="5:132">
-        <div className="relative h-[919px] w-full overflow-hidden">
+        <div className="relative h-[826px] w-full overflow-hidden">
           <img
             alt=""
             src={imgBanner}
@@ -48,23 +46,27 @@ export default function Frame1200() {
           >
             BY ELISE
           </p>
-          <div className="absolute left-1/2 top-0 h-full w-[1200px] -translate-x-1/2">
-            <div
-              className="absolute left-[11px] top-[434px] h-[323px] w-[766px] text-[64px] font-light leading-[1.11] text-white tracking-[11.52px]"
-              data-node-id="5:140"
-            >
-              <p>Create from </p>
-              <p>presence, </p>
-              <p>not pressure</p>
+          <div
+            className="absolute left-1/2 top-[274px] flex h-[468px] w-[1200px] -translate-x-1/2 items-end justify-end gap-[187px]"
+            data-node-id="39:270"
+          >
+            <div className="flex h-full flex-1 items-start" data-node-id="39:271">
+              <div
+                className="h-[323px] w-[766px] text-[64px] font-light leading-[1.11] text-white tracking-[11.52px]"
+                data-node-id="39:272"
+              >
+                <p>Create from </p>
+                <p>presence, </p>
+                <p>not pressure</p>
+              </div>
             </div>
             <div
-              className="absolute left-[961px] top-[757px] flex items-end justify-end bg-white p-[24px]"
-              data-node-id="5:142"
+              className="flex h-[273px] shrink-0 items-end justify-end bg-white p-[40px]"
+              data-node-id="39:273"
             >
-              <div className="w-[193px] text-right text-[18px] font-light uppercase tracking-[0.9px] text-black">
-                <p className="leading-[1.2]">There is freedom </p>
-                <p className="leading-[1.2]">in being seen without performing</p>
-              </div>
+              <p className="w-[193px] text-right text-[24px] font-light uppercase tracking-[4.32px] text-black">
+                There is freedom in being seen without performing
+              </p>
             </div>
           </div>
         </div>
