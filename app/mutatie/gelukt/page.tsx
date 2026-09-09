@@ -50,9 +50,17 @@ export default function MutatieGeluktPage() {
       steps={MUTATIE_STEPS}
       activeStep={MUTATIE_STEPS.length + 1}
       navigation={
-        <Button type="primary" onClick={() => router.push("/mutatie")}>
-          Naar je account
-        </Button>
+        /*
+         * `FunnelPageTemplate`'s `navigation`-slot geeft zelf geen padding
+         * mee (dat levert normaliter `FormNavigation` zelf, `px-6 py-4
+         * min-[600px]:px-10 min-[600px]:py-6`) — zonder deze wrapper stond
+         * de knop hier plat tegen de kaartranden aan.
+         */
+        <div className="flex w-full items-start bg-white rounded-b-md px-6 py-4 min-[600px]:px-10 min-[600px]:py-6">
+          <Button type="primary" onClick={() => router.push("/mutatie")}>
+            Naar je account
+          </Button>
+        </div>
       }
     >
       <FunnelSection intro title="Gelukt!" />
