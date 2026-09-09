@@ -5,7 +5,8 @@ import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
 import { Alert } from "@/components/Alert";
 import { Button } from "@/components/Button";
-import { ingangsdatum, formatDatum } from "../pricing";
+import { useMutatieFunnel } from "../funnel-context";
+import { fromIsoDatum, formatDatum } from "../pricing";
 
 const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
 
@@ -27,11 +28,11 @@ const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
  * stap 1 en de bevestigingsstap.
  *
  * De ingangsdatum ("Deze gaat in per ...") was in Figma een vaste
- * voorbeelddatum ("17-09-2025", in een ander formaat dan de bevestigingsstap
- * z'n eigen vaste voorbeeld). Op verzoek nu dynamisch berekend via de
- * gedeelde `ingangsdatum()`-helper in `../pricing.ts` — dezelfde datum als
- * op de bevestigingsstap, i.p.v. twee losse hardgecodeerde datums in
- * verschillende formaten.
+ * voorbeelddatum ("17-09-2025"). Eerst dynamisch berekend (eerste van de
+ * eerstvolgende maand), en op verzoek daarna vervangen door een echt
+ * invoerveld op stap 1 ("Per wanneer wil je dat de wijziging ingaat?") —
+ * dit scherm toont nu de daadwerkelijk gekozen datum uit de gedeelde
+ * `MutatieFunnelProvider`-state, i.p.v. zelf iets te berekenen.
  *
  * `Alert` met `type="success"` matcht Figma's kleuren 1-op-1
  * (`feedback/succes-tint` #eef4e3 / groen-700 #0f865d); `closable={false}`
@@ -40,6 +41,7 @@ const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
  */
 export default function MutatieGeluktPage() {
   const router = useRouter();
+  const { state } = useMutatieFunnel();
 
   return (
     <FunnelPageTemplate
@@ -69,7 +71,7 @@ export default function MutatieGeluktPage() {
         type="success"
         closable={false}
         title="Het is gelukt!"
-        description={`We hebben je wijziging verwerkt. Deze gaat in per ${formatDatum(ingangsdatum())}.`}
+        description={`We hebben je wijziging verwerkt. Deze gaat in per ${formatDatum(fromIsoDatum(state.ingangsdatum))}.`}
       />
 
       <FunnelSection title="Wat nu?" description="Je krijgt binnen een paar minuten een e-mail met de bevestiging van je wijziging." />

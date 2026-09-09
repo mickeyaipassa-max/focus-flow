@@ -13,7 +13,7 @@ import { Receipt, type ReceiptGroup } from "@/components/Receipt";
 import { ReceiptBar } from "@/components/ReceiptBar";
 import { Dialog } from "@/components/Dialog";
 import { useMutatieFunnel } from "../funnel-context";
-import { PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_DEKKING, CURRENT_MONTHLY_PRICE, CURRENT_EIGEN_RISICO, dekkingTitel, berekenNieuwePremie, formatEuro, ingangsdatum, formatDatum } from "../pricing";
+import { PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_DEKKING, CURRENT_MONTHLY_PRICE, CURRENT_EIGEN_RISICO, dekkingTitel, berekenNieuwePremie, formatEuro, fromIsoDatum, formatDatum } from "../pricing";
 
 const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
 
@@ -61,7 +61,7 @@ const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
 export default function MutatieBevestigingPage() {
   const router = useRouter();
   const { state } = useMutatieFunnel();
-  const { dekking, eigenRisico, aanvullendeDekkingen } = state;
+  const { dekking, eigenRisico, aanvullendeDekkingen, ingangsdatum } = state;
 
   const [akkoord, setAkkoord] = useState(false);
   const [akkoordError, setAkkoordError] = useState(false);
@@ -185,7 +185,7 @@ export default function MutatieBevestigingPage() {
           ]}
         />
 
-        <SummaryCard title="Ingangsdatum" rows={[{ label: "De opstalverzekering gaat in per", value: formatDatum(ingangsdatum()) }]} />
+        <SummaryCard title="Ingangsdatum" rows={[{ label: "De opstalverzekering gaat in per", value: formatDatum(fromIsoDatum(ingangsdatum)) }]} />
 
         <SummaryCard
           title="Premie"
