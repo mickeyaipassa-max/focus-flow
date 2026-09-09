@@ -71,7 +71,7 @@ export default function MutatieGeluktPage() {
         type="success"
         closable={false}
         title="Het is gelukt!"
-        description={`We hebben je wijziging verwerkt. Deze gaat in per ${formatDatum(fromIsoDatum(state.ingangsdatum))}.`}
+        description={`We hebben je wijziging verwerkt. Deze gaat in per ${state.ingangsdatum ? formatDatum(fromIsoDatum(state.ingangsdatum)) : "–"}.`}
       />
 
       <FunnelSection title="Wat nu?" description="Je krijgt binnen een paar minuten een e-mail met de bevestiging van je wijziging." />

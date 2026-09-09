@@ -185,7 +185,10 @@ export default function MutatieBevestigingPage() {
           ]}
         />
 
-        <SummaryCard title="Ingangsdatum" rows={[{ label: "De opstalverzekering gaat in per", value: formatDatum(fromIsoDatum(ingangsdatum)) }]} />
+        <SummaryCard
+          title="Ingangsdatum"
+          rows={[{ label: "De opstalverzekering gaat in per", value: ingangsdatum ? formatDatum(fromIsoDatum(ingangsdatum)) : "–" }]}
+        />
 
         <SummaryCard
           title="Premie"
