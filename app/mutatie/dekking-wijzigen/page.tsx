@@ -78,6 +78,16 @@ export default function MutatieDekkingPage() {
   const heeftGlas = aanvullendeDekkingen.includes("glas");
   const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas, eigenRisico), [dekking, heeftGlas, eigenRisico]);
   const isGewijzigd = Math.abs(nieuwePremie - CURRENT_MONTHLY_PRICE) > 0.001;
+
+  /** Prijzen op de dekkingkaarten zelf ("Basis"/"Allrisk") volgen het gekozen eigen risico — op verzoek, zonder glas (dat is een losse, eigen-risico-onafhankelijke aanvulling erna). */
+  const dekkingOpties = useMemo(
+    () =>
+      DEKKING_OPTIONS.map((option) => ({
+        ...option,
+        price: berekenNieuwePremie(option.value as DekkingKeuze, false, eigenRisico).toFixed(2).replace(".", ","),
+      })),
+    [eigenRisico],
+  );
   const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
 
   const [receiptBoxVisible, setReceiptBoxVisible] = useState(false);
@@ -172,7 +182,7 @@ export default function MutatieDekkingPage() {
       <FunnelSection intro title="Jouw dekking" showRequiredFieldsNote />
 
       <FunnelSection title="Stel je opstalverzekering samen">
-        <RadioCardBottomGroup labelText="Kies je dekking" options={DEKKING_OPTIONS} value={dekking} onChange={setDekking} />
+        <RadioCardBottomGroup labelText="Kies je dekking" options={dekkingOpties} value={dekking} onChange={setDekking} />
 
         <RadioGroup
           labelText="Kies je eigen risico"
