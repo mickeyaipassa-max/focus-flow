@@ -13,12 +13,9 @@ import { Receipt, type ReceiptGroup } from "@/components/Receipt";
 import { ReceiptBar } from "@/components/ReceiptBar";
 import { Dialog } from "@/components/Dialog";
 import { useMutatieFunnel } from "../funnel-context";
-import { PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_DEKKING, CURRENT_MONTHLY_PRICE, CURRENT_EIGEN_RISICO, dekkingTitel, berekenNieuwePremie, formatEuro } from "../pricing";
+import { PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_DEKKING, CURRENT_MONTHLY_PRICE, CURRENT_EIGEN_RISICO, dekkingTitel, berekenNieuwePremie, formatEuro, ingangsdatum, formatDatum } from "../pricing";
 
 const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
-
-/** Vaste ingangsdatum uit Figma (node 8031:18859/8031:18881) — er bestaat geen datumkeuze-veld op stap 1 om dit uit af te leiden, dus letterlijk overgenomen i.p.v. zelf een datumlogica te verzinnen. */
-const INGANGSDATUM = "01 - 10 2026";
 
 /**
  * Bevestigingsstap van de mutatie-funnel "Dekking wijzigen" (Figma node
@@ -44,8 +41,7 @@ const INGANGSDATUM = "01 - 10 2026";
  * gelijkgetrokken aan stap 1's langere titel, en later — weer op expliciet
  * verzoek — teruggebracht naar deze kortere variant, nu op beide stappen.
  *
- * "Aanpassing bevestigen" navigeert bij succes naar "/" — het successcherm
- * ("Gelukt!") is niet meegebouwd, buiten scope van deze stap.
+ * "Aanpassing bevestigen" navigeert bij succes naar "/mutatie/gelukt".
  *
  * `activeStep={2}` (niet `{1}`): zelfde off-by-one-fix als stap 1
  * (app/mutatie/dekking-wijzigen/page.tsx) — `StepIndicator` is 1-indexed.
@@ -84,7 +80,7 @@ export default function MutatieBevestigingPage() {
   }, []);
 
   const heeftGlas = aanvullendeDekkingen.includes("glas");
-  const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas), [dekking, heeftGlas]);
+  const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas, eigenRisico), [dekking, heeftGlas, eigenRisico]);
   const isDekkingGewijzigd = dekking !== CURRENT_DEKKING;
   const isEigenRisicoGewijzigd = eigenRisico !== CURRENT_EIGEN_RISICO;
   const isPremieGewijzigd = Math.abs(nieuwePremie - CURRENT_MONTHLY_PRICE) > 0.001;
@@ -105,7 +101,7 @@ export default function MutatieBevestigingPage() {
       setAkkoordError(true);
       return;
     }
-    router.push("/");
+    router.push("/mutatie/gelukt");
   }
 
   return (
@@ -130,7 +126,7 @@ export default function MutatieBevestigingPage() {
               icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}
               type="one-section"
               sections={[{ id: "opstal", groups: receiptGroups }]}
-              summaryLabel="Je gaat betalen per maand"
+              summaryLabel={isPremieGewijzigd ? "Je gaat betalen per maand" : "Je betaalt per maand"}
               summaryAmount={formatEuro(nieuwePremie)}
               summaryInfo={isPremieGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
             />
@@ -140,7 +136,7 @@ export default function MutatieBevestigingPage() {
             <Receipt
               type="one-section"
               sections={[{ id: "opstal", groups: receiptGroups }]}
-              summaryLabel="Je gaat betalen per maand"
+              summaryLabel={isPremieGewijzigd ? "Je gaat betalen per maand" : "Je betaalt per maand"}
               summaryAmount={formatEuro(nieuwePremie)}
               summaryInfo={isPremieGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
               className="flex w-full flex-col items-start gap-4"
@@ -189,7 +185,7 @@ export default function MutatieBevestigingPage() {
           ]}
         />
 
-        <SummaryCard title="Ingangsdatum" rows={[{ label: "De opstalverzekering gaat in per", value: INGANGSDATUM }]} />
+        <SummaryCard title="Ingangsdatum" rows={[{ label: "De opstalverzekering gaat in per", value: formatDatum(ingangsdatum()) }]} />
 
         <SummaryCard
           title="Premie"
