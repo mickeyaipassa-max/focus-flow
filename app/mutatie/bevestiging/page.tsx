@@ -13,7 +13,7 @@ import { Receipt, type ReceiptGroup } from "@/components/Receipt";
 import { ReceiptBar } from "@/components/ReceiptBar";
 import { Dialog } from "@/components/Dialog";
 import { useMutatieFunnel } from "../funnel-context";
-import { PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_DEKKING, CURRENT_MONTHLY_PRICE, CURRENT_EIGEN_RISICO, dekkingTitel, berekenNieuwePremie, formatEuro, fromIsoDatum, formatDatum } from "../pricing";
+import { GLAS_PRICE, CURRENT_DEKKING, CURRENT_MONTHLY_PRICE, CURRENT_EIGEN_RISICO, dekkingTitel, berekenNieuwePremie, formatEuro, fromIsoDatum, formatDatum } from "../pricing";
 
 const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
 
@@ -89,7 +89,7 @@ export default function MutatieBevestigingPage() {
     {
       title: "Dekking",
       items: [
-        { label: dekkingTitel(dekking), amount: `€ ${PRICE_BY_DEKKING[dekking]}` },
+        { label: dekkingTitel(dekking), amount: formatEuro(berekenNieuwePremie(dekking, false, eigenRisico)) },
         { label: `Eigen risico € ${eigenRisico}` },
       ],
     },

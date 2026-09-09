@@ -16,7 +16,6 @@ import { InputDate } from "@/components/InputDate";
 import { useMutatieFunnel } from "../funnel-context";
 import {
   DEKKING_OPTIONS,
-  PRICE_BY_DEKKING,
   GLAS_PRICE,
   CURRENT_MONTHLY_PRICE,
   dekkingTitel,
@@ -134,7 +133,7 @@ export default function MutatieDekkingPage() {
     {
       title: "Dekking",
       items: [
-        { label: dekkingTitel(dekking), amount: `€ ${PRICE_BY_DEKKING[dekking]}` },
+        { label: dekkingTitel(dekking), amount: formatEuro(berekenNieuwePremie(dekking, false, eigenRisico)) },
         { label: `Eigen risico € ${eigenRisico}` },
       ],
     },
