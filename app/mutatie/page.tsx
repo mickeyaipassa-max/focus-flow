@@ -32,6 +32,10 @@ import { Tile } from "@/components/Tile";
  * - Het verborgen alternatieve blok "Frame 686" (ander adres, 3 knoppen, een
  *   reviews-widget) stond niet in de zichtbare schermstaat en is op verzoek
  *   niet meegebouwd.
+ * - "Basis dekking" toonde in Figma `€ 104,75 per maand`, terwijl de
+ *   "Premie"-kaart eronder voor dezelfde polis `€ 4,82` als daadwerkelijk te
+ *   betalen bedrag toont — een interne Figma-inconsistentie. Op verzoek
+ *   gelijkgetrokken aan het bedrag dat je per maand betaalt (`€ 4,82`).
  *
  * De 224px-desktoppadding uit Figma (1448px-canvas) komt overeen met een
  * 1000px-inhoudskolom — hier als `max-w-[1000px] mx-auto` met `px-4`-fallback
@@ -89,7 +93,7 @@ export default function KlantdetailUitlegPage() {
             cardActionEdit={false}
             rows={[
               { label: "Polisnummer", value: "7586645060" },
-              { label: "Basis dekking", value: "€ 104,75 per maand", editable: true, onEdit: () => router.push("/mutatie/dekking-wijzigen") },
+              { label: "Basis dekking", value: "€ 4,82 per maand", editable: true, onEdit: () => router.push("/mutatie/dekking-wijzigen") },
               { label: "Eigen risico", value: "€ 100", editable: true, onEdit: () => router.push("/mutatie/dekking-wijzigen") },
               { label: "De verzekering is voor", value: "Archimedeslaan 10, 3584 BA, Utrecht", editable: true },
             ]}
