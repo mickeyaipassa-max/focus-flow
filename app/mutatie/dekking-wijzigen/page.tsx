@@ -12,8 +12,26 @@ import { CheckboxCardControlLeftGroup } from "@/components/CheckboxCardControlLe
 import { Receipt, type ReceiptGroup } from "@/components/Receipt";
 import { ReceiptBar } from "@/components/ReceiptBar";
 import { Dialog } from "@/components/Dialog";
+import { InputDate } from "@/components/InputDate";
 import { useMutatieFunnel } from "../funnel-context";
-import { DEKKING_OPTIONS, PRICE_BY_DEKKING, GLAS_PRICE, CURRENT_MONTHLY_PRICE, dekkingTitel, berekenNieuwePremie, formatEuro, type DekkingKeuze } from "../pricing";
+import {
+  DEKKING_OPTIONS,
+  PRICE_BY_DEKKING,
+  GLAS_PRICE,
+  CURRENT_MONTHLY_PRICE,
+  dekkingTitel,
+  berekenNieuwePremie,
+  formatEuro,
+  toIsoDatum,
+  fromIsoDatum,
+  type DekkingKeuze,
+} from "../pricing";
+
+/** Vroegst mogelijke ingangsdatum: morgen — op verzoek moet de wijziging minimaal in de toekomst liggen, dus vandaag zelf telt niet meer mee. */
+function morgen(): Date {
+  const vandaag = new Date();
+  return new Date(vandaag.getFullYear(), vandaag.getMonth(), vandaag.getDate() + 1);
+}
 
 const MUTATIE_STEPS = ["Jouw dekking", "Bevestiging"];
 
@@ -73,7 +91,7 @@ const EIGEN_RISICO_OPTIES = [
 export default function MutatieDekkingPage() {
   const router = useRouter();
   const { state, setState } = useMutatieFunnel();
-  const { dekking, eigenRisico, aanvullendeDekkingen } = state;
+  const { dekking, eigenRisico, aanvullendeDekkingen, ingangsdatum } = state;
 
   const heeftGlas = aanvullendeDekkingen.includes("glas");
   const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas, eigenRisico), [dekking, heeftGlas, eigenRisico]);
@@ -122,6 +140,9 @@ export default function MutatieDekkingPage() {
   function setAanvullendeDekkingen(values: string[]) {
     setState({ ...state, aanvullendeDekkingen: values });
   }
+  function setIngangsdatum(value: Date | null) {
+    setState({ ...state, ingangsdatum: value ? toIsoDatum(value) : "" });
+  }
 
   return (
     <FunnelPageTemplate
@@ -169,7 +190,7 @@ export default function MutatieDekkingPage() {
         <FormNavigation
           previousStep
           previousLabel="Terug naar jouw account"
-          nextLabel="Naar jouw gegevens"
+          nextLabel="Naar bevestigen"
           onPrevious={() => router.push("/mutatie")}
           onNext={() => router.push("/mutatie/bevestiging")}
         />
@@ -205,6 +226,14 @@ export default function MutatieDekkingPage() {
           values={aanvullendeDekkingen}
           onChange={setAanvullendeDekkingen}
           onMoreInfoClick={() => {}}
+        />
+
+        <InputDate
+          labelText="Per wanneer wil je dat de wijziging ingaat?"
+          showPickerButton
+          minDate={morgen()}
+          value={ingangsdatum ? fromIsoDatum(ingangsdatum) : null}
+          onChange={setIngangsdatum}
         />
       </FunnelSection>
     </FunnelPageTemplate>
