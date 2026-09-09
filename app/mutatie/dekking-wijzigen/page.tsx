@@ -76,7 +76,7 @@ export default function MutatieDekkingPage() {
   const { dekking, eigenRisico, aanvullendeDekkingen } = state;
 
   const heeftGlas = aanvullendeDekkingen.includes("glas");
-  const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas), [dekking, heeftGlas]);
+  const nieuwePremie = useMemo(() => berekenNieuwePremie(dekking, heeftGlas, eigenRisico), [dekking, heeftGlas, eigenRisico]);
   const isGewijzigd = Math.abs(nieuwePremie - CURRENT_MONTHLY_PRICE) > 0.001;
   const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
 
@@ -137,7 +137,7 @@ export default function MutatieDekkingPage() {
               icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}
               type="one-section"
               sections={[{ id: "opstal", groups: receiptGroups }]}
-              summaryLabel="Je gaat betalen per maand"
+              summaryLabel={isGewijzigd ? "Je gaat betalen per maand" : "Je betaalt per maand"}
               summaryAmount={formatEuro(nieuwePremie)}
               summaryInfo={isGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
             />
@@ -147,7 +147,7 @@ export default function MutatieDekkingPage() {
             <Receipt
               type="one-section"
               sections={[{ id: "opstal", groups: receiptGroups }]}
-              summaryLabel="Je gaat betalen per maand"
+              summaryLabel={isGewijzigd ? "Je gaat betalen per maand" : "Je betaalt per maand"}
               summaryAmount={formatEuro(nieuwePremie)}
               summaryInfo={isGewijzigd ? `Dit was: ${formatEuro(CURRENT_MONTHLY_PRICE)} per maand` : undefined}
               className="flex w-full flex-col items-start gap-4"

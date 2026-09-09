@@ -5,6 +5,8 @@ import { Button } from "@/components/Button";
 import { Icon } from "@/components/Icon";
 import { CardDetails } from "@/components/CardDetails";
 import { Tile } from "@/components/Tile";
+import { useMutatieFunnel } from "./funnel-context";
+import { berekenNieuwePremie, formatEuro } from "./pricing";
 
 /**
  * "Klantdetail + uitleg" (Figma node 8233:24257, bestand "Mutatie funnels").
@@ -32,6 +34,19 @@ import { Tile } from "@/components/Tile";
  * - Het verborgen alternatieve blok "Frame 686" (ander adres, 3 knoppen, een
  *   reviews-widget) stond niet in de zichtbare schermstaat en is op verzoek
  *   niet meegebouwd.
+ * - "Basis dekking" toonde in Figma `€ 104,75 per maand`, terwijl de
+ *   "Premie"-kaart eronder voor dezelfde polis `€ 4,82` als daadwerkelijk te
+ *   betalen bedrag toont — een interne Figma-inconsistentie. Op verzoek
+ *   gelijkgetrokken aan het bedrag dat je per maand betaalt.
+ *
+ * "Basis dekking", "Eigen risico" en "Premie" zijn geen losse hardgecodeerde
+ * strings meer, maar afgeleid van de gedeelde `MutatieFunnelProvider`-state
+ * (`useMutatieFunnel`) via `berekenNieuwePremie` — op verzoek, zodat een
+ * doorlopen "Dekking wijzigen"-flow hier direct zichtbaar is zodra je op
+ * "Naar je account" terugkomt, i.p.v. altijd de oorspronkelijke polis te
+ * tonen. Zonder wijziging (of bij een nieuwe sessie) blijft dit gelijk aan
+ * de standaardstaat uit Figma, want `funnel-context.tsx`'s `DEFAULT_STATE`
+ * matcht de huidige polis (`CURRENT_DEKKING`/`"100"`).
  *
  * De 224px-desktoppadding uit Figma (1448px-canvas) komt overeen met een
  * 1000px-inhoudskolom — hier als `max-w-[1000px] mx-auto` met `px-4`-fallback
@@ -52,6 +67,9 @@ import { Tile } from "@/components/Tile";
  */
 export default function KlantdetailUitlegPage() {
   const router = useRouter();
+  const { state } = useMutatieFunnel();
+  const heeftGlas = state.aanvullendeDekkingen.includes("glas");
+  const premie = formatEuro(berekenNieuwePremie(state.dekking, heeftGlas, state.eigenRisico));
 
   return (
     <div className="flex w-full flex-col items-start gap-10 bg-[#fff8e3]">
@@ -89,8 +107,8 @@ export default function KlantdetailUitlegPage() {
             cardActionEdit={false}
             rows={[
               { label: "Polisnummer", value: "7586645060" },
-              { label: "Basis dekking", value: "€ 104,75 per maand", editable: true, onEdit: () => router.push("/mutatie/dekking-wijzigen") },
-              { label: "Eigen risico", value: "€ 100", editable: true, onEdit: () => router.push("/mutatie/dekking-wijzigen") },
+              { label: "Basis dekking", value: `${premie} per maand`, editable: true, onEdit: () => router.push("/mutatie/dekking-wijzigen") },
+              { label: "Eigen risico", value: `€ ${state.eigenRisico}`, editable: true, onEdit: () => router.push("/mutatie/dekking-wijzigen") },
               { label: "De verzekering is voor", value: "Archimedeslaan 10, 3584 BA, Utrecht", editable: true },
             ]}
           />
@@ -108,7 +126,7 @@ export default function KlantdetailUitlegPage() {
             title="Premie"
             cardActionEdit={false}
             rows={[
-              { label: "Premie (inclusief 21% assurantiebelasting)", value: "€ 4,82" },
+              { label: "Premie (inclusief 21% assurantiebelasting)", value: premie },
               { label: "Betaaltermijn", value: "Per maand" },
             ]}
           />
