@@ -61,10 +61,7 @@ export function RadioGroup({
 
   return (
     <fieldset
-      className={
-        className ??
-        ["flex flex-col items-start gap-2 border-0 p-0 m-0", horizontal ? "w-fit" : "w-[272px] max-w-full"].join(" ")
-      }
+      className={className ?? ["flex flex-col items-start gap-2 border-0 p-0 m-0", horizontal ? "w-fit" : "w-full"].join(" ")}
     >
       <legend className="mb-1 flex items-center gap-1 p-0 text-lg leading-[1.5]">
         <span className="font-bold text-black" style={{ fontFamily: "var(--font-avenir-bold)" }}>
@@ -77,12 +74,13 @@ export function RadioGroup({
         )}
       </legend>
       {description && (
-        <p className="mb-1 text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+        <p className="mb-1 w-full text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
           {description}
         </p>
       )}
 
-      <div className={horizontal ? "flex w-fit flex-wrap items-start gap-2" : "flex w-full flex-col items-start gap-2"}>
+      {/* Vaste 272px-breedte hier i.p.v. op het hele fieldset (die nu vol-breed is, zodat `description` niet meer geknepen wordt in dezelfde smalle kolom als deze losse verticale keuzelijst). */}
+      <div className={horizontal ? "flex w-fit flex-wrap items-start gap-2" : "flex w-[272px] max-w-full flex-col items-start gap-2"}>
         {options.map((option) => {
           const checked = option.value === value;
           const inputId = `${groupName}-${option.value}`;
