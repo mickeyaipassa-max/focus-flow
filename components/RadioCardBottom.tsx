@@ -1,7 +1,8 @@
 "use client";
 
-import { Fragment, useId } from "react";
+import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { Icon } from "./Icon";
+import { Spinner } from "./Spinner";
 
 export type RadioCardBottomFeature = { text: string; included: boolean };
 
@@ -13,6 +14,48 @@ export type RadioCardBottomOption = {
   /** Getoond als "€ {price} per maand" — geen placeholder-cijfers, dus een echte waarde vereist. */
   price: string;
 };
+
+/**
+ * Toont een `Spinner` i.p.v. de prijs, 1 seconde lang, telkens wanneer
+ * `price` verandert (na de eerste render) — zelfde "herberekenen"-patroon
+ * en dezelfde reden als `Receipt`'s eigen `summaryAmount`: een wijziging
+ * elders (hier: het gekozen eigen risico) heeft impact op dit bedrag.
+ * Losse subcomponent i.p.v. lokale state in de groep zelf, want elke kaart
+ * moet z'n eigen onafhankelijke spinner-venster hebben.
+ */
+function DekkingPrice({ price }: { price: string }) {
+  const [isRecalculating, setIsRecalculating] = useState(false);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setIsRecalculating(true);
+    const timeout = setTimeout(() => setIsRecalculating(false), 1000);
+    return () => clearTimeout(timeout);
+  }, [price]);
+
+  return (
+    <div className="flex w-full flex-col items-center border-t border-[#e5e5e5] pt-4 text-center">
+      {isRecalculating ? (
+        <span className="flex items-center justify-center py-1" aria-live="polite" aria-label="Prijs wordt herberekend">
+          <Spinner size="md" />
+        </span>
+      ) : (
+        <>
+          <p className="w-full text-2xl text-black leading-[1.3]" style={{ fontFamily: "var(--font-memphis-bold)" }}>
+            € {price}
+          </p>
+          <p className="w-full font-[350] text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+            per maand
+          </p>
+        </>
+      )}
+    </div>
+  );
+}
 
 type RadioCardBottomGroupProps = {
   labelText: string;
@@ -131,14 +174,7 @@ export function RadioCardBottomGroup({
                   ))}
                 </div>
 
-                <div className="flex w-full flex-col items-center border-t border-[#e5e5e5] pt-4 text-center">
-                  <p className="w-full text-2xl text-black leading-[1.3]" style={{ fontFamily: "var(--font-memphis-bold)" }}>
-                    € {option.price}
-                  </p>
-                  <p className="w-full font-[350] text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    per maand
-                  </p>
-                </div>
+                <DekkingPrice price={option.price} />
 
                 {/*
                   Losse, lokale knop i.p.v. het gedeelde `Button`-component:
