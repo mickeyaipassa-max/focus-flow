@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { CURRENT_DEKKING, ingangsdatum, toIsoDatum, type DekkingKeuze } from "./pricing";
+import { CURRENT_DEKKING, type DekkingKeuze } from "./pricing";
 
 /**
  * Gedeelde state tussen de mutatie-funnel-stappen ("Jouw dekking" →
@@ -17,7 +17,7 @@ export type MutatieFunnelState = {
   dekking: DekkingKeuze;
   eigenRisico: string;
   aanvullendeDekkingen: string[];
-  /** yyyy-mm-dd (zie `toIsoDatum`/`fromIsoDatum` in pricing.ts) — sessionStorage kent geen `Date`-type. */
+  /** yyyy-mm-dd (zie `toIsoDatum`/`fromIsoDatum` in pricing.ts) — sessionStorage kent geen `Date`-type. Leeg tot de klant zelf een datum kiest — op verzoek geen vooringevulde waarde. */
   ingangsdatum: string;
 };
 
@@ -25,7 +25,7 @@ const DEFAULT_STATE: MutatieFunnelState = {
   dekking: CURRENT_DEKKING,
   eigenRisico: "100",
   aanvullendeDekkingen: [],
-  ingangsdatum: toIsoDatum(ingangsdatum()),
+  ingangsdatum: "",
 };
 
 const STORAGE_KEY = "mutatie-dekking-funnel";

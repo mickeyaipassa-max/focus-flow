@@ -16,7 +16,6 @@ import { InputDate } from "@/components/InputDate";
 import { useMutatieFunnel } from "../funnel-context";
 import {
   DEKKING_OPTIONS,
-  PRICE_BY_DEKKING,
   GLAS_PRICE,
   CURRENT_MONTHLY_PRICE,
   dekkingTitel,
@@ -87,6 +86,15 @@ const EIGEN_RISICO_OPTIES = [
  *
  * "Meer informatie"-dialogen (Basis/Allrisk/Glas) zijn in Figma wel
  * aanwezig maar bewust niet meegebouwd — buiten scope.
+ *
+ * Ingangsdatum-veld: op verzoek leeg als standaardwaarde (geen
+ * vooringevulde datum meer) — dus "Naar bevestigen" valideert nu eerst of
+ * er een datum gekozen is, zelfde patroon als de bevestigingsstap z'n
+ * eigen "Ja, ik ga akkoord"-validatie. `InputDate`'s eigen root-breedte
+ * (`w-[333px]`, nodig voor de compacte homepage-showcase) is hier
+ * overschreven naar `w-full` via de `className`-prop — anders knijpt die
+ * vaste breedte het lange labelopschrift in een onnodig smalle kolom,
+ * zelfde soort bug als `RadioGroup`'s eerdere 272px-fix.
  */
 export default function MutatieDekkingPage() {
   const router = useRouter();
@@ -107,6 +115,7 @@ export default function MutatieDekkingPage() {
     [eigenRisico],
   );
   const [receiptDialogOpen, setReceiptDialogOpen] = useState(false);
+  const [ingangsdatumError, setIngangsdatumError] = useState(false);
 
   const [receiptBoxVisible, setReceiptBoxVisible] = useState(false);
   const receiptBoxRef = useRef<HTMLDivElement>(null);
@@ -124,7 +133,7 @@ export default function MutatieDekkingPage() {
     {
       title: "Dekking",
       items: [
-        { label: dekkingTitel(dekking), amount: `€ ${PRICE_BY_DEKKING[dekking]}` },
+        { label: dekkingTitel(dekking), amount: formatEuro(berekenNieuwePremie(dekking, false, eigenRisico)) },
         { label: `Eigen risico € ${eigenRisico}` },
       ],
     },
@@ -142,6 +151,14 @@ export default function MutatieDekkingPage() {
   }
   function setIngangsdatum(value: Date | null) {
     setState({ ...state, ingangsdatum: value ? toIsoDatum(value) : "" });
+    if (value) setIngangsdatumError(false);
+  }
+  function handleNext() {
+    if (!ingangsdatum) {
+      setIngangsdatumError(true);
+      return;
+    }
+    router.push("/mutatie/bevestiging");
   }
 
   return (
@@ -192,7 +209,7 @@ export default function MutatieDekkingPage() {
           previousLabel="Terug naar jouw account"
           nextLabel="Naar bevestigen"
           onPrevious={() => router.push("/mutatie")}
-          onNext={() => router.push("/mutatie/bevestiging")}
+          onNext={handleNext}
         />
       }
     >
@@ -229,11 +246,13 @@ export default function MutatieDekkingPage() {
         />
 
         <InputDate
+          className="relative isolate flex w-full flex-col items-start gap-2"
           labelText="Per wanneer wil je dat de wijziging ingaat?"
           showPickerButton
           minDate={morgen()}
           value={ingangsdatum ? fromIsoDatum(ingangsdatum) : null}
           onChange={setIngangsdatum}
+          error={ingangsdatumError ? "Kies een datum" : undefined}
         />
       </FunnelSection>
     </FunnelPageTemplate>
