@@ -172,7 +172,19 @@ export default function AutoNewPage() {
       <FunnelSection intro title="Jouw dekking" showRequiredFieldsNote />
 
       <FunnelSection title="Stel je autoverzekering samen">
-        <div className="min-[600px]:hidden w-full">
+        {/*
+          `-mx-6` heft hier specifiek de 24px `p-6`-padding van de
+          formulierkaart (FunnelPageTemplate.tsx) op: alleen déze sectie
+          moet edge-to-edge lopen zodat de buurkaarten van de carrousel
+          altijd een stukje in beeld blijven — de rest van de pagina (titel,
+          desktop-variant, aanvullende dekkingen) houdt gewoon de standaard
+          24px marge. Bewust geen `w-full` ernaast: dat legt de breedte vast
+          op 100% van de (al 24px kleinere) ouder, waardoor de negatieve
+          marge het element alleen verschuift i.p.v. verbreedt — zonder
+          expliciete breedte rekt een block-element vanzelf mee met de
+          negatieve marge.
+        */}
+        <div className="-mx-6 min-[600px]:hidden">
           <RadioCardBottomCarousel
             labelText="Kies je basisdekking"
             options={CAROUSEL_OPTIONS}
