@@ -178,13 +178,18 @@ export default function AutoNewPage() {
           moet edge-to-edge lopen zodat de buurkaarten van de carrousel
           altijd een stukje in beeld blijven — de rest van de pagina (titel,
           desktop-variant, aanvullende dekkingen) houdt gewoon de standaard
-          24px marge. Bewust geen `w-full` ernaast: dat legt de breedte vast
-          op 100% van de (al 24px kleinere) ouder, waardoor de negatieve
-          marge het element alleen verschuift i.p.v. verbreedt — zonder
-          expliciete breedte rekt een block-element vanzelf mee met de
-          negatieve marge.
+          24px marge. `w-[calc(100%+48px)]` i.p.v. gewoon `w-full` weglaten:
+          deze `<div>` zit als direct kind in `FunnelSection`'s
+          `items-start`-flex-kolom, dus zonder een expliciete breedte krimpt
+          hij (via fit-content-sizing onder `items-start`) terug naar zijn
+          intrinsieke inhoudsbreedte i.p.v. te blijven stretchen — gemeten:
+          993px (3 kaarten op hun volle `calc(100vw-72px)`-breedte naast
+          elkaar) i.p.v. de bedoelde 375px, waardoor de paginatie-stipjes
+          en een deel van de pagina buiten beeld vielen. `calc(100%+48px)`
+          (48 = 2x de 24px die de negatieve marge wegneemt) geeft wel een
+          concrete breedte, dus geen fit-content-gedrag.
         */}
-        <div className="-mx-6 min-[600px]:hidden">
+        <div className="-mx-6 w-[calc(100%+48px)] min-[600px]:hidden">
           <RadioCardBottomCarousel
             labelText="Kies je basisdekking"
             options={CAROUSEL_OPTIONS}
@@ -195,6 +200,12 @@ export default function AutoNewPage() {
             }}
             onMoreInfoClick={() => {}}
             error={dekkingError ? "Kies een dekking" : undefined}
+            /* Op verzoek dezelfde 8px tussen label en kaarten als bij
+               "Welke aanvullende dekkingen wil je?" verderop op deze pagina
+               (CheckboxCardControlLeftGroup's eigen gap-2) — via
+               `contentTopClassName` i.p.v. de fieldset-gap zelf (die werkt
+               niet tussen legend en de scroll-container, zie component). */
+            contentTopClassName="mt-2"
           />
         </div>
 
@@ -202,6 +213,7 @@ export default function AutoNewPage() {
           <RadioCardBottomGroup
             labelText="Kies je basisdekking"
             options={DEKKING_OPTIONS}
+            contentTopClassName="mt-2"
             value={dekking}
             onChange={(value) => {
               setDekking(value as DekkingKeuze);
