@@ -19,7 +19,6 @@ const DEKKING_OPTIONS: RadioCardBottomOption[] = [
     title: "WA",
     description: "",
     price: "68,76",
-    highlightLines: ["Meest gekozen", "door klanten met een vergelijkbare auto"],
     features: [
       { text: "Schade aan anderen", included: true },
       { text: "Schade door brand, storm en natuur", included: false },
@@ -105,13 +104,10 @@ const AANVULLENDE_DEKKINGEN = [
  * `CheckboxCardControlLeftGroup` (3 aanvullende dekkingen, zelfde patroon
  * als mutatie's "Glas"-checkbox).
  *
- * `RadioCardBottomOption` kreeg een nieuwe optionele `highlightLines`-prop
- * voor de gele "Meest gekozen"-badge — bevestigd via MCP dat dit op de
- * WA-kaart hoort: dat is de enige van de 3 "Highlight Tag"-instanties in
- * Figma met de volledige, letterlijke tekst ("Meest gekozen" + "door
- * klanten met een vergelijkbare auto"); de andere 2 tonen zelf een
- * afgekapte resp. een letterlijk onopgeloste placeholderversie — dus niet
- * meegenomen.
+ * `RadioCardBottomOption`/`RadioCardBottomCarousel` ondersteunen een
+ * optionele `highlightLines`-prop voor de gele "Meest gekozen"-badge (op
+ * de WA-kaart in Figma) — op verzoek hier niet gebruikt, dus geen enkele
+ * kaart toont die badge.
  *
  * Geen `description` onder de kaarttitels: die laag stond in Figma op
  * hidden, net als bij de eerdere carrousel-kaarten.
