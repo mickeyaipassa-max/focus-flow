@@ -11,6 +11,8 @@ export type CarouselCardOption = {
   features: CarouselCardFeature[];
   /** Getoond als "€ {price} per maand" — geen placeholder-cijfers, dus een echte waarde vereist. */
   price: string;
+  /** Zelfde "Highlight Tag"-badge als `RadioCardBottomOption`'s eigen `highlightLines` — hier overgenomen zodat de mobiele en desktop-weergave dezelfde inhoud tonen. */
+  highlightLines?: string[];
 };
 
 type RadioCardBottomCarouselProps = {
@@ -20,6 +22,8 @@ type RadioCardBottomCarouselProps = {
   value?: string;
   onChange?: (value: string) => void;
   onMoreInfoClick?: (value: string) => void;
+  /** Zelfde patroon als `RadioCardBottomGroup`'s eigen `error`-prop. */
+  error?: string;
   name?: string;
   className?: string;
 };
@@ -56,6 +60,11 @@ type RadioCardBottomCarouselProps = {
  * placeholdertekst, op verzoek gelijkgetrokken aan dat bestaande patroon.
  * Geen `description`-regel onder de titel: die laag stond in Figma zelf op
  * hidden voor elk van de 3 kaarten, dus hier niet verzonnen.
+ *
+ * `highlightLines` en `error` later toegevoegd (zelfde props/gedrag als
+ * `RadioCardBottomGroup`) toen deze carrousel als mobiele weergave naast
+ * die desktop-groep werd ingezet op `/autonew` — zodat beide weergaven
+ * exact dezelfde inhoud en validatie tonen.
  */
 export function RadioCardBottomCarousel({
   labelText,
@@ -64,6 +73,7 @@ export function RadioCardBottomCarousel({
   value,
   onChange,
   onMoreInfoClick,
+  error,
   name,
   className,
 }: RadioCardBottomCarouselProps) {
@@ -72,6 +82,7 @@ export function RadioCardBottomCarousel({
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLLabelElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const hasHighlight = options.some((option) => option.highlightLines);
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -114,7 +125,10 @@ export function RadioCardBottomCarousel({
 
       <div
         ref={scrollRef}
-        className="flex w-full min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto pl-6 pr-9 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className={[
+          "flex w-full min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto pl-6 pr-9 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          hasHighlight ? "mt-4" : "",
+        ].join(" ")}
       >
         {options.map((option, index) => {
           const checked = option.value === value;
@@ -127,11 +141,19 @@ export function RadioCardBottomCarousel({
               }}
               htmlFor={inputId}
               className={[
-                "flex w-[calc(100vw-72px)] shrink-0 cursor-pointer flex-col items-start rounded-[3px]",
+                "relative flex w-[calc(100vw-72px)] shrink-0 cursor-pointer flex-col items-start rounded-[3px]",
                 index === 0 ? "snap-start" : "snap-center",
                 checked ? "drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]" : "",
               ].join(" ")}
             >
+              {option.highlightLines && (
+                <span className="-translate-x-1/2 absolute top-[-15px] left-1/2 flex flex-col items-center rounded-full bg-[#eda50f] px-3 pt-[6px] pb-1 text-center font-bold text-black text-sm leading-[1.5] whitespace-nowrap" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+                  {option.highlightLines.map((line, lineIndex) => (
+                    <span key={lineIndex}>{line}</span>
+                  ))}
+                </span>
+              )}
+
               <input
                 id={inputId}
                 type="radio"
@@ -144,7 +166,8 @@ export function RadioCardBottomCarousel({
 
               <div
                 className={[
-                  "flex w-full flex-col items-center gap-4 rounded-t-[3px] border-t border-r border-l bg-white px-6 pt-6 pb-4",
+                  "flex w-full flex-col items-center gap-4 rounded-t-[3px] border-t border-r border-l bg-white px-6 pb-4",
+                  option.highlightLines ? "pt-10" : "pt-6",
                   checked ? "border-[#eda50f]" : "border-[#ccc]",
                 ].join(" ")}
               >
@@ -230,6 +253,17 @@ export function RadioCardBottomCarousel({
           />
         ))}
       </div>
+
+      {error && (
+        <div className="mx-6 flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
+          <span className="flex shrink-0 items-center pt-[3px]">
+            <Icon name="validation-error" size="sm" />
+          </span>
+          <span className="flex items-center pt-[2px] text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir)" }}>
+            {error}
+          </span>
+        </div>
+      )}
     </fieldset>
   );
 }

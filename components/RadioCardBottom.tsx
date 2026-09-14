@@ -167,7 +167,8 @@ export function RadioCardBottomGroup({
 
               <div
                 className={[
-                  "flex w-full flex-col items-center gap-4 rounded-t-[3px] border-t border-r border-l bg-white px-6 pt-6 pb-4",
+                  "flex w-full flex-col items-center gap-4 rounded-t-[3px] border-t border-r border-l bg-white px-6 pb-4",
+                  option.highlightLines ? "pt-10" : "pt-6",
                   checked ? "border-[#eda50f]" : "border-[#ccc]",
                 ].join(" ")}
               >
