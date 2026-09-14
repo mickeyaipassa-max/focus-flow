@@ -13,6 +13,15 @@ export type RadioCardBottomOption = {
   features: RadioCardBottomFeature[];
   /** Getoond als "€ {price} per maand" — geen placeholder-cijfers, dus een echte waarde vereist. */
   price: string;
+  /**
+   * Regels voor de gele "Highlight Tag"-badge boven de kaart (bevestigd op
+   * de Auto-funnel "Jouw dekking"-stap, node 2383:21799 — daar alleen op de
+   * WA-kaart, niet op de andere 2, die in Figma zelf een niet-afgemaakte
+   * ("Meest gekozen" zonder tweede regel) resp. letterlijk onopgeloste
+   * ("Highlight Tag"-placeholdertekst) badge tonen). Geen badge zonder deze
+   * prop — bewust geen default tekst, want dit is per-kaart content.
+   */
+  highlightLines?: string[];
 };
 
 /**
@@ -64,6 +73,8 @@ type RadioCardBottomGroupProps = {
   value?: string;
   onChange?: (value: string) => void;
   onMoreInfoClick?: (value: string) => void;
+  /** Zelfde foutmelding-patroon als `RadioGroup`'s eigen `error`-prop — nodig zodra een groep zonder standaardselectie start (bevestigd op de Auto-funnel "Jouw dekking"-stap, geen enkele kaart staat daar standaard aan). */
+  error?: string;
   name?: string;
   className?: string;
 };
@@ -96,11 +107,14 @@ export function RadioCardBottomGroup({
   value,
   onChange,
   onMoreInfoClick,
+  error,
   name,
   className,
 }: RadioCardBottomGroupProps) {
   const generatedName = useId();
   const groupName = name ?? generatedName;
+  /** Extra ruimte boven de kaartenrij zodra een "Highlight Tag"-badge (absoluut, -15px boven de kaart) anders over de legend zou vallen. */
+  const hasHighlight = options.some((option) => option.highlightLines);
 
   return (
     <fieldset className={className ?? "m-0 flex w-full flex-col items-start gap-4 border-0 p-0"}>
@@ -115,7 +129,12 @@ export function RadioCardBottomGroup({
         )}
       </legend>
 
-      <div className="flex w-full flex-col items-stretch gap-4 min-[600px]:flex-row">
+      <div
+        className={[
+          "flex w-full flex-col items-stretch gap-4 min-[600px]:flex-row",
+          hasHighlight ? "mt-4" : "",
+        ].join(" ")}
+      >
         {options.map((option) => {
           const checked = option.value === value;
           const inputId = `${groupName}-${option.value}`;
@@ -124,10 +143,18 @@ export function RadioCardBottomGroup({
               key={option.value}
               htmlFor={inputId}
               className={[
-                "flex min-w-px flex-1 cursor-pointer flex-col items-start rounded-[3px]",
+                "relative flex min-w-px flex-1 cursor-pointer flex-col items-start rounded-[3px]",
                 checked ? "drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]" : "",
               ].join(" ")}
             >
+              {option.highlightLines && (
+                <span className="-translate-x-1/2 absolute top-[-15px] left-1/2 flex flex-col items-center rounded-full bg-[#eda50f] px-3 pt-[6px] pb-1 text-center font-bold text-black text-sm leading-[1.5] whitespace-nowrap" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+                  {option.highlightLines.map((line, index) => (
+                    <span key={index}>{line}</span>
+                  ))}
+                </span>
+              )}
+
               <input
                 id={inputId}
                 type="radio"
@@ -220,6 +247,17 @@ export function RadioCardBottomGroup({
           );
         })}
       </div>
+
+      {error && (
+        <div className="flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
+          <span className="flex shrink-0 items-center pt-[3px]">
+            <Icon name="validation-error" size="sm" />
+          </span>
+          <span className="flex items-center pt-[2px] text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir)" }}>
+            {error}
+          </span>
+        </div>
+      )}
     </fieldset>
   );
 }
