@@ -26,6 +26,8 @@ type RadioCardBottomCarouselProps = {
   error?: string;
   name?: string;
   className?: string;
+  /** Zelfde patroon en reden als `RadioCardBottomGroup`'s eigen `contentTopClassName` — de fieldset's `gap` werkt niet tussen `<legend>` en de scroll-container. Genegeerd zodra `hasHighlight` al zijn eigen `mt-4` toepast. */
+  contentTopClassName?: string;
 };
 
 /**
@@ -76,6 +78,7 @@ export function RadioCardBottomCarousel({
   error,
   name,
   className,
+  contentTopClassName,
 }: RadioCardBottomCarouselProps) {
   const generatedName = useId();
   const groupName = name ?? generatedName;
@@ -127,7 +130,7 @@ export function RadioCardBottomCarousel({
         ref={scrollRef}
         className={[
           "flex w-full min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto pl-6 pr-9 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-          hasHighlight ? "mt-4" : "",
+          hasHighlight ? "mt-4" : (contentTopClassName ?? ""),
         ].join(" ")}
       >
         {options.map((option, index) => {
@@ -142,7 +145,22 @@ export function RadioCardBottomCarousel({
               htmlFor={inputId}
               className={[
                 "relative flex w-[calc(100vw-72px)] shrink-0 cursor-pointer flex-col items-start rounded-[3px]",
-                index === 0 ? "snap-start" : "snap-center",
+                /**
+                 * `scroll-ml-6` (scroll-margin-left: 24px) alléén op de
+                 * eerste kaart — i.p.v. `scroll-padding-left` op de hele
+                 * container: dat laatste maakte de snapport asymmetrisch en
+                 * schoof daardoor OOK de `snap-center`-kaarten 12px naar
+                 * rechts (36px/12px zicht op buren i.p.v. 24px/24px, want de
+                 * snapport-"center" verschuift mee met scroll-padding).
+                 * `scroll-margin` werkt alleen op het snap-gebied van déze
+                 * ene kaart, dus de overige kaarten centreren onaangetast op
+                 * het echte scherm-midden. Zonder deze marge snapt de browser
+                 * bij laden de scrollpositie naar 24 (= de `pl-6`) om de
+                 * kaart tegen de padding-rand te zetten, waardoor de
+                 * bedoelde 24px-marge visueel verdween (geverifieerd via
+                 * scrollLeft na een fresh load/resize).
+                 */
+                index === 0 ? "snap-start scroll-ml-6" : "snap-center",
                 checked ? "drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]" : "",
               ].join(" ")}
             >
@@ -249,7 +267,7 @@ export function RadioCardBottomCarousel({
           <span
             key={option.value}
             aria-hidden="true"
-            className={["h-3 rounded-full transition-all", index === activeIndex ? "w-8 bg-[#eda50f]" : "w-3 bg-[#ccc]"].join(" ")}
+            className={["h-3 rounded-full transition-all", index === activeIndex ? "w-8 bg-black" : "w-3 bg-[#ccc]"].join(" ")}
           />
         ))}
       </div>

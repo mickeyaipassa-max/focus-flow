@@ -77,6 +77,16 @@ type RadioCardBottomGroupProps = {
   error?: string;
   name?: string;
   className?: string;
+  /**
+   * Extra marge boven de kaartenrij, los van de fieldset's eigen `gap`: die
+   * gap werkt niet tussen `<legend>` en de eerstvolgende sibling (bekende
+   * browserquirk — legend doet niet mee aan de normale flex-gap-berekening,
+   * geverifieerd via `getBoundingClientRect()` op de Auto-funnel "Jouw
+   * dekking"-stap: legend-bottom en kaartenrij-top vielen exact samen
+   * ondanks `gap-4`). Genegeerd zodra `hasHighlight` al zijn eigen `mt-4`
+   * toepast (badge-clearance gaat voor).
+   */
+  contentTopClassName?: string;
 };
 
 /**
@@ -110,6 +120,7 @@ export function RadioCardBottomGroup({
   error,
   name,
   className,
+  contentTopClassName,
 }: RadioCardBottomGroupProps) {
   const generatedName = useId();
   const groupName = name ?? generatedName;
@@ -132,7 +143,7 @@ export function RadioCardBottomGroup({
       <div
         className={[
           "flex w-full flex-col items-stretch gap-4 min-[600px]:flex-row",
-          hasHighlight ? "mt-4" : "",
+          hasHighlight ? "mt-4" : (contentTopClassName ?? ""),
         ].join(" ")}
       >
         {options.map((option) => {
