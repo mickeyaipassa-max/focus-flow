@@ -6,6 +6,7 @@ import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
 import { FormNavigation } from "@/components/FormNavigation";
 import { RadioCardBottomGroup, type RadioCardBottomOption } from "@/components/RadioCardBottom";
+import { RadioCardBottomCarousel, type CarouselCardOption } from "@/components/RadioCardBottomCarousel";
 import { CheckboxCardControlLeftGroup } from "@/components/CheckboxCardControlLeft";
 
 const AUTO_STEPS = ["Jouw situatie", "Jouw dekking", "Jouw gegevens", "Laatste vragen", "Samenvatting"];
@@ -18,7 +19,6 @@ const DEKKING_OPTIONS: RadioCardBottomOption[] = [
     title: "WA",
     description: "",
     price: "68,76",
-    highlightLines: ["Meest gekozen", "door klanten met een vergelijkbare auto"],
     features: [
       { text: "Schade aan anderen", included: true },
       { text: "Schade door brand, storm en natuur", included: false },
@@ -51,6 +51,15 @@ const DEKKING_OPTIONS: RadioCardBottomOption[] = [
     ],
   },
 ];
+
+/** Zelfde inhoud als `DEKKING_OPTIONS`, alleen zonder het (hier toch al lege) `description`-veld dat de carrousel-variant niet kent. */
+const CAROUSEL_OPTIONS: CarouselCardOption[] = DEKKING_OPTIONS.map(({ value, title, price, features, highlightLines }) => ({
+  value,
+  title,
+  price,
+  features,
+  highlightLines,
+}));
 
 const AANVULLENDE_DEKKINGEN = [
   {
@@ -95,13 +104,10 @@ const AANVULLENDE_DEKKINGEN = [
  * `CheckboxCardControlLeftGroup` (3 aanvullende dekkingen, zelfde patroon
  * als mutatie's "Glas"-checkbox).
  *
- * `RadioCardBottomOption` kreeg een nieuwe optionele `highlightLines`-prop
- * voor de gele "Meest gekozen"-badge — bevestigd via MCP dat dit op de
- * WA-kaart hoort: dat is de enige van de 3 "Highlight Tag"-instanties in
- * Figma met de volledige, letterlijke tekst ("Meest gekozen" + "door
- * klanten met een vergelijkbare auto"); de andere 2 tonen zelf een
- * afgekapte resp. een letterlijk onopgeloste placeholderversie — dus niet
- * meegenomen.
+ * `RadioCardBottomOption`/`RadioCardBottomCarousel` ondersteunen een
+ * optionele `highlightLines`-prop voor de gele "Meest gekozen"-badge (op
+ * de WA-kaart in Figma) — op verzoek hier niet gebruikt, dus geen enkele
+ * kaart toont die badge.
  *
  * Geen `description` onder de kaarttitels: die laag stond in Figma op
  * hidden, net als bij de eerdere carrousel-kaarten.
@@ -121,6 +127,17 @@ const AANVULLENDE_DEKKINGEN = [
  * Form Navigation-knoptekst ("Terug naar jouw situatie" / "Naar jouw
  * gegevens") was in Figma zelf niet ingevuld (letterlijk "Button") — hier
  * gekozen naar analogie van stap 1's eigen "Naar jouw dekking"-conventie.
+ *
+ * Op verzoek toont de dekkingkeuze nu twee volledige, los gerenderde
+ * varianten naast elkaar in de DOM, geschakeld via responsive classes
+ * i.p.v. JS-detectie (zelfde precedent als `StepIndicator`'s eigen
+ * mobiel/desktop-instances in `FunnelPageTemplate`): onder 600px de
+ * `RadioCardBottomCarousel` uit de `/horizontaalgedrag`-demo, vanaf 600px
+ * (`RadioCardBottomGroup`'s eigen bestaande `min-[600px]:flex-row`-omslag)
+ * de gewone naast-elkaar-groep. Beide delen dezelfde `dekking`/`error`-state,
+ * dus een selectie blijft behouden als het scherm van grootte verandert.
+ * De rest van de pagina (kop, stappenbalk, aanvullende dekkingen,
+ * navigatie) is ongewijzigd.
  */
 export default function AutoNewPage() {
   const router = useRouter();
@@ -155,17 +172,33 @@ export default function AutoNewPage() {
       <FunnelSection intro title="Jouw dekking" showRequiredFieldsNote />
 
       <FunnelSection title="Stel je autoverzekering samen">
-        <RadioCardBottomGroup
-          labelText="Kies je basisdekking"
-          options={DEKKING_OPTIONS}
-          value={dekking}
-          onChange={(value) => {
-            setDekking(value as DekkingKeuze);
-            setDekkingError(false);
-          }}
-          onMoreInfoClick={() => {}}
-          error={dekkingError ? "Kies een dekking" : undefined}
-        />
+        <div className="min-[600px]:hidden w-full">
+          <RadioCardBottomCarousel
+            labelText="Kies je basisdekking"
+            options={CAROUSEL_OPTIONS}
+            value={dekking}
+            onChange={(value) => {
+              setDekking(value as DekkingKeuze);
+              setDekkingError(false);
+            }}
+            onMoreInfoClick={() => {}}
+            error={dekkingError ? "Kies een dekking" : undefined}
+          />
+        </div>
+
+        <div className="hidden min-[600px]:block w-full">
+          <RadioCardBottomGroup
+            labelText="Kies je basisdekking"
+            options={DEKKING_OPTIONS}
+            value={dekking}
+            onChange={(value) => {
+              setDekking(value as DekkingKeuze);
+              setDekkingError(false);
+            }}
+            onMoreInfoClick={() => {}}
+            error={dekkingError ? "Kies een dekking" : undefined}
+          />
+        </div>
 
         <CheckboxCardControlLeftGroup
           labelText="Welke aanvullende dekkingen wil je?"
