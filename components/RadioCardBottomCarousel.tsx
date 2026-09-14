@@ -1,0 +1,235 @@
+"use client";
+
+import { Fragment, useEffect, useId, useRef, useState } from "react";
+import { Icon } from "./Icon";
+
+export type CarouselCardFeature = { text: string; included: boolean };
+
+export type CarouselCardOption = {
+  value: string;
+  title: string;
+  features: CarouselCardFeature[];
+  /** Getoond als "€ {price} per maand" — geen placeholder-cijfers, dus een echte waarde vereist. */
+  price: string;
+};
+
+type RadioCardBottomCarouselProps = {
+  labelText: string;
+  required?: boolean;
+  options: CarouselCardOption[];
+  value?: string;
+  onChange?: (value: string) => void;
+  onMoreInfoClick?: (value: string) => void;
+  name?: string;
+  className?: string;
+};
+
+/**
+ * Puur mobiele, horizontaal swipebare variant van `RadioCardBottomGroup` —
+ * gebaseerd op Figma's "asr kaart"-scherm (node 2383:6764, bestand
+ * "Untitled"/q7IRrH1ahDr1P5KSWCLlBA), de nog niet gebouwde "Jouw dekking"-
+ * stap van de Auto-funnel (WA/Casco-kaarten). Op verzoek een apart, nieuw
+ * component i.p.v. een responsive uitbreiding van `RadioCardBottomGroup` —
+ * dat component blijft de bestaande gestapelde/naast-elkaar layout houden.
+ *
+ * Maatvoering 1-op-1 uit Figma's eigen "Maatvoering"-toelichting op het
+ * canvas (geen los component, puur documentatie ernaast): kaartbreedte
+ * `calc(100vw - 72px)`, 12px tussen kaarten. De eerste kaart staat 24px
+ * vanaf de linkerrand (`snap-start`, laat 36px van de volgende kaart zien);
+ * elke kaart daarna — inclusief de laatste — centreert zich (`snap-center`,
+ * 24px van beide buurkaarten zichtbaar). Bereikt door alleen de EERSTE
+ * kaart op `snap-start` te zetten en de rest op `snap-center`, met 24px
+ * linker- en 36px rechter-padding op de scroll-container (36px = de
+ * "slack" die de laatste kaart nodig heeft om ook echt te centreren:
+ * (schermbreedte 375 − kaartbreedte 303) / 2).
+ *
+ * Paginatie-stipjes onderaan: kleuren en vorm 1-op-1 uit Figma's eigen SVG
+ * (actief = pil 32×12px `#eda50f`, inactief = rondje 12px `#ccc`) — hier
+ * dynamisch opgebouwd i.p.v. 3 losse vaste SVG's per stand, want het aantal
+ * kaarten kan variëren. Actieve kaart wordt bijgehouden via een
+ * scroll-listener die per kaart het dichtstbijzijnde middelpunt bepaalt
+ * (geen aparte state-prop nodig — puur visuele voortgangsindicator).
+ *
+ * "Meer informatie"-knoptekst en kaart-opbouw (radio onderaan, prijs,
+ * check/cross-featurelijst) letterlijk hergebruikt van `RadioCardBottom`'s
+ * al bevestigde stijl — Figma toonde hier zelf een niet-ingevulde "Button"-
+ * placeholdertekst, op verzoek gelijkgetrokken aan dat bestaande patroon.
+ * Geen `description`-regel onder de titel: die laag stond in Figma zelf op
+ * hidden voor elk van de 3 kaarten, dus hier niet verzonnen.
+ */
+export function RadioCardBottomCarousel({
+  labelText,
+  required = true,
+  options,
+  value,
+  onChange,
+  onMoreInfoClick,
+  name,
+  className,
+}: RadioCardBottomCarouselProps) {
+  const generatedName = useId();
+  const groupName = name ?? generatedName;
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLLabelElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    function handleScroll() {
+      const el = scrollRef.current;
+      if (!el) return;
+      const viewportCenter = el.scrollLeft + el.clientWidth / 2;
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      cardRefs.current.forEach((card, index) => {
+        if (!card) return;
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const distance = Math.abs(cardCenter - viewportCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+      setActiveIndex(closestIndex);
+    }
+
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <fieldset className={className ?? "m-0 flex w-full min-w-0 flex-col items-start gap-4 border-0 p-0"}>
+      <legend className="flex items-center gap-1 p-0 px-6 text-lg leading-[1.5]">
+        <span className="font-bold text-black" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+          {labelText}
+        </span>
+        {required && (
+          <span className="text-[#ce0a1e]" style={{ fontFamily: "var(--font-avenir)" }}>
+            *
+          </span>
+        )}
+      </legend>
+
+      <div
+        ref={scrollRef}
+        className="flex w-full min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto pl-6 pr-9 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {options.map((option, index) => {
+          const checked = option.value === value;
+          const inputId = `${groupName}-${option.value}`;
+          return (
+            <label
+              key={option.value}
+              ref={(el) => {
+                cardRefs.current[index] = el;
+              }}
+              htmlFor={inputId}
+              className={[
+                "flex w-[calc(100vw-72px)] shrink-0 cursor-pointer flex-col items-start rounded-[3px]",
+                index === 0 ? "snap-start" : "snap-center",
+                checked ? "drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]" : "",
+              ].join(" ")}
+            >
+              <input
+                id={inputId}
+                type="radio"
+                name={groupName}
+                value={option.value}
+                checked={checked}
+                onChange={() => onChange?.(option.value)}
+                className="sr-only"
+              />
+
+              <div
+                className={[
+                  "flex w-full flex-col items-center gap-4 rounded-t-[3px] border-t border-r border-l bg-white px-6 pt-6 pb-4",
+                  checked ? "border-[#eda50f]" : "border-[#ccc]",
+                ].join(" ")}
+              >
+                <p className="w-full text-center font-bold text-black text-xl leading-[1.4]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+                  {option.title}
+                </p>
+
+                <div className="flex w-full flex-col items-start gap-2">
+                  {option.features.map((feature, featureIndex) => (
+                    <Fragment key={featureIndex}>
+                      <div className="flex w-full items-start gap-2">
+                        <span
+                          className={[
+                            "flex shrink-0 items-center justify-center rounded-full p-1",
+                            feature.included ? "bg-[#eef4e3]" : "bg-[#f6f6f7]",
+                          ].join(" ")}
+                        >
+                          <Icon name={feature.included ? "list-check" : "list-cross"} size="sm" />
+                        </span>
+                        <p className="min-w-px flex-1 pt-px text-left text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                          {feature.text}
+                        </p>
+                      </div>
+                      {featureIndex < option.features.length - 1 && <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />}
+                    </Fragment>
+                  ))}
+                </div>
+
+                <div className="flex w-full flex-col items-center border-t border-[#e5e5e5] pt-4 text-center">
+                  <p className="w-full text-2xl text-black leading-[1.3]" style={{ fontFamily: "var(--font-memphis-bold)" }}>
+                    € {option.price}
+                  </p>
+                  <p className="w-full font-[350] text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                    per maand
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onMoreInfoClick?.(option.value);
+                  }}
+                  className="flex w-full items-center justify-center gap-2 rounded-[3px]"
+                >
+                  <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+                    Meer informatie
+                  </span>
+                </button>
+              </div>
+
+              <div
+                className={[
+                  "flex w-full items-center justify-center rounded-b-[3px] border px-6 py-2",
+                  checked ? "border-[#eda50f] bg-[#fff8e3]" : "border-[#ccc] bg-[#f6f6f7]",
+                ].join(" ")}
+              >
+                <span className="relative inline-flex size-5 shrink-0">
+                  <span
+                    aria-hidden="true"
+                    className={[
+                      "pointer-events-none absolute inset-0 rounded-full border bg-white",
+                      checked ? "border-[6px] border-black" : "border-[#565656]",
+                    ].join(" ")}
+                  />
+                </span>
+              </div>
+            </label>
+          );
+        })}
+      </div>
+
+      <div className="flex w-full items-center justify-center gap-2">
+        <span className="sr-only" aria-live="polite">
+          Kaart {activeIndex + 1} van {options.length}
+        </span>
+        {options.map((option, index) => (
+          <span
+            key={option.value}
+            aria-hidden="true"
+            className={["h-3 rounded-full transition-all", index === activeIndex ? "w-8 bg-[#eda50f]" : "w-3 bg-[#ccc]"].join(" ")}
+          />
+        ))}
+      </div>
+    </fieldset>
+  );
+}
