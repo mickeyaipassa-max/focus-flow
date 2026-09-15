@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, useEffect, useId, useRef, useState } from "react";
+import { Fragment, forwardRef, useEffect, useId, useImperativeHandle, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { Icon } from "./Icon";
 
 export type CarouselCardFeature = { text: string; included: boolean };
@@ -28,6 +29,15 @@ type RadioCardBottomCarouselProps = {
   className?: string;
   /** Zelfde patroon en reden als `RadioCardBottomGroup`'s eigen `contentTopClassName` — de fieldset's `gap` werkt niet tussen `<legend>` en de scroll-container. Genegeerd zodra `hasHighlight` al zijn eigen `mt-4` toepast. */
   contentTopClassName?: string;
+  /** Meldt de actief bekeken kaart (scroll-gebaseerd, zelfde bepaling als de paginatie-stipjes) — nodig zodat `SegmentedNavPill` erboven kan meebewegen. */
+  onActiveIndexChange?: (index: number) => void;
+  /** Slot tussen de legend en de kaartenrij, bv. voor `SegmentedNavPill`. Los van `contentTopClassName` (die blijft de marge boven de kaartenrij zelf regelen). */
+  topSlot?: ReactNode;
+};
+
+export type RadioCardBottomCarouselHandle = {
+  /** Scrollt naar de opgegeven kaart — zelfde `scrollIntoView`-techniek als de interne actieve-kaart-tracking, zodat `SegmentedNavPill` de carrousel kan aansturen. */
+  scrollToIndex: (index: number) => void;
 };
 
 /**
@@ -68,20 +78,26 @@ type RadioCardBottomCarouselProps = {
  * die desktop-groep werd ingezet op `/autonew` — zodat beide weergaven
  * exact dezelfde inhoud en validatie tonen.
  */
-export function RadioCardBottomCarousel({
-  labelText,
-  required = true,
-  options,
-  value,
-  onChange,
-  onMoreInfoClick,
-  error,
-  name,
-  className,
-  contentTopClassName,
-}: RadioCardBottomCarouselProps) {
+export const RadioCardBottomCarousel = forwardRef<RadioCardBottomCarouselHandle, RadioCardBottomCarouselProps>(function RadioCardBottomCarousel(
+  {
+    labelText,
+    required = true,
+    options,
+    value,
+    onChange,
+    onMoreInfoClick,
+    error,
+    name,
+    className,
+    contentTopClassName,
+    onActiveIndexChange,
+    topSlot,
+  },
+  ref,
+) {
   const generatedName = useId();
   const groupName = name ?? generatedName;
+  const errorId = `${groupName}-error`;
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLLabelElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -113,24 +129,50 @@ export function RadioCardBottomCarousel({
     return () => container.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    onActiveIndexChange?.(activeIndex);
+  }, [activeIndex, onActiveIndexChange]);
+
+  useImperativeHandle(ref, () => ({
+    scrollToIndex(index) {
+      cardRefs.current[index]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    },
+  }));
+
   return (
-    <fieldset className={className ?? "m-0 flex w-full min-w-0 flex-col items-start gap-4 border-0 p-0"}>
+    <fieldset
+      className={className ?? "m-0 flex w-full min-w-0 flex-col items-start gap-4 border-0 p-0"}
+      aria-describedby={error ? errorId : undefined}
+    >
       <legend className="flex items-center gap-1 p-0 px-6 text-lg leading-[1.5]">
         <span className="font-bold text-black" style={{ fontFamily: "var(--font-avenir-bold)" }}>
           {labelText}
         </span>
         {required && (
-          <span className="text-[#ce0a1e]" style={{ fontFamily: "var(--font-avenir)" }}>
+          <span aria-hidden="true" className="text-[#ce0a1e]" style={{ fontFamily: "var(--font-avenir)" }}>
             *
           </span>
         )}
       </legend>
 
+      {/* mt-4 (16px) i.p.v. de fieldset-gap: dezelfde legend-naar-sibling-quirk als bij `contentTopClassName` hieronder — de fieldset's eigen `gap` werkt niet na een `<legend>`. */}
+      {topSlot && <div className="mt-4 w-full px-6">{topSlot}</div>}
+
       <div
         ref={scrollRef}
         className={[
           "flex w-full min-w-0 snap-x snap-mandatory gap-3 overflow-x-auto pl-6 pr-9 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-          hasHighlight ? "mt-4" : (contentTopClassName ?? ""),
+          /**
+           * `contentTopClassName` compenseert normaliter de legend-naar-
+           * sibling-quirk (fieldset's `gap` werkt niet ná een `<legend>`).
+           * Staat er een `topSlot` tussen, dan is de kaartenrij géén
+           * legend-buur meer maar een gewone sibling van `topSlot` — dáár
+           * werkt de fieldset's eigen `gap-4` wel gewoon, dus zou
+           * `contentTopClassName` er als EXTRA marge bovenop komen (16px
+           * gap-4 + 16px mt-4 = 32px i.p.v. de bedoelde 16px, zo gevonden).
+           * Vandaar hier leeg zodra `topSlot` bestaat.
+           */
+          hasHighlight ? "mt-4" : topSlot ? "" : (contentTopClassName ?? ""),
         ].join(" ")}
       >
         {options.map((option, index) => {
@@ -145,6 +187,7 @@ export function RadioCardBottomCarousel({
               htmlFor={inputId}
               className={[
                 "relative flex w-[calc(100vw-72px)] shrink-0 cursor-pointer flex-col items-start rounded-[3px]",
+                "has-[input:focus-visible]:outline has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-black",
                 /**
                  * `scroll-ml-6` (scroll-margin-left: 24px) alléén op de
                  * eerste kaart — i.p.v. `scroll-padding-left` op de hele
@@ -179,6 +222,7 @@ export function RadioCardBottomCarousel({
                 value={option.value}
                 checked={checked}
                 onChange={() => onChange?.(option.value)}
+                required={required}
                 className="sr-only"
               />
 
@@ -273,7 +317,7 @@ export function RadioCardBottomCarousel({
       </div>
 
       {error && (
-        <div className="mx-6 flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
+        <div id={errorId} role="alert" className="mx-6 flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
           <span className="flex shrink-0 items-center pt-[3px]">
             <Icon name="validation-error" size="sm" />
           </span>
@@ -284,4 +328,4 @@ export function RadioCardBottomCarousel({
       )}
     </fieldset>
   );
-}
+});
