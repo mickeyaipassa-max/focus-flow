@@ -3,6 +3,7 @@
 import { useId, type ReactNode } from "react";
 import { Icon } from "./Icon";
 import { CheckboxVisual } from "./Checkbox";
+import { Tag } from "./Tag";
 
 type CheckboxCardControlLeftProps = {
   title: string;
@@ -30,6 +31,16 @@ type CheckboxCardControlLeftProps = {
    * ook (nog) niet aangevinkt zijn.
    */
   disabled?: boolean;
+  /**
+   * Toont een groene "Inbegrepen"-pil i.p.v. checkbox+prijs, en het hele
+   * kaartje wordt dan niet-interactief (geen `<label>`/checkbox) — bevestigd
+   * op de Reisverzekering-funnel "Jouw dekking"-stap bij Optimaal: "Bagage"
+   * en "Geld" horen daar al standaard bij de gekozen basisdekking, dus niet
+   * meer los aan te vinken. Overschrijft `checked`/`price`/`actionSlot`.
+   */
+  included?: boolean;
+  /** Verbergt "per maand" onder de prijs — zelfde reden/precedent als `RadioCardBottomOption.showPricePeriod`. Default `true`. */
+  showPricePeriod?: boolean;
   name?: string;
   value?: string;
   id?: string;
@@ -58,6 +69,8 @@ export function CheckboxCardControlLeft({
   onInfoClick,
   compact = false,
   disabled = false,
+  included = false,
+  showPricePeriod = true,
   name,
   value,
   id,
@@ -81,21 +94,29 @@ export function CheckboxCardControlLeft({
           </p>
         )}
       </div>
-      {(actionSlot || price) && (
+      {(actionSlot || price || included) && (
         <div className={["flex shrink-0 items-center justify-end gap-2", description ? "items-start" : "h-[49px] items-center"].join(" ")}>
-          {actionSlot}
-          {price && (
-            <div className="flex shrink-0 flex-col items-end">
-              <p
-                className="mb-[-1px] w-full text-right font-bold text-black text-xl leading-[1.4]"
-                style={{ fontFamily: "var(--font-memphis-bold)" }}
-              >
-                + € {price}
-              </p>
-              <p className="w-full text-right font-[350] text-[#565656] text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                per maand
-              </p>
-            </div>
+          {included ? (
+            <Tag text="Inbegrepen" color="green" />
+          ) : (
+            <>
+              {actionSlot}
+              {price && (
+                <div className="flex shrink-0 flex-col items-end">
+                  <p
+                    className="mb-[-1px] w-full text-right font-bold text-black text-xl leading-[1.4]"
+                    style={{ fontFamily: "var(--font-memphis-bold)" }}
+                  >
+                    + € {price}
+                  </p>
+                  {showPricePeriod && (
+                    <p className="w-full text-right font-[350] text-[#565656] text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                      per maand
+                    </p>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -122,6 +143,15 @@ export function CheckboxCardControlLeft({
       )}
     </div>
   );
+
+  if (included) {
+    // Geen `<label>`/checkbox: een al-inbegrepen dekking is niet aan/uit te zetten, dus ook geen formuliersemantiek nodig.
+    return (
+      <div className={className ?? "flex w-full items-start overflow-hidden rounded-[3px] border border-[#ccc]"}>
+        {content}
+      </div>
+    );
+  }
 
   return (
     <label
@@ -192,6 +222,10 @@ export type CheckboxCardOption = {
    * tussen opties is pagina-specifieke logica, geen generieke componentregel).
    */
   disabledMessage?: string;
+  /** Zelfde patroon als `CheckboxCardControlLeft`'s eigen `included` — toont de "Inbegrepen"-pil i.p.v. checkbox+prijs voor deze optie. */
+  included?: boolean;
+  /** Zelfde patroon als `CheckboxCardControlLeft`'s eigen `showPricePeriod`. Default `true`. */
+  showPricePeriod?: boolean;
 };
 
 type CheckboxCardControlLeftGroupProps = {
@@ -256,6 +290,8 @@ export function CheckboxCardControlLeftGroup({
             checked={values.includes(option.value)}
             onChange={(checked) => toggle(option.value, checked)}
             disabled={Boolean(option.disabledMessage)}
+            included={option.included}
+            showPricePeriod={option.showPricePeriod ?? true}
             actionSlot={
               option.disabledMessage && (
                 // Zelfde kleurtokens als Alert's type="info" (bg-[#d7e9f5]/border-[#0064a8]/icon="info")

@@ -31,6 +31,13 @@ export type RadioCardBottomOption = {
    */
   priceFrom?: boolean;
   /**
+   * Verbergt "per maand" onder de prijs (bevestigd op dezelfde
+   * Reisverzekering-stap: die toont alleen "vanaf € X,XX", zonder "per
+   * maand" erna — anders dan de mutatie-funnel-kaarten, die dat wel tonen).
+   * Optioneel, default `true` (bestaand gedrag ongewijzigd).
+   */
+  showPricePeriod?: boolean;
+  /**
    * Regels voor de gele "Highlight Tag"-badge boven de kaart (bevestigd op
    * de Auto-funnel "Jouw dekking"-stap, node 2383:21799 — daar alleen op de
    * WA-kaart, niet op de andere 2, die in Figma zelf een niet-afgemaakte
@@ -49,7 +56,7 @@ export type RadioCardBottomOption = {
  * Losse subcomponent i.p.v. lokale state in de groep zelf, want elke kaart
  * moet z'n eigen onafhankelijke spinner-venster hebben.
  */
-function DekkingPrice({ price, priceFrom }: { price: string; priceFrom?: boolean }) {
+function DekkingPrice({ price, priceFrom, showPeriod = true }: { price: string; priceFrom?: boolean; showPeriod?: boolean }) {
   const [isRecalculating, setIsRecalculating] = useState(false);
   const isFirstRender = useRef(true);
 
@@ -79,9 +86,11 @@ function DekkingPrice({ price, priceFrom }: { price: string; priceFrom?: boolean
           <p className="w-full text-2xl text-black leading-[1.3]" style={{ fontFamily: "var(--font-memphis-bold)" }}>
             € {price}
           </p>
-          <p className="w-full font-[350] text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-            per maand
-          </p>
+          {showPeriod && (
+            <p className="w-full font-[350] text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              per maand
+            </p>
+          )}
         </>
       )}
     </div>
@@ -221,38 +230,57 @@ export function RadioCardBottomGroup({
                 </div>
 
                 <div className="flex w-full flex-col items-start gap-2">
-                  {option.features.map((feature, index) => (
-                    <Fragment key={index}>
-                      <div className="flex w-full items-start gap-2">
-                        <span
-                          className={[
-                            "flex shrink-0 items-center justify-center rounded-full p-1",
-                            feature.included ? "bg-[#eef4e3]" : "bg-[#f6f6f7]",
-                          ].join(" ")}
-                        >
-                          <Icon name={feature.included ? "list-check" : "list-cross"} size="sm" />
-                        </span>
-                        <div className="flex min-w-px flex-1 flex-col items-start pt-px text-left">
-                          <p className="w-full text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                            {feature.text}
-                          </p>
-                          {feature.details?.map((detail, detailIndex) => (
+                  {(() => {
+                    /**
+                     * Bevestigd op de Reisverzekering-stap: zodra een kaart
+                     * feature-items met `details` heeft, staan ALLE
+                     * feature-regels (óók zonder eigen details, óók de
+                     * enige-regel-items) in dezelfde vette, zwarte stijl —
+                     * geen apart lichter/kleiner uiterlijk voor detailregels.
+                     * De bestaande mutatie-funnel-kaarten geven nooit
+                     * `details` mee, dus die blijven ongewijzigd in hun
+                     * oorspronkelijke (niet-vette) stijl.
+                     */
+                    const hasFeatureDetails = option.features.some((feature) => feature.details);
+                    return option.features.map((feature, index) => (
+                      <Fragment key={index}>
+                        <div className="flex w-full items-start gap-2">
+                          <span
+                            className={[
+                              "flex shrink-0 items-center justify-center rounded-full p-1",
+                              feature.included ? "bg-[#eef4e3]" : "bg-[#f6f6f7]",
+                            ].join(" ")}
+                          >
+                            <Icon name={feature.included ? "list-check" : "list-cross"} size="sm" />
+                          </span>
+                          <div className="flex min-w-px flex-1 flex-col items-start pt-px text-left">
                             <p
-                              key={detailIndex}
-                              className="w-full font-[350] text-[#565656] text-sm leading-[1.5]"
-                              style={{ fontFamily: "var(--font-avenir-book)" }}
+                              className={[
+                                "w-full text-black text-base leading-[1.5]",
+                                hasFeatureDetails ? "font-bold" : "",
+                              ].join(" ")}
+                              style={{ fontFamily: hasFeatureDetails ? "var(--font-avenir-bold)" : "var(--font-avenir-book)" }}
                             >
-                              {detail}
+                              {feature.text}
                             </p>
-                          ))}
+                            {feature.details?.map((detail, detailIndex) => (
+                              <p
+                                key={detailIndex}
+                                className="w-full font-bold text-black text-base leading-[1.5]"
+                                style={{ fontFamily: "var(--font-avenir-bold)" }}
+                              >
+                                {detail}
+                              </p>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                      {index < option.features.length - 1 && <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />}
-                    </Fragment>
-                  ))}
+                        {index < option.features.length - 1 && <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />}
+                      </Fragment>
+                    ));
+                  })()}
                 </div>
 
-                <DekkingPrice price={option.price} priceFrom={option.priceFrom} />
+                <DekkingPrice price={option.price} priceFrom={option.priceFrom} showPeriod={option.showPricePeriod ?? true} />
 
                 {/*
                   Losse, lokale knop i.p.v. het gedeelde `Button`-component:
