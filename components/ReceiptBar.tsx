@@ -1,6 +1,12 @@
 type ReceiptBarProps = {
   amount: string;
-  /** Vaste tekst uit Figma ("per maand") — geen aparte prop-default nodig, dit component is er specifiek voor gebouwd. */
+  /**
+   * Vaste tekst uit Figma ("per maand"). Geef expliciet `""` mee om 'm te
+   * verbergen — bevestigd op de Reisverzekering-funnel "Jouw dekking"-stap
+   * (node 2416:2956): de premiebalk toont daar alleen "Premie € X,XX",
+   * zonder "per maand" erna. Bestaande aanroepen (mutatie-funnel) geven dit
+   * niet mee en blijven dus ongewijzigd op de default.
+   */
   period?: string;
   onShowDetails: () => void;
   className?: string;
@@ -40,12 +46,14 @@ export function ReceiptBar({ amount, period = "per maand", onShowDetails, classN
           <span className="whitespace-nowrap font-bold text-black text-xl leading-[1.4]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
             {amount}
           </span>
-          <span
-            className="whitespace-nowrap text-black text-sm leading-[1.5] min-[600px]:text-base"
-            style={{ fontFamily: "var(--font-avenir-book)" }}
-          >
-            {period}
-          </span>
+          {period && (
+            <span
+              className="whitespace-nowrap text-black text-sm leading-[1.5] min-[600px]:text-base"
+              style={{ fontFamily: "var(--font-avenir-book)" }}
+            >
+              {period}
+            </span>
+          )}
         </div>
         <button
           type="button"

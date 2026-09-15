@@ -22,6 +22,7 @@ const BASISDEKKING_OPTIONS: RadioCardBottomOption[] = [
     description: "",
     price: "30,36",
     priceFrom: true,
+    showPricePeriod: false,
     features: [
       { text: "Personenhulp in noodsituaties", included: true },
       { text: "Bagage tot € 1.000", included: false, details: ["€ 100 eigen risico", "Als extra dekking te kiezen"] },
@@ -36,6 +37,7 @@ const BASISDEKKING_OPTIONS: RadioCardBottomOption[] = [
     description: "",
     price: "34,16",
     priceFrom: true,
+    showPricePeriod: false,
     features: [
       { text: "Personenhulp in noodsituaties", included: true },
       { text: "Bagage tot € 3.000", included: false, details: ["€ 50 eigen risico", "Als extra dekking te kiezen"] },
@@ -50,6 +52,7 @@ const BASISDEKKING_OPTIONS: RadioCardBottomOption[] = [
     description: "",
     price: "48,04",
     priceFrom: true,
+    showPricePeriod: false,
     features: [
       { text: "Personenhulp in noodsituaties", included: true },
       { text: "Bagage tot € 5.000", included: true, details: ["Geen eigen risico", "Inbegrepen"] },
@@ -61,14 +64,18 @@ const BASISDEKKING_OPTIONS: RadioCardBottomOption[] = [
 ];
 
 /**
- * De "Bagage"-aanvullende dekking is een upgrade naar de bagagedekking van
- * de EERSTVOLGENDE hogere basisdekking — bevestigd via mcp op zowel de
- * Basis- als de Comfort-geselecteerde staat (Basis toont daar "Bagage tot
- * € 3000"/€50 eigen risico = Comfort's eigen bagagespec; Comfort toont
- * "Bagage tot € 5000"/geen eigen risico = Optimaal's spec). Bij Optimaal is
- * er geen hogere tier meer — dat scherm is niet apart bevestigd via mcp,
- * dus dit is een aanname: de upgrade-optie vervalt dan simpelweg (Optimaal
- * heeft de bagagedekking al standaard inbegrepen).
+ * De "Bagage"-aanvullende dekking bij Basis/Comfort — LET OP, deze aanname
+ * (upgrade naar de eerstvolgende hogere tier) staat nog open: een hernieuwde
+ * mcp-check liet zien dat Basis' eigen scherm juist zijn ÉÍGEN cijfers toont
+ * ("€ 1000"/"€ 100 eigen risico", niet Comfort's "€ 3000"/"€ 50"), en dat
+ * Comfort's scherm weer een mix van Comfort- en Optimaal-cijfers toont — dus
+ * dit patroon klopt zelf niet consistent. Bewust nog NIET aangepast, op
+ * verzoek eerst uitzoeken voordat dit gewijzigd wordt.
+ *
+ * Optimaal's eigen geval (Bagage al standaard inbegrepen) wordt niet meer
+ * door déze functie afgehandeld — zie `getAanvullendeDekkingenOptions`'s
+ * `bagageIncluded`-check, die dat geval nu apart en wél bevestigd afvangt
+ * vóórdat deze functie ooit aangeroepen wordt.
  */
 function getBagageUpgrade(dekking: DekkingKeuze): CheckboxCardOption | null {
   if (dekking === "basis") {
@@ -83,16 +90,40 @@ function getBagageUpgrade(dekking: DekkingKeuze): CheckboxCardOption | null {
 /**
  * "Extra sportuitrusting" is in Figma alleen aan te vinken zodra "Bagage"
  * is aangevinkt (getoond als een blauw info-blokje i.p.v. een checkbox
- * zolang dat niet zo is). Bij Optimaal bestaat de "Bagage"-upgrade niet
- * (zie hierboven) — omdat Optimaal de bagagedekking al standaard heeft,
- * is aan die voorwaarde dan impliciet al voldaan.
+ * zolang dat niet zo is). Bij Optimaal is "Bagage" zelf al "Inbegrepen"
+ * (zie hieronder), dus is aan die voorwaarde dan impliciet al voldaan.
+ *
+ * "Inbegrepen"-pil i.p.v. checkbox: bevestigd via mcp op de Optimaal-
+ * geselecteerde staat — "Bagage", "Geld", "Geneeskundige kosten" en
+ * "Reisrechtsbijstand" zijn daar niet meer los aan te vinken, want ze zijn
+ * al standaard onderdeel van Optimaal (exact dezelfde 4 items die in de
+ * basisdekking-kaart zelf als ✓ i.p.v. ✗ staan). Bij Basis/Comfort staan
+ * die 4 features nog op ✗, dus daar blijven het gewoon checkboxen.
+ *
+ * "Geld"-beschrijving bij Optimaal ("De a.s.r. alarmcentrale...") is
+ * letterlijk overgenomen uit Figma, ook al lijkt de tekst inhoudelijk niet
+ * bij "Geld" te passen (lijkt een contentfout in Figma zelf, hier bewust
+ * niet zelf gecorrigeerd — mcp is de waarheid).
+ *
+ * "Geneeskundige kosten"/"Reisrechtsbijstand" tonen bij Optimaal in Figma
+ * zelf nog onopgeloste "Description"-placeholdertekst — hier bewust NIET
+ * overgenomen (zou zelf verzonnen content zijn); ze behouden voorlopig hun
+ * bestaande, al wel bevestigde Basis/Comfort-beschrijving.
  */
 function getAanvullendeDekkingenOptions(dekking: DekkingKeuze, bagageChecked: boolean): CheckboxCardOption[] {
-  const bagageSatisfied = dekking === "optimaal" || bagageChecked;
-  const bagage = getBagageUpgrade(dekking);
+  const tier = BASISDEKKING_OPTIONS.find((option) => option.value === dekking)!;
+  const bagageIncluded = tier.features[1].included;
+  const geldIncluded = tier.features[2].included;
+  const geneeskundigeKostenIncluded = tier.features[3].included;
+  const reisrechtsbijstandIncluded = tier.features[4].included;
+  const bagageSatisfied = bagageIncluded || bagageChecked;
+
+  const bagageOption: CheckboxCardOption | null = bagageIncluded
+    ? { value: "bagage", title: "Bagage tot € 5000", description: "Voor deze dekking geldt geen eigen risico", included: true }
+    : getBagageUpgrade(dekking);
 
   const options: CheckboxCardOption[] = [];
-  if (bagage) options.push(bagage);
+  if (bagageOption) options.push(bagageOption);
   options.push(
     {
       value: "sportuitrusting",
@@ -101,14 +132,34 @@ function getAanvullendeDekkingenOptions(dekking: DekkingKeuze, bagageChecked: bo
       price: "1,20",
       disabledMessage: bagageSatisfied ? undefined : "Kan alleen worden meeverzekerd als dekking Bagage is afgesloten",
     },
-    { value: "geld", title: "Geld", description: "Geld en cheques tot € 500 meeverzekerd.", price: "4,00" },
-    { value: "geneeskundige-kosten", title: "Geneeskundige kosten", description: "Vergoeding voor spoedeisende medische hulp.", price: "4,00" },
-    { value: "reisrechtsbijstand", title: "Reisrechtsbijstand", description: "Tijdens je reis verzekerd voor rechtsbijstand door de juristen van DAS.", price: "1,20" },
+    {
+      value: "geld",
+      title: "Geld",
+      description: geldIncluded
+        ? "De a.s.r. alarmcentrale staat voor je klaar als je niet verder kan rijden door pech."
+        : "Geld en cheques tot € 500 meeverzekerd.",
+      price: "4,00",
+      included: geldIncluded,
+    },
+    {
+      value: "geneeskundige-kosten",
+      title: "Geneeskundige kosten",
+      description: "Vergoeding voor spoedeisende medische hulp.",
+      price: "4,00",
+      included: geneeskundigeKostenIncluded,
+    },
+    {
+      value: "reisrechtsbijstand",
+      title: "Reisrechtsbijstand",
+      description: "Tijdens je reis verzekerd voor rechtsbijstand door de juristen van DAS.",
+      price: "1,20",
+      included: reisrechtsbijstandIncluded,
+    },
     { value: "ongevallen", title: "Ongevallen", description: "Eenmalige uitkering bij invaliditeit of overlijden door een ongeval.", price: "1,20" },
     { value: "wintersport", title: "Skiën en snowboarden", description: "Ook verzekerd als je gaat wintersporten.", price: "8,00" },
     { value: "vervoermiddel-hulp", title: "Hulp en huur vervoermiddel", description: "Verzekerd bij uitval van je vervoermiddel of bestuurder.", price: "17,50" },
   );
-  return options;
+  return options.map((option) => ({ ...option, showPricePeriod: false }));
 }
 
 function parseEuro(value: string): number {
@@ -175,7 +226,8 @@ export default function KortlopendeReisPage() {
     const basis = BASISDEKKING_OPTIONS.find((option) => option.value === dekking);
     const basisPrijs = basis ? parseEuro(basis.price) : 0;
     const extraPrijs = aanvullendeOpties
-      .filter((option) => aanvullendeDekkingen.includes(option.value))
+      // `included` (de "Inbegrepen"-pil) telt nooit los mee — die zit al in de basisprijs.
+      .filter((option) => !option.included && aanvullendeDekkingen.includes(option.value))
       .reduce((sum, option) => sum + (option.price ? parseEuro(option.price) : 0), 0);
     return basisPrijs + extraPrijs;
   }, [dekking, aanvullendeOpties, aanvullendeDekkingen]);
@@ -184,8 +236,11 @@ export default function KortlopendeReisPage() {
     const next = value as DekkingKeuze;
     setDekking(next);
     setDekkingError(false);
-    // Aanvullende dekkingen die niet meer bestaan voor de nieuwe basisdekking (bv. "bagage" bij Optimaal) automatisch uitzetten.
-    setAanvullendeDekkingen((current) => current.filter((value) => getAanvullendeDekkingenOptions(next, true).some((option) => option.value === value)));
+    // Aanvullende dekkingen die niet meer bestaan óf nu "Inbegrepen" zijn voor de nieuwe basisdekking automatisch uitzetten.
+    const nextOptions = getAanvullendeDekkingenOptions(next, true);
+    setAanvullendeDekkingen((current) =>
+      current.filter((value) => nextOptions.some((option) => option.value === value && !option.included)),
+    );
   }
 
   function handleNext() {
@@ -243,9 +298,10 @@ export default function KortlopendeReisPage() {
             options={aanvullendeOpties}
             values={aanvullendeDekkingen}
             onChange={setAanvullendeDekkingen}
+            className="flex w-full max-w-[800px] flex-col items-start gap-2"
           />
         ) : (
-          <div className="flex w-full flex-col items-start gap-2">
+          <div className="flex w-full max-w-[800px] flex-col items-start gap-2">
             <p className="font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
               Welke aanvullende dekkingen wil je?
             </p>
@@ -259,7 +315,7 @@ export default function KortlopendeReisPage() {
         )}
       </FunnelSection>
 
-      {dekking && <ReceiptBar amount={formatEuro(totaalPremie)} onShowDetails={() => {}} />}
+      {dekking && <ReceiptBar amount={`Premie € ${formatEuro(totaalPremie)}`} period="" onShowDetails={() => {}} />}
     </FunnelPageTemplate>
   );
 }
