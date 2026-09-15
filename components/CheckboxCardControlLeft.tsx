@@ -278,6 +278,16 @@ export type CheckboxCardOption = {
   showPricePeriod?: boolean;
   /** Zelfde patroon als `CheckboxCardControlLeft`'s eigen `centerActionSlot`. Default `false`. */
   centerActionSlot?: boolean;
+  /**
+   * Zelfde patroon als `CheckboxCardControlLeft`'s eigen `compact` — kleinere
+   * padding (`py-3` i.p.v. `py-6`) en titelgrootte (18px i.p.v. 20px).
+   * Bevestigd via mcp-metadata op node 2416:3155 ("Frame 627": `pt`/`pb` 12px
+   * i.p.v. 24px; Title-tekstnode: `fontSize: 18`) — de aanvullende-
+   * dekkingen-rijen zijn in Figma dus wel degelijk de compacte variant, niet
+   * de standaard. Default `false`: geen Figma-bevestiging hiervan voor de
+   * andere bestaande aanroepen van dit component.
+   */
+  compact?: boolean;
 };
 
 type CheckboxCardControlLeftGroupProps = {
@@ -345,6 +355,7 @@ export function CheckboxCardControlLeftGroup({
             included={option.included}
             showPricePeriod={option.showPricePeriod ?? true}
             centerActionSlot={option.centerActionSlot}
+            compact={option.compact}
             actionSlot={
               option.disabledMessage && (
                 // Zelfde kleurtokens als Alert's type="info" (bg-[#d7e9f5]/border-[#0064a8]/icon="info")

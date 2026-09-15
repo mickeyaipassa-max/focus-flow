@@ -189,24 +189,26 @@ export function RadioCardBottomGroup({
               key={option.value}
               htmlFor={inputId}
               /**
-               * `onMouseDown` legt de scrollpositie vast vóórdat de browser
-               * de (onzichtbare, `sr-only`) radio-input focust — die focus
-               * triggert anders het browser-standaardgedrag "scroll het
-               * gefocuste element in beeld", wat de pagina liet springen
-               * zodra de kaart niet volledig zichtbaar was (bevestigd:
-               * scrollY sprong van 400 naar 934 bij een enkele klik). De
-               * dubbele `requestAnimationFrame` wacht tot na zowel die
-               * browser-scroll als de React-rerender (nieuwe aanvullende-
-               * dekkingen-sectie) voordat de oorspronkelijke positie wordt
-               * hersteld.
+               * `preventDefault` + zelf `focus({ preventScroll: true })` +
+               * zelf `onChange` aanroepen, i.p.v. de browser natuurlijk de
+               * (onzichtbare, `sr-only`) radio-input laten activeren.
+               *
+               * Eerder werd de scrollpositie ná de klik hersteld (capture-en-
+               * corrigeer via dubbele `requestAnimationFrame`), maar dat bleek
+               * niet waterdicht bij een echte, "trusted" muisklik: Chrome
+               * animeert de native focus-scroll voor trusted events soms
+               * (geen CSS `scroll-behavior: smooth` nodig, browsers doen dit
+               * intern), dus de eenmalige correctie ving de sprong soms
+               * halverwege af i.p.v. hem volledig te voorkomen (gemeten: een
+               * kleine, hardnekkige restverspringing van ~24px bij een echte
+               * klik, ook al toonde elke synthetische testklik géén sprong).
+               * Nu voorkomt `preventDefault` de browser-eigen scroll-naar-
+               * focus helemaal, in plaats van hem achteraf te repareren.
                */
-              onMouseDown={() => {
-                const scrollY = window.scrollY;
-                requestAnimationFrame(() => {
-                  requestAnimationFrame(() => {
-                    if (window.scrollY !== scrollY) window.scrollTo({ top: scrollY });
-                  });
-                });
+              onClick={(event) => {
+                event.preventDefault();
+                document.getElementById(inputId)?.focus({ preventScroll: true });
+                onChange?.(option.value);
               }}
               className={[
                 "relative flex min-w-px flex-1 cursor-pointer flex-col items-start rounded-[3px]",
