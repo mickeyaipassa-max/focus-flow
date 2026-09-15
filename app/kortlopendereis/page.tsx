@@ -128,7 +128,7 @@ function getAanvullendeDekkingenOptions(dekking: DekkingKeuze, bagageChecked: bo
     {
       value: "sportuitrusting",
       title: "Extra sportuitrusting",
-      description: "Extra vergoeding voor je sportuitrusting tot € 2.500.",
+      description: "Extra sportuitrusting vergoeding tot € 2.500",
       price: "1,20",
       disabledMessage: bagageSatisfied ? undefined : "Kan alleen worden meeverzekerd als dekking Bagage is afgesloten",
     },
