@@ -159,7 +159,7 @@ function getAanvullendeDekkingenOptions(dekking: DekkingKeuze, bagageChecked: bo
     { value: "wintersport", title: "Skiën en snowboarden", description: "Ook verzekerd als je gaat wintersporten.", price: "8,00" },
     { value: "vervoermiddel-hulp", title: "Hulp en huur vervoermiddel", description: "Verzekerd bij uitval van je vervoermiddel of bestuurder.", price: "17,50" },
   );
-  return options.map((option) => ({ ...option, showPricePeriod: false, centerActionSlot: true }));
+  return options.map((option) => ({ ...option, showPricePeriod: false, centerActionSlot: true, compact: true }));
 }
 
 function parseEuro(value: string): number {
