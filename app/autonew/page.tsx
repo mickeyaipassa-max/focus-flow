@@ -1,18 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
 import { FormNavigation } from "@/components/FormNavigation";
 import { RadioCardBottomGroup, type RadioCardBottomOption } from "@/components/RadioCardBottom";
-import {
-  RadioCardBottomCarousel,
-  type CarouselCardOption,
-  type RadioCardBottomCarouselHandle,
-} from "@/components/RadioCardBottomCarousel";
+import { RadioCardBottomCarousel, type CarouselCardOption } from "@/components/RadioCardBottomCarousel";
 import { CheckboxCardControlLeftGroup } from "@/components/CheckboxCardControlLeft";
-import { SegmentedNavPill } from "@/components/SegmentedNavPill";
 
 const AUTO_STEPS = ["Jouw situatie", "Jouw dekking", "Jouw gegevens", "Laatste vragen", "Samenvatting"];
 
@@ -143,24 +138,12 @@ const AANVULLENDE_DEKKINGEN = [
  * dus een selectie blijft behouden als het scherm van grootte verandert.
  * De rest van de pagina (kop, stappenbalk, aanvullende dekkingen,
  * navigatie) is ongewijzigd.
- *
- * `SegmentedNavPill` (Figma node 2412:7738, zelf als los component gebouwd
- * naast de oorspronkelijke referentieschets 2403:28971) toont boven de
- * mobiele carrousel dezelfde 3 opties als tik-navigatie. Alleen op mobiel
- * relevant — de desktop-groep heeft geen scrollbare rij om te synchroniseren.
- * Via `RadioCardBottomCarousel`'s nieuwe `topSlot`-prop ertussen geplaatst
- * (tussen de legend en de kaartenrij), en tweerichtingsgekoppeld aan
- * dezelfde `activeIndex`: `onActiveIndexChange` houdt de pil in sync met de
- * kaart die je bekijkt, `scrollToIndex` (via `ref`) laat een tik op de pil
- * de carrousel laten scrollen.
  */
 export default function AutoNewPage() {
   const router = useRouter();
   const [dekking, setDekking] = useState<DekkingKeuze | "">("");
   const [dekkingError, setDekkingError] = useState(false);
   const [aanvullendeDekkingen, setAanvullendeDekkingen] = useState<string[]>([]);
-  const [carouselActiveIndex, setCarouselActiveIndex] = useState(0);
-  const carouselRef = useRef<RadioCardBottomCarouselHandle>(null);
 
   function handleNext() {
     if (!dekking) {
@@ -208,7 +191,6 @@ export default function AutoNewPage() {
         */}
         <div className="-mx-6 w-[calc(100%+48px)] min-[600px]:hidden">
           <RadioCardBottomCarousel
-            ref={carouselRef}
             labelText="Kies je basisdekking"
             options={CAROUSEL_OPTIONS}
             value={dekking}
@@ -218,19 +200,12 @@ export default function AutoNewPage() {
             }}
             onMoreInfoClick={() => {}}
             error={dekkingError ? "Kies een dekking" : undefined}
-            /* Geen `contentTopClassName` hier: zodra `topSlot` gezet is,
-               regelt de fieldset's eigen `gap-4` (16px) de marge tussen de
-               SegmentedNavPill en de kaarten vanzelf — die 16px is precies
-               wat gevraagd is, dus geen extra marge nodig (zie component:
-               een extra `contentTopClassName` zou hier optellen tot 32px). */
-            onActiveIndexChange={setCarouselActiveIndex}
-            topSlot={
-              <SegmentedNavPill
-                options={CAROUSEL_OPTIONS}
-                activeIndex={carouselActiveIndex}
-                onSelect={(index) => carouselRef.current?.scrollToIndex(index)}
-              />
-            }
+            /* Op verzoek dezelfde 8px tussen label en kaarten als bij
+               "Welke aanvullende dekkingen wil je?" verderop op deze pagina
+               (CheckboxCardControlLeftGroup's eigen gap-2) — via
+               `contentTopClassName` i.p.v. de fieldset-gap zelf (die werkt
+               niet tussen legend en de scroll-container, zie component). */
+            contentTopClassName="mt-2"
           />
         </div>
 
