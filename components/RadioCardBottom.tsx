@@ -188,6 +188,26 @@ export function RadioCardBottomGroup({
             <label
               key={option.value}
               htmlFor={inputId}
+              /**
+               * `onMouseDown` legt de scrollpositie vast vóórdat de browser
+               * de (onzichtbare, `sr-only`) radio-input focust — die focus
+               * triggert anders het browser-standaardgedrag "scroll het
+               * gefocuste element in beeld", wat de pagina liet springen
+               * zodra de kaart niet volledig zichtbaar was (bevestigd:
+               * scrollY sprong van 400 naar 934 bij een enkele klik). De
+               * dubbele `requestAnimationFrame` wacht tot na zowel die
+               * browser-scroll als de React-rerender (nieuwe aanvullende-
+               * dekkingen-sectie) voordat de oorspronkelijke positie wordt
+               * hersteld.
+               */
+              onMouseDown={() => {
+                const scrollY = window.scrollY;
+                requestAnimationFrame(() => {
+                  requestAnimationFrame(() => {
+                    if (window.scrollY !== scrollY) window.scrollTo({ top: scrollY });
+                  });
+                });
+              }}
               className={[
                 "relative flex min-w-px flex-1 cursor-pointer flex-col items-start rounded-[3px]",
                 "has-[input:focus-visible]:outline has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-black",
@@ -290,6 +310,10 @@ export function RadioCardBottomGroup({
                   "Meer informatie"-knop, die voor exact dezelfde reden ook
                   geen gedeeld `Button` gebruikt (dat component accepteert
                   geen event-object in `onClick`).
+
+                  `justify-center` bevestigd via mcp op de Reisverzekering-
+                  funnel "Jouw dekking"-stap (node 2416:3490): "Meer
+                  informatie" staat daar gecentreerd, niet links uitgelijnd.
                 */}
                 <button
                   type="button"
@@ -298,7 +322,7 @@ export function RadioCardBottomGroup({
                     event.stopPropagation();
                     onMoreInfoClick?.(option.value);
                   }}
-                  className="flex w-full items-center gap-2 rounded-[3px]"
+                  className="flex w-full items-center justify-center gap-2 rounded-[3px]"
                 >
                   <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
                     Meer informatie
