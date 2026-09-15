@@ -4,7 +4,18 @@ import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { Icon } from "./Icon";
 import { Spinner } from "./Spinner";
 
-export type RadioCardBottomFeature = { text: string; included: boolean };
+export type RadioCardBottomFeature = {
+  text: string;
+  included: boolean;
+  /**
+   * Extra regels ónder `text` (bv. "€ 100 eigen risico" / "Als extra dekking
+   * te kiezen") — bevestigd op de Reisverzekering-funnel "Jouw dekking"-stap
+   * (node 2416:2956), waar elk feature-item tot 3 regels toont i.p.v. de tot
+   * nu toe enige-regel-tekst. Optioneel: bestaande 1-regelige features
+   * (mutatie-funnel) geven dit niet mee en blijven ongewijzigd.
+   */
+  details?: string[];
+};
 
 export type RadioCardBottomOption = {
   value: string;
@@ -13,6 +24,12 @@ export type RadioCardBottomOption = {
   features: RadioCardBottomFeature[];
   /** Getoond als "€ {price} per maand" — geen placeholder-cijfers, dus een echte waarde vereist. */
   price: string;
+  /**
+   * Toont "vanaf" boven de prijs (bevestigd op dezelfde Reisverzekering-stap
+   * — elke kaart daar toont "vanaf € X,XX", i.p.v. de kale "€ X,XX" van de
+   * mutatie-funnel-kaarten). Optioneel, default geen "vanaf"-tekst.
+   */
+  priceFrom?: boolean;
   /**
    * Regels voor de gele "Highlight Tag"-badge boven de kaart (bevestigd op
    * de Auto-funnel "Jouw dekking"-stap, node 2383:21799 — daar alleen op de
@@ -32,7 +49,7 @@ export type RadioCardBottomOption = {
  * Losse subcomponent i.p.v. lokale state in de groep zelf, want elke kaart
  * moet z'n eigen onafhankelijke spinner-venster hebben.
  */
-function DekkingPrice({ price }: { price: string }) {
+function DekkingPrice({ price, priceFrom }: { price: string; priceFrom?: boolean }) {
   const [isRecalculating, setIsRecalculating] = useState(false);
   const isFirstRender = useRef(true);
 
@@ -54,6 +71,11 @@ function DekkingPrice({ price }: { price: string }) {
         </span>
       ) : (
         <>
+          {priceFrom && (
+            <p className="w-full font-[350] text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              vanaf
+            </p>
+          )}
           <p className="w-full text-2xl text-black leading-[1.3]" style={{ fontFamily: "var(--font-memphis-bold)" }}>
             € {price}
           </p>
@@ -124,17 +146,21 @@ export function RadioCardBottomGroup({
 }: RadioCardBottomGroupProps) {
   const generatedName = useId();
   const groupName = name ?? generatedName;
+  const errorId = `${groupName}-error`;
   /** Extra ruimte boven de kaartenrij zodra een "Highlight Tag"-badge (absoluut, -15px boven de kaart) anders over de legend zou vallen. */
   const hasHighlight = options.some((option) => option.highlightLines);
 
   return (
-    <fieldset className={className ?? "m-0 flex w-full flex-col items-start gap-4 border-0 p-0"}>
+    <fieldset
+      className={className ?? "m-0 flex w-full flex-col items-start gap-4 border-0 p-0"}
+      aria-describedby={error ? errorId : undefined}
+    >
       <legend className="flex items-center gap-1 p-0 text-lg leading-[1.5]">
         <span className="font-bold text-black" style={{ fontFamily: "var(--font-avenir-bold)" }}>
           {labelText}
         </span>
         {required && (
-          <span className="text-[#ce0a1e]" style={{ fontFamily: "var(--font-avenir)" }}>
+          <span aria-hidden="true" className="text-[#ce0a1e]" style={{ fontFamily: "var(--font-avenir)" }}>
             *
           </span>
         )}
@@ -155,6 +181,7 @@ export function RadioCardBottomGroup({
               htmlFor={inputId}
               className={[
                 "relative flex min-w-px flex-1 cursor-pointer flex-col items-start rounded-[3px]",
+                "has-[input:focus-visible]:outline has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-2 has-[input:focus-visible]:outline-black",
                 checked ? "drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]" : "",
               ].join(" ")}
             >
@@ -173,6 +200,7 @@ export function RadioCardBottomGroup({
                 value={option.value}
                 checked={checked}
                 onChange={() => onChange?.(option.value)}
+                required={required}
                 className="sr-only"
               />
 
@@ -204,16 +232,27 @@ export function RadioCardBottomGroup({
                         >
                           <Icon name={feature.included ? "list-check" : "list-cross"} size="sm" />
                         </span>
-                        <p className="min-w-px flex-1 pt-px text-left text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                          {feature.text}
-                        </p>
+                        <div className="flex min-w-px flex-1 flex-col items-start pt-px text-left">
+                          <p className="w-full text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                            {feature.text}
+                          </p>
+                          {feature.details?.map((detail, detailIndex) => (
+                            <p
+                              key={detailIndex}
+                              className="w-full font-[350] text-[#565656] text-sm leading-[1.5]"
+                              style={{ fontFamily: "var(--font-avenir-book)" }}
+                            >
+                              {detail}
+                            </p>
+                          ))}
+                        </div>
                       </div>
                       {index < option.features.length - 1 && <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />}
                     </Fragment>
                   ))}
                 </div>
 
-                <DekkingPrice price={option.price} />
+                <DekkingPrice price={option.price} priceFrom={option.priceFrom} />
 
                 {/*
                   Losse, lokale knop i.p.v. het gedeelde `Button`-component:
@@ -261,7 +300,7 @@ export function RadioCardBottomGroup({
       </div>
 
       {error && (
-        <div className="flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
+        <div id={errorId} role="alert" className="flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
           <span className="flex shrink-0 items-center pt-[3px]">
             <Icon name="validation-error" size="sm" />
           </span>
