@@ -144,8 +144,16 @@ export function CheckboxCardControlLeft({
     </div>
   );
 
-  if (included) {
-    // Geen `<label>`/checkbox: een al-inbegrepen dekking is niet aan/uit te zetten, dus ook geen formuliersemantiek nodig.
+  if (included || disabled) {
+    /**
+     * Geen `<label>`/checkbox-kolom: bevestigd via mcp op zowel het
+     * "Inbegrepen"-geval (node 2416:3520) als het uitgeschakelde geval
+     * (node 2416:3155, "Extra sportuitrusting" zolang "Bagage" niet is
+     * aangevinkt) — in BEIDE gevallen is er helemaal geen checkbox-vakje
+     * zichtbaar, niet eens een grijze/gedimde. Eerder toonde `disabled`
+     * hier nog wél een grijze, uitgeschakelde checkbox-kolom — dat klopte
+     * dus niet.
+     */
     return (
       <div className={className ?? "flex w-full items-start overflow-hidden rounded-[3px] border border-[#ccc]"}>
         {content}

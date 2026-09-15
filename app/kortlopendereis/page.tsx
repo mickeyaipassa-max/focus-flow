@@ -290,6 +290,14 @@ export default function KortlopendeReisPage() {
           onChange={handleDekkingChange}
           onMoreInfoClick={() => {}}
           error={dekkingError ? "Kies een dekking" : undefined}
+          /**
+           * Zonder deze prop staat de kaartenrij plakt direct tegen de
+           * legend aan (0px i.p.v. 16px) — bevestigd via mcp (node 2416:3430,
+           * frame "Frame 2609877"): legend-hoogte 27px, kaartenrij start op
+           * y=43, dus een gap van 16px. Bekende quirk: de fieldset's eigen
+           * `gap-4` werkt niet tussen `<legend>` en de eerstvolgende sibling.
+           */
+          contentTopClassName="mt-4"
         />
 
         {dekking ? (
@@ -298,10 +306,26 @@ export default function KortlopendeReisPage() {
             options={aanvullendeOpties}
             values={aanvullendeDekkingen}
             onChange={setAanvullendeDekkingen}
-            className="flex w-full max-w-[800px] flex-col items-start gap-2"
+            /**
+             * Zonder handler toont de Group geen "Meer informatie"-link per
+             * item (`showMoreInfoButton={Boolean(onMoreInfoClick)}` in
+             * `CheckboxCardControlLeft.tsx`) — bevestigd via mcp (node
+             * 2416:3430): elk aanvullende-dekking-item toont daar een eigen
+             * "Meer informatie"-link. Zelfde no-op-patroon als de
+             * basisdekking-kaarten hierboven, in afwachting van een
+             * info-modal/paneel dat nog niet is opgeleverd.
+             */
+            onMoreInfoClick={() => {}}
+            /**
+             * `gap-4` (16px) i.p.v. het component-eigen default `gap-2` —
+             * bevestigd via mcp (node 2416:3430, "Frame 2609878"): het label
+             * "Welke aanvullende dekkingen wil je?" is 27px hoog, de lijst
+             * begint op y=43, dus een gap van 16px tussen label en lijst.
+             */
+            className="flex w-full max-w-[800px] flex-col items-start gap-4"
           />
         ) : (
-          <div className="flex w-full max-w-[800px] flex-col items-start gap-2">
+          <div className="flex w-full max-w-[800px] flex-col items-start gap-4">
             <p className="font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
               Welke aanvullende dekkingen wil je?
             </p>
