@@ -1,4 +1,5 @@
 import { Button } from "./Button";
+import { Icon } from "./Icon";
 
 type FormNavigationProps = {
   /** Toont de "Vorige stap"-knop. Default false — matcht de eerste-stap variant in Figma. */
@@ -15,6 +16,19 @@ type FormNavigationProps = {
   submitLabel?: string;
   /** Verticale, volle-breedte knoppen i.p.v. een horizontale rij. Default false. */
   stacked?: boolean;
+  /**
+   * Toont de "Bewaar voor later"-link met envelop-icoon boven de knoppenrij
+   * — bevestigd op de Reisverzekering-funnel "Jouw dekking"-stap (node
+   * 2416:2956). In Figma zelf staat deze link in een verticale stapel boven
+   * alléén de hoofdknop (niet de volledige rij) — hier vereenvoudigd tot een
+   * eigen, rechts uitgelijnde regel boven de hele knoppenrij, want de exacte
+   * per-knop-stapeling zou dit component onevenredig complex maken voor een
+   * secundaire actie. Geen icoon-asset bevestigd via mcp (de Figma-instance
+   * bleek een niet-oplosbare geneste icon-swap) — `mail.svg` is hier zelf
+   * getekend, geen Figma-export.
+   */
+  saveForLater?: boolean;
+  onSaveForLater?: () => void;
   /**
    * Geen van deze handlers komt uit Figma (het ontwerp toont geen klikgedrag).
    * Dit zijn architectuur-hooks, geen ontwerpkeuzes: zonder aanhaakpunt is
@@ -35,6 +49,8 @@ export function FormNavigation({
   submit = false,
   submitLabel = "Aanvraag versturen",
   stacked = false,
+  saveForLater = false,
+  onSaveForLater,
   onPrevious,
   onNext,
   onSubmit,
@@ -70,6 +86,14 @@ export function FormNavigation({
         ].join(" ")
       }
     >
+      {saveForLater && (
+        <button type="button" onClick={onSaveForLater} className="mb-2 flex w-full items-center justify-end gap-2 rounded-[3px]">
+          <Icon name="mail" size="sm" />
+          <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+            Bewaar voor later
+          </span>
+        </button>
+      )}
       <div className={["flex w-full items-start", groupAlignment].join(" ")} data-name="Button Group">
         {previousStep && (
           <Button type="secondary" iconPrepend="arrow-left" onClick={onPrevious} fullWidth={buttonFullWidth} order={stacked ? 2 : undefined}>

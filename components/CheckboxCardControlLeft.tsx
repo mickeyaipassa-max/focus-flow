@@ -22,6 +22,14 @@ type CheckboxCardControlLeftProps = {
   showInfo?: boolean;
   onInfoClick?: () => void;
   compact?: boolean;
+  /**
+   * Voorkomt aanvinken en dimt de checkbox — bevestigd op de
+   * Reisverzekering-funnel "Jouw dekking"-stap (node 2416:2956): "Extra
+   * sportuitrusting" is daar niet aan te vinken zolang "Bagage" niet is
+   * gekozen. Los van `checked`/`onChange`, want een uitgeschakelde optie kan
+   * ook (nog) niet aangevinkt zijn.
+   */
+  disabled?: boolean;
   name?: string;
   value?: string;
   id?: string;
@@ -49,6 +57,7 @@ export function CheckboxCardControlLeft({
   showInfo = false,
   onInfoClick,
   compact = false,
+  disabled = false,
   name,
   value,
   id,
@@ -120,7 +129,8 @@ export function CheckboxCardControlLeft({
       className={
         className ??
         [
-          "flex w-full cursor-pointer items-start overflow-hidden rounded-[3px] border",
+          "flex w-full items-start overflow-hidden rounded-[3px] border",
+          disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
           checked ? "border-[#eda50f] drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]" : "border-[#ccc]",
         ].join(" ")
       }
@@ -138,8 +148,9 @@ export function CheckboxCardControlLeft({
             name={name}
             value={value}
             checked={checked}
+            disabled={disabled}
             onChange={(event) => onChange?.(event.target.checked)}
-            className="peer absolute inset-0 size-5 cursor-pointer appearance-none opacity-0"
+            className="peer absolute inset-0 size-5 cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed"
           />
           <CheckboxVisual checked={checked} />
         </span>
@@ -172,6 +183,15 @@ export type CheckboxCardOption = {
   title: string;
   description?: string;
   price?: string;
+  /**
+   * Zet deze optie op disabled en toont dit bericht i.p.v. een klikbare
+   * checkbox — bevestigd op de Reisverzekering-funnel "Jouw dekking"-stap:
+   * "Extra sportuitrusting" toont daar "Kan alleen worden meeverzekerd als
+   * dekking Bagage is afgesloten" zolang "Bagage" niet is aangevinkt. De
+   * afnemer berekent zelf wanneer dit van toepassing is (afhankelijkheid
+   * tussen opties is pagina-specifieke logica, geen generieke componentregel).
+   */
+  disabledMessage?: string;
 };
 
 type CheckboxCardControlLeftGroupProps = {
@@ -235,6 +255,23 @@ export function CheckboxCardControlLeftGroup({
             value={option.value}
             checked={values.includes(option.value)}
             onChange={(checked) => toggle(option.value, checked)}
+            disabled={Boolean(option.disabledMessage)}
+            actionSlot={
+              option.disabledMessage && (
+                // Zelfde kleurtokens als Alert's type="info" (bg-[#d7e9f5]/border-[#0064a8]/icon="info")
+                // — geverifieerd via mcp dat dit letterlijk een Alert-instance is in Figma. Niet de
+                // volledige `Alert` hergebruikt: die is groter opgezet (p-2+p-2, md-icoon, text-base)
+                // dan dit compacte inline blokje (sm-icoon, text-sm, geen titel/actie/sluitknop).
+                <div className="flex max-w-[280px] items-start gap-2 rounded-[3px] border border-[#0064a8] bg-[#d7e9f5] px-2 py-1">
+                  <span className="flex shrink-0 items-center pt-[3px]">
+                    <Icon name="info-sm" size="sm" />
+                  </span>
+                  <span className="flex items-center pt-[2px] text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir)" }}>
+                    {option.disabledMessage}
+                  </span>
+                </div>
+              )
+            }
             showMoreInfoButton={Boolean(onMoreInfoClick)}
             onMoreInfoClick={() => onMoreInfoClick?.(option.value)}
           />
