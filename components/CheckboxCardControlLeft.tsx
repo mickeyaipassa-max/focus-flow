@@ -41,6 +41,18 @@ type CheckboxCardControlLeftProps = {
   included?: boolean;
   /** Verbergt "per maand" onder de prijs — zelfde reden/precedent als `RadioCardBottomOption.showPricePeriod`. Default `true`. */
   showPricePeriod?: boolean;
+  /**
+   * Centreert het prijs-/tag-/actionSlot-blok verticaal t.o.v. de volledige
+   * kaarthoogte, ook wanneer er een `description` is (die anders naar
+   * `items-start` schakelt) — bevestigd op de Reisverzekering-funnel "Jouw
+   * dekking"-stap (nodes 2416:3155 en 2416:3520): de "Inbegrepen"-pil en de
+   * prijs/info-box staan daar verticaal gecentreerd t.o.v. de hele kaart
+   * (incl. de "Meer informatie"-regel eronder), niet uitgelijnd met de titel.
+   * Default `false`: geen Figma-bevestiging hiervan voor de andere bestaande
+   * aanroepen van dit component (mutatie-funnel, Auto-funnel), dus daar blijft
+   * het bestaande `items-start`-gedrag ongewijzigd.
+   */
+  centerActionSlot?: boolean;
   name?: string;
   value?: string;
   id?: string;
@@ -71,6 +83,7 @@ export function CheckboxCardControlLeft({
   disabled = false,
   included = false,
   showPricePeriod = true,
+  centerActionSlot = false,
   name,
   value,
   id,
@@ -78,9 +91,26 @@ export function CheckboxCardControlLeft({
 }: CheckboxCardControlLeftProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
+  const alignTop = description && !centerActionSlot;
+
+  const meerInfoButton = showMoreInfoButton && (
+    <button
+      type="button"
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onMoreInfoClick?.();
+      }}
+      className="flex w-full items-center gap-2 rounded-[3px]"
+    >
+      <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+        Meer informatie
+      </span>
+    </button>
+  );
 
   const titleAndActionRow = (
-    <div className={["flex w-full gap-6", description ? "items-start" : "items-center"].join(" ")}>
+    <div className={["flex w-full gap-6", alignTop ? "items-start" : "items-center"].join(" ")}>
       <div className="flex flex-1 flex-col items-start justify-center gap-2 min-w-px">
         <p
           className={["w-full font-bold text-black", compact ? "text-lg leading-[1.5]" : "text-xl leading-[1.4]"].join(" ")}
@@ -93,9 +123,31 @@ export function CheckboxCardControlLeft({
             {description}
           </p>
         )}
+        {/*
+          Bij `centerActionSlot` verhuist "Meer informatie" mee in deze
+          linkerkolom (i.p.v. als losse rij onder `titleAndActionRow`) zodat
+          de rij se eigen `items-center` het prijs-/tag-blok verticaal
+          centreert t.o.v. de VOLLEDIGE kaarthoogte (titel+beschrijving+
+          "Meer informatie"), niet alleen t.o.v. titel+beschrijving —
+          bevestigd via mcp (node 2416:3155): de info-box/prijs staat daar
+          gecentreerd tussen de titel-top en de "Meer informatie"-regel.
+        */}
+        {centerActionSlot && meerInfoButton}
       </div>
       {(actionSlot || price || included) && (
-        <div className={["flex shrink-0 items-center justify-end gap-2", description ? "items-start" : "h-[49px] items-center"].join(" ")}>
+        <div
+          className={[
+            /**
+             * `gap-6` (24px) i.p.v. `gap-2` tussen `actionSlot` (bv. de
+             * blauwe info-alert) en de prijs — bevestigd via mcp-metadata op
+             * node 2416:3155 ("Frame 627", `itemSpacing: 24`): dezelfde 24px
+             * die ook tussen de titel-kolom en `actionSlot` wordt gebruikt
+             * (het `gap-6` op de rij hierboven), niet de kleinere 8px.
+             */
+            "flex shrink-0 items-center justify-end gap-6",
+            alignTop ? "items-start" : description ? "items-center" : "h-[49px] items-center",
+          ].join(" ")}
+        >
           {included ? (
             <Tag text="Inbegrepen" color="green" />
           ) : (
@@ -126,36 +178,26 @@ export function CheckboxCardControlLeft({
   const content = (
     <div className={["flex flex-1 flex-col items-start justify-center gap-4 min-w-px", compact ? "gap-3 px-4 py-3" : "px-4 py-6"].join(" ")}>
       {titleAndActionRow}
-      {showMoreInfoButton && (
-        <button
-          type="button"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            onMoreInfoClick?.();
-          }}
-          className="flex w-full items-center gap-2 rounded-[3px]"
-        >
-          <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
-            Meer informatie
-          </span>
-        </button>
-      )}
+      {!centerActionSlot && meerInfoButton}
     </div>
   );
 
   if (included || disabled) {
     /**
-     * Geen `<label>`/checkbox-kolom: bevestigd via mcp op zowel het
-     * "Inbegrepen"-geval (node 2416:3520) als het uitgeschakelde geval
-     * (node 2416:3155, "Extra sportuitrusting" zolang "Bagage" niet is
-     * aangevinkt) — in BEIDE gevallen is er helemaal geen checkbox-vakje
-     * zichtbaar, niet eens een grijze/gedimde. Eerder toonde `disabled`
-     * hier nog wél een grijze, uitgeschakelde checkbox-kolom — dat klopte
-     * dus niet.
+     * Geen `<label>`/interactieve checkbox, maar de GRIJZE KOLOM zelf blijft
+     * wél staan (leeg, zonder input/vinkje) — bevestigd door bij mcp in te
+     * zoomen op zowel het "Inbegrepen"-geval (node 2416:3520) als het
+     * uitgeschakelde geval (node 2416:3155): in beide gevallen staat er een
+     * volledig lege, grijze kolom over de hele kaarthoogte, met dezelfde
+     * breedte/rand als een normale checkbox-kolom — alleen het witte
+     * vinkje-vakje zelf ontbreekt. Eerdere aanname dat de hele kolom weg zou
+     * moeten, was fout (te snel naar een verkleind screenshot gekeken).
      */
     return (
       <div className={className ?? "flex w-full items-start overflow-hidden rounded-[3px] border border-[#ccc]"}>
+        <div className="flex shrink-0 items-center justify-center self-stretch border-r border-[#ccc] bg-[#f6f6f7] p-2">
+          <span className="relative inline-flex size-5 shrink-0" />
+        </div>
         {content}
       </div>
     );
@@ -234,6 +276,8 @@ export type CheckboxCardOption = {
   included?: boolean;
   /** Zelfde patroon als `CheckboxCardControlLeft`'s eigen `showPricePeriod`. Default `true`. */
   showPricePeriod?: boolean;
+  /** Zelfde patroon als `CheckboxCardControlLeft`'s eigen `centerActionSlot`. Default `false`. */
+  centerActionSlot?: boolean;
 };
 
 type CheckboxCardControlLeftGroupProps = {
@@ -300,6 +344,7 @@ export function CheckboxCardControlLeftGroup({
             disabled={Boolean(option.disabledMessage)}
             included={option.included}
             showPricePeriod={option.showPricePeriod ?? true}
+            centerActionSlot={option.centerActionSlot}
             actionSlot={
               option.disabledMessage && (
                 // Zelfde kleurtokens als Alert's type="info" (bg-[#d7e9f5]/border-[#0064a8]/icon="info")
