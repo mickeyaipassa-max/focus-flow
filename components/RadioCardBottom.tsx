@@ -254,14 +254,20 @@ export function RadioCardBottomGroup({
                 <div className="flex w-full flex-col items-start gap-2">
                   {(() => {
                     /**
-                     * Bevestigd op de Reisverzekering-stap: zodra een kaart
-                     * feature-items met `details` heeft, staan ALLE
-                     * feature-regels (óók zonder eigen details, óók de
-                     * enige-regel-items) in dezelfde vette, zwarte stijl —
-                     * geen apart lichter/kleiner uiterlijk voor detailregels.
-                     * De bestaande mutatie-funnel-kaarten geven nooit
-                     * `details` mee, dus die blijven ongewijzigd in hun
-                     * oorspronkelijke (niet-vette) stijl.
+                     * Zodra een kaart feature-items met `details` heeft,
+                     * gebruikt de featurenaam ("Bagage tot € 1.000")
+                     * `--font-avenir-medium` i.p.v. het standaard
+                     * `--font-avenir-book`-leesgewicht van de mutatie-
+                     * funnel-kaarten (die nooit `details` meegeven, dus
+                     * ongewijzigd blijven) — 350 (Book) bleek te dun om
+                     * onderscheid te houden met de detailregel eronder
+                     * ("€ 100 eigen risico"), die `--font-avenir-light`
+                     * (Avenir 35 Light) gebruikt. Bevestigd doordat de
+                     * gebruiker de daadwerkelijke Figma-typography-
+                     * inspector liet zien: het gekoppelde font-family-token
+                     * voor de detailregel bleek daar losgekoppeld, maar het
+                     * losse gewicht-token heette letterlijk
+                     * "font-text-weight-light".
                      */
                     const hasFeatureDetails = option.features.some((feature) => feature.details);
                     return option.features.map((feature, index) => (
@@ -277,19 +283,16 @@ export function RadioCardBottomGroup({
                           </span>
                           <div className="flex min-w-px flex-1 flex-col items-start pt-px text-left">
                             <p
-                              className={[
-                                "w-full text-black text-base leading-[1.5]",
-                                hasFeatureDetails ? "font-bold" : "",
-                              ].join(" ")}
-                              style={{ fontFamily: hasFeatureDetails ? "var(--font-avenir-bold)" : "var(--font-avenir-book)" }}
+                              className={["w-full text-black text-base leading-[1.5]", hasFeatureDetails ? "font-[550]" : "font-[350]"].join(" ")}
+                              style={{ fontFamily: hasFeatureDetails ? "var(--font-avenir-medium)" : "var(--font-avenir-book)" }}
                             >
                               {feature.text}
                             </p>
                             {feature.details?.map((detail, detailIndex) => (
                               <p
                                 key={detailIndex}
-                                className="w-full font-bold text-black text-base leading-[1.5]"
-                                style={{ fontFamily: "var(--font-avenir-bold)" }}
+                                className="w-full font-[300] text-black text-base leading-[1.5]"
+                                style={{ fontFamily: "var(--font-avenir-light)" }}
                               >
                                 {detail}
                               </p>

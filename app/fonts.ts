@@ -53,13 +53,13 @@ export const avenirMedium = localFont({
 });
 
 /**
- * "Avenir LT Pro 35 Light" (CSS-gewicht 300). Geregistreerd als
- * beschikbare infrastructuur, maar: in geen van de Figma-fetches die in
- * dit project zijn gedaan kwam een tekststijl voor die dit bestand
- * (35 Light) gebruikte — steeds was het 45 Book (zie hierboven). Er is dus
- * momenteel geen component dat `--font-avenir-light` toepast. Niet
- * geforceerd ergens op geplakt om "het bestand toch te gebruiken" — dat
- * zou een aanname zijn, geen Figma-feit.
+ * "Avenir LT Pro 35 Light" (CSS-gewicht 300). Gebruikt in de
+ * Reisverzekering-funnel se basisdekking-kaarten (`RadioCardBottom.tsx`,
+ * de feature-/detailregels zodra een kaart `details` heeft) — bevestigd
+ * doordat de gebruiker de daadwerkelijke Figma-typography-inspector liet
+ * zien: het gekoppelde font-family-token bleek daar losgekoppeld (vandaar
+ * dat een eerdere aanname op "45 Book"/bold uitkwam), maar het losse
+ * gewicht-token heette letterlijk "font-text-weight-light".
  */
 export const avenirLight = localFont({
   src: "./fonts/AvenirLTW05-35Light.otf",
