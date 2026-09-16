@@ -153,7 +153,14 @@ export function CheckboxCardControlLeft({
           ) : (
             <>
               {actionSlot}
-              {price && (
+              {/*
+                Geen prijs zolang `actionSlot` (de roze "niet beschikbaar"-pil)
+                getoond wordt — bevestigd via mcp (node 2444:4193): die staat
+                bevat alleen titel, "Meer informatie" en de pil, geen prijs-
+                tekstnode. Prijs verschijnt pas weer zodra de pil verdwijnt
+                (Bagage aangevinkt/inbegrepen).
+              */}
+              {price && !actionSlot && (
                 <div className="flex shrink-0 flex-col items-end">
                   <p
                     className="mb-[-1px] w-full text-right font-bold text-black text-xl leading-[1.4]"
