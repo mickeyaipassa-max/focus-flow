@@ -64,34 +64,30 @@ const BASISDEKKING_OPTIONS: RadioCardBottomOption[] = [
 ];
 
 /**
- * De "Bagage"-aanvullende dekking bij Basis/Comfort — LET OP, deze aanname
- * (upgrade naar de eerstvolgende hogere tier) staat nog open: een hernieuwde
- * mcp-check liet zien dat Basis' eigen scherm juist zijn ÉÍGEN cijfers toont
- * ("€ 1000"/"€ 100 eigen risico", niet Comfort's "€ 3000"/"€ 50"), en dat
- * Comfort's scherm weer een mix van Comfort- en Optimaal-cijfers toont — dus
- * dit patroon klopt zelf niet consistent. Bewust nog NIET aangepast, op
- * verzoek eerst uitzoeken voordat dit gewijzigd wordt.
- *
- * Optimaal's eigen geval (Bagage al standaard inbegrepen) wordt niet meer
- * door déze functie afgehandeld — zie `getAanvullendeDekkingenOptions`'s
- * `bagageIncluded`-check, die dat geval nu apart en wél bevestigd afvangt
- * vóórdat deze functie ooit aangeroepen wordt.
+ * Bagage-bedragen per tier — hernieuwde mcp-check (Basis-scherm en beide
+ * Comfort-schermen) loste de eerdere inconsistentie op: het aanvinkbare
+ * "Bagage"-item toont standaard de EIGEN tier-bedragen (niet die van de
+ * volgende tier), en pas ná aanvinken springt alleen de TITEL door naar het
+ * bedrag van de eerstvolgende tier — de eigen-risico-tekst verandert daarbij
+ * niet mee (bevestigd op Comfort: aangevinkt toont "Bagage tot € 5000" met
+ * ongewijzigd "€ 50 eigen risico", niet Optimaal's "geen eigen risico").
+ * Voor Basis is alleen de niet-aangevinkte stand rechtstreeks bevestigd; de
+ * aangevinkte stand ("Bagage tot € 3000") is afgeleid via exact hetzelfde,
+ * wél bevestigde patroon bij Comfort — geen apart Figma-scherm hiervoor.
  */
-function getBagageUpgrade(dekking: DekkingKeuze): CheckboxCardOption | null {
-  if (dekking === "basis") {
-    return { value: "bagage", title: "Bagage tot € 3000", description: "Voor deze dekking geldt een eigen risico van € 50.", price: "2,00" };
-  }
-  if (dekking === "comfort") {
-    return { value: "bagage", title: "Bagage tot € 5000", description: "Voor deze dekking geldt geen eigen risico.", price: "2,00" };
-  }
-  return null;
-}
+const BAGAGE_TIER_DATA: Record<"basis" | "comfort", { eigenBedrag: string; volgendeBedrag: string; eigenRisico: string }> = {
+  basis: { eigenBedrag: "1000", volgendeBedrag: "3000", eigenRisico: "Voor deze dekking geldt een eigen risico van € 100." },
+  comfort: { eigenBedrag: "3000", volgendeBedrag: "5000", eigenRisico: "Voor deze dekking geldt een eigen risico van € 50." },
+};
 
 /**
  * "Extra sportuitrusting" is in Figma alleen aan te vinken zodra "Bagage"
- * is aangevinkt (getoond als een blauw info-blokje i.p.v. een checkbox
- * zolang dat niet zo is). Bij Optimaal is "Bagage" zelf al "Inbegrepen"
- * (zie hieronder), dus is aan die voorwaarde dan impliciet al voldaan.
+ * is aangevinkt (getoond als een roze pil i.p.v. een checkbox zolang dat
+ * niet zo is — bevestigd via mcp, node 2444:4193/2444:4211: de titel bevat
+ * nu zelf het bedrag ("Extra sportuitrusting tot € 2.500.") zonder aparte
+ * beschrijvingsregel, en de pil-tekst is tier-afhankelijk: "Alleen
+ * beschikbaar i.c.m. Bagage tot € 1000/3000"). Bij Optimaal is "Bagage" zelf
+ * al "Inbegrepen", dus is aan die voorwaarde dan impliciet al voldaan.
  *
  * "Inbegrepen"-pil i.p.v. checkbox: bevestigd via mcp op de Optimaal-
  * geselecteerde staat — "Bagage", "Geld", "Geneeskundige kosten" en
@@ -100,15 +96,22 @@ function getBagageUpgrade(dekking: DekkingKeuze): CheckboxCardOption | null {
  * basisdekking-kaart zelf als ✓ i.p.v. ✗ staan). Bij Basis/Comfort staan
  * die 4 features nog op ✗, dus daar blijven het gewoon checkboxen.
  *
- * "Geld"-beschrijving bij Optimaal ("De a.s.r. alarmcentrale...") is
- * letterlijk overgenomen uit Figma, ook al lijkt de tekst inhoudelijk niet
- * bij "Geld" te passen (lijkt een contentfout in Figma zelf, hier bewust
- * niet zelf gecorrigeerd — mcp is de waarheid).
+ * Alle 4 "Inbegrepen"-items tonen bij Optimaal geen beschrijvingsregel meer
+ * (bevestigd via mcp) — inclusief "Geld", waarvan de eerder overgenomen
+ * "De a.s.r. alarmcentrale..."-tekst (een contentfout in Figma zelf) dus
+ * niet meer relevant is, want die regel is helemaal verdwenen.
  *
  * "Geneeskundige kosten"/"Reisrechtsbijstand" tonen bij Optimaal in Figma
- * zelf nog onopgeloste "Description"-placeholdertekst — hier bewust NIET
- * overgenomen (zou zelf verzonnen content zijn); ze behouden voorlopig hun
- * bestaande, al wel bevestigde Basis/Comfort-beschrijving.
+ * zelf nog onopgeloste "Description"-placeholdertekst voor de 3 laatste,
+ * nog-aan-te-vinken items (Ongevallen/Skiën/Hulp) — hier bewust NIET
+ * overgenomen (zou zelf verzonnen content zijn); die 3 behouden voorlopig
+ * hun bestaande, al wel bevestigde Basis/Comfort-beschrijving.
+ *
+ * Volgorde: bevestigd via mcp op Optimaal (node 2416:3430) staan de 4
+ * "Inbegrepen"-items vooraan, gevolgd door de nog aan te vinken items. Een
+ * stabiele sort op `included` (aflopend) reproduceert dit exact, zonder iets
+ * te veranderen aan Basis/Comfort (daar is nooit een item `included`, ook
+ * niet wanneer Bagage is aangevinkt — dat geeft geen `included`-status).
  */
 function getAanvullendeDekkingenOptions(dekking: DekkingKeuze, bagageChecked: boolean): CheckboxCardOption[] {
   const tier = BASISDEKKING_OPTIONS.find((option) => option.value === dekking)!;
@@ -116,50 +119,59 @@ function getAanvullendeDekkingenOptions(dekking: DekkingKeuze, bagageChecked: bo
   const geldIncluded = tier.features[2].included;
   const geneeskundigeKostenIncluded = tier.features[3].included;
   const reisrechtsbijstandIncluded = tier.features[4].included;
-  const bagageSatisfied = bagageIncluded || bagageChecked;
 
-  const bagageOption: CheckboxCardOption | null = bagageIncluded
-    ? { value: "bagage", title: "Bagage tot € 5000", description: "Voor deze dekking geldt geen eigen risico", included: true }
-    : getBagageUpgrade(dekking);
+  let bagageOption: CheckboxCardOption;
+  let sportuitrustingDisabledMessage: string | undefined;
+  if (bagageIncluded) {
+    bagageOption = { value: "bagage", title: "Bagage tot € 5000", included: true };
+    sportuitrustingDisabledMessage = undefined;
+  } else {
+    const tierData = BAGAGE_TIER_DATA[dekking as "basis" | "comfort"];
+    bagageOption = {
+      value: "bagage",
+      title: `Bagage tot € ${bagageChecked ? tierData.volgendeBedrag : tierData.eigenBedrag}`,
+      description: tierData.eigenRisico,
+      price: "2,00",
+    };
+    sportuitrustingDisabledMessage = bagageChecked ? undefined : `Alleen beschikbaar i.c.m. Bagage tot € ${tierData.eigenBedrag}`;
+  }
 
-  const options: CheckboxCardOption[] = [];
-  if (bagageOption) options.push(bagageOption);
-  options.push(
+  const options: CheckboxCardOption[] = [
+    bagageOption,
     {
       value: "sportuitrusting",
-      title: "Extra sportuitrusting",
-      description: "Extra sportuitrusting vergoeding tot € 2.500",
+      title: "Extra sportuitrusting tot € 2.500.",
       price: "1,20",
-      disabledMessage: bagageSatisfied ? undefined : "Kan alleen worden meeverzekerd als dekking Bagage is afgesloten",
+      disabledMessage: sportuitrustingDisabledMessage,
     },
     {
       value: "geld",
       title: "Geld",
-      description: geldIncluded
-        ? "De a.s.r. alarmcentrale staat voor je klaar als je niet verder kan rijden door pech."
-        : "Geld en cheques tot € 500 meeverzekerd.",
+      description: geldIncluded ? undefined : "Geld en cheques tot € 500 meeverzekerd.",
       price: "4,00",
       included: geldIncluded,
     },
     {
       value: "geneeskundige-kosten",
       title: "Geneeskundige kosten",
-      description: "Vergoeding voor spoedeisende medische hulp.",
+      description: geneeskundigeKostenIncluded ? undefined : "Vergoeding voor spoedeisende medische hulp.",
       price: "4,00",
       included: geneeskundigeKostenIncluded,
     },
     {
       value: "reisrechtsbijstand",
       title: "Reisrechtsbijstand",
-      description: "Tijdens je reis verzekerd voor rechtsbijstand door de juristen van DAS.",
+      description: reisrechtsbijstandIncluded ? undefined : "Tijdens je reis verzekerd voor rechtsbijstand door de juristen van DAS.",
       price: "1,20",
       included: reisrechtsbijstandIncluded,
     },
     { value: "ongevallen", title: "Ongevallen", description: "Eenmalige uitkering bij invaliditeit of overlijden door een ongeval.", price: "1,20" },
     { value: "wintersport", title: "Skiën en snowboarden", description: "Ook verzekerd als je gaat wintersporten.", price: "8,00" },
     { value: "vervoermiddel-hulp", title: "Hulp en huur vervoermiddel", description: "Verzekerd bij uitval van je vervoermiddel of bestuurder.", price: "17,50" },
-  );
-  return options.map((option) => ({ ...option, showPricePeriod: false, centerActionSlot: true, compact: true }));
+  ];
+
+  const sortedByIncludedFirst = [...options].sort((a, b) => Number(b.included ?? false) - Number(a.included ?? false));
+  return sortedByIncludedFirst.map((option) => ({ ...option, showPricePeriod: false, centerActionSlot: true, compact: true }));
 }
 
 function parseEuro(value: string): number {
@@ -332,7 +344,7 @@ export default function KortlopendeReisPage() {
             <Alert
               type="info"
               title="Kies eerst een basisdekking"
-              description="Kies eerst je basisdekking. Daarna zie je welke aanvullende dekkingen je kunt kiezen."
+              description="Daarna zie je welke aanvullende dekkingen je kunt kiezen."
               closable={false}
             />
           </div>

@@ -358,18 +358,13 @@ export function CheckboxCardControlLeftGroup({
             compact={option.compact}
             actionSlot={
               option.disabledMessage && (
-                // Zelfde kleurtokens als Alert's type="info" (bg-[#d7e9f5]/border-[#0064a8]/icon="info")
-                // — geverifieerd via mcp dat dit letterlijk een Alert-instance is in Figma. Niet de
-                // volledige `Alert` hergebruikt: die is groter opgezet (p-2+p-2, md-icoon, text-base)
-                // dan dit compacte inline blokje (sm-icoon, text-sm, geen titel/actie/sluitknop).
-                <div className="flex max-w-[280px] items-start gap-2 rounded-[3px] border border-[#0064a8] bg-[#d7e9f5] px-2 py-1">
-                  <span className="flex shrink-0 items-center pt-[3px]">
-                    <Icon name="info-sm" size="sm" />
-                  </span>
-                  <span className="flex items-center pt-[2px] text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir)" }}>
-                    {option.disabledMessage}
-                  </span>
-                </div>
+                // Hernieuwde mcp-check (node 2444:4193/2444:4211, "Extra
+                // sportuitrusting" bij Basis/Comfort) toont nu een roze,
+                // volledig ronde pil i.p.v. het eerdere blauwe info-blokje
+                // met icoon — letterlijk hetzelfde "Tag"-component als de
+                // groene "Inbegrepen"-pil, hier met `color="red"`
+                // (`bg-[#f8d3dd]`, geen icoon, geen border).
+                <Tag text={option.disabledMessage} color="red" />
               )
             }
             showMoreInfoButton={Boolean(onMoreInfoClick)}
