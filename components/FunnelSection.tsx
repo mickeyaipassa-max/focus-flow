@@ -10,6 +10,16 @@ type FunnelSectionProps = {
   intro?: boolean;
   /** Toont de "Velden met * zijn verplicht"-regel — in Figma uitsluitend op de Intro section. Onafhankelijk van de afsluitende divider (zie `intro`): die staat er in Figma's IntroSection-component altijd, ook zonder deze regel. */
   showRequiredFieldsNote?: boolean;
+  /**
+   * Overschrijft de tekst/volgorde van de verplichte-velden-regel. Default
+   * ongewijzigd "Velden met * zijn verplicht" (asterisk in het midden) —
+   * bevestigd via mcp op de Woonverzekeringen-funnel (bestand "Live event
+   * Funnel", node 1:23578) dat die funnel juist "* Verplichte velden"
+   * (asterisk eerst, andere woorden) gebruikt. Puur een override-prop i.p.v.
+   * de bestaande tekst overal te wijzigen: geen andere funnel is hierop
+   * gecontroleerd, dus die blijven op de al bevestigde standaardtekst staan.
+   */
+  requiredFieldsNote?: ReactNode;
   /** Toont een divider vóór deze sectie. Figma's gewone "Form section" heeft die altijd; de Intro section (altijd de eerste) nooit. */
   showDividerAbove?: boolean;
   className?: string;
@@ -30,6 +40,7 @@ export function FunnelSection({
   children,
   intro = false,
   showRequiredFieldsNote = false,
+  requiredFieldsNote,
   showDividerAbove = false,
   className,
 }: FunnelSectionProps) {
@@ -66,19 +77,20 @@ export function FunnelSection({
 
       {intro && (
         <div className="flex w-full flex-col items-end gap-2">
-          {showRequiredFieldsNote && (
-            <div className="flex items-center gap-1 whitespace-nowrap">
-              <span className="text-black text-sm" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                Velden met
-              </span>
-              <span className="text-[#ce0a1e] text-base" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                *
-              </span>
-              <span className="text-black text-sm" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                zijn verplicht
-              </span>
-            </div>
-          )}
+          {showRequiredFieldsNote &&
+            (requiredFieldsNote ?? (
+              <div className="flex items-center gap-1 whitespace-nowrap">
+                <span className="text-black text-sm" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                  Velden met
+                </span>
+                <span className="text-[#ce0a1e] text-base" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                  *
+                </span>
+                <span className="text-black text-sm" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                  zijn verplicht
+                </span>
+              </div>
+            ))}
           <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
         </div>
       )}
