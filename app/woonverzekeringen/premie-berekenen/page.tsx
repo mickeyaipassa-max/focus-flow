@@ -253,13 +253,16 @@ export default function OpstalPremieBerekenenPage() {
         Entity Item" is 763px breed, dus edge-to-edge over de hele kaart —
         anders dan de smallere, 40px-ingesprongen divider die de intro-sectie
         zelf al toont (683px, `FunnelSection`'s eigen ingebouwde divider).
-        Zonder de `-mx-6`/`-mx-10`-uitbraak uit `FunnelPageTemplate`'s eigen
-        kaartpadding oogden beide dividers identiek breed en direct onder
-        elkaar (het gerapporteerde "dubbele divider"-probleem). `MultiEntityItem`
-        heeft zelf al de bevestigde 40px binnenpadding (pad=16/40/16/40), dus na
-        deze uitbraak precies één set inspringing i.p.v. dubbel opgeteld.
+        `-mx-6`/`-mx-10` alléén verschuift een `w-full`-element (breedte blijft
+        100% van de reeds ingesprongen ouder, dus het schuift alleen naar
+        links i.p.v. ook rechts door te lopen — vandaar de eerdere "loopt niet
+        door"-fout). De `w-[calc(100%+3rem)]`/`...+5rem)` compenseert dat: de
+        breedte wordt expliciet met exact 2x de opgeheven padding vergroot, dus
+        de rand raakt nu écht beide kaartranden. `MultiEntityItem` heeft zelf
+        al de bevestigde 40px binnenpadding (pad=16/40/16/40), dus na deze
+        uitbraak precies één set inspringing i.p.v. dubbel opgeteld.
       */}
-      <div className="flex w-full flex-col items-start -mx-6 min-[1200px]:-mx-10">
+      <div className="flex w-[calc(100%+3rem)] flex-col items-start -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10">
         <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
         <MultiEntityItem state="current" icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />} title="Opstalverzekering" description="Verzeker je woning voor bijvoorbeeld brand, storm of inbraak." />
       </div>
@@ -314,8 +317,14 @@ export default function OpstalPremieBerekenenPage() {
         <RadioGroup labelText="Heeft je woning een rieten dak?" options={JA_NEE_OPTIONS} value={rietenDak} onChange={setRietenDak} horizontal />
       </FunnelSection>
 
-      {/* Bevestigd via mcp (node 1:36357): ook deze divider is 763px, edge-to-edge — `showDividerAbove` zou hier de smallere, ingesprongen variant geven. */}
-      <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:-mx-10" />
+      {/*
+        Bevestigd via mcp (node 1:36357): ook deze divider is 763px, edge-to-
+        edge — `showDividerAbove` zou hier de smallere, ingesprongen variant
+        geven. Zie de toelichting hierboven: `w-[calc(100%+...)]` i.p.v.
+        `w-full`, anders schuift de divider alleen naar links i.p.v. ook
+        rechts door te lopen.
+      */}
+      <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
 
       <FunnelSection title="Stel je opstalverzekering samen">
         {!isDataComplete ? (
@@ -356,7 +365,7 @@ export default function OpstalPremieBerekenenPage() {
         groep (het gerapporteerde "dividers lopen niet door"-probleem: elke
         divider moet zelf ook edge-to-edge zijn, niet alleen de bovenste).
       */}
-      <div className="flex w-full flex-col items-start -mx-6 min-[1200px]:-mx-10">
+      <div className="flex w-[calc(100%+3rem)] flex-col items-start -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10">
         {remainingProducts.map((product) => (
           <div key={product.title} className="flex w-full flex-col items-start">
             <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
