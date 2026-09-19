@@ -22,6 +22,17 @@ type FunnelSectionProps = {
   requiredFieldsNote?: ReactNode;
   /** Toont een divider vóór deze sectie. Figma's gewone "Form section" heeft die altijd; de Intro section (altijd de eerste) nooit. */
   showDividerAbove?: boolean;
+  /**
+   * Verbergt de afsluitende divider van de Intro section (alleen relevant
+   * met `intro`). Default `false` (Figma's IntroSection heeft 'm altijd,
+   * ongewijzigd voor bestaande funnels) — nodig op de Woonverzekeringen-
+   * stap-2-pagina, waar direct ná deze intro al een eigen, edge-to-edge
+   * divider volgt (de "Multi Entity Item"-container): twee dividers vlak
+   * onder elkaar oogden daar als één dubbele lijn, bevestigd door de
+   * opdrachtgever als ongewenst — vandaar hier uitschakelbaar i.p.v. de
+   * standaard overal te wijzigen.
+   */
+  hideIntroDivider?: boolean;
   className?: string;
 };
 
@@ -42,6 +53,7 @@ export function FunnelSection({
   showRequiredFieldsNote = false,
   requiredFieldsNote,
   showDividerAbove = false,
+  hideIntroDivider = false,
   className,
 }: FunnelSectionProps) {
   return (
@@ -91,7 +103,7 @@ export function FunnelSection({
                 </span>
               </div>
             ))}
-          <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
+          {!hideIntroDivider && <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />}
         </div>
       )}
     </div>
