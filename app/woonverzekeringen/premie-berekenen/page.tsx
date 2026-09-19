@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
@@ -112,9 +112,18 @@ export default function OpstalPremieBerekenenPage() {
   const [dak, setDak] = useState("");
   const [rietenDak, setRietenDak] = useState("");
 
-  const [dekking, setDekking] = useState("");
-  const [eigenRisico, setEigenRisico] = useState("");
-  const [glas, setGlas] = useState<string[]>([]);
+  /**
+   * Standaard al Basis/€ 100/Glas aangevinkt i.p.v. leeg — bevestigd via de
+   * Figma Make-broncode (`useState('Basis')`/`useState('€ 100')`/
+   * `useState(true)`): de gebruiker krijgt een kant-en-klare configuratie te
+   * zien die hij kan aanpassen, in plaats van alles zelf te moeten kiezen.
+   */
+  const [dekking, setDekking] = useState("basis");
+  const [eigenRisico, setEigenRisico] = useState("100");
+  const [glas, setGlas] = useState<string[]>(["glas"]);
+  const [showSkeleton, setShowSkeleton] = useState(false);
+  const stelJeOpstalRef = useRef<HTMLDivElement>(null);
+  const wasDataComplete = useRef(false);
 
   /**
    * Geen backend voor een echte postcode-lookup (bevestigd: ook de bestaande
@@ -129,14 +138,38 @@ export default function OpstalPremieBerekenenPage() {
   const isDataComplete = Boolean(
     geboortedatum && addressResolved && soortWoning && koopHuur && particulier && muren && dak && rietenDak,
   );
-  const isCoverageComplete = Boolean(dekking && eigenRisico);
+
+  /**
+   * Bevestigd via de Figma Make-broncode (`useEffect` op `isComplete`):
+   * zodra "Gegevens" van onvolledig naar compleet gaat, scrollt de pagina
+   * smooth naar "Stel je opstalverzekering samen" (80px vanaf de top) en
+   * toont hij daar 1 seconde een pulserende skeleton i.p.v. direct de echte
+   * Basis/Allrisk-kaarten — geen losse animatiebibliotheek nodig voor dit
+   * eenmalige effect, `setTimeout` + Tailwinds `animate-pulse` volstaan,
+   * exact zoals de referentie het zelf ook doet.
+   */
+  useEffect(() => {
+    if (isDataComplete && !wasDataComplete.current) {
+      setShowSkeleton(true);
+      requestAnimationFrame(() => {
+        const top = stelJeOpstalRef.current?.getBoundingClientRect().top;
+        if (top !== undefined) {
+          window.scrollTo({ top: top + window.scrollY - 80, behavior: "smooth" });
+        }
+      });
+      const timeout = setTimeout(() => setShowSkeleton(false), 1000);
+      wasDataComplete.current = isDataComplete;
+      return () => clearTimeout(timeout);
+    }
+    wasDataComplete.current = isDataComplete;
+  }, [isDataComplete]);
 
   const coveragePrice = dekking === "basis" ? 4.82 : dekking === "allrisk" ? 5.2 : 0;
   const glasPrice = glas.includes("glas") ? GLAS_PRICE : 0;
   const totalPrice = coveragePrice + glasPrice;
 
   const opstalSection: ReceiptSection = useMemo(() => {
-    if (!isCoverageComplete) {
+    if (!isDataComplete) {
       return {
         id: "opstal",
         title: "Opstal",
@@ -162,7 +195,7 @@ export default function OpstalPremieBerekenenPage() {
         ...(glasPrice > 0 ? [{ title: "Aanvullende dekkingen", items: [{ label: "Glas", amount: formatEuro(glasPrice) }] }] : []),
       ],
     };
-  }, [isCoverageComplete, dekking, eigenRisico, glasPrice, totalPrice, coveragePrice]);
+  }, [isDataComplete, dekking, eigenRisico, glasPrice, totalPrice, coveragePrice]);
 
   /**
    * De overige 3 producten hier hardcoded als "nog niet begonnen" —
@@ -197,7 +230,7 @@ export default function OpstalPremieBerekenenPage() {
     })),
   ];
 
-  const summaryAmount = formatEuro(totalPrice);
+  const summaryAmount = isDataComplete ? formatEuro(totalPrice) : "€ -,--";
 
   function handlePrevious() {
     router.push("/woonverzekeringen");
@@ -246,7 +279,13 @@ export default function OpstalPremieBerekenenPage() {
         </span>
       </button>
 
-      <FunnelSection intro title="Bereken je premie" />
+      {/*
+        `hideIntroDivider`: de opdrachtgever wil hier maar één lijn zien
+        (bevestigd na review) — de eigen intro-divider van deze sectie
+        verviel, de edge-to-edge "Container"-divider vlak vóór het
+        Multi-Entity-item-blok hieronder blijft over.
+      */}
+      <FunnelSection intro title="Bereken je premie" hideIntroDivider />
 
       {/*
         Bevestigd via mcp (node 1:30978, "Container"): de divider vóór "Multi
@@ -326,36 +365,63 @@ export default function OpstalPremieBerekenenPage() {
       */}
       <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
 
-      <FunnelSection title="Stel je opstalverzekering samen">
-        {!isDataComplete ? (
-          <Alert type="warning" title="Vul eerst alle gegevens in om je premie te berekenen" description="You can use a description to better explain the alert." />
-        ) : (
-          <>
-            <RadioCardBottomGroup labelText="Kies je dekking" options={DEKKING_OPTIES} value={dekking} onChange={setDekking} onMoreInfoClick={() => {}} />
-            <RadioGroup
-              labelText="Kies je eigen risico"
-              description="Dit is het bedrag dat wij aftrekken van een schadevergoeding. Hoe hoger je eigen risico, hoe minder je per maand betaalt."
-              options={EIGEN_RISICO_OPTIONS}
-              value={eigenRisico}
-              onChange={setEigenRisico}
-            />
-            <CheckboxCardControlLeftGroup
-              labelText="Welke aanvullende dekking wil je?"
-              options={[
-                {
-                  value: "glas",
-                  title: "Glas",
-                  description: "Vergoeding voor de kosten van nieuwe ruiten en herstel van beschadigd schilderwerk.",
-                  price: formatEuro(GLAS_PRICE).replace("€ ", ""),
-                },
-              ]}
-              values={glas}
-              onChange={setGlas}
-              onMoreInfoClick={() => {}}
-            />
-          </>
-        )}
-      </FunnelSection>
+      <div ref={stelJeOpstalRef}>
+        <FunnelSection title="Stel je opstalverzekering samen">
+          {!isDataComplete ? (
+            <Alert type="warning" title="Vul eerst alle gegevens in om je premie te berekenen" description="You can use a description to better explain the alert." />
+          ) : showSkeleton ? (
+            /**
+             * Bevestigd via de Figma Make-broncode: 1 seconde lang een
+             * pulserende skeleton i.p.v. direct de echte content, met
+             * ongeveer dezelfde blokafmetingen als de content die hij
+             * vervangt (titel + 2 kaarten naast elkaar + eigen-risico-blok +
+             * Glas-blok).
+             */
+            <div className="flex w-full flex-col items-start gap-6" aria-hidden="true">
+              <div className="h-7 w-[180px] animate-pulse rounded bg-[rgba(0,0,0,0.08)]" />
+              <div className="flex w-full gap-4">
+                <div className="h-80 flex-1 animate-pulse rounded-[3px] bg-[rgba(0,0,0,0.08)]" />
+                <div className="h-80 flex-1 animate-pulse rounded-[3px] bg-[rgba(0,0,0,0.08)]" />
+              </div>
+              <div className="flex w-full flex-col gap-3">
+                <div className="h-7 w-[200px] animate-pulse rounded bg-[rgba(0,0,0,0.08)]" />
+                <div className="h-[22px] w-full animate-pulse rounded bg-[rgba(0,0,0,0.08)]" />
+                <div className="h-[22px] w-full animate-pulse rounded bg-[rgba(0,0,0,0.08)]" />
+                <div className="h-[22px] w-full animate-pulse rounded bg-[rgba(0,0,0,0.08)]" />
+              </div>
+              <div className="flex w-full flex-col gap-3">
+                <div className="h-7 w-[280px] animate-pulse rounded bg-[rgba(0,0,0,0.08)]" />
+                <div className="h-20 w-full animate-pulse rounded-[3px] bg-[rgba(0,0,0,0.08)]" />
+              </div>
+            </div>
+          ) : (
+            <>
+              <RadioCardBottomGroup labelText="Kies je dekking" options={DEKKING_OPTIES} value={dekking} onChange={setDekking} onMoreInfoClick={() => {}} />
+              <RadioGroup
+                labelText="Kies je eigen risico"
+                description="Dit is het bedrag dat wij aftrekken van een schadevergoeding. Hoe hoger je eigen risico, hoe minder je per maand betaalt."
+                options={EIGEN_RISICO_OPTIONS}
+                value={eigenRisico}
+                onChange={setEigenRisico}
+              />
+              <CheckboxCardControlLeftGroup
+                labelText="Welke aanvullende dekking wil je?"
+                options={[
+                  {
+                    value: "glas",
+                    title: "Glas",
+                    description: "Vergoeding voor de kosten van nieuwe ruiten en herstel van beschadigd schilderwerk.",
+                    price: formatEuro(GLAS_PRICE).replace("€ ", ""),
+                  },
+                ]}
+                values={glas}
+                onChange={setGlas}
+                onMoreInfoClick={() => {}}
+              />
+            </>
+          )}
+        </FunnelSection>
+      </div>
 
       {/*
         Bevestigd via mcp: elke resterende-product-rij is z'n eigen "Multi
