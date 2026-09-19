@@ -7,57 +7,31 @@ import { FunnelSection } from "@/components/FunnelSection";
 import { FormNavigation } from "@/components/FormNavigation";
 import { ToggleCardGroup, type ToggleCardOption } from "@/components/ToggleCard";
 import { Icon } from "@/components/Icon";
+import { useWoonverzekeringenFunnel } from "./funnel-context";
+import { WOONVERZEKERINGEN_PRODUCTEN, type WoonverzekeringenProductId } from "./products";
 
 const WOON_STEPS = ["Productkeuze", "Premie berekenen", "Gegevens", "Laatste vragen", "Samenvatting"];
 
 /**
- * Iconen opnieuw gecontroleerd via mcp (bestand "Live event Funnel", node
- * 1:23578) nadat bleek dat het bestand was bijgewerkt: elke tegel heeft nu
- * wél zijn eigen icoon-component. Elk rechtstreeks als SVG geëxporteerd via
- * de Figma plugin-API (`node.exportAsync`, geen screenshot):
- * "1036-woonhuisverzekering" (Opstal, matcht het al aanwezige
- * `pictogram-house`) en "1020-inboedelverzekering" (matcht het al aanwezige
- * `pictogram-inboedel`) zijn hergebruikt; "1003-aansprakelijkheidsverzekering"
- * bleek NIET hetzelfde als het al aanwezige `pictogram-aansprakelijkheid`
- * (ander viewBox/andere paden) — dus als apart, nieuw bestand toegevoegd
- * i.p.v. dat bestaande bestand te overschrijven of te hergebruiken.
- * "1028-overlijdensrisicoverzekering" en "1030-rechtsbijstandsverzekering"
- * bestonden nog helemaal niet, ook nieuw toegevoegd.
- *
- * Overlijdens-/Rechtsbijstandverzekering hebben in Figma dezelfde
- * beschrijving als Opstalverzekering gekregen (kopieerfout) — bewust
- * letterlijk overgenomen i.p.v. zelf een andere tekst te verzinnen.
+ * Iconen/titels/beschrijvingen komen nu uit `products.ts` (losgetrokken uit
+ * deze pagina) i.p.v. hier lokaal gedupliceerd te staan — dezelfde data is
+ * nodig op de productpagina's zelf (bv. Opstal's "resterende producten"-lijst
+ * en de kassabon).
  */
-const PRODUCT_OPTIES: ToggleCardOption[] = [
-  { value: "opstal", icon: "pictogram-house", title: "Opstalverzekering", description: "Verzeker je woning voor bijvoorbeeld brand, storm of inbraak." },
-  { value: "inboedel", icon: "pictogram-inboedel", title: "Inboedelverzekering", description: "Verzeker je spullen voor schade of diefstal." },
-  {
-    value: "aansprakelijkheid",
-    icon: "pictogram-aansprakelijkheidsverzekering",
-    title: "Aansprakelijkheidsverzekering",
-    description: "Verzeker jezelf voor schade die jij per ongeluk veroorzaakt.",
-  },
-  {
-    value: "overlijden",
-    icon: "pictogram-overlijdensrisicoverzekering",
-    title: "Overlijdensrisicoverzekering",
-    description: "Verzeker je woning voor bijvoorbeeld brand, storm of inbraak.",
-  },
-  {
-    value: "rechtsbijstand",
-    icon: "pictogram-rechtsbijstandsverzekering",
-    title: "Rechtsbijstandverzekering",
-    description: "Verzeker je woning voor bijvoorbeeld brand, storm of inbraak.",
-  },
-];
+const PRODUCT_OPTIES: ToggleCardOption[] = WOONVERZEKERINGEN_PRODUCTEN.map((product) => ({
+  value: product.id,
+  icon: product.icon,
+  title: product.title,
+  description: product.description,
+}));
 
 export default function WoonverzekeringenPage() {
   const router = useRouter();
-  const [producten, setProducten] = useState<string[]>([]);
+  const { state, setState } = useWoonverzekeringenFunnel();
   const [error, setError] = useState(false);
 
   function handleNext() {
-    if (producten.length === 0) {
+    if (state.selectedProducts.length === 0) {
       setError(true);
       return;
     }
@@ -106,9 +80,9 @@ export default function WoonverzekeringenPage() {
       <FunnelSection title="Waarvoor wil je een premie berekenen?" description="Kies minimaal één verzekering om verder te gaan.">
         <ToggleCardGroup
           options={PRODUCT_OPTIES}
-          values={producten}
+          values={state.selectedProducts}
           onChange={(values) => {
-            setProducten(values);
+            setState({ ...state, selectedProducts: values as WoonverzekeringenProductId[] });
             setError(false);
           }}
           onMoreInfoClick={() => {}}

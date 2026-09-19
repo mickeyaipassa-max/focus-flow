@@ -16,6 +16,15 @@ import { CheckboxCardControlLeftGroup } from "@/components/CheckboxCardControlLe
 import { Alert } from "@/components/Alert";
 import { Receipt, type ReceiptSection } from "@/components/Receipt";
 import { Icon } from "@/components/Icon";
+import {
+  fromIsoDatum,
+  getProductStatus,
+  getTotalPremium,
+  toIsoDatum,
+  useWoonverzekeringenFunnel,
+  type WoonverzekeringenSharedData,
+} from "../funnel-context";
+import { getProductMeta, type WoonverzekeringenProductId } from "../products";
 
 const WOON_STEPS = ["Productkeuze", "Premie berekenen", "Gegevens", "Laatste vragen", "Samenvatting"];
 
@@ -102,15 +111,28 @@ function formatEuro(amount: number) {
 
 export default function OpstalPremieBerekenenPage() {
   const router = useRouter();
+  const { state, setState } = useWoonverzekeringenFunnel();
 
-  const [geboortedatum, setGeboortedatum] = useState<Date | null>(null);
-  const [adres, setAdres] = useState<FieldsetAddressValue>({ postalCode: "", houseNumber: "", addition: "" });
-  const [soortWoning, setSoortWoning] = useState("");
-  const [koopHuur, setKoopHuur] = useState("");
-  const [particulier, setParticulier] = useState("");
-  const [muren, setMuren] = useState("");
-  const [dak, setDak] = useState("");
-  const [rietenDak, setRietenDak] = useState("");
+  /**
+   * Alle velden hieronder komen nu uit `state.sharedData` i.p.v. lokale
+   * `useState` — bevestigd via mcp dat Inboedel's "Je woning"-sectie
+   * letterlijk dezelfde vragen stelt als deze "Gegevens"-sectie, dus deze
+   * gegevens moeten aanvraagbreed beschikbaar zijn, niet alleen op deze
+   * pagina (rationale punt 11-13). `updateSharedData` is een dunne
+   * merge-helper, zelfde `setState({ ...state, veld })`-patroon als
+   * `app/mutatie/dekking-wijzigen/page.tsx` al gebruikt.
+   */
+  function updateSharedData(patch: Partial<WoonverzekeringenSharedData>) {
+    setState({ ...state, sharedData: { ...state.sharedData, ...patch } });
+  }
+
+  const geboortedatum = fromIsoDatum(state.sharedData.geboortedatum);
+  const adres: FieldsetAddressValue = {
+    postalCode: state.sharedData.postcode,
+    houseNumber: state.sharedData.huisnummer,
+    addition: state.sharedData.toevoeging,
+  };
+  const { soortWoning, koopHuur, particulier, muren, dak, rietenDak } = state.sharedData;
 
   /**
    * Standaard al Basis/€ 100/Glas aangevinkt i.p.v. leeg — bevestigd via de
@@ -168,6 +190,24 @@ export default function OpstalPremieBerekenenPage() {
   const glasPrice = glas.includes("glas") ? GLAS_PRICE : 0;
   const totalPrice = coveragePrice + glasPrice;
 
+  /**
+   * Zet Opstal's eigen premie door naar de gedeelde state, zodat een latere
+   * productpagina (bv. Inboedel) 'm in de kassabon kan tonen — bevestigd via
+   * mcp dat Inboedel's Receipt precies dit doet ("Opstal € 17,69" naast de
+   * nog niet-berekende producten). Reactief op elke wijziging (niet pas bij
+   * "verder met ..."), zodat de kassabon ook op déze pagina live meebeweegt
+   * zoals Figma laat zien. `isComplete` (het product is écht afgerond, de
+   * gebruiker is verdergegaan) staat los hiervan — zie `handleNext`.
+   */
+  useEffect(() => {
+    const premium = isDataComplete ? totalPrice : null;
+    if (state.products.opstal?.premium === premium) return;
+    setState({
+      ...state,
+      products: { ...state.products, opstal: { premium, isComplete: state.products.opstal?.isComplete ?? false } },
+    });
+  }, [isDataComplete, totalPrice, state, setState]);
+
   const opstalSection: ReceiptSection = useMemo(() => {
     if (!isDataComplete) {
       return {
@@ -198,50 +238,62 @@ export default function OpstalPremieBerekenenPage() {
   }, [isDataComplete, dekking, eigenRisico, glasPrice, totalPrice, coveragePrice]);
 
   /**
-   * De overige 3 producten hier hardcoded als "nog niet begonnen" —
-   * bevestigd exact zo op de Figma-pagina zelf (Inboedel/Overlijdensrisico/
-   * Rechtsbijstand, node 1:30178/1:36444/1:36470). Ze automatisch afleiden
-   * uit de echte stap-1-selectie (zoals de rationale in punt 13/17
-   * beschrijft) hoort bij het gedeelde-state-werk dat nog moet gebeuren
-   * (`funnel-context.tsx` bestaat al, maar wordt door stap 1 nog niet
-   * gebruikt) — hier bewust buiten scope, dit is de Opstal-only eerste bouw.
+   * Nu écht afgeleid uit de stap-1-selectie i.p.v. hardcoded (was bewust
+   * buiten scope bij de allereerste Opstal-only bouw, tot deze
+   * gedeelde-state-laag er was) — volgorde uit `state.selectedProducts` is
+   * leidend (rationale punt 1). Titels/iconen komen uit `products.ts` i.p.v.
+   * hier opnieuw gedupliceerd.
    */
-  /**
-   * Figma's eigen upcoming-rijen tonen voor alle drie hetzelfde generieke
-   * poppetje-icoon (bevestigd via mcp) — in de praktijk oogt dat als een
-   * fout zodra drie verschillende producten identiek ogen. Hier daarom
-   * bewust het eigen producticoon van stap 1 hergebruikt (zelfde bestanden
-   * als `app/woonverzekeringen/page.tsx`), consistent met hoe het huidige
-   * (`current`) Opstal-item hierboven ook zijn eigen icoon toont.
-   */
-  const remainingProducts = [
-    { title: "Inboedelverzekering", icon: "pictogram-inboedel" },
-    { title: "Overlijdensrisicoverzekering", icon: "pictogram-overlijdensrisicoverzekering" },
-    { title: "Rechtsbijstandverzekering", icon: "pictogram-rechtsbijstandsverzekering" },
-  ];
+  const otherProductIds = state.selectedProducts.filter((id) => id !== "opstal");
 
   const receiptSections: ReceiptSection[] = [
     opstalSection,
-    ...remainingProducts.map((p) => ({
-      id: p.title,
-      title: p.title,
-      amount: "€ -,--",
-      icon: <img src={`/icons/${p.icon}.svg`} alt="" className="size-8" />,
-    })),
+    ...otherProductIds.map((id) => {
+      const meta = getProductMeta(id);
+      const premium = state.products[id]?.premium ?? null;
+      return {
+        id,
+        title: meta.shortTitle,
+        amount: premium != null ? formatEuro(premium) : "€ -,--",
+        icon: <img src={`/icons/${meta.icon}.svg`} alt="" className="size-8" />,
+        ...(premium == null ? { groups: [{ items: [{ label: "Beantwoord de vragen om de premie te zien" }] }] } : {}),
+      };
+    }),
   ];
 
-  const summaryAmount = isDataComplete ? formatEuro(totalPrice) : "€ -,--";
+  const summaryAmount = isDataComplete ? formatEuro(getTotalPremium(state)) : "€ -,--";
+
+  const nextProductId = otherProductIds[0] ?? null;
+  const nextLabel = nextProductId ? `verder met ${getProductMeta(nextProductId).shortTitle}` : "Volgende stap";
 
   function handlePrevious() {
     router.push("/woonverzekeringen");
   }
 
+  /** Haalt een product uit de selectie (en z'n eventuele premie/status) — de "Verwijder"-knop op de resterende-producten-rijen. */
+  function handleRemoveProduct(id: WoonverzekeringenProductId) {
+    const { [id]: _removed, ...remainingProductStates } = state.products;
+    setState({
+      ...state,
+      selectedProducts: state.selectedProducts.filter((productId) => productId !== id),
+      products: remainingProductStates,
+    });
+  }
+
   /**
-   * De vervolgstap (Inboedel) is nog niet gebouwd ("product voor product",
-   * zie de werkwijze-instructie) — zelfde no-op-precedent als stap 1's eigen
-   * "Ga terug"-knop, totdat die pagina er is.
+   * Zet Opstal op "afgerond" in de gedeelde state zodra de gebruiker
+   * daadwerkelijk verdergaat (rationale punt 9: "active → completed" gebeurt
+   * bij het verdergaan, niet al zodra het formulier toevallig vol is — zie
+   * de premie-sync hierboven, die blijft reactief los hiervan). Navigeren
+   * naar de vervolgpagina zelf hoort bij het bouwen van dat product (bv.
+   * Inboedel) — nog niet gebouwd, dus hier bewust geen route-navigatie.
    */
-  function handleNext() {}
+  function handleNext() {
+    setState({
+      ...state,
+      products: { ...state.products, opstal: { premium: state.products.opstal?.premium ?? null, isComplete: true } },
+    });
+  }
 
   return (
     <FunnelPageTemplate
@@ -262,7 +314,7 @@ export default function OpstalPremieBerekenenPage() {
         <FormNavigation
           previousStep
           previousLabel="Vorige stap"
-          nextLabel="verder met Inboedel"
+          nextLabel={nextLabel}
           onPrevious={handlePrevious}
           onNext={handleNext}
         />
@@ -303,14 +355,27 @@ export default function OpstalPremieBerekenenPage() {
       */}
       <div className="flex w-[calc(100%+3rem)] flex-col items-start -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10">
         <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
-        <MultiEntityItem state="current" icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />} title="Opstalverzekering" description="Verzeker je woning voor bijvoorbeeld brand, storm of inbraak." />
+        <MultiEntityItem
+          state={state.products.opstal?.isComplete ? "completed" : "current"}
+          icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}
+          title="Opstalverzekering"
+          description="Verzeker je woning voor bijvoorbeeld brand, storm of inbraak."
+        />
       </div>
 
       <FunnelSection title="Gegevens">
-        <InputDate labelText="Geboortedatum (dd-mm-jjjj)" showPickerButton value={geboortedatum} onChange={setGeboortedatum} />
+        <InputDate
+          labelText="Geboortedatum (dd-mm-jjjj)"
+          showPickerButton
+          value={geboortedatum}
+          onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
+        />
 
         <div className="flex w-full flex-col items-start gap-4">
-          <FieldsetAddress value={adres} onChange={setAdres} />
+          <FieldsetAddress
+            value={adres}
+            onChange={(value) => updateSharedData({ postcode: value.postalCode, huisnummer: value.houseNumber, toevoeging: value.addition })}
+          />
           {addressResolved && (
             <CardDetails
               title="Deze gegevens hebben we opgehaald"
@@ -330,19 +395,30 @@ export default function OpstalPremieBerekenenPage() {
           description="Je kunt geen recreatiewoning, woonboot, studentenkamer, monument of bedrijfspand bij ons verzekeren."
           options={SOORT_WONING_OPTIONS}
           value={soortWoning}
-          onChange={setSoortWoning}
+          onChange={(value) => updateSharedData({ soortWoning: value })}
         />
 
-        <RadioGroup labelText="Heb je een koop- of huurwoning?" options={KOOP_HUUR_OPTIONS} value={koopHuur} onChange={setKoopHuur} />
+        <RadioGroup
+          labelText="Heb je een koop- of huurwoning?"
+          options={KOOP_HUUR_OPTIONS}
+          value={koopHuur}
+          onChange={(value) => updateSharedData({ koopHuur: value })}
+        />
 
-        <RadioGroup labelText="Gebruik je de woning particulier?" options={JA_NEE_OPTIONS} value={particulier} onChange={setParticulier} horizontal />
+        <RadioGroup
+          labelText="Gebruik je de woning particulier?"
+          options={JA_NEE_OPTIONS}
+          value={particulier}
+          onChange={(value) => updateSharedData({ particulier: value })}
+          horizontal
+        />
 
         <RadioGroup
           labelText="Wat voor muren heeft je woning?"
           description="Geef aan van welk materiaal de muren van je woning zijn."
           options={MUREN_OPTIONS}
           value={muren}
-          onChange={setMuren}
+          onChange={(value) => updateSharedData({ muren: value })}
         />
 
         <RadioGroup
@@ -350,10 +426,16 @@ export default function OpstalPremieBerekenenPage() {
           description="Heb je beide? Kies dan het soort dak dat het grootste deel van je woning heeft."
           options={DAK_OPTIONS}
           value={dak}
-          onChange={setDak}
+          onChange={(value) => updateSharedData({ dak: value })}
         />
 
-        <RadioGroup labelText="Heeft je woning een rieten dak?" options={JA_NEE_OPTIONS} value={rietenDak} onChange={setRietenDak} horizontal />
+        <RadioGroup
+          labelText="Heeft je woning een rieten dak?"
+          options={JA_NEE_OPTIONS}
+          value={rietenDak}
+          onChange={(value) => updateSharedData({ rietenDak: value })}
+          horizontal
+        />
       </FunnelSection>
 
       {/*
@@ -432,17 +514,21 @@ export default function OpstalPremieBerekenenPage() {
         divider moet zelf ook edge-to-edge zijn, niet alleen de bovenste).
       */}
       <div className="flex w-[calc(100%+3rem)] flex-col items-start -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10">
-        {remainingProducts.map((product) => (
-          <div key={product.title} className="flex w-full flex-col items-start">
-            <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
-            <MultiEntityItem
-              state="disabled"
-              icon={<img src={`/icons/${product.icon}.svg`} alt="" className="size-8" />}
-              title={product.title}
-              onRemove={() => {}}
-            />
-          </div>
-        ))}
+        {otherProductIds.map((id) => {
+          const meta = getProductMeta(id);
+          const status = getProductStatus(state, id);
+          return (
+            <div key={id} className="flex w-full flex-col items-start">
+              <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
+              <MultiEntityItem
+                state={status === "completed" ? "completed" : "disabled"}
+                icon={<img src={`/icons/${meta.icon}.svg`} alt="" className="size-8" />}
+                title={meta.title}
+                onRemove={() => handleRemoveProduct(id)}
+              />
+            </div>
+          );
+        })}
       </div>
     </FunnelPageTemplate>
   );
