@@ -1,125 +1,119 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
 import { FormNavigation } from "@/components/FormNavigation";
-import { ProductSelectCard } from "@/components/ProductSelectCard";
-import { useWoonverzekeringenFunnel } from "./funnel-context";
+import { ToggleCardGroup, type ToggleCardOption } from "@/components/ToggleCard";
+import { Icon } from "@/components/Icon";
 
-const WOONVERZEKERINGEN_STEPS = ["Productkeuze", "Jouw situatie", "Jouw dekking", "Jouw gegevens", "Laatste vragen", "Samenvatting"];
+const WOON_STEPS = ["Productkeuze", "Premie berekenen", "Gegevens", "Laatste vragen", "Samenvatting"];
 
-type Product = {
-  slug: string;
-  icon: string;
-  title: string;
-  description: string;
-  /** Voorlopige prijzen — Figma toont zelf letterlijk "Vanaf € x,- p/m" (placeholder). Opstal hergebruikt het al bevestigde basisbedrag uit de mutatie-funnel (`pricing.ts`); Inboedel/Aansprakelijkheid hebben nog geen bevestigd bedrag. */
-  price: string;
-};
-
-const PRODUCTS: Product[] = [
+/**
+ * Iconen opnieuw gecontroleerd via mcp (bestand "Live event Funnel", node
+ * 1:23578) nadat bleek dat het bestand was bijgewerkt: elke tegel heeft nu
+ * wél zijn eigen icoon-component. Elk rechtstreeks als SVG geëxporteerd via
+ * de Figma plugin-API (`node.exportAsync`, geen screenshot):
+ * "1036-woonhuisverzekering" (Opstal, matcht het al aanwezige
+ * `pictogram-house`) en "1020-inboedelverzekering" (matcht het al aanwezige
+ * `pictogram-inboedel`) zijn hergebruikt; "1003-aansprakelijkheidsverzekering"
+ * bleek NIET hetzelfde als het al aanwezige `pictogram-aansprakelijkheid`
+ * (ander viewBox/andere paden) — dus als apart, nieuw bestand toegevoegd
+ * i.p.v. dat bestaande bestand te overschrijven of te hergebruiken.
+ * "1028-overlijdensrisicoverzekering" en "1030-rechtsbijstandsverzekering"
+ * bestonden nog helemaal niet, ook nieuw toegevoegd.
+ *
+ * Overlijdens-/Rechtsbijstandverzekering hebben in Figma dezelfde
+ * beschrijving als Opstalverzekering gekregen (kopieerfout) — bewust
+ * letterlijk overgenomen i.p.v. zelf een andere tekst te verzinnen.
+ */
+const PRODUCT_OPTIES: ToggleCardOption[] = [
+  { value: "opstal", icon: "pictogram-house", title: "Opstalverzekering", description: "Verzeker je woning voor bijvoorbeeld brand, storm of inbraak." },
+  { value: "inboedel", icon: "pictogram-inboedel", title: "Inboedelverzekering", description: "Verzeker je spullen voor schade of diefstal." },
   {
-    slug: "opstal",
-    icon: "/icons/pictogram-house.svg",
-    title: "Opstal",
-    description: "Dekt schade aan je huis.",
-    price: "Vanaf € 4,82 p/m",
+    value: "aansprakelijkheid",
+    icon: "pictogram-aansprakelijkheidsverzekering",
+    title: "Aansprakelijkheidsverzekering",
+    description: "Verzeker jezelf voor schade die jij per ongeluk veroorzaakt.",
   },
   {
-    slug: "inboedel",
-    icon: "/icons/pictogram-inboedel.svg",
-    title: "Inboedel",
-    description: "Dekt schade aan je spullen.",
-    price: "Vanaf € x,- p/m",
+    value: "overlijden",
+    icon: "pictogram-overlijdensrisicoverzekering",
+    title: "Overlijdensrisicoverzekering",
+    description: "Verzeker je woning voor bijvoorbeeld brand, storm of inbraak.",
   },
   {
-    slug: "aansprakelijkheid",
-    icon: "/icons/pictogram-aansprakelijkheid.svg",
-    title: "Aansprakelijkheid",
-    // Figma zelf: "Desk schade die jij per ongeluk veroorzaakt." — letterlijke typo, hier op verzoek gecorrigeerd naar "Dekt".
-    description: "Dekt schade die jij per ongeluk veroorzaakt.",
-    price: "Vanaf € x,- p/m",
+    value: "rechtsbijstand",
+    icon: "pictogram-rechtsbijstandsverzekering",
+    title: "Rechtsbijstandverzekering",
+    description: "Verzeker je woning voor bijvoorbeeld brand, storm of inbraak.",
   },
 ];
 
-/**
- * Stap 1 "Productkeuze" van de nieuwe "Woonverzekeringen"-funnel (Figma
- * node 1:4300, "Productkeuze/Idle"). Hergebruikt volledig bestaande
- * componenten — `FunnelPageTemplate` (geen sidebar: dit is Figma's "Multi
- * Product Template", single column, exact dezelfde kaart-schaduw als
- * `FunnelBox`'s default), `FunnelSection` (de 40px "Onze verzekeringen"-
- * intro en de 32px "Waarvoor wil je een premie berekenen?"-titel matchen
- * al 1-op-1 met de bestaande `intro`/normale titel-tiers, geen aanpassing
- * nodig), en het net gebouwde `ProductSelectCard` + `Toggle` 3x.
- *
- * Op expliciet verzoek: geen chevron op "Meer informatie" (Figma zelf was
- * hier inconsistent — alleen Opstal had 'm, Inboedel/Aansprakelijkheid
- * niet — nu voor alle 3 uniform uit via `ProductSelectCard`'s nieuwe
- * `showMoreInfoChevron`-prop), en de "Desk schade..."-typo in
- * Aansprakelijkheid's beschrijving is gecorrigeerd naar "Dekt".
- *
- * Twee pictogrammen (`pictogram-inboedel.svg`, `pictogram-aansprakelijkheid.svg`)
- * zijn nieuw geëxporteerd — Aansprakelijkheid's Code Connect-referentie gaf
- * een generieke "Placeholder", dus 1-op-1 opgehaald via `use_figma`
- * (instance → mainComponent → vector → exportAsync), zelfde aanpak als
- * eerder bij het huis-pictogram (mutatie-funnel) — niet vertrouwd op het
- * eerste, mogelijk niet-opgeloste asset.
- *
- * Geen "vorige stap"-knop: Figma toont hier geen zichtbare, al bevestigde
- * knop is enkel de primaire "Naar jouw situatie" — een verborgen
- * "button-back"-node bestaat wel in de metadata maar is in deze
- * "Idle"-staat niet zichtbaar, dus niet meegebouwd.
- *
- * Nog niet gebouwd/bevestigd, bewust buiten scope van deze stap: validatie
- * op "Kies minimaal één verzekering" (geen Figma-foutstaat gevonden),
- * mobiele viewport (geen mobiel mockup gevonden voor dit scherm), en de
- * daaropvolgende stappen (2 t/m 6, alleen labels in de Step Indicator
- * bevestigd).
- */
-export default function WoonverzekeringenProductkeuzePage() {
+export default function WoonverzekeringenPage() {
   const router = useRouter();
-  const { state, setState } = useWoonverzekeringenFunnel();
+  const [producten, setProducten] = useState<string[]>([]);
+  const [error, setError] = useState(false);
 
-  function toggleProduct(slug: string, selected: boolean) {
-    const next = selected ? [...state.selectedProducts, slug] : state.selectedProducts.filter((p) => p !== slug);
-    setState({ ...state, selectedProducts: next });
+  function handleNext() {
+    if (producten.length === 0) {
+      setError(true);
+      return;
+    }
+    router.push("/woonverzekeringen/premie-berekenen");
   }
 
   return (
     <FunnelPageTemplate
       headerTitle="Woonverzekeringen"
       ikzSticker
-      steps={WOONVERZEKERINGEN_STEPS}
+      steps={WOON_STEPS}
       activeStep={1}
-      stepAnimationKey="woonverzekeringen"
-      navigation={
-        <FormNavigation nextLabel="Naar jouw situatie" onNext={() => router.push("/woonverzekeringen/jouw-situatie")} />
-      }
+      cardClassName="flex w-full max-w-[784px] flex-col items-start overflow-hidden rounded-md bg-white shadow-[0px_4px_8px_rgba(0,0,0,0.12)]"
+      navigation={<FormNavigation nextLabel="Volgende stap" onNext={handleNext} />}
     >
-      <FunnelSection intro title="Onze verzekeringen" showRequiredFieldsNote />
+      {/* "Ga terug" heeft in Figma geen zichtbare bestemming (eerste stap van de funnel) — zelfde no-op-precedent als kortlopendereis' eigen "Jouw situatie"-terugknop. */}
+      <button type="button" onClick={() => {}} className="flex items-center gap-2 rounded-[3px]">
+        <Icon name="arrow-left" size="sm" />
+        <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+          Ga terug
+        </span>
+      </button>
 
-      <FunnelSection title="Waarvoor wil je een premie berekenen?" description="Kies minimaal één verzekering.">
-        <div className="flex w-full flex-col items-start gap-2">
-          {PRODUCTS.map((product) => (
-            <ProductSelectCard
-              key={product.slug}
-              icon={<img src={product.icon} alt="" className="size-8" />}
-              title={product.title}
-              description={
-                <>
-                  {product.description}
-                  <br />
-                  {product.price}
-                </>
-              }
-              selected={state.selectedProducts.includes(product.slug)}
-              onSelectedChange={(selected) => toggleProduct(product.slug, selected)}
-              onMoreInfoClick={() => {}}
-              showMoreInfoChevron={false}
-            />
-          ))}
-        </div>
+      <FunnelSection
+        intro
+        title="Onze woonverzekeringen"
+        showRequiredFieldsNote
+        /**
+         * "* Verplichte velden" (asterisk eerst) i.p.v. de standaard "Velden
+         * met * zijn verplicht" — bevestigd via mcp specifiek voor deze
+         * funnel (node I1:25088;1277:3062 e.o.), dus hier via de override-
+         * prop i.p.v. de gedeelde standaardtekst overal te wijzigen.
+         */
+        requiredFieldsNote={
+          <div className="flex items-center gap-1 whitespace-nowrap">
+            <span className="text-[#ce0a1e] text-base" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              *
+            </span>
+            <span className="text-black text-sm" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              Verplichte velden
+            </span>
+          </div>
+        }
+      />
+
+      <FunnelSection title="Waarvoor wil je een premie berekenen?" description="Kies minimaal één verzekering om verder te gaan.">
+        <ToggleCardGroup
+          options={PRODUCT_OPTIES}
+          values={producten}
+          onChange={(values) => {
+            setProducten(values);
+            setError(false);
+          }}
+          onMoreInfoClick={() => {}}
+          error={error ? "Kies minimaal één verzekering" : undefined}
+        />
       </FunnelSection>
     </FunnelPageTemplate>
   );

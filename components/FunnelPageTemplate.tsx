@@ -38,6 +38,18 @@ type FunnelPageTemplateProps = {
    * dubbel genest ogen (eigen box binnen FunnelBox's eigen box).
    */
   sidebarClassName?: string;
+  /**
+   * Override voor de className van de kaart zelf (Figma's "Funnel"-frame).
+   * Standaard `flex-1` (rekt uit tot de volledige beschikbare breedte,
+   * bevestigd voor de funnels die dit tot nu toe gebruikten). De
+   * Woonverzekeringen-funnel heeft echter een vaste kaartbreedte van 784px
+   * (`layoutSizingHorizontal: FIXED`, bevestigd via mcp, node 1:25084,
+   * "Funnel ") i.p.v. uit te rekken — geen sidebar in dat ontwerp, dus geen
+   * reden om de volle 1184px te vullen. Puur een override i.p.v. de
+   * standaardbreedte overal te wijzigen: geen andere funnel hierop
+   * gecontroleerd.
+   */
+  cardClassName?: string;
   /** De navigatieknoppenrij onderaan de kaart — typisch een `<FormNavigation .../>`. Losse slot i.p.v. doorgeefprops, zodat de afnemer dat component zelf blijft aansturen. */
   navigation: ReactNode;
   className?: string;
@@ -75,6 +87,7 @@ export function FunnelPageTemplate({
   children,
   sidebar,
   sidebarClassName,
+  cardClassName,
   navigation,
   className,
 }: FunnelPageTemplateProps) {
@@ -149,8 +162,21 @@ export function FunnelPageTemplate({
             `items-start` nodig zodat de twee kolommen top-uitgelijnd zijn
             i.p.v. gedwongen gelijke hoogte.
           */}
-          <div className="flex w-full flex-col items-stretch gap-6 min-[1200px]:flex-row min-[1200px]:items-start">
-            <div className="flex min-w-px flex-1 flex-col items-start overflow-hidden rounded-md bg-white shadow-[0px_4px_8px_rgba(0,0,0,0.12)]">
+          {/*
+            `justify-center` toegevoegd voor kaarten met een vaste breedte
+            i.p.v. de standaard `flex-1` (zie `cardClassName` hierboven) —
+            zonder sidebar pakt een niet-uitrekkende kaart anders de
+            standaard `justify-start` en blijft links staan i.p.v.
+            gecentreerd, bevestigd op de Woonverzekeringen-funnel (784px-
+            kaart, geen sidebar). Zonder effect op bestaande `flex-1`-kaarten
+            (die vullen de rij toch al volledig, met of zonder sidebar).
+          */}
+          <div className="flex w-full flex-col items-stretch justify-center gap-6 min-[1200px]:flex-row min-[1200px]:items-start">
+            <div
+              className={
+                cardClassName ?? "flex min-w-px flex-1 flex-col items-start overflow-hidden rounded-md bg-white shadow-[0px_4px_8px_rgba(0,0,0,0.12)]"
+              }
+            >
               <div className="flex w-full flex-col items-start gap-10 p-6 min-[1200px]:p-10">{children}</div>
               <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
               {navigation}
