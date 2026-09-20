@@ -62,3 +62,19 @@ export function getProductMeta(id: WoonverzekeringenProductId): Woonverzekeringe
   if (!meta) throw new Error(`Onbekend woonverzekeringen-product: ${id}`);
   return meta;
 }
+
+/**
+ * Route per product — alleen Opstal en Inboedel bestaan vooralsnog; de rest
+ * volgt zodra die pagina's gebouwd zijn. Gebruikt door een productpagina om
+ * terug/verder te navigeren naar een ándere productpagina (bv. Inboedel's
+ * "Vorige stap" naar Opstal).
+ */
+export const PRODUCT_ROUTES: Partial<Record<WoonverzekeringenProductId, string>> = {
+  opstal: "/woonverzekeringen/premie-berekenen",
+  inboedel: "/woonverzekeringen/premie-berekenen/inboedel",
+};
+
+/** Gedeelde bedrag-formattering (bv. "€ 4,82") — gebruikt door elke productpagina's premie/kassabon-weergave. */
+export function formatEuro(amount: number): string {
+  return `€ ${amount.toFixed(2).replace(".", ",")}`;
+}

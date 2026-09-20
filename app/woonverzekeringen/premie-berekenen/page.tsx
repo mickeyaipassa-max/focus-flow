@@ -9,7 +9,7 @@ import { MultiEntityItem } from "@/components/MultiEntityItem";
 import { InputDate } from "@/components/InputDate";
 import { FieldsetAddress, type FieldsetAddressValue } from "@/components/FieldsetAddress";
 import { CardDetails } from "@/components/CardDetails";
-import { Select, type SelectOption } from "@/components/Select";
+import { Select } from "@/components/Select";
 import { RadioGroup } from "@/components/RadioGroup";
 import { RadioCardBottomGroup, type RadioCardBottomOption } from "@/components/RadioCardBottom";
 import { CheckboxCardControlLeftGroup } from "@/components/CheckboxCardControlLeft";
@@ -17,6 +17,7 @@ import { Alert } from "@/components/Alert";
 import { Receipt, type ReceiptSection } from "@/components/Receipt";
 import { Icon } from "@/components/Icon";
 import {
+  buildOtherProductReceiptSection,
   fromIsoDatum,
   getProductStatus,
   getTotalPremium,
@@ -24,50 +25,10 @@ import {
   useWoonverzekeringenFunnel,
   type WoonverzekeringenSharedData,
 } from "../funnel-context";
-import { getProductMeta, type WoonverzekeringenProductId } from "../products";
+import { formatEuro, getProductMeta, PRODUCT_ROUTES, type WoonverzekeringenProductId } from "../products";
+import { DAK_OPTIONS, EIGEN_RISICO_OPTIONS, JA_NEE_OPTIONS, KOOP_HUUR_OPTIONS, MUREN_OPTIONS, SOORT_WONING_OPTIONS } from "../woning-opties";
 
 const WOON_STEPS = ["Productkeuze", "Premie berekenen", "Gegevens", "Laatste vragen", "Samenvatting"];
-
-/**
- * Geen enkele Figma-instance van deze select toonde de volledige optielijst
- * (alleen het al gekozen voorbeeld "Twee onder een kap" was zichtbaar, de
- * dropdown zelf heeft geen los "open met alle opties"-component) — deze
- * lijst is dus, op "Twee onder een kap woning" na, niet 1-op-1 mcp-bevestigd.
- * Gebaseerd op de gangbare a.s.r.-categorieën voor woningtype.
- */
-const SOORT_WONING_OPTIONS: SelectOption[] = [
-  { value: "vrijstaand", label: "Vrijstaande woning" },
-  { value: "twee-onder-een-kap", label: "Twee onder een kap woning" },
-  { value: "tussenwoning", label: "Rijwoning (tussenwoning)" },
-  { value: "hoekwoning", label: "Rijwoning (hoekwoning)" },
-  { value: "appartement", label: "Appartement" },
-];
-
-const KOOP_HUUR_OPTIONS = [
-  { value: "koop", label: "Koopwoning" },
-  { value: "huur", label: "Huurwoning" },
-];
-
-const JA_NEE_OPTIONS = [
-  { value: "ja", label: "Ja" },
-  { value: "nee", label: "Nee" },
-];
-
-const MUREN_OPTIONS = [
-  { value: "steen", label: "Steen" },
-  { value: "hout", label: "Hout" },
-];
-
-const DAK_OPTIONS = [
-  { value: "schuin", label: "Schuin dak" },
-  { value: "plat", label: "Plat dak" },
-];
-
-const EIGEN_RISICO_OPTIONS = [
-  { value: "0", label: "€ 0" },
-  { value: "100", label: "€ 100" },
-  { value: "500", label: "€ 500" },
-];
 
 const OPSTAL_FEATURES = [
   "Brand, bliksem en rook",
@@ -104,10 +65,6 @@ const DEKKING_OPTIES: RadioCardBottomOption[] = [
 ];
 
 const GLAS_PRICE = 2.63;
-
-function formatEuro(amount: number) {
-  return `€ ${amount.toFixed(2).replace(".", ",")}`;
-}
 
 export default function OpstalPremieBerekenenPage() {
   const router = useRouter();
@@ -246,20 +203,7 @@ export default function OpstalPremieBerekenenPage() {
    */
   const otherProductIds = state.selectedProducts.filter((id) => id !== "opstal");
 
-  const receiptSections: ReceiptSection[] = [
-    opstalSection,
-    ...otherProductIds.map((id) => {
-      const meta = getProductMeta(id);
-      const premium = state.products[id]?.premium ?? null;
-      return {
-        id,
-        title: meta.shortTitle,
-        amount: premium != null ? formatEuro(premium) : "€ -,--",
-        icon: <img src={`/icons/${meta.icon}.svg`} alt="" className="size-8" />,
-        ...(premium == null ? { groups: [{ items: [{ label: "Beantwoord de vragen om de premie te zien" }] }] } : {}),
-      };
-    }),
-  ];
+  const receiptSections: ReceiptSection[] = [opstalSection, ...otherProductIds.map((id) => buildOtherProductReceiptSection(state, id))];
 
   const summaryAmount = isDataComplete ? formatEuro(getTotalPremium(state)) : "€ -,--";
 
@@ -284,15 +228,19 @@ export default function OpstalPremieBerekenenPage() {
    * Zet Opstal op "afgerond" in de gedeelde state zodra de gebruiker
    * daadwerkelijk verdergaat (rationale punt 9: "active → completed" gebeurt
    * bij het verdergaan, niet al zodra het formulier toevallig vol is — zie
-   * de premie-sync hierboven, die blijft reactief los hiervan). Navigeren
-   * naar de vervolgpagina zelf hoort bij het bouwen van dat product (bv.
-   * Inboedel) — nog niet gebouwd, dus hier bewust geen route-navigatie.
+   * de premie-sync hierboven, die blijft reactief los hiervan) en navigeert
+   * daarna naar het eerstvolgende geselecteerde product met een gebouwde
+   * route (`PRODUCT_ROUTES`) — vooralsnog alleen Inboedel; is er geen
+   * volgend product of nog geen route ervoor, dan blijft dit bewust een
+   * no-op totdat die pagina bestaat.
    */
   function handleNext() {
     setState({
       ...state,
       products: { ...state.products, opstal: { premium: state.products.opstal?.premium ?? null, isComplete: true } },
     });
+    const nextRoute = nextProductId && PRODUCT_ROUTES[nextProductId];
+    if (nextRoute) router.push(nextRoute);
   }
 
   return (
@@ -337,7 +285,28 @@ export default function OpstalPremieBerekenenPage() {
         verviel, de edge-to-edge "Container"-divider vlak vóór het
         Multi-Entity-item-blok hieronder blijft over.
       */}
-      <FunnelSection intro title="Bereken je premie" hideIntroDivider />
+      {/*
+        `showRequiredFieldsNote`/`requiredFieldsNote`: bevestigd via mcp
+        (node 1:38906) dat deze intro-sectie ook op de Opstal-pagina zelf
+        "* Verplichte velden" toont (zelfde "asterisk eerst"-variant als stap
+        1) — eerder gemist bij de allereerste bouw van deze pagina.
+      */}
+      <FunnelSection
+        intro
+        title="Bereken je premie"
+        hideIntroDivider
+        showRequiredFieldsNote
+        requiredFieldsNote={
+          <div className="flex items-center gap-1 whitespace-nowrap">
+            <span className="text-[#ce0a1e] text-base" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              *
+            </span>
+            <span className="text-black text-sm" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              Verplichte velden
+            </span>
+          </div>
+        }
+      />
 
       {/*
         Bevestigd via mcp (node 1:30978, "Container"): de divider vóór "Multi
@@ -355,8 +324,16 @@ export default function OpstalPremieBerekenenPage() {
       */}
       <div className="flex w-[calc(100%+3rem)] flex-col items-start -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10">
         <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
+        {/*
+          Altijd "current" (geel) — dit ís letterlijk de pagina waar de
+          gebruiker nu op zit, ongeacht of `isComplete` al eerder op `true`
+          stond (bv. na "verder met ..." zonder dat de vervolgpagina al
+          bestaat, waardoor je op dezelfde pagina blijft). "Completed"
+          (wit met groen bolletje) hoort alleen op ándere pagina's te tonen
+          voor een product dat je nu niet aan het bekijken bent.
+        */}
         <MultiEntityItem
-          state={state.products.opstal?.isComplete ? "completed" : "current"}
+          state="current"
           icon={<img src="/icons/pictogram-house.svg" alt="" className="size-8" />}
           title="Opstalverzekering"
           description="Verzeker je woning voor bijvoorbeeld brand, storm of inbraak."

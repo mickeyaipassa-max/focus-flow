@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { WoonverzekeringenProductId } from "./products";
+import type { ReceiptSection } from "@/components/Receipt";
+import { formatEuro, getProductMeta, type WoonverzekeringenProductId } from "./products";
 
 /**
  * Gedeelde state voor de Woonverzekeringen Multi Product Funnel — React
@@ -151,6 +152,26 @@ export function getProductStatus(state: WoonverzekeringenFunnelState, id: Woonve
 /** Som van de premies van alle producten die al een bekend bedrag hebben — rationale punt 16 ("Je betaalt per maand" = som van de op dat moment beschikbare premies). */
 export function getTotalPremium(state: WoonverzekeringenFunnelState): number {
   return Object.values(state.products).reduce((sum: number, product) => sum + (product?.premium ?? 0), 0);
+}
+
+/**
+ * Bouwt de kassabon-sectie voor een ánder product dan de huidige pagina —
+ * altijd read-only ("€ -,--" totdat dat product zijn eigen premie heeft
+ * doorgezet, anders het al bekende bedrag). Gedeeld zodat elke productpagina
+ * dezelfde weergave voor de "overige" producten gebruikt i.p.v. dit per
+ * pagina te herhalen — bevestigd via mcp dat Inboedel's Receipt exact dit
+ * doet voor Opstal ("Opstal € 17,69") en de nog niet-berekende producten.
+ */
+export function buildOtherProductReceiptSection(state: WoonverzekeringenFunnelState, id: WoonverzekeringenProductId): ReceiptSection {
+  const meta = getProductMeta(id);
+  const premium = state.products[id]?.premium ?? null;
+  return {
+    id,
+    title: meta.shortTitle,
+    amount: premium != null ? formatEuro(premium) : "€ -,--",
+    icon: <img src={`/icons/${meta.icon}.svg`} alt="" className="size-8" />,
+    ...(premium == null ? { groups: [{ items: [{ label: "Beantwoord de vragen om de premie te zien" }] }] } : {}),
+  };
 }
 
 /** sessionStorage kent geen `Date`-type — zelfde aanpak als `app/mutatie/pricing.ts`'s `toIsoDatum`/`fromIsoDatum`, hier lokaal voor deze funnel i.p.v. een cross-funnel import. */
