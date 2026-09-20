@@ -72,6 +72,7 @@ export function getProductMeta(id: WoonverzekeringenProductId): Woonverzekeringe
 export const PRODUCT_ROUTES: Partial<Record<WoonverzekeringenProductId, string>> = {
   opstal: "/woonverzekeringen/premie-berekenen",
   inboedel: "/woonverzekeringen/premie-berekenen/inboedel",
+  aansprakelijkheid: "/woonverzekeringen/premie-berekenen/aansprakelijkheid",
 };
 
 /** Gedeelde bedrag-formattering (bv. "€ 4,82") — gebruikt door elke productpagina's premie/kassabon-weergave. */

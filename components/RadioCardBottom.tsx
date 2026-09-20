@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useId, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./Icon";
 import { Spinner } from "./Spinner";
 
@@ -20,10 +20,19 @@ export type RadioCardBottomFeature = {
 export type RadioCardBottomOption = {
   value: string;
   title: string;
-  description: string;
-  features: RadioCardBottomFeature[];
-  /** Getoond als "€ {price} per maand" — geen placeholder-cijfers, dus een echte waarde vereist. */
-  price: string;
+  /** Ontbreekt bij de "compact" variant (zie `RadioCardBottomGroupProps.variant`) — Aansprakelijkheid's kaarten tonen alleen een titel, geen subtekst. */
+  description?: string;
+  /** Ontbreekt bij de "compact" variant — geen featurelijst dan. */
+  features?: RadioCardBottomFeature[];
+  /**
+   * Getoond als "€ {price} per maand" — geen placeholder-cijfers, dus een
+   * echte waarde vereist zodra hij wordt getoond. Ontbreekt bij de "compact"
+   * variant: Aansprakelijkheid's kaarten (node 180:5051;10783:74593) tonen
+   * bevestigd via mcp geen prijsblok per kaart, alleen titel + radio-stip —
+   * de premie zelf komt uit een expliciete afspraak met de opdrachtgever
+   * (€ 4,50 / € 6,20) en wordt alleen in de kassabon getoond, niet hier.
+   */
+  price?: string;
   /**
    * Toont "vanaf" boven de prijs (bevestigd op dezelfde Reisverzekering-stap
    * — elke kaart daar toont "vanaf € X,XX", i.p.v. de kale "€ X,XX" van de
@@ -99,11 +108,23 @@ function DekkingPrice({ price, priceFrom, showPeriod = true }: { price: string; 
 
 type RadioCardBottomGroupProps = {
   labelText: string;
+  /** Toelichting onder de legend, vóór de kaartenrij — zelfde plek/stijl als `RadioGroup`'s eigen `description`, hier `ReactNode` i.p.v. `string` omdat Aansprakelijkheid's toelichting een link bevat ("Bekijk wie en wat is verzekerd", node 180:5051;10783:74593;1099:302;11148:4293). */
+  description?: ReactNode;
   required?: boolean;
   options: RadioCardBottomOption[];
   value?: string;
   onChange?: (value: string) => void;
   onMoreInfoClick?: (value: string) => void;
+  /**
+   * "detailed" (default) = ongewijzigd bestaand gedrag: featurelijst +
+   * prijsblok + "Meer informatie"-link per kaart (mutatie-funnel/Opstal/
+   * Inboedel). "compact" = alleen titel + radio-stip, zonder die drie
+   * blokken — bevestigd via mcp voor Aansprakelijkheid's "Kies een maximaal
+   * verzekerd bedrag"-kaarten (node 180:5051;10783:74593;1099:302;
+   * 11092:3714/3715): die tonen geen features, geen prijs en geen
+   * "Meer informatie", puur titel + radio.
+   */
+  variant?: "detailed" | "compact";
   /** Zelfde foutmelding-patroon als `RadioGroup`'s eigen `error`-prop — nodig zodra een groep zonder standaardselectie start (bevestigd op de Auto-funnel "Jouw dekking"-stap, geen enkele kaart staat daar standaard aan). */
   error?: string;
   name?: string;
@@ -143,11 +164,13 @@ type RadioCardBottomGroupProps = {
  */
 export function RadioCardBottomGroup({
   labelText,
+  description,
   required = true,
   options,
   value,
   onChange,
   onMoreInfoClick,
+  variant = "detailed",
   error,
   name,
   className,
@@ -156,6 +179,7 @@ export function RadioCardBottomGroup({
   const generatedName = useId();
   const groupName = name ?? generatedName;
   const errorId = `${groupName}-error`;
+  const isCompact = variant === "compact";
   /** Extra ruimte boven de kaartenrij zodra een "Highlight Tag"-badge (absoluut, -15px boven de kaart) anders over de legend zou vallen. */
   const hasHighlight = options.some((option) => option.highlightLines);
 
@@ -174,6 +198,11 @@ export function RadioCardBottomGroup({
           </span>
         )}
       </legend>
+      {description && (
+        <div className="w-full text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+          {description}
+        </div>
+      )}
 
       <div
         className={[
@@ -246,66 +275,73 @@ export function RadioCardBottomGroup({
                   <p className="w-full font-bold text-black text-xl leading-[1.4]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
                     {option.title}
                   </p>
-                  <p className="w-full font-[350] text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    {option.description}
-                  </p>
+                  {option.description && (
+                    <p className="w-full font-[350] text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                      {option.description}
+                    </p>
+                  )}
                 </div>
 
-                <div className="flex w-full flex-col items-start gap-2">
-                  {(() => {
-                    /**
-                     * Zodra een kaart feature-items met `details` heeft,
-                     * gebruikt de featurenaam ("Bagage tot € 1.000")
-                     * `--font-avenir-medium` i.p.v. het standaard
-                     * `--font-avenir-book`-leesgewicht van de mutatie-
-                     * funnel-kaarten (die nooit `details` meegeven, dus
-                     * ongewijzigd blijven) — 350 (Book) bleek te dun om
-                     * onderscheid te houden met de detailregel eronder
-                     * ("€ 100 eigen risico"), die `--font-avenir-light`
-                     * (Avenir 35 Light) gebruikt. Bevestigd doordat de
-                     * gebruiker de daadwerkelijke Figma-typography-
-                     * inspector liet zien: het gekoppelde font-family-token
-                     * voor de detailregel bleek daar losgekoppeld, maar het
-                     * losse gewicht-token heette letterlijk
-                     * "font-text-weight-light".
-                     */
-                    const hasFeatureDetails = option.features.some((feature) => feature.details);
-                    return option.features.map((feature, index) => (
-                      <Fragment key={index}>
-                        <div className="flex w-full items-start gap-2">
-                          <span
-                            className={[
-                              "flex shrink-0 items-center justify-center rounded-full p-1",
-                              feature.included ? "bg-[#eef4e3]" : "bg-[#f6f6f7]",
-                            ].join(" ")}
-                          >
-                            <Icon name={feature.included ? "list-check" : "list-cross"} size="sm" />
-                          </span>
-                          <div className="flex min-w-px flex-1 flex-col items-start pt-px text-left">
-                            <p
-                              className={["w-full text-black text-base leading-[1.5]", hasFeatureDetails ? "font-[550]" : "font-[350]"].join(" ")}
-                              style={{ fontFamily: hasFeatureDetails ? "var(--font-avenir-medium)" : "var(--font-avenir-book)" }}
+                {!isCompact && option.features && option.features.length > 0 && (
+                  <div className="flex w-full flex-col items-start gap-2">
+                    {(() => {
+                      /**
+                       * Zodra een kaart feature-items met `details` heeft,
+                       * gebruikt de featurenaam ("Bagage tot € 1.000")
+                       * `--font-avenir-medium` i.p.v. het standaard
+                       * `--font-avenir-book`-leesgewicht van de mutatie-
+                       * funnel-kaarten (die nooit `details` meegeven, dus
+                       * ongewijzigd blijven) — 350 (Book) bleek te dun om
+                       * onderscheid te houden met de detailregel eronder
+                       * ("€ 100 eigen risico"), die `--font-avenir-light`
+                       * (Avenir 35 Light) gebruikt. Bevestigd doordat de
+                       * gebruiker de daadwerkelijke Figma-typography-
+                       * inspector liet zien: het gekoppelde font-family-token
+                       * voor de detailregel bleek daar losgekoppeld, maar het
+                       * losse gewicht-token heette letterlijk
+                       * "font-text-weight-light".
+                       */
+                      const features = option.features ?? [];
+                      const hasFeatureDetails = features.some((feature) => feature.details);
+                      return features.map((feature, index) => (
+                        <Fragment key={index}>
+                          <div className="flex w-full items-start gap-2">
+                            <span
+                              className={[
+                                "flex shrink-0 items-center justify-center rounded-full p-1",
+                                feature.included ? "bg-[#eef4e3]" : "bg-[#f6f6f7]",
+                              ].join(" ")}
                             >
-                              {feature.text}
-                            </p>
-                            {feature.details?.map((detail, detailIndex) => (
+                              <Icon name={feature.included ? "list-check" : "list-cross"} size="sm" />
+                            </span>
+                            <div className="flex min-w-px flex-1 flex-col items-start pt-px text-left">
                               <p
-                                key={detailIndex}
-                                className="w-full font-[300] text-black text-base leading-[1.5]"
-                                style={{ fontFamily: "var(--font-avenir-light)" }}
+                                className={["w-full text-black text-base leading-[1.5]", hasFeatureDetails ? "font-[550]" : "font-[350]"].join(" ")}
+                                style={{ fontFamily: hasFeatureDetails ? "var(--font-avenir-medium)" : "var(--font-avenir-book)" }}
                               >
-                                {detail}
+                                {feature.text}
                               </p>
-                            ))}
+                              {feature.details?.map((detail, detailIndex) => (
+                                <p
+                                  key={detailIndex}
+                                  className="w-full font-[300] text-black text-base leading-[1.5]"
+                                  style={{ fontFamily: "var(--font-avenir-light)" }}
+                                >
+                                  {detail}
+                                </p>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                        {index < option.features.length - 1 && <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />}
-                      </Fragment>
-                    ));
-                  })()}
-                </div>
+                          {index < features.length - 1 && <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />}
+                        </Fragment>
+                      ));
+                    })()}
+                  </div>
+                )}
 
-                <DekkingPrice price={option.price} priceFrom={option.priceFrom} showPeriod={option.showPricePeriod ?? true} />
+                {!isCompact && option.price && (
+                  <DekkingPrice price={option.price} priceFrom={option.priceFrom} showPeriod={option.showPricePeriod ?? true} />
+                )}
 
                 {/*
                   Losse, lokale knop i.p.v. het gedeelde `Button`-component:
@@ -319,20 +355,26 @@ export function RadioCardBottomGroup({
                   `justify-center` bevestigd via mcp op de Reisverzekering-
                   funnel "Jouw dekking"-stap (node 2416:3490): "Meer
                   informatie" staat daar gecentreerd, niet links uitgelijnd.
+
+                  Alleen in de "detailed" variant — Aansprakelijkheid's
+                  compacte kaarten (node 180:5051;10783:74593;1099:302;
+                  11092:3714/3715) hebben geen "Meer informatie"-link.
                 */}
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    onMoreInfoClick?.(option.value);
-                  }}
-                  className="flex w-full items-center justify-center gap-2 rounded-[3px]"
-                >
-                  <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
-                    Meer informatie
-                  </span>
-                </button>
+                {!isCompact && (
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      onMoreInfoClick?.(option.value);
+                    }}
+                    className="flex w-full items-center justify-center gap-2 rounded-[3px]"
+                  >
+                    <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+                      Meer informatie
+                    </span>
+                  </button>
+                )}
               </div>
 
               <div
