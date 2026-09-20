@@ -36,6 +36,15 @@ import { formatEuro, getProductMeta, type WoonverzekeringenProductId } from "./p
 export type WoonverzekeringenSharedData = {
   /** yyyy-mm-dd — sessionStorage kent geen `Date`-type, zelfde aanpak als mutatie's `ingangsdatum` (zie `toIsoDatum`/`fromIsoDatum` hieronder). */
   geboortedatum: string;
+  /**
+   * Verplaatst van lokale per-productstate naar hier: Inboedel én
+   * Aansprakelijkheid stellen letterlijk dezelfde vraag ("Hoe is je gezin
+   * samengesteld?") — de eerdere aanname dat dit uniek per product was
+   * ("geen ander product gebruikt dit") bleek onjuist zodra Aansprakelijkheid
+   * gebouwd werd. Nu gedeeld, zodat de vraag nooit twee keer wordt gesteld
+   * (rationale punt 11/12), consistent met alle andere gedeelde velden hier.
+   */
+  gezinssamenstelling: string;
   postcode: string;
   huisnummer: string;
   toevoeging: string;
@@ -63,6 +72,7 @@ export type WoonverzekeringenFunnelState = {
 
 const DEFAULT_SHARED_DATA: WoonverzekeringenSharedData = {
   geboortedatum: "",
+  gezinssamenstelling: "",
   postcode: "",
   huisnummer: "",
   toevoeging: "",
