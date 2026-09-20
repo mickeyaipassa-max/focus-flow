@@ -72,12 +72,18 @@ function ActionButton({ label, onClick }: MultiEntityItemAction) {
  * afhankelijke actieknop(pen)-combinatie.
  *
  * Cirkelkleuren 1:1 uit Figma: `current` = geel (bg `#fff8e3`, rand
- * `#eda50f`, bevestigd op de echte component). Voor `completed` bleek de
- * eigen Figma-instance van de status-badge leeg/niet-op te lossen (net als
- * de actieknoppen) — hier ingevuld met dezelfde groene vink-taal
- * (`bg-[#0f865d]` + witte check) die dit designsysteem al bevestigd gebruikt
- * voor "completed" (zie `StepIndicator.tsx`), niet zelf verzonnen. `disabled`
- * = grijs (`bg-[#f6f6f7]`), met het letterlijk geëxporteerde Figma-icoon
+ * `#eda50f`, bevestigd op de echte component). `completed` = dezelfde opzet
+ * maar groen (bg `#eef4e3`, rand `#0f865d`) — bevestigd via mcp op "Multi
+ * Product Flow Item" (node 1:1148, hetzelfde completed-component, wél
+ * volledig oplosbaar, i.t.t. "Multi Entity Item"'s eigen lege badge-
+ * instance). Twee eerdere pogingen zaten er beide naast: de hoofdcirkel was
+ * eerst wit i.p.v. groen, en het bolletje zelf gebruikte een losstaand
+ * checkmark-icoon (`check.svg`) op de verkeerde hoek (rechtsonder) i.p.v.
+ * het echte, rechtstreeks geëxporteerde badge-icoon (wit rondje + groene
+ * ring + groen vinkje ineen, `node.exportAsync`) rechtsbóven — bevestigde
+ * positie: x=35/y=-2 op een 56×56-cirkel, dus 3px voorbij de rechterrand en
+ * 2px boven de bovenrand, niet -bottom/-right. `disabled` = grijs
+ * (`bg-[#f6f6f7]`), met het letterlijk geëxporteerde Figma-icoon
  * (`pictogram-persoon-in-cirkel.svg`).
  */
 export function MultiEntityItem({ state, icon, title, description, addition, actions, onRemove, className }: MultiEntityItemProps) {
@@ -91,11 +97,9 @@ export function MultiEntityItem({ state, icon, title, description, addition, act
             </span>
           )}
           {state === "completed" && (
-            <span className="relative flex size-14 items-center justify-center rounded-full bg-white drop-shadow-[0px_1px_2px_rgba(0,0,0,0.16)]">
+            <span className="relative flex size-14 items-center justify-center rounded-full border-2 border-[#0f865d] bg-[#eef4e3]">
               <span className="flex size-8 items-center justify-center">{icon}</span>
-              <span className="-bottom-0.5 -right-0.5 absolute flex size-5 items-center justify-center rounded-full bg-[#0f865d]">
-                <img src="/icons/check.svg" alt="" className="size-3" />
-              </span>
+              <img src="/icons/multi-entity-item-completed-badge.svg" alt="" className="-top-[2px] -right-[3px] absolute size-6" />
             </span>
           )}
           {state === "disabled" && (
