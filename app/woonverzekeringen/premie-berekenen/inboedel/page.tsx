@@ -90,7 +90,7 @@ export default function InboedelPremieBerekenenPage() {
     houseNumber: state.sharedData.huisnummer,
     addition: state.sharedData.toevoeging,
   };
-  const { soortWoning, koopHuur, particulier, muren, dak, rietenDak } = state.sharedData;
+  const { gezinssamenstelling, soortWoning, koopHuur, particulier, muren, dak, rietenDak } = state.sharedData;
   const addressResolved = adres.postalCode.trim().length >= 6 && adres.houseNumber.trim().length > 0;
 
   /**
@@ -104,20 +104,27 @@ export default function InboedelPremieBerekenenPage() {
    * Opstal nu zelf al doet, dus de functionaliteit blijft ook dan compleet.
    */
   const woningAlleGegevensBekend = Boolean(addressResolved && soortWoning && koopHuur && particulier && muren && dak && rietenDak);
-
-  /** Écht Inboedel-specifiek (geen ander product gebruikt dit) — bewust lokale state, niet in `sharedData` (rationale punt 13). */
-  const [gezinssamenstelling, setGezinssamenstelling] = useState("");
+  /** Zelfde soort volledig-overslaan als `woningAlleGegevensBekend` hierboven, nu voor "Persoonlijke gegevens" — beide velden zijn inmiddels gedeeld (`gezinssamenstelling` bleek ook door Aansprakelijkheid gevraagd te worden). */
+  const persoonlijkeGegevensBekend = Boolean(gezinssamenstelling && geboortedatum);
 
   const [dekking, setDekking] = useState("");
   const [eigenRisico, setEigenRisico] = useState("");
   const [aanvullendeDekkingen, setAanvullendeDekkingen] = useState<string[]>([]);
   const [showSkeleton, setShowSkeleton] = useState(false);
   const stelJeInboedelRef = useRef<HTMLDivElement>(null);
-  const wasDataComplete = useRef(false);
 
   const isDataComplete = Boolean(
     gezinssamenstelling && geboortedatum && addressResolved && soortWoning && koopHuur && particulier && muren && dak && rietenDak,
   );
+  /**
+   * Geïnitialiseerd op de huidige waarde (niet altijd `false`) — anders
+   * vuurt de skeleton+scroll-animatie hieronder ook bij een pagina die al
+   * meteen compleet binnenkomt (alles al bekend uit eerdere producten), wat
+   * een ongewenste flits zou geven waar de gebruiker niets voor deed. Zo
+   * blijft de animatie voorbehouden aan een écht live overgang tijdens het
+   * invullen op déze pagina.
+   */
+  const wasDataComplete = useRef(isDataComplete);
 
   /** Zelfde skeleton+scroll-animatie als de Opstal-pagina (bevestigd via de Figma Make-broncode voor dat product) — hier hergebruikt voor consistentie tussen productpagina's. */
   useEffect(() => {
@@ -343,22 +350,26 @@ export default function InboedelPremieBerekenenPage() {
         />
       </div>
 
-      <FunnelSection title="Persoonlijke gegevens">
-        {!geboortedatum && (
-          <InputDate
-            labelText="Geboortedatum (dd-mm-jjjj)"
-            showPickerButton
-            value={geboortedatum}
-            onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
-          />
-        )}
-        <Select
-          labelText="Hoe is je gezin samengesteld?"
-          options={GEZINSSAMENSTELLING_OPTIONS}
-          value={gezinssamenstelling}
-          onChange={setGezinssamenstelling}
-        />
-      </FunnelSection>
+      {!persoonlijkeGegevensBekend && (
+        <FunnelSection title="Persoonlijke gegevens">
+          {!gezinssamenstelling && (
+            <Select
+              labelText="Hoe is je gezin samengesteld?"
+              options={GEZINSSAMENSTELLING_OPTIONS}
+              value={gezinssamenstelling}
+              onChange={(value) => updateSharedData({ gezinssamenstelling: value })}
+            />
+          )}
+          {!geboortedatum && (
+            <InputDate
+              labelText="Geboortedatum (dd-mm-jjjj)"
+              showPickerButton
+              value={geboortedatum}
+              onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
+            />
+          )}
+        </FunnelSection>
+      )}
 
       {!woningAlleGegevensBekend && (
         <FunnelSection title="Je woning" showDividerAbove>

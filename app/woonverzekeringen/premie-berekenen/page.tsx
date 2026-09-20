@@ -102,7 +102,6 @@ export default function OpstalPremieBerekenenPage() {
   const [glas, setGlas] = useState<string[]>(["glas"]);
   const [showSkeleton, setShowSkeleton] = useState(false);
   const stelJeOpstalRef = useRef<HTMLDivElement>(null);
-  const wasDataComplete = useRef(false);
 
   /**
    * Geen backend voor een echte postcode-lookup (bevestigd: ook de bestaande
@@ -117,6 +116,15 @@ export default function OpstalPremieBerekenenPage() {
   const isDataComplete = Boolean(
     geboortedatum && addressResolved && soortWoning && koopHuur && particulier && muren && dak && rietenDak,
   );
+  /**
+   * Geïnitialiseerd op de huidige waarde i.p.v. altijd `false` — anders vuurt
+   * de skeleton+scroll-animatie hieronder ook wanneer Opstal niet het eerste
+   * product is en alle "Gegevens"-velden al uit een eerder product bekend
+   * zijn: de pagina zou dan een ongewenste flits tonen voor een overgang
+   * waar de gebruiker hier niets voor deed (zelfde fix als Inboedel/
+   * Aansprakelijkheid).
+   */
+  const wasDataComplete = useRef(isDataComplete);
 
   /**
    * Bevestigd via de Figma Make-broncode (`useEffect` op `isComplete`):
@@ -340,20 +348,32 @@ export default function OpstalPremieBerekenenPage() {
         />
       </div>
 
-      <FunnelSection title="Gegevens">
-        <InputDate
-          labelText="Geboortedatum (dd-mm-jjjj)"
-          showPickerButton
-          value={geboortedatum}
-          onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
-        />
+      {/*
+        Volledig overgeslagen zodra alle velden hieronder al uit een eerder
+        product bekend zijn (bv. Inboedel of Aansprakelijkheid eerst gedaan)
+        — dan laadt deze pagina meteen door naar "Stel je opstalverzekering
+        samen" (rationale punt 11/12, zelfde patroon als Inboedel's "Je
+        woning"-sectie). Was Opstal tot nu toe de enige pagina zonder deze
+        behandeling, omdat hij oorspronkelijk gebouwd is toen hij altijd het
+        eerste product was.
+      */}
+      {!isDataComplete && (
+        <FunnelSection title="Gegevens">
+          {!geboortedatum && (
+            <InputDate
+              labelText="Geboortedatum (dd-mm-jjjj)"
+              showPickerButton
+              value={geboortedatum}
+              onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
+            />
+          )}
 
-        <div className="flex w-full flex-col items-start gap-4">
-          <FieldsetAddress
-            value={adres}
-            onChange={(value) => updateSharedData({ postcode: value.postalCode, huisnummer: value.houseNumber, toevoeging: value.addition })}
-          />
-          {addressResolved && (
+          {!addressResolved ? (
+            <FieldsetAddress
+              value={adres}
+              onChange={(value) => updateSharedData({ postcode: value.postalCode, huisnummer: value.houseNumber, toevoeging: value.addition })}
+            />
+          ) : (
             <CardDetails
               title="Deze gegevens hebben we opgehaald"
               cardActionEdit={false}
@@ -365,55 +385,67 @@ export default function OpstalPremieBerekenenPage() {
               ]}
             />
           )}
-        </div>
 
-        <Select
-          labelText="Wat voor soort woning heb je?"
-          description="Je kunt geen recreatiewoning, woonboot, studentenkamer, monument of bedrijfspand bij ons verzekeren."
-          options={SOORT_WONING_OPTIONS}
-          value={soortWoning}
-          onChange={(value) => updateSharedData({ soortWoning: value })}
-        />
+          {!soortWoning && (
+            <Select
+              labelText="Wat voor soort woning heb je?"
+              description="Je kunt geen recreatiewoning, woonboot, studentenkamer, monument of bedrijfspand bij ons verzekeren."
+              options={SOORT_WONING_OPTIONS}
+              value={soortWoning}
+              onChange={(value) => updateSharedData({ soortWoning: value })}
+            />
+          )}
 
-        <RadioGroup
-          labelText="Heb je een koop- of huurwoning?"
-          options={KOOP_HUUR_OPTIONS}
-          value={koopHuur}
-          onChange={(value) => updateSharedData({ koopHuur: value })}
-        />
+          {!koopHuur && (
+            <RadioGroup
+              labelText="Heb je een koop- of huurwoning?"
+              options={KOOP_HUUR_OPTIONS}
+              value={koopHuur}
+              onChange={(value) => updateSharedData({ koopHuur: value })}
+            />
+          )}
 
-        <RadioGroup
-          labelText="Gebruik je de woning particulier?"
-          options={JA_NEE_OPTIONS}
-          value={particulier}
-          onChange={(value) => updateSharedData({ particulier: value })}
-          horizontal
-        />
+          {!particulier && (
+            <RadioGroup
+              labelText="Gebruik je de woning particulier?"
+              options={JA_NEE_OPTIONS}
+              value={particulier}
+              onChange={(value) => updateSharedData({ particulier: value })}
+              horizontal
+            />
+          )}
 
-        <RadioGroup
-          labelText="Wat voor muren heeft je woning?"
-          description="Geef aan van welk materiaal de muren van je woning zijn."
-          options={MUREN_OPTIONS}
-          value={muren}
-          onChange={(value) => updateSharedData({ muren: value })}
-        />
+          {!muren && (
+            <RadioGroup
+              labelText="Wat voor muren heeft je woning?"
+              description="Geef aan van welk materiaal de muren van je woning zijn."
+              options={MUREN_OPTIONS}
+              value={muren}
+              onChange={(value) => updateSharedData({ muren: value })}
+            />
+          )}
 
-        <RadioGroup
-          labelText="Is het dak van je woning schuin of plat?"
-          description="Heb je beide? Kies dan het soort dak dat het grootste deel van je woning heeft."
-          options={DAK_OPTIONS}
-          value={dak}
-          onChange={(value) => updateSharedData({ dak: value })}
-        />
+          {!dak && (
+            <RadioGroup
+              labelText="Is het dak van je woning schuin of plat?"
+              description="Heb je beide? Kies dan het soort dak dat het grootste deel van je woning heeft."
+              options={DAK_OPTIONS}
+              value={dak}
+              onChange={(value) => updateSharedData({ dak: value })}
+            />
+          )}
 
-        <RadioGroup
-          labelText="Heeft je woning een rieten dak?"
-          options={JA_NEE_OPTIONS}
-          value={rietenDak}
-          onChange={(value) => updateSharedData({ rietenDak: value })}
-          horizontal
-        />
-      </FunnelSection>
+          {!rietenDak && (
+            <RadioGroup
+              labelText="Heeft je woning een rieten dak?"
+              options={JA_NEE_OPTIONS}
+              value={rietenDak}
+              onChange={(value) => updateSharedData({ rietenDak: value })}
+              horizontal
+            />
+          )}
+        </FunnelSection>
+      )}
 
       {/*
         Bevestigd via mcp (node 1:36357): ook deze divider is 763px, edge-to-
