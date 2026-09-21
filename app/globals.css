@@ -56,3 +56,44 @@
     cursor: pointer;
   }
 }
+
+/**
+ * Accordion-overgang tussen producten op de Woonverzekeringen "Premie
+ * berekenen"-pagina — gebaseerd op de door de opdrachtgever aangeleverde
+ * Figma Make-broncode ("Interactive Transition for Calculator"). Grid-rows
+ * i.p.v. `height`/`max-height`: dat animeert naar de werkelijke inhoudshoogte
+ * zonder die vooraf te hoeven kennen (`max-height` zou een grote, willekeurige
+ * waarde nodig hebben die de animatietiming zou vervormen).
+ */
+.accordion-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease-in-out;
+}
+
+.accordion-grid.open {
+  grid-template-rows: 1fr;
+}
+
+.accordion-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/** Fade bij het wisselen van een bedrag (kassabon-totaal/per-product) — zelfde bron als hierboven. */
+.premium-animate {
+  transition: opacity 300ms ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 200ms ease-in-out;
+}

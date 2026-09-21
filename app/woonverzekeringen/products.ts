@@ -64,18 +64,14 @@ export function getProductMeta(id: WoonverzekeringenProductId): Woonverzekeringe
 }
 
 /**
- * Route per product — alleen Opstal en Inboedel bestaan vooralsnog; de rest
- * volgt zodra die pagina's gebouwd zijn. Gebruikt door een productpagina om
- * terug/verder te navigeren naar een ándere productpagina (bv. Inboedel's
- * "Vorige stap" naar Opstal).
+ * Alle producten samen op één route (`/woonverzekeringen/premie-berekenen`)
+ * sinds het accordion-model: elk product is nu een uitklapbaar item op
+ * dezelfde pagina i.p.v. een eigen route per product — gebaseerd op de door
+ * de opdrachtgever aangeleverde Figma Make-broncode ("Interactive Transition
+ * for Calculator"), die alle producten als accordion-items op één pagina
+ * toont in plaats van losse pagina's met eigen navigatie ertussen.
  */
-export const PRODUCT_ROUTES: Partial<Record<WoonverzekeringenProductId, string>> = {
-  opstal: "/woonverzekeringen/premie-berekenen",
-  inboedel: "/woonverzekeringen/premie-berekenen/inboedel",
-  aansprakelijkheid: "/woonverzekeringen/premie-berekenen/aansprakelijkheid",
-  rechtsbijstand: "/woonverzekeringen/premie-berekenen/rechtsbijstand",
-  overlijden: "/woonverzekeringen/premie-berekenen/overlijden",
-};
+export const PREMIE_BEREKENEN_ROUTE = "/woonverzekeringen/premie-berekenen";
 
 /** Gedeelde bedrag-formattering (bv. "€ 4,82") — gebruikt door elke productpagina's premie/kassabon-weergave. */
 export function formatEuro(amount: number): string {

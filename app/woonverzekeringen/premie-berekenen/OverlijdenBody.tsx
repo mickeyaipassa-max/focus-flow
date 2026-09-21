@@ -1,11 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
+import { useEffect, useRef, useState } from "react";
 import { FunnelSection } from "@/components/FunnelSection";
-import { FormNavigation } from "@/components/FormNavigation";
-import { MultiEntityItem } from "@/components/MultiEntityItem";
 import { InputDate } from "@/components/InputDate";
 import { InputCurrency } from "@/components/InputCurrency";
 import { InputPercentage } from "@/components/InputPercentage";
@@ -14,21 +10,9 @@ import { RadioGroup } from "@/components/RadioGroup";
 import { RadioCardGroup, type RadioCardOption } from "@/components/RadioCardGroup";
 import { RadioCardBottomGroup, type RadioCardBottomOption } from "@/components/RadioCardBottom";
 import { Alert } from "@/components/Alert";
-import { Receipt, type ReceiptSection } from "@/components/Receipt";
-import { Icon } from "@/components/Icon";
-import {
-  buildOtherProductReceiptSection,
-  fromIsoDatum,
-  getProductStatus,
-  getTotalPremium,
-  toIsoDatum,
-  useWoonverzekeringenFunnel,
-  type WoonverzekeringenSharedData,
-} from "../../funnel-context";
-import { formatEuro, getProductMeta, PRODUCT_ROUTES, type WoonverzekeringenProductId } from "../../products";
-import { JA_NEE_OPTIONS, KOOP_HUUR_OPTIONS } from "../../woning-opties";
-
-const WOON_STEPS = ["Productkeuze", "Premie berekenen", "Gegevens", "Laatste vragen", "Samenvatting"];
+import { useWoonverzekeringenFunnel, type WoonverzekeringenSharedData } from "../funnel-context";
+import { formatEuro } from "../products";
+import { JA_NEE_OPTIONS, KOOP_HUUR_OPTIONS } from "../woning-opties";
 
 /** Écht Overlijdensrisico-specifiek — geen ander product vraagt dit. */
 const WIE_VERZEKEREN_OPTIONS = [
@@ -89,16 +73,16 @@ const PREMIE_BETALEN_PER_OPTIONS = [
 /**
  * Bevestigd via mcp (node 189:10244, "Receipt Summary"): een vast bedrag
  * (€ 2,41 per maand), niet afgeleid van een zichtbare formule op basis van
- * verzekerd bedrag/looptijd/rentepercentage/rookgedrag — zelfde behandeling
- * als Opstal/Inboedel's vaste Basis/Allrisk-kaartprijzen. De eenmalige
+ * verzekerd bedrag/looptijd/rentepercentage/rookgedrag. De eenmalige
  * afsluitkosten-tekst staat letterlijk in dezelfde node.
  */
 const PREMIUM = 2.41;
-const AFSLUITKOSTEN_INFO =
+/** Geëxporteerd zodat de hoofdpagina 'm kan tonen in de gedeelde kassabon-footer (`Receipt`'s `summaryInfo` is één tekst voor de hele kassabon, geen per-product-slot). */
+export const OVERLIJDEN_AFSLUITKOSTEN_INFO =
   "Je betaalt eenmalig € 55,- afsluitkosten voor de verzekering, samen met je eerste premie. Dit zijn de kosten voor het verwerken van je aanvraag. Daarom is de eerste betaling hoger dan de premie die je daarna betaalt.";
 
-export default function OverlijdenPremieBerekenenPage() {
-  const router = useRouter();
+/** Overlijdensrisico's accordion-body — zie de toelichting in `OpstalBody.tsx` over de overgang naar het accordion-model. */
+export function OverlijdenBody() {
   const { state, setState } = useWoonverzekeringenFunnel();
 
   function updateSharedData(patch: Partial<WoonverzekeringenSharedData>) {
@@ -107,7 +91,6 @@ export default function OverlijdenPremieBerekenenPage() {
 
   const { koopHuur } = state.sharedData;
 
-  /** Écht Overlijdensrisico-specifiek — bewust lokale state, niet in `sharedData` (rationale punt 13). */
   const [wieVerzekeren, setWieVerzekeren] = useState("");
   const [gerookt, setGerookt] = useState("");
   const [ingangsdatum, setIngangsdatum] = useState<Date | null>(null);
@@ -120,7 +103,6 @@ export default function OverlijdenPremieBerekenenPage() {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const stelJeOverlijdenRef = useRef<HTMLDivElement>(null);
 
-  /** Zelfde patroon als de andere productpagina's: bewaakt alleen de "Gegevens"-sectie. */
   const isDataComplete = Boolean(wieVerzekeren && gerookt && koopHuur && ingangsdatum && looptijd);
   const wasDataComplete = useRef(isDataComplete);
 
@@ -140,7 +122,6 @@ export default function OverlijdenPremieBerekenenPage() {
     wasDataComplete.current = isDataComplete;
   }, [isDataComplete]);
 
-  /** Premie pas getoond zodra ook de "Stel je ... samen"-sectie volledig is beantwoord — er is geen per-veld bedrag om een tussentijds getal op te bouwen (zie `PREMIUM` hierboven). */
   const isVolledigIngevuld = Boolean(
     isDataComplete && verzekerdBedrag && bedragVorm && rentepercentage && premieBetalenPer && voorHypotheekAflossen,
   );
@@ -148,164 +129,25 @@ export default function OverlijdenPremieBerekenenPage() {
 
   useEffect(() => {
     const premium = isVolledigIngevuld ? totalPrice : null;
-    if (state.products.overlijden?.premium === premium) return;
-    setState({
-      ...state,
-      products: { ...state.products, overlijden: { premium, isComplete: state.products.overlijden?.isComplete ?? false } },
-    });
-  }, [isVolledigIngevuld, totalPrice, state, setState]);
-
-  const overlijdenSection: ReceiptSection = useMemo(() => {
-    if (!isVolledigIngevuld) {
-      return {
-        id: "overlijden",
-        title: "Overlijdensrisico",
-        amount: "€ -,--",
-        icon: <img src="/icons/pictogram-overlijdensrisicoverzekering.svg" alt="" className="size-8" />,
-        groups: [{ items: [{ label: "Beantwoord de vragen om de premie te zien" }] }],
-      };
-    }
     const bedragVormOptie = BEDRAG_VORM_OPTIES.find((optie) => optie.value === bedragVorm);
-    return {
-      id: "overlijden",
-      title: "Overlijdensrisico",
-      amount: formatEuro(totalPrice),
-      icon: <img src="/icons/pictogram-overlijdensrisicoverzekering.svg" alt="" className="size-8" />,
-      groups: [
-        {
-          title: "Dekking",
-          items: [{ label: bedragVormOptie?.title ?? "" }, { label: `Verzekerd bedrag € ${verzekerdBedrag}` }],
-        },
-      ],
-    };
-  }, [isVolledigIngevuld, bedragVorm, verzekerdBedrag, totalPrice]);
-
-  const otherProductIds = state.selectedProducts.filter((id) => id !== "overlijden");
-  const completedBeforeSelf = otherProductIds.filter((id) => getProductStatus(state, id) === "completed");
-  const remainingAfterSelf = otherProductIds.filter((id) => getProductStatus(state, id) !== "completed");
-
-  const receiptSections: ReceiptSection[] = [
-    ...completedBeforeSelf.map((id) => buildOtherProductReceiptSection(state, id)),
-    overlijdenSection,
-    ...remainingAfterSelf.map((id) => buildOtherProductReceiptSection(state, id)),
-  ];
-
-  const summaryAmount = isVolledigIngevuld || getTotalPremium(state) > 0 ? formatEuro(getTotalPremium(state)) : "€ -,--";
-
-  const nextProductId = remainingAfterSelf[0] ?? null;
-  const nextLabel = nextProductId ? `verder met ${getProductMeta(nextProductId).shortTitle}` : "Volgende stap";
-
-  const previousProductId = (() => {
-    const index = state.selectedProducts.indexOf("overlijden");
-    return index > 0 ? state.selectedProducts[index - 1] : null;
-  })();
-  const previousRoute = (previousProductId && PRODUCT_ROUTES[previousProductId]) || "/woonverzekeringen";
-
-  function handlePrevious() {
-    router.push(previousRoute);
-  }
-
-  function handleBackToProductkeuze() {
-    router.push("/woonverzekeringen");
-  }
-
-  function handleRemoveProduct(id: WoonverzekeringenProductId) {
-    const { [id]: _removed, ...remainingProductStates } = state.products;
+    const breakdown = isVolledigIngevuld
+      ? [
+          {
+            title: "Dekking",
+            items: [{ label: bedragVormOptie?.title ?? "" }, { label: `Verzekerd bedrag € ${verzekerdBedrag}` }],
+          },
+        ]
+      : undefined;
+    const current = state.products.overlijden;
+    if (current?.premium === premium && JSON.stringify(current?.breakdown) === JSON.stringify(breakdown)) return;
     setState({
       ...state,
-      selectedProducts: state.selectedProducts.filter((productId) => productId !== id),
-      products: remainingProductStates,
+      products: { ...state.products, overlijden: { premium, isComplete: current?.isComplete ?? false, breakdown } },
     });
-  }
-
-  function handleRemoveSelf() {
-    const { overlijden: _removed, ...remainingProductStates } = state.products;
-    setState({
-      ...state,
-      selectedProducts: state.selectedProducts.filter((productId) => productId !== "overlijden"),
-      products: remainingProductStates,
-    });
-    router.push("/woonverzekeringen");
-  }
-
-  function handleNext() {
-    setState({
-      ...state,
-      products: { ...state.products, overlijden: { premium: state.products.overlijden?.premium ?? null, isComplete: true } },
-    });
-  }
+  }, [isVolledigIngevuld, totalPrice, bedragVorm, verzekerdBedrag, state, setState]);
 
   return (
-    <FunnelPageTemplate
-      headerTitle="Woonverzekeringen"
-      ikzSticker
-      steps={WOON_STEPS}
-      activeStep={2}
-      sidebarClassName="w-full"
-      sidebar={
-        <Receipt
-          sections={receiptSections}
-          type="collapsable"
-          defaultActiveSectionId="overlijden"
-          summaryAmount={summaryAmount}
-          summaryInfo={isVolledigIngevuld ? AFSLUITKOSTEN_INFO : undefined}
-        />
-      }
-      navigation={
-        <FormNavigation previousStep previousLabel="Vorige stap" nextLabel={nextLabel} onPrevious={handlePrevious} onNext={handleNext} />
-      }
-    >
-      <button type="button" onClick={handleBackToProductkeuze} className="flex items-center gap-2 rounded-[3px]">
-        <Icon name="arrow-left" size="sm" />
-        <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
-          Terug naar productkeuze
-        </span>
-      </button>
-
-      <FunnelSection
-        intro
-        title="Bereken je premie"
-        hideIntroDivider
-        showRequiredFieldsNote
-        requiredFieldsNote={
-          <div className="flex items-center gap-1 whitespace-nowrap">
-            <span className="text-[#ce0a1e] text-base" style={{ fontFamily: "var(--font-avenir-book)" }}>
-              *
-            </span>
-            <span className="text-black text-sm" style={{ fontFamily: "var(--font-avenir-book)" }}>
-              Verplichte velden
-            </span>
-          </div>
-        }
-      />
-
-      <div className="flex w-[calc(100%+3rem)] flex-col items-start -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10">
-        {completedBeforeSelf.map((id) => {
-          const meta = getProductMeta(id);
-          const route = PRODUCT_ROUTES[id];
-          return (
-            <div key={id} className="flex w-full flex-col items-start">
-              <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
-              <MultiEntityItem
-                state="completed"
-                icon={<img src={`/icons/${meta.icon}.svg`} alt="" className="size-8" />}
-                title={meta.title}
-                description={meta.description}
-                actions={[{ label: "Wijzig", onClick: () => (route ? router.push(route) : undefined) }]}
-              />
-            </div>
-          );
-        })}
-        <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
-        <MultiEntityItem
-          state="current"
-          icon={<img src="/icons/pictogram-overlijdensrisicoverzekering.svg" alt="" className="size-8" />}
-          title="Overlijdensrisicoverzekering"
-          description="Bereken je premie"
-          actions={[{ label: "Verwijder", onClick: handleRemoveSelf }]}
-        />
-      </div>
-
+    <>
       {!isDataComplete && (
         <FunnelSection title="Gegevens">
           {!wieVerzekeren && (
@@ -420,23 +262,6 @@ export default function OverlijdenPremieBerekenenPage() {
           )}
         </FunnelSection>
       </div>
-
-      <div className="flex w-[calc(100%+3rem)] flex-col items-start -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10">
-        {remainingAfterSelf.map((id) => {
-          const meta = getProductMeta(id);
-          return (
-            <div key={id} className="flex w-full flex-col items-start">
-              <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
-              <MultiEntityItem
-                state="disabled"
-                icon={<img src={`/icons/${meta.icon}.svg`} alt="" className="size-8" />}
-                title={meta.title}
-                onRemove={() => handleRemoveProduct(id)}
-              />
-            </div>
-          );
-        })}
-      </div>
-    </FunnelPageTemplate>
+    </>
   );
 }
