@@ -46,6 +46,8 @@ export type RadioCardBottomOption = {
    * Optioneel, default `true` (bestaand gedrag ongewijzigd).
    */
   showPricePeriod?: boolean;
+  /** Override voor de link onderaan de kaart — default "Meer informatie". Bevestigd via mcp op de Overlijdensrisico-pagina (node 189:9930 e.a.): daar heet die per kaart "Meer over {titel}" i.p.v. de generieke tekst elders. */
+  moreInfoLabel?: string;
   /**
    * Regels voor de gele "Highlight Tag"-badge boven de kaart (bevestigd op
    * de Auto-funnel "Jouw dekking"-stap, node 2383:21799 — daar alleen op de
@@ -371,7 +373,7 @@ export function RadioCardBottomGroup({
                     className="flex w-full items-center justify-center gap-2 rounded-[3px]"
                   >
                     <span className="font-[550] text-black text-base leading-[1.5] underline" style={{ fontFamily: "var(--font-avenir-medium)" }}>
-                      Meer informatie
+                      {option.moreInfoLabel ?? "Meer informatie"}
                     </span>
                   </button>
                 )}

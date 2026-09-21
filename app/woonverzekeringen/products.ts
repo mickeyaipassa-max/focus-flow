@@ -74,6 +74,7 @@ export const PRODUCT_ROUTES: Partial<Record<WoonverzekeringenProductId, string>>
   inboedel: "/woonverzekeringen/premie-berekenen/inboedel",
   aansprakelijkheid: "/woonverzekeringen/premie-berekenen/aansprakelijkheid",
   rechtsbijstand: "/woonverzekeringen/premie-berekenen/rechtsbijstand",
+  overlijden: "/woonverzekeringen/premie-berekenen/overlijden",
 };
 
 /** Gedeelde bedrag-formattering (bv. "€ 4,82") — gebruikt door elke productpagina's premie/kassabon-weergave. */
