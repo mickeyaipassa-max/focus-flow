@@ -150,8 +150,22 @@ export function OpstalBody() {
     });
   }, [isDataComplete, totalPrice, dekking, eigenRisico, glasPrice, coveragePrice, state, setState]);
 
+  /** Als geen van deze velden hier iets te tonen heeft (alles al bekend via een ander product), heeft deze sectie geen inhoud — dan moeten kop, inhoud én de scheidingslijn eronder allemaal weg i.p.v. een lege sectie achterlaten. */
+  const showGegevens =
+    showSharedField("geboortedatum", geboortedatum) ||
+    showSharedField("postcode", adres.postalCode) ||
+    addressResolved ||
+    showSharedField("soortWoning", soortWoning) ||
+    showSharedField("koopHuur", koopHuur) ||
+    showSharedField("particulier", particulier) ||
+    showSharedField("muren", muren) ||
+    showSharedField("dak", dak) ||
+    showSharedField("rietenDak", rietenDak);
+
   return (
     <>
+      {showGegevens && (
+        <>
       <FunnelSection title="Gegevens">
         {showSharedField("geboortedatum", geboortedatum) && (
           <InputDate
@@ -244,6 +258,8 @@ export function OpstalBody() {
       </FunnelSection>
 
       <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
+        </>
+      )}
 
       <div ref={stelJeOpstalRef}>
         <FunnelSection title="Stel je opstalverzekering samen">

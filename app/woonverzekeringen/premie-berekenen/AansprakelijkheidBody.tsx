@@ -96,28 +96,35 @@ export function AansprakelijkheidBody() {
     });
   }, [isDataComplete, totalPrice, maximaalVerzekerd, eigenRisico, coveragePrice, state, setState]);
 
+  /** Als beide velden al via een ander product bekend zijn, heeft deze sectie geen enkel veld om te tonen — dan moeten kop, inhoud én de scheidingslijn eronder allemaal weg i.p.v. een lege sectie achterlaten. */
+  const showGegevens = showSharedField("gezinssamenstelling", gezinssamenstelling) || showSharedField("geboortedatum", geboortedatum);
+
   return (
     <>
-      <FunnelSection title="Gegevens">
-        {showSharedField("gezinssamenstelling", gezinssamenstelling) && (
-          <Select
-            labelText="Hoe is je gezin samengesteld?"
-            options={GEZINSSAMENSTELLING_OPTIONS}
-            value={gezinssamenstelling}
-            onChange={(value) => updateSharedData({ gezinssamenstelling: value })}
-          />
-        )}
-        {showSharedField("geboortedatum", geboortedatum) && (
-          <InputDate
-            labelText="Geboortedatum (dd-mm-jjjj)"
-            showPickerButton
-            value={geboortedatum}
-            onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
-          />
-        )}
-      </FunnelSection>
+      {showGegevens && (
+        <>
+          <FunnelSection title="Gegevens">
+            {showSharedField("gezinssamenstelling", gezinssamenstelling) && (
+              <Select
+                labelText="Hoe is je gezin samengesteld?"
+                options={GEZINSSAMENSTELLING_OPTIONS}
+                value={gezinssamenstelling}
+                onChange={(value) => updateSharedData({ gezinssamenstelling: value })}
+              />
+            )}
+            {showSharedField("geboortedatum", geboortedatum) && (
+              <InputDate
+                labelText="Geboortedatum (dd-mm-jjjj)"
+                showPickerButton
+                value={geboortedatum}
+                onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
+              />
+            )}
+          </FunnelSection>
 
-      <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
+          <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
+        </>
+      )}
 
       <div ref={stelJeAansprakelijkheidRef}>
         <FunnelSection title="Stel je Aansprakelijkheidsverzekering samen">

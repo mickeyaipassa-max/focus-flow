@@ -141,28 +141,49 @@ export function InboedelBody() {
     });
   }, [isDataComplete, totalPrice, dekking, eigenRisico, mobieleElektronicaPrice, waardevolleSpullenPrice, coveragePrice, state, setState]);
 
+  /**
+   * Als geen van de velden in een sectie hier iets te tonen heeft (alles al
+   * bekend via een ander product), heeft die sectie geen inhoud — dan moeten
+   * kop, inhoud én de scheidingslijn eromheen allemaal weg i.p.v. een lege
+   * sectie achterlaten.
+   */
+  const showPersoonlijkeGegevens =
+    showSharedField("gezinssamenstelling", gezinssamenstelling) || showSharedField("geboortedatum", geboortedatum);
+  const showJeWoning =
+    showSharedField("postcode", adres.postalCode) ||
+    addressResolved ||
+    showSharedField("soortWoning", soortWoning) ||
+    showSharedField("koopHuur", koopHuur) ||
+    showSharedField("particulier", particulier) ||
+    showSharedField("muren", muren) ||
+    showSharedField("dak", dak) ||
+    showSharedField("rietenDak", rietenDak);
+
   return (
     <>
-      <FunnelSection title="Persoonlijke gegevens">
-        {showSharedField("gezinssamenstelling", gezinssamenstelling) && (
-          <Select
-            labelText="Hoe is je gezin samengesteld?"
-            options={GEZINSSAMENSTELLING_OPTIONS}
-            value={gezinssamenstelling}
-            onChange={(value) => updateSharedData({ gezinssamenstelling: value })}
-          />
-        )}
-        {showSharedField("geboortedatum", geboortedatum) && (
-          <InputDate
-            labelText="Geboortedatum (dd-mm-jjjj)"
-            showPickerButton
-            value={geboortedatum}
-            onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
-          />
-        )}
-      </FunnelSection>
+      {showPersoonlijkeGegevens && (
+        <FunnelSection title="Persoonlijke gegevens">
+          {showSharedField("gezinssamenstelling", gezinssamenstelling) && (
+            <Select
+              labelText="Hoe is je gezin samengesteld?"
+              options={GEZINSSAMENSTELLING_OPTIONS}
+              value={gezinssamenstelling}
+              onChange={(value) => updateSharedData({ gezinssamenstelling: value })}
+            />
+          )}
+          {showSharedField("geboortedatum", geboortedatum) && (
+            <InputDate
+              labelText="Geboortedatum (dd-mm-jjjj)"
+              showPickerButton
+              value={geboortedatum}
+              onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
+            />
+          )}
+        </FunnelSection>
+      )}
 
-      <FunnelSection title="Je woning" showDividerAbove>
+      {showJeWoning && (
+      <FunnelSection title="Je woning" showDividerAbove={showPersoonlijkeGegevens}>
         {showSharedField("postcode", adres.postalCode) && (
           <FieldsetAddress
             value={adres}
@@ -243,8 +264,11 @@ export function InboedelBody() {
           />
         )}
       </FunnelSection>
+      )}
 
-      <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
+      {(showPersoonlijkeGegevens || showJeWoning) && (
+        <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
+      )}
 
       <div ref={stelJeInboedelRef}>
         <FunnelSection title="Stel je inboedelverzekering samen">
