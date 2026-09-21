@@ -9,7 +9,12 @@ import { MultiEntityItem } from "@/components/MultiEntityItem";
 import { Receipt } from "@/components/Receipt";
 import { Icon } from "@/components/Icon";
 import { ProductAccordionSkeleton } from "@/components/ProductAccordionSkeleton";
-import { buildProductReceiptSection, getTotalPremium, useWoonverzekeringenFunnel } from "../funnel-context";
+import {
+  buildProductReceiptSection,
+  getTotalPremium,
+  useWoonverzekeringenFunnel,
+  type WoonverzekeringenFunnelState,
+} from "../funnel-context";
 import { formatEuro, getProductMeta, type WoonverzekeringenProductId } from "../products";
 import { OpstalBody } from "./OpstalBody";
 import { InboedelBody } from "./InboedelBody";
@@ -142,7 +147,15 @@ export default function PremieBerekenenPage() {
   }
 
   function handleRemove(id: WoonverzekeringenProductId) {
-    const { [id]: _removed, ...remainingProducts } = state.products;
+    /**
+     * Geen rest-destructuring met een dynamische key (`{ [id]: _removed, ...rest }`)
+     * — TypeScript kan de `Partial<Record<...>>`-typering dan niet behouden en
+     * infereert `rest` als `{}`, wat Netlify's build (wel een volledige
+     * project-typecheck, i.t.t. de lokale `tsc --noEmit` die dit eerder miste)
+     * terecht afkeurt. Expliciete kopie + `delete` behoudt het echte type.
+     */
+    const remainingProducts: WoonverzekeringenFunnelState["products"] = { ...state.products };
+    delete remainingProducts[id];
     const remainingSelected = state.selectedProducts.filter((productId) => productId !== id);
     setState({ ...state, selectedProducts: remainingSelected, products: remainingProducts });
 
