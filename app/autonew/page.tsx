@@ -52,12 +52,19 @@ const DEKKING_OPTIONS: RadioCardBottomOption[] = [
   },
 ];
 
-/** Zelfde inhoud als `DEKKING_OPTIONS`, alleen zonder het (hier toch al lege) `description`-veld dat de carrousel-variant niet kent. */
+/**
+ * Zelfde inhoud als `DEKKING_OPTIONS`, alleen zonder het (hier toch al lege)
+ * `description`-veld dat de carrousel-variant niet kent. `price`/`features`
+ * zijn hier altijd gezet (zie `DEKKING_OPTIONS` hierboven) — de `?? ""`/`?? []`
+ * fallbacks zijn puur om te voldoen aan `CarouselCardOption`'s verplichte
+ * velden, want `RadioCardBottomOption.price`/`.features` zijn sinds de
+ * "compact"-variant (Aansprakelijkheid-pagina) optioneel geworden.
+ */
 const CAROUSEL_OPTIONS: CarouselCardOption[] = DEKKING_OPTIONS.map(({ value, title, price, features, highlightLines }) => ({
   value,
   title,
-  price,
-  features,
+  price: price ?? "",
+  features: features ?? [],
   highlightLines,
 }));
 

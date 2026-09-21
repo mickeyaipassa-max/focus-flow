@@ -115,10 +115,11 @@ const BAGAGE_TIER_DATA: Record<"basis" | "comfort", { eigenBedrag: string; volge
  */
 function getAanvullendeDekkingenOptions(dekking: DekkingKeuze, bagageChecked: boolean): CheckboxCardOption[] {
   const tier = BASISDEKKING_OPTIONS.find((option) => option.value === dekking)!;
-  const bagageIncluded = tier.features[1].included;
-  const geldIncluded = tier.features[2].included;
-  const geneeskundigeKostenIncluded = tier.features[3].included;
-  const reisrechtsbijstandIncluded = tier.features[4].included;
+  /** `!` hier (i.p.v. hierboven al bij `tier`): `features` is sinds de "compact"-variant (Aansprakelijkheid-pagina) optioneel op `RadioCardBottomOption`, maar elke entry in `BASISDEKKING_OPTIONS` zet het altijd. */
+  const bagageIncluded = tier.features![1].included;
+  const geldIncluded = tier.features![2].included;
+  const geneeskundigeKostenIncluded = tier.features![3].included;
+  const reisrechtsbijstandIncluded = tier.features![4].included;
 
   let bagageOption: CheckboxCardOption;
   let sportuitrustingDisabledMessage: string | undefined;
