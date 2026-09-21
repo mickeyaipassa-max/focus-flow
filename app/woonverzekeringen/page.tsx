@@ -8,7 +8,7 @@ import { FormNavigation } from "@/components/FormNavigation";
 import { ToggleCardGroup, type ToggleCardOption } from "@/components/ToggleCard";
 import { Icon } from "@/components/Icon";
 import { useWoonverzekeringenFunnel } from "./funnel-context";
-import { PRODUCT_ROUTES, WOONVERZEKERINGEN_PRODUCTEN, type WoonverzekeringenProductId } from "./products";
+import { PREMIE_BEREKENEN_ROUTE, WOONVERZEKERINGEN_PRODUCTEN, type WoonverzekeringenProductId } from "./products";
 
 const WOON_STEPS = ["Productkeuze", "Premie berekenen", "Gegevens", "Laatste vragen", "Samenvatting"];
 
@@ -30,20 +30,13 @@ export default function WoonverzekeringenPage() {
   const { state, setState } = useWoonverzekeringenFunnel();
   const [error, setError] = useState(false);
 
-  /**
-   * Navigeert naar het éérste geselecteerde product dat al een gebouwde
-   * route heeft (`PRODUCT_ROUTES`) — niet hardcoded naar Opstal, want die
-   * hoeft niet gekozen te zijn (bv. iemand kiest alleen Inboedel). Heeft
-   * geen van de gekozen producten al een pagina, dan is er nog niets om
-   * naartoe te navigeren; blijft dan bewust op stap 1 staan.
-   */
+  /** Alle producten leven sinds het accordion-model op dezelfde route — zie de toelichting bij `PREMIE_BEREKENEN_ROUTE`. */
   function handleNext() {
     if (state.selectedProducts.length === 0) {
       setError(true);
       return;
     }
-    const firstBuiltRoute = state.selectedProducts.map((id) => PRODUCT_ROUTES[id]).find((route) => route);
-    if (firstBuiltRoute) router.push(firstBuiltRoute);
+    router.push(PREMIE_BEREKENEN_ROUTE);
   }
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { ReceiptSection } from "@/components/Receipt";
+import type { ReceiptGroup, ReceiptSection } from "@/components/Receipt";
 import { formatEuro, getProductMeta, type WoonverzekeringenProductId } from "./products";
 
 /**
@@ -61,6 +61,16 @@ export type WoonverzekeringenProductState = {
   premium: number | null;
   /** `true` pas zodra de gebruiker het product heeft afgerond (op "verder met ..." heeft geklikt) — niet al zodra het formulier toevallig volledig is ingevuld. */
   isComplete: boolean;
+  /**
+   * De kassabon-detailregels voor dit product (bv. "Dekking: Basis, Eigen
+   * risico € 100") — sinds het accordion-model bouwt de hoofdpagina de
+   * kassabon voor ÁLLE producten tegelijk (niet meer alleen "de pagina waar
+   * je nu op zit"), dus moet elk product zijn eigen detail hier delen i.p.v.
+   * dat lokaal te berekenen op een pagina die niet meer bestaat. Alleen
+   * platte, serialiseerbare data (geen `ReactNode`/iconen) — dezelfde reden
+   * als `premium` hierboven al serialiseerbaar is voor sessionStorage.
+   */
+  breakdown?: ReceiptGroup[];
 };
 
 export type WoonverzekeringenFunnelState = {
@@ -141,46 +151,31 @@ export function useWoonverzekeringenFunnel() {
   return context;
 }
 
-/**
- * Het actieve product = het eerste geselecteerde product (in de volgorde uit
- * stap 1) dat nog niet completed is — rationale punt 19, letterlijk zo
- * afgeleid i.p.v. apart opgeslagen, zodat er nooit twee velden uit de pas
- * kunnen lopen.
- */
-export function getActiveProduct(state: WoonverzekeringenFunnelState): WoonverzekeringenProductId | null {
-  return state.selectedProducts.find((id) => !state.products[id]?.isComplete) ?? null;
-}
-
-export type WoonverzekeringenProductStatus = "completed" | "active" | "upcoming" | "not-selected";
-
-export function getProductStatus(state: WoonverzekeringenFunnelState, id: WoonverzekeringenProductId): WoonverzekeringenProductStatus {
-  if (!state.selectedProducts.includes(id)) return "not-selected";
-  if (state.products[id]?.isComplete) return "completed";
-  return getActiveProduct(state) === id ? "active" : "upcoming";
-}
-
 /** Som van de premies van alle producten die al een bekend bedrag hebben — rationale punt 16 ("Je betaalt per maand" = som van de op dat moment beschikbare premies). */
 export function getTotalPremium(state: WoonverzekeringenFunnelState): number {
   return Object.values(state.products).reduce((sum: number, product) => sum + (product?.premium ?? 0), 0);
 }
 
 /**
- * Bouwt de kassabon-sectie voor een ánder product dan de huidige pagina —
- * altijd read-only ("€ -,--" totdat dat product zijn eigen premie heeft
- * doorgezet, anders het al bekende bedrag). Gedeeld zodat elke productpagina
- * dezelfde weergave voor de "overige" producten gebruikt i.p.v. dit per
- * pagina te herhalen — bevestigd via mcp dat Inboedel's Receipt exact dit
- * doet voor Opstal ("Opstal € 17,69") en de nog niet-berekende producten.
+ * Bouwt de kassabon-sectie voor één product uit de gedeelde state — sinds
+ * het accordion-model (Figma Make-broncode "Interactive Transition for
+ * Calculator") bouwt de ene hoofdpagina de kassabon voor ALLE geselecteerde
+ * producten tegelijk, niet meer alleen voor "de pagina waar je nu op zit"
+ * plus placeholders voor de rest. Elk product-accordion-item zet daarom zijn
+ * eigen `premium`/`breakdown` door naar de gedeelde state (zelfde reactieve
+ * sync-patroon als voorheen), en deze functie leest dat terug — ongeacht of
+ * dat product nu open, dicht of nog niet bereikt is.
  */
-export function buildOtherProductReceiptSection(state: WoonverzekeringenFunnelState, id: WoonverzekeringenProductId): ReceiptSection {
+export function buildProductReceiptSection(state: WoonverzekeringenFunnelState, id: WoonverzekeringenProductId): ReceiptSection {
   const meta = getProductMeta(id);
-  const premium = state.products[id]?.premium ?? null;
+  const productState = state.products[id];
+  const premium = productState?.premium ?? null;
   return {
     id,
     title: meta.shortTitle,
     amount: premium != null ? formatEuro(premium) : "€ -,--",
     icon: <img src={`/icons/${meta.icon}.svg`} alt="" className="size-8" />,
-    ...(premium == null ? { groups: [{ items: [{ label: "Beantwoord de vragen om de premie te zien" }] }] } : {}),
+    groups: productState?.breakdown ?? [{ items: [{ label: "Beantwoord de vragen om de premie te zien" }] }],
   };
 }
 
