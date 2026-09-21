@@ -3,7 +3,12 @@
 import { useId } from "react";
 import { Icon } from "./Icon";
 
-export type RadioCardOption = { value: string; label: string };
+export type RadioCardOption = {
+  value: string;
+  label: string;
+  /** Toont een tweede, lichtere regel onder `label` — bevestigd via mcp op de Overlijdensrisico-pagina ("Zo lang mogelijk" / "Tot je 75ste verjaardag"). Optioneel: bestaande aanroepen zonder subtekst blijven ongewijzigd op de enkele gecentreerde regel. */
+  description?: string;
+};
 
 type RadioCardGroupProps = {
   labelText: string;
@@ -101,10 +106,15 @@ export function RadioCardGroup({
                   />
                 </span>
               </span>
-              <span className="flex flex-1 items-center bg-white px-4 py-6">
-                <span className="font-bold text-black text-xl leading-[1.4]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+              <span className="flex flex-1 flex-col items-start justify-center gap-1 bg-white px-4 py-6">
+                <span className="w-full font-bold text-black text-xl leading-[1.4]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
                   {option.label}
                 </span>
+                {option.description && (
+                  <span className="w-full font-[350] text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                    {option.description}
+                  </span>
+                )}
               </span>
             </label>
           );
