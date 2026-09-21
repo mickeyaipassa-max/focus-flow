@@ -237,7 +237,8 @@ export default function KortlopendeReisPage() {
   const totaalPremie = useMemo(() => {
     if (!dekking) return 0;
     const basis = BASISDEKKING_OPTIONS.find((option) => option.value === dekking);
-    const basisPrijs = basis ? parseEuro(basis.price) : 0;
+    /** `!` op `.price`: optioneel geworden op `RadioCardBottomOption` sinds de "compact"-variant (Aansprakelijkheid-pagina), maar elke entry in `BASISDEKKING_OPTIONS` zet het altijd. */
+    const basisPrijs = basis ? parseEuro(basis.price!) : 0;
     const extraPrijs = aanvullendeOpties
       // `included` (de "Inbegrepen"-pil) telt nooit los mee — die zit al in de basisprijs.
       .filter((option) => !option.included && aanvullendeDekkingen.includes(option.value))
