@@ -213,8 +213,6 @@ export default function PremieBerekenenPage() {
         }
       />
 
-      <FunnelSection title="Gegevens" />
-
       <div className="flex w-full flex-col items-start">
         {state.selectedProducts.map((id) => {
           const meta = getProductMeta(id);
