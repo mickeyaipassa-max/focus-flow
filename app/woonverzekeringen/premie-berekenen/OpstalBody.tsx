@@ -60,8 +60,24 @@ const GLAS_PRICE = 2.63;
 export function OpstalBody() {
   const { state, setState } = useWoonverzekeringenFunnel();
 
+  /**
+   * Houdt bij welke gedeelde velden ÍN DIT product zijn beantwoord — zo'n
+   * veld blijft daarna gewoon zichtbaar (met het ingevulde antwoord, nog
+   * steeds aanpasbaar) i.p.v. te verdwijnen zodra het is ingevuld. Een veld
+   * dat al bekend was TOEN dit component het las (dus door een ánder,
+   * eerder ingevuld product) wordt wél overgeslagen — dat voorkomt dubbele
+   * vragen tussen producten, zonder dat je eigen zojuist gegeven antwoord
+   * verdwijnt.
+   */
+  const answeredHereRef = useRef<Set<keyof WoonverzekeringenSharedData>>(new Set());
+
   function updateSharedData(patch: Partial<WoonverzekeringenSharedData>) {
+    (Object.keys(patch) as (keyof WoonverzekeringenSharedData)[]).forEach((key) => answeredHereRef.current.add(key));
     setState({ ...state, sharedData: { ...state.sharedData, ...patch } });
+  }
+
+  function showSharedField(key: keyof WoonverzekeringenSharedData, value: unknown): boolean {
+    return !value || answeredHereRef.current.has(key);
   }
 
   const geboortedatum = fromIsoDatum(state.sharedData.geboortedatum);
@@ -136,95 +152,93 @@ export function OpstalBody() {
 
   return (
     <>
-      {!isDataComplete && (
-        <FunnelSection title="Gegevens">
-          {!geboortedatum && (
-            <InputDate
-              labelText="Geboortedatum (dd-mm-jjjj)"
-              showPickerButton
-              value={geboortedatum}
-              onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
-            />
-          )}
+      <FunnelSection title="Gegevens">
+        {showSharedField("geboortedatum", geboortedatum) && (
+          <InputDate
+            labelText="Geboortedatum (dd-mm-jjjj)"
+            showPickerButton
+            value={geboortedatum}
+            onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
+          />
+        )}
 
-          {!addressResolved ? (
-            <FieldsetAddress
-              value={adres}
-              onChange={(value) => updateSharedData({ postcode: value.postalCode, huisnummer: value.houseNumber, toevoeging: value.addition })}
-            />
-          ) : (
-            <CardDetails
-              title="Deze gegevens hebben we opgehaald"
-              cardActionEdit={false}
-              rows={[
-                { label: "Straat en huisnummer", value: "Dorpslaan 10" },
-                { label: "Plaats", value: "Utrecht" },
-                { label: "Oppervlakte", value: "119 m²" },
-                { label: "Bouwjaar", value: "1972" },
-              ]}
-            />
-          )}
+        {!addressResolved ? (
+          <FieldsetAddress
+            value={adres}
+            onChange={(value) => updateSharedData({ postcode: value.postalCode, huisnummer: value.houseNumber, toevoeging: value.addition })}
+          />
+        ) : (
+          <CardDetails
+            title="Deze gegevens hebben we opgehaald"
+            cardActionEdit={false}
+            rows={[
+              { label: "Straat en huisnummer", value: "Dorpslaan 10" },
+              { label: "Plaats", value: "Utrecht" },
+              { label: "Oppervlakte", value: "119 m²" },
+              { label: "Bouwjaar", value: "1972" },
+            ]}
+          />
+        )}
 
-          {!soortWoning && (
-            <Select
-              labelText="Wat voor soort woning heb je?"
-              description="Je kunt geen recreatiewoning, woonboot, studentenkamer, monument of bedrijfspand bij ons verzekeren."
-              options={SOORT_WONING_OPTIONS}
-              value={soortWoning}
-              onChange={(value) => updateSharedData({ soortWoning: value })}
-            />
-          )}
+        {showSharedField("soortWoning", soortWoning) && (
+          <Select
+            labelText="Wat voor soort woning heb je?"
+            description="Je kunt geen recreatiewoning, woonboot, studentenkamer, monument of bedrijfspand bij ons verzekeren."
+            options={SOORT_WONING_OPTIONS}
+            value={soortWoning}
+            onChange={(value) => updateSharedData({ soortWoning: value })}
+          />
+        )}
 
-          {!koopHuur && (
-            <RadioGroup
-              labelText="Heb je een koop- of huurwoning?"
-              options={KOOP_HUUR_OPTIONS}
-              value={koopHuur}
-              onChange={(value) => updateSharedData({ koopHuur: value })}
-            />
-          )}
+        {showSharedField("koopHuur", koopHuur) && (
+          <RadioGroup
+            labelText="Heb je een koop- of huurwoning?"
+            options={KOOP_HUUR_OPTIONS}
+            value={koopHuur}
+            onChange={(value) => updateSharedData({ koopHuur: value })}
+          />
+        )}
 
-          {!particulier && (
-            <RadioGroup
-              labelText="Gebruik je de woning particulier?"
-              options={JA_NEE_OPTIONS}
-              value={particulier}
-              onChange={(value) => updateSharedData({ particulier: value })}
-              horizontal
-            />
-          )}
+        {showSharedField("particulier", particulier) && (
+          <RadioGroup
+            labelText="Gebruik je de woning particulier?"
+            options={JA_NEE_OPTIONS}
+            value={particulier}
+            onChange={(value) => updateSharedData({ particulier: value })}
+            horizontal
+          />
+        )}
 
-          {!muren && (
-            <RadioGroup
-              labelText="Wat voor muren heeft je woning?"
-              description="Geef aan van welk materiaal de muren van je woning zijn."
-              options={MUREN_OPTIONS}
-              value={muren}
-              onChange={(value) => updateSharedData({ muren: value })}
-            />
-          )}
+        {showSharedField("muren", muren) && (
+          <RadioGroup
+            labelText="Wat voor muren heeft je woning?"
+            description="Geef aan van welk materiaal de muren van je woning zijn."
+            options={MUREN_OPTIONS}
+            value={muren}
+            onChange={(value) => updateSharedData({ muren: value })}
+          />
+        )}
 
-          {!dak && (
-            <RadioGroup
-              labelText="Is het dak van je woning schuin of plat?"
-              description="Heb je beide? Kies dan het soort dak dat het grootste deel van je woning heeft."
-              options={DAK_OPTIONS}
-              value={dak}
-              onChange={(value) => updateSharedData({ dak: value })}
-            />
-          )}
+        {showSharedField("dak", dak) && (
+          <RadioGroup
+            labelText="Is het dak van je woning schuin of plat?"
+            description="Heb je beide? Kies dan het soort dak dat het grootste deel van je woning heeft."
+            options={DAK_OPTIONS}
+            value={dak}
+            onChange={(value) => updateSharedData({ dak: value })}
+          />
+        )}
 
-          {!rietenDak && (
-            <RadioGroup
-              labelText="Heeft je woning een rieten dak?"
-              options={JA_NEE_OPTIONS}
-              value={rietenDak}
-              onChange={(value) => updateSharedData({ rietenDak: value })}
-              horizontal
-            />
-          )}
-        </FunnelSection>
-      )}
+        {showSharedField("rietenDak", rietenDak) && (
+          <RadioGroup
+            labelText="Heeft je woning een rieten dak?"
+            options={JA_NEE_OPTIONS}
+            value={rietenDak}
+            onChange={(value) => updateSharedData({ rietenDak: value })}
+            horizontal
+          />
+        )}
+      </FunnelSection>
 
       <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
 

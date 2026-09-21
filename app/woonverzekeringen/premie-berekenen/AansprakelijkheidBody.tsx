@@ -32,8 +32,16 @@ const MAXIMAAL_VERZEKERD_PRICES: Record<string, number> = {
 export function AansprakelijkheidBody() {
   const { state, setState } = useWoonverzekeringenFunnel();
 
+  /** Zie de toelichting in `OpstalBody.tsx`: een gedeeld veld dat hier is beantwoord blijft zichtbaar; een veld dat al bekend was via een ander product wordt overgeslagen. */
+  const answeredHereRef = useRef<Set<keyof WoonverzekeringenSharedData>>(new Set());
+
   function updateSharedData(patch: Partial<WoonverzekeringenSharedData>) {
+    (Object.keys(patch) as (keyof WoonverzekeringenSharedData)[]).forEach((key) => answeredHereRef.current.add(key));
     setState({ ...state, sharedData: { ...state.sharedData, ...patch } });
+  }
+
+  function showSharedField(key: keyof WoonverzekeringenSharedData, value: unknown): boolean {
+    return !value || answeredHereRef.current.has(key);
   }
 
   const geboortedatum = fromIsoDatum(state.sharedData.geboortedatum);
@@ -90,26 +98,24 @@ export function AansprakelijkheidBody() {
 
   return (
     <>
-      {!isDataComplete && (
-        <FunnelSection title="Gegevens">
-          {!gezinssamenstelling && (
-            <Select
-              labelText="Hoe is je gezin samengesteld?"
-              options={GEZINSSAMENSTELLING_OPTIONS}
-              value={gezinssamenstelling}
-              onChange={(value) => updateSharedData({ gezinssamenstelling: value })}
-            />
-          )}
-          {!geboortedatum && (
-            <InputDate
-              labelText="Geboortedatum (dd-mm-jjjj)"
-              showPickerButton
-              value={geboortedatum}
-              onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
-            />
-          )}
-        </FunnelSection>
-      )}
+      <FunnelSection title="Gegevens">
+        {showSharedField("gezinssamenstelling", gezinssamenstelling) && (
+          <Select
+            labelText="Hoe is je gezin samengesteld?"
+            options={GEZINSSAMENSTELLING_OPTIONS}
+            value={gezinssamenstelling}
+            onChange={(value) => updateSharedData({ gezinssamenstelling: value })}
+          />
+        )}
+        {showSharedField("geboortedatum", geboortedatum) && (
+          <InputDate
+            labelText="Geboortedatum (dd-mm-jjjj)"
+            showPickerButton
+            value={geboortedatum}
+            onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
+          />
+        )}
+      </FunnelSection>
 
       <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
 

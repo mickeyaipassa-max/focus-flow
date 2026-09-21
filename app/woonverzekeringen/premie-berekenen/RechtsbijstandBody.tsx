@@ -46,8 +46,16 @@ const AANVULLENDE_DEKKINGEN_LABELS: Record<string, string> = {
 export function RechtsbijstandBody() {
   const { state, setState } = useWoonverzekeringenFunnel();
 
+  /** Zie de toelichting in `OpstalBody.tsx`: een gedeeld veld dat hier is beantwoord blijft zichtbaar; een veld dat al bekend was via een ander product wordt overgeslagen. */
+  const answeredHereRef = useRef<Set<keyof WoonverzekeringenSharedData>>(new Set());
+
   function updateSharedData(patch: Partial<WoonverzekeringenSharedData>) {
+    (Object.keys(patch) as (keyof WoonverzekeringenSharedData)[]).forEach((key) => answeredHereRef.current.add(key));
     setState({ ...state, sharedData: { ...state.sharedData, ...patch } });
+  }
+
+  function showSharedField(key: keyof WoonverzekeringenSharedData, value: unknown): boolean {
+    return !value || answeredHereRef.current.has(key);
   }
 
   const geboortedatum = fromIsoDatum(state.sharedData.geboortedatum);
@@ -116,55 +124,53 @@ export function RechtsbijstandBody() {
 
   return (
     <>
-      {!isDataComplete && (
-        <FunnelSection title="Gegevens">
-          {!gezinssamenstelling && (
-            <Select
-              labelText="Hoe is je gezin samengesteld?"
-              options={GEZINSSAMENSTELLING_OPTIONS}
-              value={gezinssamenstelling}
-              onChange={(value) => updateSharedData({ gezinssamenstelling: value })}
-            />
-          )}
+      <FunnelSection title="Gegevens">
+        {showSharedField("gezinssamenstelling", gezinssamenstelling) && (
+          <Select
+            labelText="Hoe is je gezin samengesteld?"
+            options={GEZINSSAMENSTELLING_OPTIONS}
+            value={gezinssamenstelling}
+            onChange={(value) => updateSharedData({ gezinssamenstelling: value })}
+          />
+        )}
 
-          {!geboortedatum && (
-            <InputDate
-              labelText="Geboortedatum (dd-mm-jjjj)"
-              showPickerButton
-              value={geboortedatum}
-              onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
-            />
-          )}
+        {showSharedField("geboortedatum", geboortedatum) && (
+          <InputDate
+            labelText="Geboortedatum (dd-mm-jjjj)"
+            showPickerButton
+            value={geboortedatum}
+            onChange={(value) => updateSharedData({ geboortedatum: value ? toIsoDatum(value) : "" })}
+          />
+        )}
 
-          {!koopHuur && (
-            <RadioGroup
-              labelText="Koop- of huurwoning"
-              options={KOOP_HUUR_OPTIONS}
-              value={koopHuur}
-              onChange={(value) => updateSharedData({ koopHuur: value })}
-              horizontal
-            />
-          )}
+        {showSharedField("koopHuur", koopHuur) && (
+          <RadioGroup
+            labelText="Koop- of huurwoning"
+            options={KOOP_HUUR_OPTIONS}
+            value={koopHuur}
+            onChange={(value) => updateSharedData({ koopHuur: value })}
+            horizontal
+          />
+        )}
 
-          {!addressResolved ? (
-            <FieldsetAddress
-              value={adres}
-              onChange={(value) => updateSharedData({ postcode: value.postalCode, huisnummer: value.houseNumber, toevoeging: value.addition })}
-            />
-          ) : (
-            <CardDetails
-              title="Deze gegevens hebben we opgehaald"
-              cardActionEdit={false}
-              rows={[
-                { label: "Straat en huisnummer", value: "Dorpslaan 10" },
-                { label: "Plaats", value: "Utrecht" },
-                { label: "Oppervlakte", value: "119 m²" },
-                { label: "Bouwjaar", value: "1972" },
-              ]}
-            />
-          )}
-        </FunnelSection>
-      )}
+        {!addressResolved ? (
+          <FieldsetAddress
+            value={adres}
+            onChange={(value) => updateSharedData({ postcode: value.postalCode, huisnummer: value.houseNumber, toevoeging: value.addition })}
+          />
+        ) : (
+          <CardDetails
+            title="Deze gegevens hebben we opgehaald"
+            cardActionEdit={false}
+            rows={[
+              { label: "Straat en huisnummer", value: "Dorpslaan 10" },
+              { label: "Plaats", value: "Utrecht" },
+              { label: "Oppervlakte", value: "119 m²" },
+              { label: "Bouwjaar", value: "1972" },
+            ]}
+          />
+        )}
+      </FunnelSection>
 
       <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
 

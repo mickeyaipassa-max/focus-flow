@@ -85,8 +85,16 @@ export const OVERLIJDEN_AFSLUITKOSTEN_INFO =
 export function OverlijdenBody() {
   const { state, setState } = useWoonverzekeringenFunnel();
 
+  /** Zie de toelichting in `OpstalBody.tsx`: een gedeeld veld (hier alleen `koopHuur`) dat hier is beantwoord blijft zichtbaar; een veld dat al bekend was via een ander product wordt overgeslagen. */
+  const answeredHereRef = useRef<Set<keyof WoonverzekeringenSharedData>>(new Set());
+
   function updateSharedData(patch: Partial<WoonverzekeringenSharedData>) {
+    (Object.keys(patch) as (keyof WoonverzekeringenSharedData)[]).forEach((key) => answeredHereRef.current.add(key));
     setState({ ...state, sharedData: { ...state.sharedData, ...patch } });
+  }
+
+  function showSharedField(key: keyof WoonverzekeringenSharedData, value: unknown): boolean {
+    return !value || answeredHereRef.current.has(key);
   }
 
   const { koopHuur } = state.sharedData;
@@ -148,52 +156,42 @@ export function OverlijdenBody() {
 
   return (
     <>
-      {!isDataComplete && (
-        <FunnelSection title="Gegevens">
-          {!wieVerzekeren && (
-            <RadioGroup labelText="Wie wil je verzekeren" options={WIE_VERZEKEREN_OPTIONS} value={wieVerzekeren} onChange={setWieVerzekeren} />
-          )}
+      <FunnelSection title="Gegevens">
+        <RadioGroup labelText="Wie wil je verzekeren" options={WIE_VERZEKEREN_OPTIONS} value={wieVerzekeren} onChange={setWieVerzekeren} />
 
-          {!gerookt && (
-            <RadioGroup
-              labelText="Heb je de afgelopen twee jaar gerookt?"
-              options={JA_NEE_OPTIONS}
-              value={gerookt}
-              onChange={setGerookt}
-              horizontal
-            />
-          )}
+        <RadioGroup
+          labelText="Heb je de afgelopen twee jaar gerookt?"
+          options={JA_NEE_OPTIONS}
+          value={gerookt}
+          onChange={setGerookt}
+          horizontal
+        />
 
-          {!koopHuur && (
-            <RadioGroup
-              labelText="Koop- of huurwoning"
-              options={KOOP_HUUR_OPTIONS}
-              value={koopHuur}
-              onChange={(value) => updateSharedData({ koopHuur: value })}
-              horizontal
-            />
-          )}
+        {showSharedField("koopHuur", koopHuur) && (
+          <RadioGroup
+            labelText="Koop- of huurwoning"
+            options={KOOP_HUUR_OPTIONS}
+            value={koopHuur}
+            onChange={(value) => updateSharedData({ koopHuur: value })}
+            horizontal
+          />
+        )}
 
-          {!ingangsdatum && (
-            <InputDate
-              labelText="Wanneer wil je dat de verzekering begint? (dd-mm-jjjj)"
-              showPickerButton
-              value={ingangsdatum}
-              onChange={setIngangsdatum}
-            />
-          )}
+        <InputDate
+          labelText="Wanneer wil je dat de verzekering begint? (dd-mm-jjjj)"
+          showPickerButton
+          value={ingangsdatum}
+          onChange={setIngangsdatum}
+        />
 
-          {!looptijd && (
-            <RadioCardGroup
-              labelText="Hoelang wil je dat de verzekering duurt?"
-              description="De verzekering moet tussen de 1 en 50 jaar duren. Je mag niet ouder zijn dan 75 jaar op de einddatum van de verzekering. Verandert jouw situatie? Dan kun je later nog aanpassen hoe lang je wil dat de verzekering duurt."
-              options={LOOPTIJD_OPTIONS}
-              value={looptijd}
-              onChange={setLooptijd}
-            />
-          )}
-        </FunnelSection>
-      )}
+        <RadioCardGroup
+          labelText="Hoelang wil je dat de verzekering duurt?"
+          description="De verzekering moet tussen de 1 en 50 jaar duren. Je mag niet ouder zijn dan 75 jaar op de einddatum van de verzekering. Verandert jouw situatie? Dan kun je later nog aanpassen hoe lang je wil dat de verzekering duurt."
+          options={LOOPTIJD_OPTIONS}
+          value={looptijd}
+          onChange={setLooptijd}
+        />
+      </FunnelSection>
 
       <div className="h-px w-[calc(100%+3rem)] shrink-0 bg-[rgba(0,0,0,0.08)] -mx-6 min-[1200px]:w-[calc(100%+5rem)] min-[1200px]:-mx-10" />
 
