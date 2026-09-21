@@ -163,12 +163,15 @@ export function InboedelBody() {
       </FunnelSection>
 
       <FunnelSection title="Je woning" showDividerAbove>
-        {!addressResolved ? (
+        {showSharedField("postcode", adres.postalCode) && (
           <FieldsetAddress
             value={adres}
             onChange={(value) => updateSharedData({ postcode: value.postalCode, huisnummer: value.houseNumber, toevoeging: value.addition })}
+            helperText={addressResolved ? "" : undefined}
           />
-        ) : (
+        )}
+
+        {addressResolved && (
           <CardDetails
             title="Deze gegevens hebben we opgehaald"
             cardActionEdit={false}
