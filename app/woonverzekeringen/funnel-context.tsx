@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import type { ReceiptGroup, ReceiptSection } from "@/components/Receipt";
 import { formatEuro, getProductMeta, type WoonverzekeringenProductId } from "./products";
 
@@ -110,19 +111,37 @@ type WoonverzekeringenFunnelContextValue = {
 
 const WoonverzekeringenFunnelContext = createContext<WoonverzekeringenFunnelContextValue | null>(null);
 
+/** Stap 1 (productkeuze) is het beginpunt van de funnel — een browservernieuwing hierop moet altijd een schone start geven, ongeacht een eventuele oude, nog niet afgeronde flow in sessionStorage. */
+const ENTRY_ROUTE = "/woonverzekeringen";
+
 export function WoonverzekeringenFunnelProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [state, setStateInternal] = useState<WoonverzekeringenFunnelState>(DEFAULT_STATE);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     try {
-      const raw = sessionStorage.getItem(STORAGE_KEY);
-      if (raw) setStateInternal(JSON.parse(raw) as WoonverzekeringenFunnelState);
+      /**
+       * Alleen een écht browservernieuwing (niet een gewone klik/navigatie
+       * binnen de funnel, bv. "Terug naar productkeuze") op precies de
+       * eerste stap reset de flow — sessionStorage-herstel op elke andere
+       * stap blijft ongewijzigd (bewust zo gebouwd zodat een vernieuwing
+       * halverwege de flow geen voortgang verliest).
+       */
+      const [navigationEntry] = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+      const isReload = navigationEntry?.type === "reload";
+      if (isReload && pathname === ENTRY_ROUTE) {
+        sessionStorage.removeItem(STORAGE_KEY);
+      } else {
+        const raw = sessionStorage.getItem(STORAGE_KEY);
+        if (raw) setStateInternal(JSON.parse(raw) as WoonverzekeringenFunnelState);
+      }
     } catch {
       // Corrupte of ontoegankelijke sessionStorage — start gewoon leeg, geen harde fout.
     } finally {
       setIsHydrated(true);
     }
+    // `pathname` bewust niet in de deps: dit moet één keer bij het mounten van de Provider draaien (op basis van de route waarop je op dat moment binnenkwam), niet opnieuw bij elke stap-navigatie binnen de funnel.
   }, []);
 
   useEffect(() => {
