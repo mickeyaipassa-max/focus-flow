@@ -26,10 +26,20 @@ import { Icon } from "./Icon";
 export function SiteHeader() {
   return (
     <header className="relative z-10 w-full">
-      {/* Top bar: domeinswitch */}
-      <div className="flex h-10 w-full items-center bg-[#f6f6f7] px-32">
-        <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between">
-          <div className="h-[77px] w-[160px] shrink-0" />
+      {/* Top bar: domeinswitch + logo (staat vast tegen de bovenkant van de pagina, hangt door in de navigatierij eronder) */}
+      <div className="relative flex h-10 w-full items-center bg-[#f6f6f7] px-32">
+        <div className="relative mx-auto flex w-full max-w-[1200px] items-center justify-between">
+          <div className="absolute top-0 left-0 h-[77px] w-[160px] overflow-hidden bg-white shadow-[0_4px_16px_0_rgba(0,0,0,0.12)]">
+            <div className="relative size-full">
+              <img src="/header/logo-underline-lg.svg" alt="" className="absolute inset-x-0 bottom-0 block h-[5.222px] w-full" />
+              <img
+                src="/header/logo-asr-lg.svg"
+                alt="a.s.r."
+                className="-translate-x-1/2 absolute top-[26.59px] left-1/2 h-[18.766px] w-[106.039px]"
+              />
+            </div>
+          </div>
+          <div className="h-10 w-[160px] shrink-0" />
           <div className="flex shrink-0 items-center gap-5">
             <div className="flex h-10 items-center border-black border-b-2">
               <span className="text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
@@ -50,19 +60,10 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Nav: logo (overhangend) + gecentreerd menu + Inloggen */}
+      {/* Nav: plaatsvuller voor het doorhangende logo (dat leeft in de topbar erboven) + gecentreerd menu + Inloggen */}
       <div className="relative w-full bg-white px-32">
         <div className="mx-auto flex w-full max-w-[1200px] items-center gap-10 py-5">
-          <div className="-mt-[57.75px] h-[77px] w-[160px] shrink-0 overflow-hidden bg-white shadow-[0_4px_16px_0_rgba(0,0,0,0.12)]">
-            <div className="relative size-full">
-              <img src="/header/logo-underline-lg.svg" alt="" className="absolute inset-x-0 bottom-0 block h-[5.222px] w-full" />
-              <img
-                src="/header/logo-asr-lg.svg"
-                alt="a.s.r."
-                className="-translate-x-1/2 absolute top-[26.59px] left-1/2 h-[18.766px] w-[106.039px]"
-              />
-            </div>
-          </div>
+          <div className="h-[77px] w-[160px] shrink-0" />
 
           <nav className="flex flex-1 flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <button type="button" className="flex items-center gap-2">
