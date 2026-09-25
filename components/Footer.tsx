@@ -43,21 +43,23 @@ type FooterProps = {
   columns?: FooterColumn[];
   /** Toont de App Store/Google Play-badges als 4e kolom, naast `columns`. */
   showAppBadges?: boolean;
+  /**
+   * Centreert de inhoud op 1200px (achtergrond blijft edge-to-edge) i.p.v.
+   * de bestaande responsieve-padding-schaal — nodig voor pagina's als
+   * `/aichat` waar élke sectie (header, hero, tiles, FAQ, contact) al op
+   * dezelfde `mx-auto max-w-[1200px]`-breedte staat: zonder deze prop trok
+   * de footer op brede viewports (>1456px) breder dan de rest van de
+   * pagina, want de bestaande padding-schaal begrenst de inhoud niet echt,
+   * alleen de marge. Standaard `false` = exact het bestaande gedrag voor
+   * alle funnels, die dit probleem niet hebben (hun content is altijd
+   * smaller dan 1200px).
+   */
+  centered?: boolean;
 };
 
-export function Footer({ className, columns, showAppBadges }: FooterProps) {
-  return (
-    <footer
-      className={
-        className ??
-        [
-          "flex flex-col items-start gap-6 bg-white p-6",
-          "min-[600px]:px-12",
-          "min-[900px]:px-16",
-          "min-[1200px]:gap-8 min-[1200px]:px-32 min-[1200px]:py-8",
-        ].join(" ")
-      }
-    >
+export function Footer({ className, columns, showAppBadges, centered = false }: FooterProps) {
+  const content = (
+    <>
       {columns && columns.length > 0 && (
         <div className="flex w-full flex-col items-start gap-8 min-[900px]:flex-row">
           {columns.map((column) => (
@@ -136,6 +138,30 @@ export function Footer({ className, columns, showAppBadges }: FooterProps) {
           <img src="/footer/logo-mini-4.svg" alt="" className="absolute inset-[13.34%_0_0_52.82%] h-auto w-auto" />
         </div>
       </div>
+    </>
+  );
+
+  if (centered) {
+    return (
+      <footer className={className ?? "flex w-full flex-col items-center bg-white px-32 py-8"}>
+        <div className="flex w-full max-w-[1200px] flex-col items-start gap-8">{content}</div>
+      </footer>
+    );
+  }
+
+  return (
+    <footer
+      className={
+        className ??
+        [
+          "flex flex-col items-start gap-6 bg-white p-6",
+          "min-[600px]:px-12",
+          "min-[900px]:px-16",
+          "min-[1200px]:gap-8 min-[1200px]:px-32 min-[1200px]:py-8",
+        ].join(" ")
+      }
+    >
+      {content}
     </footer>
   );
 }
