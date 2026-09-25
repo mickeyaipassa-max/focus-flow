@@ -251,18 +251,18 @@ export function ChatWidget({
   if (!visible) return null;
 
   // Breedte/rechtermarge: 400px/60px tussen 900-1199px, 480px/64px tussen 1200-1439px, 528px/120px vanaf 1440px — bevestigd via Figma's aparte 900px- en 1200px-breakpointframes.
+  // Verticaal gecentreerd (top-1/2 + translateY(-50%)) met een marge boven/onder die evenredig meeschaalt: 24px tussen 900-1199px, 40px tussen 1200-1439px, 80px vanaf 1440px — de max-h-calc()'s trekken die marge 2x af zodat er op korte vensters evenveel ruimte overblijft boven als onder.
   return (
     <div
       role="dialog"
       aria-label="AI-assistent van a.s.r."
       aria-modal="false"
-      className="fixed right-16 bottom-20 z-50 flex w-[480px] flex-col overflow-hidden rounded-md bg-[#fff8e3] min-[900px]:right-[60px] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:w-[528px]"
+      className="fixed top-1/2 right-16 z-50 flex max-h-[calc(100dvh-80px)] w-[480px] flex-col overflow-hidden rounded-md bg-[#fff8e3] min-[900px]:right-[60px] min-[900px]:max-h-[calc(100dvh-48px)] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:max-h-[calc(100dvh-80px)] min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:max-h-[calc(100dvh-160px)] min-[1440px]:w-[528px]"
       style={{
         height: 653,
-        maxHeight: "calc(100dvh - 160px)",
         boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
         opacity: isLeaving ? 0 : 1,
-        transform: isLeaving ? "translateY(16px)" : "translateY(0)",
+        transform: `translateY(${isLeaving ? "calc(-50% + 16px)" : "-50%"})`,
         transition: "opacity 200ms ease-out, transform 200ms ease-out",
       }}
     >
