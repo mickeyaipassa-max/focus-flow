@@ -1,0 +1,206 @@
+"use client";
+
+import { useCallback, useRef, useState } from "react";
+import { SiteHeader } from "@/components/SiteHeader";
+import { Breadcrumb } from "@/components/Breadcrumb";
+import { FaqAccordion, type FaqItem } from "@/components/FaqAccordion";
+import { CardContact } from "@/components/CardContact";
+import { Footer, type FooterColumn } from "@/components/Footer";
+import { AIChatBlock } from "./AIChatBlock";
+import { ChatWidget, type ChatMessageData } from "./ChatWidget";
+import { MinimizedChatButton } from "./MinimizedChatButton";
+
+const TILE_ITEMS = [
+  { icon: "upload", label: "Declaratie indienen" },
+  { icon: "search", label: "Vergoedingen zoeken" },
+  { icon: "injury", label: "Zorgverlener zoeken" },
+  { icon: "user", label: "Inloggen" },
+];
+
+const FAQ_ITEMS: FaqItem[] = [
+  {
+    question: "Wat doe ik als mijn declaratie niet of niet helemaal is vergoed?",
+    answer:
+      "Als je declaratie niet of niet volledig is vergoed, kun je contact opnemen met onze klantenservice. Wij helpen je graag om dit te onderzoeken en op te lossen.",
+  },
+  {
+    question: "Hoe gebruik ik de Zorg app van a.s.r.?",
+    answer:
+      "De Zorg app van a.s.r. kun je downloaden via de App Store of Google Play. Na het inloggen heb je direct toegang tot je polisgegevens, declaraties en meer.",
+  },
+  {
+    question: "Kan ik mijn zorgverzekering annuleren of (tussentijds) opzeggen?",
+    answer: "Je zorgverzekering kun je in principe alleen aan het einde van het kalenderjaar opzeggen. Tussentijds opzeggen is alleen mogelijk in uitzonderlijke situaties.",
+  },
+  {
+    question: "Hoe neem ik contact op voor een zakelijke zorgverzekering?",
+    answer: "Voor zakelijke zorgverzekeringen kun je contact opnemen met onze zakelijke afdeling via telefoon of e-mail. Onze specialisten helpen je graag verder.",
+  },
+];
+
+const FOOTER_COLUMNS: FooterColumn[] = [
+  { title: "Klantenservice", links: ["Inloggen", "Schade melden", "Gegevens wijzigen", "Financieel advies", "Onze apps", "Contact"] },
+  { title: "Onze impact", links: ["Duurzaamheid", "Maatschappij", "Toegankelijkheid", "a.s.r. Vitality", "Doenkracht", "De raad van doen"] },
+  { title: "a.s.r.", links: ["Over a.s.r.", "Blogs", "Nieuws en financiële publicaties", "Werken bij a.s.r.", "Fondsen en koersen"] },
+];
+
+let nextMessageId = 1;
+
+/**
+ * Service hub-pagina "Zorgverzekering klantenservice" + AI-chatwidget —
+ * bevestigd via de door de opdrachtgever aangeleverde Figma Make-broncode en
+ * twee specs ("service-hub-page.md", "chat-widget-spec.md"), en gespiegeld
+ * aan het Figma-bestand "AI chat" (node 27:6491 e.o., via MCP geraadpleegd).
+ * De gedeelde chat-state (berichten, open/dicht, aan het typen) leeft hier
+ * op paginaniveau — zowel de inline "Heb je een vraag?"-sectie als het
+ * zwevende chatvenster lezen/schrijven dezelfde state, exact zoals de
+ * "Technisch"-sectie van de spec voorschrijft.
+ */
+export default function AiChatPage() {
+  const [messages, setMessages] = useState<ChatMessageData[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const chatActive = isOpen || messages.length > 0;
+  const minimizedButtonRef = useRef<HTMLButtonElement>(null);
+  const sectionButtonRef = useRef<HTMLButtonElement>(null);
+
+  const addAssistantReply = useCallback((fromTag: boolean) => {
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      const text = fromTag ? "Wat is je vraag precies?" : "Bedankt voor je vraag. Ik zoek het voor je uit.";
+      setMessages((prev) => [...prev, { id: nextMessageId++, role: "assistant", text }]);
+    }, 800);
+  }, []);
+
+  function openChat(firstMessage: string, fromTag: boolean) {
+    setMessages([{ id: nextMessageId++, role: "user", text: firstMessage }]);
+    setIsOpen(true);
+    addAssistantReply(fromTag);
+  }
+
+  function handleStartFromTag(tag: string) {
+    openChat(`Ik heb een vraag over ${tag.toLowerCase()}`, true);
+  }
+
+  function handleStartFromInput(text: string) {
+    openChat(text, false);
+  }
+
+  function handleSendMessage(text: string) {
+    setMessages((prev) => [...prev, { id: nextMessageId++, role: "user", text }]);
+    addAssistantReply(false);
+  }
+
+  function handleReset() {
+    setMessages([]);
+    setIsTyping(false);
+    setIsOpen(true);
+  }
+
+  return (
+    <div className="flex min-h-screen w-full flex-col items-start bg-white">
+      <SiteHeader />
+
+      <Breadcrumb
+        items={[{ label: "Home" }, { label: "Breadcrumb item" }, { label: "Breadcrumb item" }, { label: "Breadcrumb item" }, { label: "Current page" }]}
+      />
+
+      <main className="flex w-full flex-col items-start gap-12 pb-0">
+        <section className="w-full px-32 pt-10">
+          <div className="mx-auto flex max-w-[1200px] flex-col gap-2">
+            <h1 className="text-black text-[40px] leading-[1.2]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+              Zorgverzekering klantenservice
+            </h1>
+            <p className="max-w-[880px] text-black text-xl leading-[1.4]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              Heb je een vraag over je vergoedingen, declaraties of eigen risico? Wil je snel zelf iets regelen of wijzigen? Wij zijn er voor je.
+            </p>
+          </div>
+        </section>
+
+        <section className="w-full px-32">
+          <div className="mx-auto w-full max-w-[1200px]">
+            <div
+              className="grid w-full grid-cols-4 overflow-hidden rounded-md"
+              style={{ background: "rgba(0,0,0,0.16)", gap: 1, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}
+            >
+              {TILE_ITEMS.map(({ icon, label }) => (
+                <button key={label} type="button" className="flex items-center gap-3 bg-white px-4 py-3 text-left hover:bg-[#fafafa]">
+                  <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[#fff8e3] p-3">
+                    <img src={`/icons/${icon}.svg`} alt="" className="size-8" />
+                  </span>
+                  <span className="text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+                    {label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <AIChatBlock
+          chatActive={chatActive}
+          onStartFromTag={handleStartFromTag}
+          onStartFromInput={handleStartFromInput}
+          onOpenWelcome={() => {
+            setMessages([]);
+            setIsTyping(false);
+            setIsOpen(true);
+          }}
+          onReopen={() => setIsOpen(true)}
+          onReset={handleReset}
+          primaryBtnRef={sectionButtonRef}
+        />
+
+        <section className="w-full px-32">
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
+            <h2 className="text-black text-[32px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+              Veel gestelde vragen
+            </h2>
+            <FaqAccordion items={FAQ_ITEMS} />
+          </div>
+        </section>
+
+        <section className="w-full bg-[#f6f6f7] px-32 py-12">
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
+            <h2 className="text-black text-[32px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+              Liever echt contact?
+            </h2>
+            <div className="grid w-full grid-cols-3 gap-4">
+              <CardContact
+                title="Telefoon"
+                availability="Availability"
+                actionIcon="phone"
+                actionLabel="(0800) 00 00 000"
+                footerText="Description bottom"
+                className="flex min-w-px flex-1 flex-col items-start gap-8 self-stretch rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-6"
+              />
+              <div />
+              <div />
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <Footer columns={FOOTER_COLUMNS} showAppBadges />
+
+      {!isOpen && chatActive && <MinimizedChatButton onClick={() => setIsOpen(true)} btnRef={minimizedButtonRef} />}
+
+      <ChatWidget
+        isOpen={isOpen}
+        messages={messages}
+        isTyping={isTyping}
+        onClose={() => {
+          setIsOpen(false);
+          setMessages([]);
+          setIsTyping(false);
+        }}
+        onMinimize={() => setIsOpen(false)}
+        onNewChat={handleReset}
+        onSend={handleSendMessage}
+        returnFocusOnMinimize={minimizedButtonRef}
+        returnFocusOnClose={sectionButtonRef}
+      />
+    </div>
+  );
+}
