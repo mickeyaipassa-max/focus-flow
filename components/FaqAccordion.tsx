@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Icon } from "./Icon";
 
 export type FaqItem = {
   question: string;
@@ -43,12 +44,22 @@ export function FaqAccordion({ items, className }: FaqAccordionProps) {
               <span className="flex-1 text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
                 {item.question}
               </span>
-              <img
-                src="/icons/chevron-down.svg"
-                alt=""
-                className="size-6 shrink-0 transition-transform duration-200"
+              {/*
+                `Icon` i.p.v. een losse <img className="size-6">: het bestaande
+                chevron-down.svg is van zichzelf géén vierkant (16,06×9,09) —
+                een vaste `size-6`-vierkante box op de <img> zelf trekt de
+                pijl scheef. `Icon` centreert het icoon ongeschaald in zijn
+                kader (zie de toelichting in Icon.tsx), exact zoals elders in
+                dit project. De rotatie-animatie zit daarom op een omhullende
+                span i.p.v. op het icoon-component zelf (dat kent geen
+                `style`-prop).
+              */}
+              <span
+                className="inline-flex shrink-0 transition-transform duration-200"
                 style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
-              />
+              >
+                <Icon name="chevron-down" size="md" />
+              </span>
             </button>
             {isOpen && (
               <div className="pb-4">

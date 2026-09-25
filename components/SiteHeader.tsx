@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon } from "./Icon";
+
 /**
  * Site-brede header voor marketing-/servicepagina's (bv. de Service hub) —
  * bewust een NIEUW, los component van `Header.tsx`, dat funnel-specifiek is
@@ -67,13 +69,14 @@ export function SiteHeader() {
               <span className="whitespace-nowrap text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
                 Producten
               </span>
-              <img src="/icons/chevron-down.svg" alt="" className="size-6" />
+              {/* `Icon` i.p.v. een losse <img className="size-6">: chevron-down.svg is geen vierkant (16,06×9,09) — een vaste vierkante box op de <img> zelf trekt de pijl scheef, zie de toelichting in `FaqAccordion.tsx`. */}
+              <Icon name="chevron-down" size="md" />
             </button>
             <button type="button" className="flex items-center gap-2">
               <span className="whitespace-nowrap text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
                 Thema&apos;s
               </span>
-              <img src="/icons/chevron-down.svg" alt="" className="size-6" />
+              <Icon name="chevron-down" size="md" />
             </button>
             <button type="button" className="flex items-center">
               <span className="whitespace-nowrap text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
