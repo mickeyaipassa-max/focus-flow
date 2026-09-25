@@ -96,16 +96,16 @@ export function Footer({ className, columns, showAppBadges, centered = false }: 
     <>
       {columns && columns.length > 0 && (
         <>
-          {/* Bestaande enkele rij van kolommen — ongewijzigd tot 900px, en weer vanaf 1440px (bevestigd via Figma's aparte 1200px-breakpointframe, dat alleen tussen 1200-1439px een andere indeling toont). */}
-          <div className="flex w-full flex-col items-start gap-8 min-[900px]:flex-row min-[1200px]:hidden min-[1440px]:flex">
+          {/* Bestaande enkele rij van kolommen — ongewijzigd onder 900px, en weer vanaf 1440px (bevestigd via Figma's aparte 900px- en 1200px-breakpointframes, die beide tussen 900-1439px dezelfde gesplitste indeling tonen). */}
+          <div className="flex w-full flex-col items-start gap-8 min-[900px]:hidden min-[1440px]:flex">
             {columns.map((column) => (
               <FooterLinkColumn key={column.title} column={column} />
             ))}
             {showAppBadges && <FooterAppBadgesColumn />}
           </div>
 
-          {/* Tussen 1200-1439px splitst Figma dit in twee rijen: de kolommen op één rij (gap 16px), de app-badges op een eigen rij daaronder (gap 40px) — bevestigd via node 50:2075. */}
-          <div className="hidden w-full flex-col items-start gap-10 min-[1200px]:flex min-[1440px]:hidden">
+          {/* Tussen 900-1439px splitst Figma dit in twee rijen: de kolommen op één rij (gap 16px), de app-badges op een eigen rij daaronder (gap 40px) — bevestigd via node 50:2075 (1200-1439px) en 54:5294 (900-1199px). */}
+          <div className="hidden w-full flex-col items-start gap-10 min-[900px]:flex min-[1440px]:hidden">
             <div className="flex w-full items-start gap-4">
               {columns.map((column) => (
                 <FooterLinkColumn key={column.title} column={column} />

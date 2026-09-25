@@ -12,9 +12,9 @@ type MinimizedChatButtonProps = {
  * venster geminimaliseerd is — bevestigd via Figma ("Component 1", node
  * 41:1721, state=Default/Hover) en de Figma Make-broncode: 72px cirkel,
  * a.s.r.-spraakbelletje-pictogram, groen "online"-stipje rechtsboven.
- * Zelfde positie als het chatvenster (`bottom-20 right-[120px]` vanaf
- * 1440px, `right-16` daaronder tot 1200px — bevestigd via Figma's aparte
- * 1200px-breakpointframe), fixed.
+ * Zelfde positie als het chatvenster (`bottom-20`, rechtermarge 60px tussen
+ * 900-1199px, 64px tussen 1200-1439px, 120px vanaf 1440px — bevestigd via
+ * Figma's aparte 900px- en 1200px-breakpointframes), fixed.
  */
 export function MinimizedChatButton({ onClick, btnRef }: MinimizedChatButtonProps) {
   const [hovered, setHovered] = useState(false);
@@ -27,7 +27,7 @@ export function MinimizedChatButton({ onClick, btnRef }: MinimizedChatButtonProp
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       aria-label="Chat openen"
-      className="fixed right-16 bottom-20 z-50 rounded-full transition-transform duration-200 min-[1440px]:right-[120px]"
+      className="fixed right-16 bottom-20 z-50 rounded-full transition-transform duration-200 min-[900px]:right-[60px] min-[1200px]:right-16 min-[1440px]:right-[120px]"
       style={{
         width: 72,
         height: 72,

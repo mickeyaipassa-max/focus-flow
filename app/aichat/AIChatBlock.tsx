@@ -66,10 +66,14 @@ export function AIChatBlock({
 
           {chatActive ? (
             <div className="mt-2 flex flex-col gap-6">
-              <p className="text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              {/* Op 900-1199px staat de zwevende chatwidget (400px breed) naast deze tekst, waardoor er te weinig ruimte overblijft voor de knoppenrij ernaast — vandaar hier eerder afbreken en de knoppen eronder stapelen i.p.v. een volledige reflow van de sectie (bevestigd via Figma's "900-1199 chat open"-frame, node 54:9187/54:9193). */}
+              <p
+                className="max-w-[326px] text-black text-lg leading-[1.5] min-[1200px]:max-w-none"
+                style={{ fontFamily: "var(--font-avenir-book)" }}
+              >
                 Je hebt al een lopend gesprek, ga daar verder of start een nieuw gesprek
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col items-start gap-2 min-[1200px]:flex-row min-[1200px]:items-center">
                 {/*
                   Native <button> i.p.v. het gedeelde `Button`-component: die
                   is geen `forwardRef`-component, en deze knop heeft een ref
