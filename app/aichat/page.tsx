@@ -182,7 +182,7 @@ export default function AiChatPage() {
         </section>
       </main>
 
-      <Footer columns={FOOTER_COLUMNS} showAppBadges />
+      <Footer columns={FOOTER_COLUMNS} showAppBadges centered />
 
       {!isOpen && chatActive && <MinimizedChatButton onClick={() => setIsOpen(true)} btnRef={minimizedButtonRef} />}
 
