@@ -250,117 +250,128 @@ export function ChatWidget({
 
   if (!visible) return null;
 
-  // Breedte/rechtermarge: 400px/60px tussen 900-1199px, 480px/64px tussen 1200-1439px, 528px/120px vanaf 1440px — bevestigd via Figma's aparte 900px- en 1200px-breakpointframes.
-  // Verticaal gecentreerd (top-1/2 + translateY(-50%)) met een marge boven/onder die evenredig meeschaalt: 24px tussen 900-1199px, 40px tussen 1200-1439px, 80px vanaf 1440px — de max-h-calc()'s trekken die marge 2x af zodat er op korte vensters evenveel ruimte overblijft boven als onder.
+  // Onder 600px voelt de widget als een echte popup: inset-6 (24px marge rondom) i.p.v. een vaste breedte/hoogte, met een donkere overlay erachter die de chat sluit bij een klik — bevestigd via Figma's mobiele "chat open"-frame plus expliciete aanvulling van de opdrachtgever (24px marge + scrim, i.p.v. Figma's eigen 11px/10px-marges zonder overlay).
+  // Vanaf 600px de bestaande, per breakpoint variërende positionering: breedte/rechtermarge 400px/60px tussen 900-1199px, 480px/64px tussen 1200-1439px, 528px/120px vanaf 1440px; verticaal gecentreerd (top-1/2 + translateY(-50%)) met een marge boven/onder van 24px tussen 900-1199px, 40px tussen 1200-1439px, 80px vanaf 1440px.
+  // `--y-base` is 0 op mobiel (inset-6 bepaalt de positie al volledig) en -50% vanaf 600px (voor de top-1/2-centrering) — zo hoeft de leave-animatie in de inline style niet los per breakpoint te vertakken.
   return (
-    <div
-      role="dialog"
-      aria-label="AI-assistent van a.s.r."
-      aria-modal="false"
-      className="fixed top-1/2 right-16 z-50 flex max-h-[calc(100dvh-80px)] w-[480px] flex-col overflow-hidden rounded-md bg-[#fff8e3] min-[900px]:right-[60px] min-[900px]:max-h-[calc(100dvh-48px)] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:max-h-[calc(100dvh-80px)] min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:max-h-[calc(100dvh-160px)] min-[1440px]:w-[528px]"
-      style={{
-        height: 653,
-        boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
-        opacity: isLeaving ? 0 : 1,
-        transform: `translateY(${isLeaving ? "calc(-50% + 16px)" : "-50%"})`,
-        transition: "opacity 200ms ease-out, transform 200ms ease-out",
-      }}
-    >
-      {/* Header */}
-      <div className="flex shrink-0 items-start bg-[#eda50f] p-6">
-        <div className="min-w-0 flex-1">
-          <h2 className="pb-2 text-black text-[24px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-            AI-assistent van a.s.r.
-          </h2>
-          <div className="flex items-center gap-[11px]">
-            <span className="size-[11px] shrink-0 rounded-full border border-white bg-[#0f865d]" />
-            <span className="text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-              Altijd online
-            </span>
+    <>
+      <div
+        aria-hidden="true"
+        onClick={() => {
+          setTimeout(() => returnFocusOnClose?.current?.focus(), 50);
+          onClose();
+        }}
+        className="fixed inset-0 z-40 bg-black/50 min-[600px]:hidden"
+        style={{ opacity: isLeaving ? 0 : 1, transition: "opacity 200ms ease-out" }}
+      />
+      <div
+        role="dialog"
+        aria-label="AI-assistent van a.s.r."
+        aria-modal="false"
+        className="fixed inset-6 z-50 flex flex-col overflow-hidden rounded-md bg-[#fff8e3] [--y-base:0] min-[600px]:inset-auto min-[600px]:top-1/2 min-[600px]:right-16 min-[600px]:h-[653px] min-[600px]:w-[480px] min-[600px]:max-h-[calc(100dvh-80px)] min-[600px]:[--y-base:-50%] min-[900px]:right-[60px] min-[900px]:max-h-[calc(100dvh-48px)] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:max-h-[calc(100dvh-80px)] min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:max-h-[calc(100dvh-160px)] min-[1440px]:w-[528px]"
+        style={{
+          boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
+          opacity: isLeaving ? 0 : 1,
+          transform: `translateY(calc(var(--y-base) + ${isLeaving ? "16px" : "0px"}))`,
+          transition: "opacity 200ms ease-out, transform 200ms ease-out",
+        }}
+      >
+        {/* Header */}
+        <div className="flex shrink-0 items-start bg-[#eda50f] p-6">
+          <div className="min-w-0 flex-1">
+            <h2 className="pb-2 text-black text-[24px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+              AI-assistent van a.s.r.
+            </h2>
+            <div className="flex items-center gap-[11px]">
+              <span className="size-[11px] shrink-0 rounded-full border border-white bg-[#0f865d]" />
+              <span className="text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                Altijd online
+              </span>
+            </div>
+          </div>
+
+          <div className="relative shrink-0" ref={menuRef}>
+            <button
+              ref={menuBtnRef}
+              type="button"
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-label="Menu opties"
+              aria-expanded={menuOpen}
+              aria-haspopup="menu"
+              className="flex size-[51px] items-center justify-center rounded-[3px] bg-[#fff8e3] hover:brightness-95"
+            >
+              <img src="/icons/more-vertical.svg" alt="" className="size-6" />
+            </button>
+
+            {menuOpen && (
+              <div
+                role="menu"
+                aria-label="Chat opties"
+                className="absolute top-[calc(100%+4px)] right-0 z-10 flex min-w-[220px] flex-col overflow-hidden rounded-md bg-white"
+                style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.16)" }}
+              >
+                <button
+                  role="menuitem"
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    menuBtnRef.current?.focus();
+                    setSelectedTag(null);
+                    onNewChat();
+                  }}
+                  className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
+                >
+                  <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                    Nieuw gesprek starten
+                  </span>
+                </button>
+                <button
+                  role="menuitem"
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setTimeout(() => returnFocusOnMinimize?.current?.focus(), 50);
+                    onMinimize();
+                  }}
+                  className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
+                >
+                  <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                    Gesprek minimaliseren
+                  </span>
+                </button>
+                <button
+                  role="menuitem"
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setTimeout(() => returnFocusOnClose?.current?.focus(), 50);
+                    onClose();
+                  }}
+                  className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
+                >
+                  <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                    Gesprek afsluiten
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="relative shrink-0" ref={menuRef}>
-          <button
-            ref={menuBtnRef}
-            type="button"
-            onClick={() => setMenuOpen((open) => !open)}
-            aria-label="Menu opties"
-            aria-expanded={menuOpen}
-            aria-haspopup="menu"
-            className="flex size-[51px] items-center justify-center rounded-[3px] bg-[#fff8e3] hover:brightness-95"
-          >
-            <img src="/icons/more-vertical.svg" alt="" className="size-6" />
-          </button>
-
-          {menuOpen && (
-            <div
-              role="menu"
-              aria-label="Chat opties"
-              className="absolute top-[calc(100%+4px)] right-0 z-10 flex min-w-[220px] flex-col overflow-hidden rounded-md bg-white"
-              style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.16)" }}
-            >
-              <button
-                role="menuitem"
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  menuBtnRef.current?.focus();
-                  setSelectedTag(null);
-                  onNewChat();
-                }}
-                className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
-              >
-                <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  Nieuw gesprek starten
-                </span>
-              </button>
-              <button
-                role="menuitem"
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  setTimeout(() => returnFocusOnMinimize?.current?.focus(), 50);
-                  onMinimize();
-                }}
-                className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
-              >
-                <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  Gesprek minimaliseren
-                </span>
-              </button>
-              <button
-                role="menuitem"
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  setTimeout(() => returnFocusOnClose?.current?.focus(), 50);
-                  onClose();
-                }}
-                className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
-              >
-                <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  Gesprek afsluiten
-                </span>
-              </button>
-            </div>
-          )}
+        {/* Berichtengebied */}
+        <div aria-live="polite" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-6">
+          <ChatWelcome onTagClick={handleTagClick} selectedTag={selectedTag} showTags={!hasMessages} />
+          {messages.map((message, index) => {
+            const previous = messages[index - 1];
+            const showAvatar = message.role === "assistant" && (index === 0 || previous?.role !== "assistant");
+            return <ChatMessage key={message.id} message={message} showAvatar={showAvatar} />;
+          })}
+          {isTyping && <TypingIndicator />}
+          <div ref={messagesEndRef} />
         </div>
-      </div>
 
-      {/* Berichtengebied */}
-      <div aria-live="polite" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-6">
-        <ChatWelcome onTagClick={handleTagClick} selectedTag={selectedTag} showTags={!hasMessages} />
-        {messages.map((message, index) => {
-          const previous = messages[index - 1];
-          const showAvatar = message.role === "assistant" && (index === 0 || previous?.role !== "assistant");
-          return <ChatMessage key={message.id} message={message} showAvatar={showAvatar} />;
-        })}
-        {isTyping && <TypingIndicator />}
-        <div ref={messagesEndRef} />
+        <ChatInput onSend={onSend} />
       </div>
-
-      <ChatInput onSend={onSend} />
-    </div>
+    </>
   );
 }
