@@ -121,6 +121,15 @@ export function AIChatBlock({
                   ))}
                 </div>
                 <div className="flex w-full items-center gap-2">
+                  {/*
+                    Focus-indicator via randdikte i.p.v. `focus:outline-*`: die
+                    laatste werd door de `outline-none`-basisklasse overschreven
+                    (bevestigd met een echte Tab-toetsaanslag: outline-style bleef
+                    "none" ondanks de gestelde 1,5px zwarte outline-kleur/-breedte
+                    — een WCAG 2.4.7-schending, dit veld toonde géén zichtbare
+                    focus). Zelfde, al werkend randdikte-patroon als `ChatInput`'s
+                    eigen textarea in `ChatWidget.tsx`.
+                  */}
                   <textarea
                     aria-label="Typ je vraag of kies een onderwerp"
                     value={inputValue}
@@ -128,7 +137,7 @@ export function AIChatBlock({
                     onKeyDown={handleKeyDown}
                     placeholder="Je vraag of bericht..."
                     rows={1}
-                    className="h-[51px] min-w-0 flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-base leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black"
+                    className="h-[51px] min-w-0 flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-base leading-[1.5] outline-none placeholder:text-[#565656] hover:border-2 hover:border-black focus:border-2 focus:border-black"
                     style={{ fontFamily: "var(--font-avenir-book)" }}
                   />
                   {/* Native <button> i.p.v. `Button.tsx`: zelfde ref-behoefte als hierboven, styling 1:1 uit `Button.tsx`'s `type="brand"`-variant, alleen op de vaste 51px-hoogte van deze rij i.p.v. Button's eigen `py-3`. */}
