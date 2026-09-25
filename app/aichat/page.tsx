@@ -157,7 +157,7 @@ export default function AiChatPage() {
             <h2 className="text-black text-[32px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               Veel gestelde vragen
             </h2>
-            <FaqAccordion items={FAQ_ITEMS} className="flex w-full max-w-[800px] flex-col gap-1" />
+            <FaqAccordion items={FAQ_ITEMS} className="mx-auto flex w-full max-w-[800px] flex-col gap-1" />
           </div>
         </section>
 
