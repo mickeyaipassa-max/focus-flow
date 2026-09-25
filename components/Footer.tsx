@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Icon } from "./Icon";
 
 type FooterButtonProps = {
@@ -60,6 +63,72 @@ function FooterAppBadgesColumn({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Onder 600px worden de kolommen een accordion (standaard dicht, één tegelijk
+ * open, chevron roteert 180°) i.p.v. de open lijsten van de breedte tiers
+ * daarboven — bevestigd via Figma's mobiele frame (node 56:9304). Zelfde
+ * interactiepatroon als `FaqAccordion.tsx` (enige andere accordion in deze
+ * bibliotheek), hier lokaal herhaald i.p.v. gedeeld: `FaqAccordion` werkt op
+ * vraag/antwoord-items, dit werkt op linkkolommen én de app-badges-kolom, met
+ * andere opmaak (bold titel + gray-100-onderrand, geen apart vraag/antwoord-
+ * onderscheid).
+ */
+function FooterMobileAccordion({ columns, showAppBadges }: { columns: FooterColumn[]; showAppBadges?: boolean }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const items: { title: string; column: FooterColumn | null }[] = [
+    ...columns.map((column) => ({ title: column.title, column })),
+    ...(showAppBadges ? [{ title: "a.s.r. app", column: null }] : []),
+  ];
+
+  return (
+    <div className="flex w-full flex-col min-[600px]:hidden">
+      {items.map((item, index) => {
+        const isOpen = openIndex === index;
+        return (
+          <div key={item.title} className="border-[#e5e5e5] border-b">
+            <button
+              type="button"
+              onClick={() => setOpenIndex(isOpen ? null : index)}
+              aria-expanded={isOpen}
+              className="flex w-full items-center gap-4 py-4 text-left"
+            >
+              <span className="flex-1 text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+                {item.title}
+              </span>
+              <span
+                className="inline-flex shrink-0 transition-transform duration-200"
+                style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+              >
+                <Icon name="chevron-down" size="md" />
+              </span>
+            </button>
+            {isOpen && (
+              <div className="pb-4">
+                {item.column ? (
+                  <div className="flex flex-col items-start gap-2">
+                    {item.column.links.map((link) => (
+                      <button
+                        key={link}
+                        type="button"
+                        className="text-left text-[#2a292e] text-lg leading-[1.5] hover:underline"
+                        style={{ fontFamily: "var(--font-avenir-book)" }}
+                      >
+                        {link}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <FooterAppBadgesColumn className="flex flex-col items-start gap-2" />
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export type FooterColumn = {
   title: string;
   links: string[];
@@ -96,16 +165,18 @@ export function Footer({ className, columns, showAppBadges, centered = false }: 
     <>
       {columns && columns.length > 0 && (
         <>
-          {/* Bestaande enkele rij van kolommen — ongewijzigd onder 900px, en weer vanaf 1440px (bevestigd via Figma's aparte 900px- en 1200px-breakpointframes, die beide tussen 900-1439px dezelfde gesplitste indeling tonen). */}
-          <div className="flex w-full flex-col items-start gap-8 min-[900px]:hidden min-[1440px]:flex">
+          <FooterMobileAccordion columns={columns} showAppBadges={showAppBadges} />
+
+          {/* Bestaande enkele rij van kolommen, alleen vanaf 1440px (bevestigd via Figma's aparte 1200px-breakpointframe). */}
+          <div className="hidden w-full items-start gap-8 min-[1440px]:flex">
             {columns.map((column) => (
               <FooterLinkColumn key={column.title} column={column} />
             ))}
             {showAppBadges && <FooterAppBadgesColumn />}
           </div>
 
-          {/* Tussen 900-1439px splitst Figma dit in twee rijen: de kolommen op één rij (gap 16px), de app-badges op een eigen rij daaronder (gap 40px) — bevestigd via node 50:2075 (1200-1439px) en 54:5294 (900-1199px). */}
-          <div className="hidden w-full flex-col items-start gap-10 min-[900px]:flex min-[1440px]:hidden">
+          {/* Tussen 600-1439px splitst Figma dit in twee rijen: de kolommen op één rij (gap 16px), de app-badges op een eigen rij daaronder (gap 40px) — bevestigd via node 50:2075 (1200-1439px) en 54:5294 (900-1199px); onder 900px geen apart bevestigd frame, dus dezelfde indeling aangehouden tot de mobiele accordion het overneemt op 600px. */}
+          <div className="hidden w-full flex-col items-start gap-10 min-[600px]:flex min-[1440px]:hidden">
             <div className="flex w-full items-start gap-4">
               {columns.map((column) => (
                 <FooterLinkColumn key={column.title} column={column} />
@@ -166,7 +237,12 @@ export function Footer({ className, columns, showAppBadges, centered = false }: 
 
   if (centered) {
     return (
-      <footer className={className ?? "flex w-full flex-col items-center bg-white px-32 py-8"}>
+      <footer
+        className={
+          className ??
+          "flex w-full flex-col items-center bg-white px-6 py-4 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32 min-[1200px]:py-8"
+        }
+      >
         <div className="flex w-full max-w-[1200px] flex-col items-start gap-8">{content}</div>
       </footer>
     );

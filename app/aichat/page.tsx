@@ -107,7 +107,8 @@ export default function AiChatPage() {
       />
 
       <main className="flex w-full flex-col items-start gap-12 pb-0">
-        <section className="w-full px-32 pt-10">
+        {/* Zijmarge-schaal (24/48/64/128px) op alle secties hieronder — bevestigd via Figma's mobiele frame (56:9265, elke sectie op x=24 in een 375px-frame) en het 900px-frame (54:5255, Content op x=64 in een 900px-frame); vanaf 1200px ongewijzigd px-32, zoals ook al in Footer.tsx's niet-centered modus gebruikt wordt. */}
+        <section className="w-full px-6 pt-10 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex max-w-[1200px] flex-col gap-2">
             <h1 className="text-black text-[40px] leading-[1.2]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               Zorgverzekering klantenservice
@@ -118,19 +119,22 @@ export default function AiChatPage() {
           </div>
         </section>
 
-        <section className="w-full px-32">
+        <section className="w-full px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto w-full max-w-[1200px]">
+            {/* Onder 600px stapelt de rij van 4 tot volle-breedte kaarten (64px hoog, 1px gap), tekst 14px i.p.v. 16px — bevestigd via Figma's mobiele frame (56:9271). Icoon/cirkel blijven 40px/16px, zelfde als de 900-1439px-tiers. */}
             <div
-              className="grid w-full grid-cols-4 overflow-hidden rounded-md"
+              className="grid w-full grid-cols-1 overflow-hidden rounded-md min-[600px]:grid-cols-4"
               style={{ background: "rgba(0,0,0,0.16)", gap: 1, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}
             >
-              {/* Iconcirkel/icoon/tekst kleiner tussen 1200-1439px (40px/16px/16px), terug naar de volle maat (56px/32px/18px) vanaf 1440px — bevestigd via Figma's aparte 1200px-breakpointframe. */}
               {TILE_ITEMS.map(({ icon, label }) => (
                 <button key={label} type="button" className="flex items-center gap-3 bg-white px-4 py-3 text-left hover:bg-[#fafafa]">
                   <span className="flex size-10 min-[1440px]:size-14 shrink-0 items-center justify-center rounded-full bg-[#fff8e3] p-3">
                     <img src={`/icons/${icon}.svg`} alt="" className="size-4 min-[1440px]:size-8" />
                   </span>
-                  <span className="text-black text-base min-[1440px]:text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+                  <span
+                    className="text-black text-sm leading-[1.5] min-[600px]:text-base min-[1440px]:text-lg"
+                    style={{ fontFamily: "var(--font-avenir-medium)" }}
+                  >
                     {label}
                   </span>
                 </button>
@@ -148,7 +152,7 @@ export default function AiChatPage() {
           primaryBtnRef={sectionButtonRef}
         />
 
-        <section className="w-full px-32">
+        <section className="w-full px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
             <h2 className="text-black text-[32px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               Veel gestelde vragen
@@ -157,12 +161,12 @@ export default function AiChatPage() {
           </div>
         </section>
 
-        <section className="w-full bg-[#f6f6f7] px-32 py-12">
+        <section className="w-full bg-[#f6f6f7] px-6 py-12 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
             <h2 className="text-black text-[32px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               Liever echt contact?
             </h2>
-            <div className="grid w-full grid-cols-3 gap-4">
+            <div className="grid w-full grid-cols-1 gap-4 min-[600px]:grid-cols-3">
               <CardContact
                 title="Telefoon"
                 availability="Availability"
