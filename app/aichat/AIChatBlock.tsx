@@ -99,38 +99,12 @@ export function AIChatBlock({
           ) : (
             <>
               <p className="mb-6 text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                Ik ben de nieuwe AI-assistent van a.s.r. en help je graag op weg.
+                Hoi, ik ben de nieuwe AI-assistent van a.s.r. en help je graag op weg.
                 <br />
-                Waar gaat je vraag over?
+                Typ je hieronder je vraag of kies een onderwerp.
               </p>
-              <div className="flex flex-col gap-6">
-                <div className="flex w-full items-end gap-2">
-                  <div className="flex min-w-0 flex-1 flex-col gap-2">
-                    <label htmlFor="aichat-section-input" className="whitespace-nowrap text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                      Typ je vraag of kies een onderwerp
-                    </label>
-                    <textarea
-                      id="aichat-section-input"
-                      value={inputValue}
-                      onChange={(event) => setInputValue(event.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Je vraag of bericht..."
-                      rows={1}
-                      className="h-[51px] w-full resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-base leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black"
-                      style={{ fontFamily: "var(--font-avenir-book)" }}
-                    />
-                  </div>
-                  {/* Native <button> i.p.v. `Button.tsx`: zelfde ref-behoefte als hierboven, styling 1:1 uit `Button.tsx`'s `type="brand"`-variant, alleen op de vaste 51px-hoogte van deze rij i.p.v. Button's eigen `py-3`. */}
-                  <button
-                    ref={primaryBtnRef}
-                    type="button"
-                    onClick={handleStart}
-                    className="flex h-[51px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] px-6 text-black text-lg leading-[1.5] hover:border hover:border-b hover:border-[#f0b335] hover:bg-[#f0b335]"
-                    style={{ fontFamily: "var(--font-avenir-medium)", fontWeight: 550 }}
-                  >
-                    Start je gesprek
-                  </button>
-                </div>
+              {/* Volgorde en gap bevestigd via Figma (node 27:5854, "Frame 2609921"): tags staan nu bóven de invoerrij, gap 16px — het losse label "Typ je vraag of kies een onderwerp" dat hier eerder boven de textarea stond, is uit het ontwerp verwijderd en leeft nu alleen nog als `aria-label` op de textarea zelf. */}
+              <div className="flex flex-col gap-4">
                 <div className="flex max-w-[480px] flex-wrap gap-2" style={{ filter: "drop-shadow(0px 4px 8px rgba(0,0,0,0.12))" }}>
                   {TOPIC_LABELS.map((label) => (
                     <button
@@ -149,6 +123,28 @@ export function AIChatBlock({
                       </span>
                     </button>
                   ))}
+                </div>
+                <div className="flex w-full items-center gap-2">
+                  <textarea
+                    aria-label="Typ je vraag of kies een onderwerp"
+                    value={inputValue}
+                    onChange={(event) => setInputValue(event.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Je vraag of bericht..."
+                    rows={1}
+                    className="h-[51px] min-w-0 flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-base leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black"
+                    style={{ fontFamily: "var(--font-avenir-book)" }}
+                  />
+                  {/* Native <button> i.p.v. `Button.tsx`: zelfde ref-behoefte als hierboven, styling 1:1 uit `Button.tsx`'s `type="brand"`-variant, alleen op de vaste 51px-hoogte van deze rij i.p.v. Button's eigen `py-3`. */}
+                  <button
+                    ref={primaryBtnRef}
+                    type="button"
+                    onClick={handleStart}
+                    className="flex h-[51px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] px-6 text-black text-lg leading-[1.5] hover:border hover:border-b hover:border-[#f0b335] hover:bg-[#f0b335]"
+                    style={{ fontFamily: "var(--font-avenir-medium)", fontWeight: 550 }}
+                  >
+                    Start je gesprek
+                  </button>
                 </div>
               </div>
             </>
