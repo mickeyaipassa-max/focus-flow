@@ -57,18 +57,19 @@ export function AIChatBlock({
   }
 
   return (
-    <section className="w-full bg-[#fff8e3] px-32 py-12">
+    <section className="w-full bg-[#fff8e3] px-6 py-12 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
       <div className="mx-auto max-w-[1200px]">
         <div className="flex max-w-[800px] flex-col">
-          <h2 className="mb-2 text-black text-[32px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+          {/* H2 24px i.p.v. 32px onder 600px — bevestigd via Figma's mobiele frame (node 56:9284). */}
+          <h2 className="mb-2 text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
             Heb je een vraag?
           </h2>
 
           {chatActive ? (
             <div className="mt-2 flex flex-col gap-6">
-              {/* Op 900-1199px staat de zwevende chatwidget (400px breed) naast deze tekst, waardoor er te weinig ruimte overblijft voor de knoppenrij ernaast — vandaar hier eerder afbreken en de knoppen eronder stapelen i.p.v. een volledige reflow van de sectie (bevestigd via Figma's "900-1199 chat open"-frame, node 54:9187/54:9193). */}
+              {/* Op 900-1199px staat de zwevende chatwidget (400px breed) naast deze tekst, waardoor er te weinig ruimte overblijft voor de knoppenrij ernaast — vandaar hier eerder afbreken en de knoppen eronder stapelen i.p.v. een volledige reflow van de sectie (bevestigd via Figma's "900-1199 chat open"-frame, node 54:9187/54:9193). Tekst 14px onder 600px, zelfde max-w-[326px] blijft toevallig kloppen (327px beschikbare breedte op mobiel). */}
               <p
-                className="max-w-[326px] text-black text-lg leading-[1.5] min-[1200px]:max-w-none"
+                className="max-w-[326px] text-black text-sm leading-[1.5] min-[600px]:text-lg min-[1200px]:max-w-none"
                 style={{ fontFamily: "var(--font-avenir-book)" }}
               >
                 Je hebt al een lopend gesprek, ga daar verder of start een nieuw gesprek
@@ -98,7 +99,8 @@ export function AIChatBlock({
             </div>
           ) : (
             <>
-              <p className="mb-6 text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              {/* Tekst 14px onder 600px — bevestigd via Figma's mobiele frame (node 56:9284). */}
+              <p className="mb-6 text-black text-sm leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
                 Hoi, ik ben de nieuwe AI-assistent van a.s.r. en help je graag op weg.
                 <br />
                 Typ je hieronder je vraag of kies een onderwerp.
@@ -125,6 +127,7 @@ export function AIChatBlock({
                   ))}
                 </div>
                 <div className="flex w-full items-center gap-2">
+                  {/* Hoogte 45px en tekst 14px onder 600px, terug naar 51px/16px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9289). */}
                   <textarea
                     aria-label="Typ je vraag of kies een onderwerp"
                     value={inputValue}
@@ -132,18 +135,23 @@ export function AIChatBlock({
                     onKeyDown={handleKeyDown}
                     placeholder="Je vraag of bericht..."
                     rows={1}
-                    className="h-[51px] min-w-0 flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-base leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black"
+                    className="h-[45px] min-w-0 flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-sm leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black min-[600px]:h-[51px] min-[600px]:text-base"
                     style={{ fontFamily: "var(--font-avenir-book)" }}
                   />
-                  {/* Native <button> i.p.v. `Button.tsx`: zelfde ref-behoefte als hierboven, styling 1:1 uit `Button.tsx`'s `type="brand"`-variant, alleen op de vaste 51px-hoogte van deze rij i.p.v. Button's eigen `py-3`. */}
+                  {/*
+                    Native <button> i.p.v. `Button.tsx`: zelfde ref-behoefte als hierboven, styling 1:1 uit `Button.tsx`'s `type="brand"`-variant, alleen op de vaste 51px-hoogte van deze rij i.p.v. Button's eigen `py-3`.
+                    Onder 600px wordt de knop icon-only (51×45px, alleen het verstuur-icoon) i.p.v. tekst — bevestigd via Figma's mobiele frame (node 56:9292, Code Connect verwijst hier naar `iconOnly=true`); `aria-label` behoudt de toegankelijke naam nu de tekst met CSS verborgen is.
+                  */}
                   <button
                     ref={primaryBtnRef}
                     type="button"
                     onClick={handleStart}
-                    className="flex h-[51px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] px-6 text-black text-lg leading-[1.5] hover:border hover:border-b hover:border-[#f0b335] hover:bg-[#f0b335]"
+                    aria-label="Start je gesprek"
+                    className="flex h-[45px] w-[51px] shrink-0 items-center justify-center gap-2 rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] hover:border hover:border-b hover:border-[#f0b335] hover:bg-[#f0b335] min-[600px]:h-[51px] min-[600px]:w-auto min-[600px]:whitespace-nowrap min-[600px]:px-6"
                     style={{ fontFamily: "var(--font-avenir-medium)", fontWeight: 550 }}
                   >
-                    Start je gesprek
+                    <img src="/icons/send.svg" alt="" className="size-6 min-[600px]:hidden" />
+                    <span className="hidden text-black text-lg leading-[1.5] min-[600px]:inline">Start je gesprek</span>
                   </button>
                 </div>
               </div>
