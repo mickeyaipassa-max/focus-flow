@@ -142,11 +142,6 @@ export default function AiChatPage() {
           chatActive={chatActive}
           onStartFromTag={handleStartFromTag}
           onStartFromInput={handleStartFromInput}
-          onOpenWelcome={() => {
-            setMessages([]);
-            setIsTyping(false);
-            setIsOpen(true);
-          }}
           onReopen={() => setIsOpen(true)}
           onReset={handleReset}
           primaryBtnRef={sectionButtonRef}

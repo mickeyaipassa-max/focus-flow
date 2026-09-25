@@ -9,7 +9,6 @@ type AIChatBlockProps = {
   chatActive: boolean;
   onStartFromTag: (tag: string) => void;
   onStartFromInput: (text: string) => void;
-  onOpenWelcome: () => void;
   onReopen: () => void;
   onReset: () => void;
   primaryBtnRef?: RefObject<HTMLButtonElement | null>;
@@ -26,7 +25,6 @@ export function AIChatBlock({
   chatActive,
   onStartFromTag,
   onStartFromInput,
-  onOpenWelcome,
   onReopen,
   onReset,
   primaryBtnRef,
@@ -43,14 +41,12 @@ export function AIChatBlock({
     onStartFromTag(label);
   }
 
+  /** Bevestigd via de spec ("chat-widget-spec.md"): "Een lege textarea opent de chat niet: de knop doet dan niets." */
   function handleStart() {
     const trimmed = inputValue.trim();
-    if (trimmed) {
-      onStartFromInput(trimmed);
-      setInputValue("");
-    } else {
-      onOpenWelcome();
-    }
+    if (!trimmed) return;
+    onStartFromInput(trimmed);
+    setInputValue("");
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
