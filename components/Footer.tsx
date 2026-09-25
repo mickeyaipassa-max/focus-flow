@@ -26,6 +26,40 @@ function FooterButton({ label, children }: FooterButtonProps) {
 
 const LEGAL_LINKS = ["Disclaimer", "Privacyverklaring", "Cookies", "Toegankelijkheid", "Veilig online"];
 
+function FooterLinkColumn({ column }: { column: FooterColumn }) {
+  return (
+    <div className="flex flex-1 flex-col items-start gap-2">
+      <p className="text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+        {column.title}
+      </p>
+      {column.links.map((link) => (
+        <button
+          key={link}
+          type="button"
+          className="text-left text-[#2a292e] text-lg leading-[1.5] hover:underline"
+          style={{ fontFamily: "var(--font-avenir-book)" }}
+        >
+          {link}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function FooterAppBadgesColumn({ className }: { className?: string }) {
+  return (
+    <div className={className ?? "flex flex-1 flex-col items-start gap-2"}>
+      <p className="text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+        a.s.r. app
+      </p>
+      <div className="flex flex-wrap items-start gap-3">
+        <img src="/badges/app-store-nl.svg" alt="Download in de App Store" className="h-12 w-36" />
+        <img src="/badges/google-play-nl.svg" alt="Ontdek het op Google Play" className="h-12 w-[162px]" />
+      </div>
+    </div>
+  );
+}
+
 export type FooterColumn = {
   title: string;
   links: string[];
@@ -61,36 +95,25 @@ export function Footer({ className, columns, showAppBadges, centered = false }: 
   const content = (
     <>
       {columns && columns.length > 0 && (
-        <div className="flex w-full flex-col items-start gap-8 min-[900px]:flex-row">
-          {columns.map((column) => (
-            <div key={column.title} className="flex flex-1 flex-col items-start gap-2">
-              <p className="text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                {column.title}
-              </p>
-              {column.links.map((link) => (
-                <button
-                  key={link}
-                  type="button"
-                  className="text-left text-[#2a292e] text-lg leading-[1.5] hover:underline"
-                  style={{ fontFamily: "var(--font-avenir-book)" }}
-                >
-                  {link}
-                </button>
+        <>
+          {/* Bestaande enkele rij van kolommen — ongewijzigd tot 900px, en weer vanaf 1440px (bevestigd via Figma's aparte 1200px-breakpointframe, dat alleen tussen 1200-1439px een andere indeling toont). */}
+          <div className="flex w-full flex-col items-start gap-8 min-[900px]:flex-row min-[1200px]:hidden min-[1440px]:flex">
+            {columns.map((column) => (
+              <FooterLinkColumn key={column.title} column={column} />
+            ))}
+            {showAppBadges && <FooterAppBadgesColumn />}
+          </div>
+
+          {/* Tussen 1200-1439px splitst Figma dit in twee rijen: de kolommen op één rij (gap 16px), de app-badges op een eigen rij daaronder (gap 40px) — bevestigd via node 50:2075. */}
+          <div className="hidden w-full flex-col items-start gap-10 min-[1200px]:flex min-[1440px]:hidden">
+            <div className="flex w-full items-start gap-4">
+              {columns.map((column) => (
+                <FooterLinkColumn key={column.title} column={column} />
               ))}
             </div>
-          ))}
-          {showAppBadges && (
-            <div className="flex flex-1 flex-col items-start gap-2">
-              <p className="text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                a.s.r. app
-              </p>
-              <div className="flex flex-wrap items-start gap-3">
-                <img src="/badges/app-store-nl.svg" alt="Download in de App Store" className="h-12 w-36" />
-                <img src="/badges/google-play-nl.svg" alt="Ontdek het op Google Play" className="h-12 w-[162px]" />
-              </div>
-            </div>
-          )}
-        </div>
+            {showAppBadges && <FooterAppBadgesColumn />}
+          </div>
+        </>
       )}
 
       {/* Links + copyright */}

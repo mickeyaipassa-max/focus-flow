@@ -124,12 +124,13 @@ export default function AiChatPage() {
               className="grid w-full grid-cols-4 overflow-hidden rounded-md"
               style={{ background: "rgba(0,0,0,0.16)", gap: 1, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}
             >
+              {/* Iconcirkel/icoon/tekst kleiner tussen 1200-1439px (40px/16px/16px), terug naar de volle maat (56px/32px/18px) vanaf 1440px — bevestigd via Figma's aparte 1200px-breakpointframe. */}
               {TILE_ITEMS.map(({ icon, label }) => (
                 <button key={label} type="button" className="flex items-center gap-3 bg-white px-4 py-3 text-left hover:bg-[#fafafa]">
-                  <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[#fff8e3] p-3">
-                    <img src={`/icons/${icon}.svg`} alt="" className="size-8" />
+                  <span className="flex size-10 min-[1440px]:size-14 shrink-0 items-center justify-center rounded-full bg-[#fff8e3] p-3">
+                    <img src={`/icons/${icon}.svg`} alt="" className="size-4 min-[1440px]:size-8" />
                   </span>
-                  <span className="text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+                  <span className="text-black text-base min-[1440px]:text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
                     {label}
                   </span>
                 </button>

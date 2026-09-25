@@ -250,14 +250,14 @@ export function ChatWidget({
 
   if (!visible) return null;
 
+  // Breedte/rechtermarge smaller tussen 1200-1439px (480px/64px), terug naar de volle maat (528px/120px) vanaf 1440px — bevestigd via Figma's aparte 1200px-breakpointframe.
   return (
     <div
       role="dialog"
       aria-label="AI-assistent van a.s.r."
       aria-modal="false"
-      className="fixed right-[120px] bottom-20 z-50 flex flex-col overflow-hidden rounded-md bg-[#fff8e3]"
+      className="fixed right-16 bottom-20 z-50 flex w-[480px] flex-col overflow-hidden rounded-md bg-[#fff8e3] min-[1440px]:right-[120px] min-[1440px]:w-[528px]"
       style={{
-        width: 528,
         height: 653,
         maxHeight: "calc(100dvh - 160px)",
         boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
