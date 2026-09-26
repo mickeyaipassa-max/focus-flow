@@ -41,7 +41,8 @@ export function FaqAccordion({ items, className }: FaqAccordionProps) {
               aria-expanded={isOpen}
               className="flex w-full items-center gap-4 py-4 text-left"
             >
-              <span className="flex-1 text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+              {/* 14px onder 600px, 18px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9298). */}
+              <span className="flex-1 text-black text-sm leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-bold)" }}>
                 {item.question}
               </span>
               {/*
