@@ -123,12 +123,13 @@ export function SiteHeader() {
 
       {/* Mobiel (<600px): één balk (logo + Inloggen/Menu-iconknoppen) — bevestigd via Figma node 19:1746. */}
       <div className="flex h-20 w-full items-center justify-between bg-white px-6 min-[600px]:hidden">
-        <div className="relative h-[38.5px] w-[80px] shrink-0">
+        {/* 120×57,75px (0,75× de desktop-doos van 160×77px) met dezelfde witte kaart+schaduw — bevestigd via Figma node 19:1748 en een screenshot-vergelijking (56:9266): de bestaande sm-assets waren al exact op deze 0,75-schaal gepositioneerd, alleen de buitenste doos stond eerder op een verzonnen 80×38,5px i.p.v. de bevestigde 120×57,75px, en miste de schaduw. */}
+        <div className="relative h-[57.75px] w-[120px] shrink-0 overflow-hidden bg-white shadow-[0_4px_16px_0_rgba(0,0,0,0.12)]">
           <img src="/header/logo-underline-sm.svg" alt="" className="absolute inset-x-0 bottom-0 block h-[3.916px] w-full" />
           <img
             src="/header/logo-asr-sm.svg"
             alt="a.s.r."
-            className="-translate-x-1/2 absolute top-[13.35px] left-1/2 h-[14.074px] w-[79.529px]"
+            className="-translate-x-1/2 absolute top-[19.94px] left-1/2 h-[14.074px] w-[79.529px]"
           />
         </div>
 
@@ -165,12 +166,12 @@ export function SiteHeader() {
           className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white min-[600px]:hidden"
         >
           <div className="flex h-20 w-full shrink-0 items-center justify-between px-6">
-            <div className="relative h-[38.5px] w-[80px] shrink-0">
+            <div className="relative h-[57.75px] w-[120px] shrink-0 overflow-hidden bg-white shadow-[0_4px_16px_0_rgba(0,0,0,0.12)]">
               <img src="/header/logo-underline-sm.svg" alt="" className="absolute inset-x-0 bottom-0 block h-[3.916px] w-full" />
               <img
                 src="/header/logo-asr-sm.svg"
                 alt="a.s.r."
-                className="-translate-x-1/2 absolute top-[13.35px] left-1/2 h-[14.074px] w-[79.529px]"
+                className="-translate-x-1/2 absolute top-[19.94px] left-1/2 h-[14.074px] w-[79.529px]"
               />
             </div>
 

@@ -106,14 +106,15 @@ export default function AiChatPage() {
         items={[{ label: "Home" }, { label: "Breadcrumb item" }, { label: "Breadcrumb item" }, { label: "Breadcrumb item" }, { label: "Current page" }]}
       />
 
-      <main className="flex w-full flex-col items-start gap-12 pb-0">
+      <main className="flex w-full flex-col items-start gap-6 pb-0 min-[600px]:gap-12">
         {/* Zijmarge-schaal (24/48/64/128px) op alle secties hieronder — bevestigd via Figma's mobiele frame (56:9265, elke sectie op x=24 in een 375px-frame) en het 900px-frame (54:5255, Content op x=64 in een 900px-frame); vanaf 1200px ongewijzigd px-32, zoals ook al in Footer.tsx's niet-centered modus gebruikt wordt. */}
         <section className="w-full px-6 pt-10 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
-          <div className="mx-auto flex max-w-[1200px] flex-col gap-2">
-            <h1 className="text-black text-[40px] leading-[1.2]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+          {/* H1 32px→40px, paragraaf 16px→20px, gap 4px→8px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9269), niet eerder meegenomen in de mobiele pas. */}
+          <div className="mx-auto flex max-w-[1200px] flex-col gap-1 min-[600px]:gap-2">
+            <h1 className="text-black text-[32px] leading-[1.2] min-[600px]:text-[40px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               Zorgverzekering klantenservice
             </h1>
-            <p className="max-w-[880px] text-black text-xl leading-[1.4]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+            <p className="max-w-[880px] text-black text-base leading-[1.4] min-[600px]:text-xl" style={{ fontFamily: "var(--font-avenir-book)" }}>
               Heb je een vraag over je vergoedingen, declaraties of eigen risico? Wil je snel zelf iets regelen of wijzigen? Wij zijn er voor je.
             </p>
           </div>
@@ -154,7 +155,8 @@ export default function AiChatPage() {
 
         <section className="w-full px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
-            <h2 className="text-black text-[32px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+            {/* 24px→32px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9298). */}
+            <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               Veel gestelde vragen
             </h2>
             <FaqAccordion items={FAQ_ITEMS} className="flex w-full max-w-[800px] flex-col gap-1" />
@@ -163,7 +165,8 @@ export default function AiChatPage() {
 
         <section className="w-full bg-[#f6f6f7] px-6 py-12 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
-            <h2 className="text-black text-[32px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+            {/* 24px→32px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9303). */}
+            <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               Liever echt contact?
             </h2>
             <div className="grid w-full grid-cols-1 gap-4 min-[600px]:grid-cols-3">
