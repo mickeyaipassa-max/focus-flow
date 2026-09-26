@@ -180,8 +180,9 @@ export default function AiChatPage() {
                 footerText="Description bottom"
                 className="flex min-w-px flex-1 flex-col items-start gap-8 self-stretch rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-6"
               />
-              <div />
-              <div />
+              {/* Onder 600px staat de grid op grid-cols-1, waardoor deze lege placeholders (kolom 2/3 op desktop) anders twee extra lege rijen worden — elk nog steeds met de grid-gap (16px) ervoor, samen 32px onbedoelde ruimte bovenop de sectie's eigen bottom-padding. Verborgen op mobiel om dat te voorkomen. */}
+              <div className="hidden min-[600px]:block" />
+              <div className="hidden min-[600px]:block" />
             </div>
           </div>
         </section>
