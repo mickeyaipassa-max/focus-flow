@@ -155,7 +155,8 @@ export default function AiChatPage() {
         />
 
         <section className="w-full px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
-          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
+          {/* Gap H2→accordion 16px onder 600px i.p.v. de vaste 24px — op verzoek van de opdrachtgever. */}
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-4 min-[600px]:gap-6">
             {/* 24px→32px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9298). */}
             <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               Veel gestelde vragen
