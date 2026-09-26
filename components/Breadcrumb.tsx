@@ -19,12 +19,21 @@ type BreadcrumbProps = {
  * huidige pagina, niet vast naar "Home". Bij een keten van slechts 1 item
  * (geen vorige stap) wordt op mobiel niets getoond, exact zoals de volledige
  * keten dan ook niets zinnigs te tonen heeft.
+ *
+ * Onderrand van deze nav is onder 600px 0 i.p.v. de gebruikelijke 24px —
+ * samen met de Hero-sectie's `pt-0` op mobiel (page.tsx) staat de H1 dan
+ * direct tegen de breadcrumb aan, exact zoals Figma's mobiele frame
+ * (56:9265: Breadcrumb eindigt op y=120, Hero begint direct daarna op
+ * diezelfde y=120, dus 0px tussenruimte).
  */
 export function Breadcrumb({ items, className }: BreadcrumbProps) {
   const previous = items.length > 1 ? items[items.length - 2] : null;
 
   return (
-    <nav aria-label="Kruimelpad" className={className ?? "w-full px-6 py-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32"}>
+    <nav
+      aria-label="Kruimelpad"
+      className={className ?? "w-full px-6 pt-6 pb-0 min-[600px]:px-12 min-[600px]:pb-6 min-[900px]:px-16 min-[1200px]:px-32"}
+    >
       <ol className="mx-auto hidden max-w-[1200px] items-center gap-1 min-[600px]:flex">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;

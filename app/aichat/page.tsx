@@ -108,7 +108,8 @@ export default function AiChatPage() {
 
       <main className="flex w-full flex-col items-start gap-6 pb-0 min-[600px]:gap-12">
         {/* Zijmarge-schaal (24/48/64/128px) op alle secties hieronder — bevestigd via Figma's mobiele frame (56:9265, elke sectie op x=24 in een 375px-frame) en het 900px-frame (54:5255, Content op x=64 in een 900px-frame); vanaf 1200px ongewijzigd px-32, zoals ook al in Footer.tsx's niet-centered modus gebruikt wordt. */}
-        <section className="w-full px-6 pt-10 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
+        {/* pt-6 (24px) onder 600px tussen breadcrumb en H1 — op expliciet verzoek van de opdrachtgever bijgesteld vanaf de eerder bevestigde 0px uit Figma's mobiele frame (56:9265, waar Breadcrumb en Hero elkaar zonder marge raken). */}
+        <section className="w-full px-6 pt-6 min-[600px]:px-12 min-[600px]:pt-10 min-[900px]:px-16 min-[1200px]:px-32">
           {/* H1 32px→40px, paragraaf 16px→20px, gap 4px→8px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9269), niet eerder meegenomen in de mobiele pas. */}
           <div className="mx-auto flex max-w-[1200px] flex-col gap-1 min-[600px]:gap-2">
             <h1 className="text-black text-[32px] leading-[1.2] min-[600px]:text-[40px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
@@ -154,7 +155,8 @@ export default function AiChatPage() {
         />
 
         <section className="w-full px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
-          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
+          {/* Gap H2→accordion 16px onder 600px i.p.v. de vaste 24px — op verzoek van de opdrachtgever. */}
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-4 min-[600px]:gap-6">
             {/* 24px→32px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9298). */}
             <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               Veel gestelde vragen
@@ -163,7 +165,8 @@ export default function AiChatPage() {
           </div>
         </section>
 
-        <section className="w-full bg-[#f6f6f7] px-6 py-12 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
+        {/* py-6 (24px) onder 600px i.p.v. de vaste py-12 (48px) — op verzoek van de opdrachtgever. */}
+        <section className="w-full bg-[#f6f6f7] px-6 py-6 min-[600px]:px-12 min-[600px]:py-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
             {/* 24px→32px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9303). */}
             <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
@@ -178,8 +181,9 @@ export default function AiChatPage() {
                 footerText="Description bottom"
                 className="flex min-w-px flex-1 flex-col items-start gap-8 self-stretch rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-6"
               />
-              <div />
-              <div />
+              {/* Onder 600px staat de grid op grid-cols-1, waardoor deze lege placeholders (kolom 2/3 op desktop) anders twee extra lege rijen worden — elk nog steeds met de grid-gap (16px) ervoor, samen 32px onbedoelde ruimte bovenop de sectie's eigen bottom-padding. Verborgen op mobiel om dat te voorkomen. */}
+              <div className="hidden min-[600px]:block" />
+              <div className="hidden min-[600px]:block" />
             </div>
           </div>
         </section>
