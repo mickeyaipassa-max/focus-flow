@@ -57,7 +57,8 @@ export function AIChatBlock({
   }
 
   return (
-    <section className="w-full bg-[#fff8e3] px-6 py-12 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
+    // py-6 (24px) onder 600px i.p.v. de vaste py-12 (48px) — op verzoek van de opdrachtgever.
+    <section className="w-full bg-[#fff8e3] px-6 py-6 min-[600px]:px-12 min-[600px]:py-12 min-[900px]:px-16 min-[1200px]:px-32">
       <div className="mx-auto max-w-[1200px]">
         <div className="flex max-w-[800px] flex-col">
           {/* H2 24px i.p.v. 32px onder 600px — bevestigd via Figma's mobiele frame (node 56:9284). */}

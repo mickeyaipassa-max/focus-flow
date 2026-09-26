@@ -108,7 +108,8 @@ export default function AiChatPage() {
 
       <main className="flex w-full flex-col items-start gap-6 pb-0 min-[600px]:gap-12">
         {/* Zijmarge-schaal (24/48/64/128px) op alle secties hieronder — bevestigd via Figma's mobiele frame (56:9265, elke sectie op x=24 in een 375px-frame) en het 900px-frame (54:5255, Content op x=64 in een 900px-frame); vanaf 1200px ongewijzigd px-32, zoals ook al in Footer.tsx's niet-centered modus gebruikt wordt. */}
-        <section className="w-full px-6 pt-10 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
+        {/* pt-0 onder 600px: samen met Breadcrumb.tsx's pb-0 staat de H1 dan direct tegen de breadcrumb aan (0px), exact zoals Figma's mobiele frame (56:9265) toont. */}
+        <section className="w-full px-6 pt-0 min-[600px]:px-12 min-[600px]:pt-10 min-[900px]:px-16 min-[1200px]:px-32">
           {/* H1 32px→40px, paragraaf 16px→20px, gap 4px→8px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9269), niet eerder meegenomen in de mobiele pas. */}
           <div className="mx-auto flex max-w-[1200px] flex-col gap-1 min-[600px]:gap-2">
             <h1 className="text-black text-[32px] leading-[1.2] min-[600px]:text-[40px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
@@ -163,7 +164,8 @@ export default function AiChatPage() {
           </div>
         </section>
 
-        <section className="w-full bg-[#f6f6f7] px-6 py-12 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
+        {/* py-6 (24px) onder 600px i.p.v. de vaste py-12 (48px) — op verzoek van de opdrachtgever. */}
+        <section className="w-full bg-[#f6f6f7] px-6 py-6 min-[600px]:px-12 min-[600px]:py-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-6">
             {/* 24px→32px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9303). */}
             <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
