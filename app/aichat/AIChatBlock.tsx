@@ -41,10 +41,19 @@ export function AIChatBlock({
     onStartFromTag(label);
   }
 
-  /** Bevestigd via de spec ("chat-widget-spec.md"): "Een lege textarea opent de chat niet: de knop doet dan niets." */
+  /**
+   * Aangepast op expliciet verzoek van de opdrachtgever (i.p.v. de eerder
+   * hier geciteerde spec-tekst "een lege textarea opent de chat niet: de
+   * knop doet dan niets"): een leeg veld opent nu wél de widget, in dezelfde
+   * lege staat als "Nieuw gesprek starten" (`onReset`) — geen leeg bericht
+   * versturen, alleen de widget openen.
+   */
   function handleStart() {
     const trimmed = inputValue.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      onReset();
+      return;
+    }
     onStartFromInput(trimmed);
     setInputValue("");
   }
