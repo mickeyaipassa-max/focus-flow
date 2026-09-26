@@ -103,7 +103,7 @@ export function AIChatBlock({
               <p className="mb-6 text-black text-sm leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
                 Hoi, ik ben de nieuwe AI-assistent van a.s.r. en help je graag op weg.
                 <br />
-                Typ je hieronder je vraag of kies een onderwerp.
+                Kies hieronder een onderwerp of typ je vraag.
               </p>
               {/* Volgorde en gap bevestigd via Figma (node 27:5854, "Frame 2609921"): tags staan nu bóven de invoerrij, gap 16px — het losse label "Typ je vraag of kies een onderwerp" dat hier eerder boven de textarea stond, is uit het ontwerp verwijderd en leeft nu alleen nog als `aria-label` op de textarea zelf. */}
               <div className="flex flex-col gap-4">
