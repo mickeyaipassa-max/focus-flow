@@ -128,9 +128,10 @@ export default function AiChatPage() {
               className="grid w-full grid-cols-1 overflow-hidden rounded-md min-[600px]:grid-cols-4"
               style={{ background: "rgba(0,0,0,0.16)", gap: 1, boxShadow: "0 4px 16px rgba(0,0,0,0.12)" }}
             >
+              {/* Cirkel groeit naar scale(1.2) bij hover, 200ms cubic-bezier(0,-.4,.4,1.6) ("ease-back-out") — bevestigd via de officiële a.s.r. webcomponent (<asr-tile>, webcomponents.asr.nl/.../tile--inline-compact, shadow-DOM CSS: `.tile:hover .graphic::after { transform: scale(1.2) }`, transitie alleen binnen `@media (prefers-reduced-motion: no-preference)` — hier dus `motion-safe:` i.p.v. de scale zelf conditioneel te maken, exact zoals de bron: de sprong gebeurt altijd, alleen de animatie ernaartoe wordt overgeslagen bij reduced motion. */}
               {TILE_ITEMS.map(({ icon, label }) => (
-                <button key={label} type="button" className="flex items-center gap-3 bg-white px-4 py-3 text-left hover:bg-[#fafafa]">
-                  <span className="flex size-10 min-[1440px]:size-14 shrink-0 items-center justify-center rounded-full bg-[#fff8e3] p-3">
+                <button key={label} type="button" className="group flex items-center gap-3 bg-white px-4 py-3 text-left hover:bg-[#fafafa]">
+                  <span className="flex size-10 min-[1440px]:size-14 shrink-0 scale-100 items-center justify-center rounded-full bg-[#fff8e3] p-3 group-hover:scale-[1.2] motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-[cubic-bezier(0,-0.4,0.4,1.6)]">
                     <img src={`/icons/${icon}.svg`} alt="" className="size-4 min-[1440px]:size-8" />
                   </span>
                   <span
