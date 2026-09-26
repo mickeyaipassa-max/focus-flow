@@ -310,6 +310,7 @@ export function ChatWidget({
                 className="absolute top-[calc(100%+4px)] right-0 z-10 flex min-w-[220px] flex-col overflow-hidden rounded-md bg-white"
                 style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.16)" }}
               >
+                {/* Icoon-cirkel (40px, bg-[#f6f6f7]) per item bevestigd via Figma node 63:13371: refresh / chevron-down / een 45°-geroteerd "add"-icoon (optisch een X). */}
                 <button
                   role="menuitem"
                   type="button"
@@ -319,8 +320,11 @@ export function ChatWidget({
                     setSelectedTag(null);
                     onNewChat();
                   }}
-                  className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f6f6f7]"
                 >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f6f6f7]">
+                    <img src="/icons/refresh.svg" alt="" className="size-4" />
+                  </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                     Nieuw gesprek starten
                   </span>
@@ -333,8 +337,11 @@ export function ChatWidget({
                     setTimeout(() => returnFocusOnMinimize?.current?.focus(), 50);
                     onMinimize();
                   }}
-                  className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f6f6f7]"
                 >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f6f6f7]">
+                    <img src="/icons/chevron-down.svg" alt="" className="size-4" />
+                  </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                     Gesprek minimaliseren
                   </span>
@@ -347,8 +354,11 @@ export function ChatWidget({
                     setTimeout(() => returnFocusOnClose?.current?.focus(), 50);
                     onClose();
                   }}
-                  className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f6f6f7]"
                 >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f6f6f7]">
+                    <img src="/icons/add.svg" alt="" className="size-4 rotate-45" />
+                  </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                     Gesprek afsluiten
                   </span>
