@@ -64,9 +64,9 @@ function ChatMessage({ message, showAvatar }: { message: ChatMessageData; showAv
   }
 
   return (
-    <div className="flex flex-col gap-2 pr-6">
+    <div className="flex flex-col items-start gap-2 pr-6">
       {showAvatar && <AssistantAvatar />}
-      <div className="rounded-md bg-white px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
+      <div className="max-w-[80%] rounded-md bg-white px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
         <p className="break-words text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
           <span className="sr-only">AI-assistent zei: </span>
           {message.text}
@@ -89,7 +89,7 @@ function ChatWelcome({
     <div className="flex w-full flex-col gap-4">
       <div className="flex w-full flex-col items-start gap-2 pr-6">
         <AssistantAvatar />
-        <div className="flex w-full items-start rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
+        <div className="max-w-[80%] rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
           <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
             <span className="sr-only">AI-assistent zei: </span>
             Hallo, ik ben de AI-assistent van a.s.r. Ik kan je snel helpen. En anders stuur ik je door naar de juiste persoon. Waar gaat je
@@ -287,7 +287,7 @@ export function ChatWidget({
           transition: "opacity 200ms ease-out, transform 200ms ease-out",
         }}
       >
-        {/* Header — relative + menuRef hier i.p.v. op de kleine knop-wrapper: het menu moet de volle breedte van het venster beslaan binnen de padding (op verzoek van de opdrachtgever, was smal/content-breed), en `left-0 right-0` op een absolute kind sluit exact aan op de padding-box van deze relative ouder (dus precies de bestaande p-6, geen dubbele inset). */}
+        {/* Header — relative + menuRef hier i.p.v. op de kleine knop-wrapper: het menu moet 24px minder breed zijn dan de widget aan beide kanten (op verzoek van de opdrachtgever). `left-0 right-0` bleek verkeerd — dat sluit aan op de PADDING-box van deze relative ouder, wat gelijk is aan de widget's eigen buitenrand (0px inset, want de header heeft zelf geen marge, alleen interne p-6). `left-6 right-6` (24px) is daarom nodig om echt 24px van de widget-rand af te blijven. */}
         <div className="relative flex shrink-0 items-start bg-[#eda50f] p-6" ref={menuRef}>
           <div className="min-w-0 flex-1">
             <h2 className="pb-2 text-black text-[24px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
@@ -318,7 +318,7 @@ export function ChatWidget({
               <div
                 role="menu"
                 aria-label="Chat opties"
-                className="absolute top-[calc(100%+4px)] left-0 right-0 z-10 flex flex-col overflow-hidden rounded-md bg-white"
+                className="absolute top-[calc(100%+4px)] left-6 right-6 z-10 flex flex-col overflow-hidden rounded-md bg-white"
                 style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.16)" }}
               >
                 {/* Icoon-cirkel (40px, bg-[#f6f6f7]) per item bevestigd via Figma node 63:13371: refresh / chevron-down / een 45°-geroteerd "add"-icoon (optisch een X). */}
@@ -350,8 +350,9 @@ export function ChatWidget({
                   }}
                   className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f6f6f7]"
                 >
+                  {/* chevron-down-sm.svg i.p.v. het gedeelde chevron-down.svg: dat laatste is van zichzelf niet-vierkant (16,06×9,09px, elders altijd via `Icon` getoond op eigen grootte) — in een geforceerde 16×16px <img> hier werd de pijl daardoor verticaal uitgerekt. Dit is Figma's eigen vierkante 16×16px-asset voor deze specifieke plek. */}
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f6f6f7]">
-                    <img src="/icons/chevron-down.svg" alt="" className="size-4" />
+                    <img src="/icons/chevron-down-sm.svg" alt="" className="size-4" />
                   </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                     Gesprek minimaliseren
