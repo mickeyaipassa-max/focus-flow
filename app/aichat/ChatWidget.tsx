@@ -393,8 +393,16 @@ export function ChatWidget({
           </div>
         </div>
 
-        {/* Berichtengebied */}
-        <div aria-live="polite" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-6">
+        {/*
+          Berichtengebied — Chrome maakt deze scrollbare container (overflow-y-auto)
+          automatisch toetsenbord-focusbaar (native scroll-focus-gedrag, geen eigen
+          tabindex). role="log" + aria-label geven die onvermijdelijke focus-stop een
+          betekenisvolle naam/rol i.p.v. leeg te blijven (WCAG 4.1.2) — role="log" heeft
+          zelf al een impliciete aria-live="polite", de expliciete aria-live hieronder
+          blijft staan als bestaand, compatibiliteits-idioom en verandert niets aan het
+          al geverifieerde aankondigingsgedrag.
+        */}
+        <div role="log" aria-label="Gespreksberichten" aria-live="polite" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-6">
           <ChatWelcome onTagClick={handleTagClick} selectedTag={selectedTag} showTags={!hasMessages} />
           {messages.map((message, index) => {
             const previous = messages[index - 1];
