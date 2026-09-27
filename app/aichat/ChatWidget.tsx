@@ -287,8 +287,8 @@ export function ChatWidget({
           transition: "opacity 200ms ease-out, transform 200ms ease-out",
         }}
       >
-        {/* Header */}
-        <div className="flex shrink-0 items-start bg-[#eda50f] p-6">
+        {/* Header — relative + menuRef hier i.p.v. op de kleine knop-wrapper: het menu moet de volle breedte van het venster beslaan binnen de padding (op verzoek van de opdrachtgever, was smal/content-breed), en `left-0 right-0` op een absolute kind sluit exact aan op de padding-box van deze relative ouder (dus precies de bestaande p-6, geen dubbele inset). */}
+        <div className="relative flex shrink-0 items-start bg-[#eda50f] p-6" ref={menuRef}>
           <div className="min-w-0 flex-1">
             <h2 className="pb-2 text-black text-[24px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               AI-assistent van a.s.r.
@@ -301,7 +301,7 @@ export function ChatWidget({
             </div>
           </div>
 
-          <div className="relative shrink-0" ref={menuRef}>
+          <div className="shrink-0">
             <button
               ref={menuBtnRef}
               type="button"
@@ -318,9 +318,10 @@ export function ChatWidget({
               <div
                 role="menu"
                 aria-label="Chat opties"
-                className="absolute top-[calc(100%+4px)] right-0 z-10 flex min-w-[220px] flex-col overflow-hidden rounded-md bg-white"
+                className="absolute top-[calc(100%+4px)] left-0 right-0 z-10 flex flex-col overflow-hidden rounded-md bg-white"
                 style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.16)" }}
               >
+                {/* Icoon-cirkel (40px, bg-[#f6f6f7]) per item bevestigd via Figma node 63:13371: refresh / chevron-down / een 45°-geroteerd "add"-icoon (optisch een X). */}
                 <button
                   role="menuitem"
                   type="button"
@@ -330,8 +331,11 @@ export function ChatWidget({
                     setSelectedTag(null);
                     onNewChat();
                   }}
-                  className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f6f6f7]"
                 >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f6f6f7]">
+                    <img src="/icons/refresh.svg" alt="" className="size-4" />
+                  </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                     Nieuw gesprek starten
                   </span>
@@ -344,8 +348,11 @@ export function ChatWidget({
                     setTimeout(() => returnFocusOnMinimize?.current?.focus(), 50);
                     onMinimize();
                   }}
-                  className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f6f6f7]"
                 >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f6f6f7]">
+                    <img src="/icons/chevron-down.svg" alt="" className="size-4" />
+                  </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                     Gesprek minimaliseren
                   </span>
@@ -358,8 +365,11 @@ export function ChatWidget({
                     setTimeout(() => returnFocusOnClose?.current?.focus(), 50);
                     onClose();
                   }}
-                  className="w-full px-4 py-3 text-left hover:bg-[#f6f6f7]"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f6f6f7]"
                 >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f6f6f7]">
+                    <img src="/icons/add.svg" alt="" className="size-4 rotate-45" />
+                  </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                     Gesprek afsluiten
                   </span>
