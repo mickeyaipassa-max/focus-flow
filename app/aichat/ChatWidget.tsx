@@ -276,8 +276,8 @@ export function ChatWidget({
           transition: "opacity 200ms ease-out, transform 200ms ease-out",
         }}
       >
-        {/* Header */}
-        <div className="flex shrink-0 items-start bg-[#eda50f] p-6">
+        {/* Header — relative + menuRef hier i.p.v. op de kleine knop-wrapper: het menu moet de volle breedte van het venster beslaan binnen de padding (op verzoek van de opdrachtgever, was smal/content-breed), en `left-0 right-0` op een absolute kind sluit exact aan op de padding-box van deze relative ouder (dus precies de bestaande p-6, geen dubbele inset). */}
+        <div className="relative flex shrink-0 items-start bg-[#eda50f] p-6" ref={menuRef}>
           <div className="min-w-0 flex-1">
             <h2 className="pb-2 text-black text-[24px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               AI-assistent van a.s.r.
@@ -290,7 +290,7 @@ export function ChatWidget({
             </div>
           </div>
 
-          <div className="relative shrink-0" ref={menuRef}>
+          <div className="shrink-0">
             <button
               ref={menuBtnRef}
               type="button"
@@ -307,7 +307,7 @@ export function ChatWidget({
               <div
                 role="menu"
                 aria-label="Chat opties"
-                className="absolute top-[calc(100%+4px)] right-0 z-10 flex min-w-[220px] flex-col overflow-hidden rounded-md bg-white"
+                className="absolute top-[calc(100%+4px)] left-0 right-0 z-10 flex flex-col overflow-hidden rounded-md bg-white"
                 style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.16)" }}
               >
                 {/* Icoon-cirkel (40px, bg-[#f6f6f7]) per item bevestigd via Figma node 63:13371: refresh / chevron-down / een 45°-geroteerd "add"-icoon (optisch een X). */}
