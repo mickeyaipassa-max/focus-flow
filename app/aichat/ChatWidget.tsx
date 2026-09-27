@@ -311,14 +311,27 @@ export function ChatWidget({
               aria-haspopup="menu"
               className="flex size-[51px] items-center justify-center rounded-[3px] bg-[#fff8e3] hover:brightness-95"
             >
-              <img src="/icons/more-vertical.svg" alt="" className="size-6" />
+              {/* Drie puntjes → kruisje (hergebruik van add.svg, 45° geroteerd — zelfde "sluiten"-icoon als het "Gesprek afsluiten"-menu-item) bij openen, met een zachte fade+rotate-transitie (motion-safe, 200ms — zelfde duur als elders in dit project, bv. de tile-hover-scale). */}
+              <span className="relative flex size-6 items-center justify-center">
+                <img
+                  src="/icons/more-vertical.svg"
+                  alt=""
+                  className={`absolute size-6 motion-safe:transition-all motion-safe:duration-200 ${menuOpen ? "rotate-90 opacity-0" : "rotate-0 opacity-100"}`}
+                />
+                <img
+                  src="/icons/add.svg"
+                  alt=""
+                  className={`absolute size-6 motion-safe:transition-all motion-safe:duration-200 ${menuOpen ? "rotate-45 opacity-100" : "rotate-0 opacity-0"}`}
+                />
+              </span>
             </button>
 
             {menuOpen && (
               <div
                 role="menu"
                 aria-label="Chat opties"
-                className="absolute top-[calc(100%+4px)] left-6 right-6 z-10 flex flex-col overflow-hidden rounded-md bg-white"
+                // top-[79px] i.p.v. top-[calc(100%+4px)]: dat laatste stond onder de hele header (die door het H2-blok hoger is dan de 51px-knop), waardoor het menu ~37px onder de knop "zweefde" i.p.v. er duidelijk bij te horen. 79px = de knop's eigen onderrand (24px header-padding + 51px knophoogte = 75px vanaf de bovenkant van de header) + 4px marge — op verzoek van de opdrachtgever.
+                className="absolute top-[79px] left-6 right-6 z-10 flex flex-col overflow-hidden rounded-md bg-white"
                 style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.16)" }}
               >
                 {/* Icoon-cirkel (40px, bg-[#f6f6f7]) per item bevestigd via Figma node 63:13371: refresh / chevron-down / een 45°-geroteerd "add"-icoon (optisch een X). */}
