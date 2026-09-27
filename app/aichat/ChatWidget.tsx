@@ -41,12 +41,21 @@ function TypingIndicator() {
   );
 }
 
+/**
+ * WCAG 1.3.1: wie iets gezegd heeft, wordt nu alleen visueel bepaald
+ * (uitlijning rechts/links, kleur, wel/geen avatar) — een screenreader
+ * krijgt anders alleen de kale berichttekst zonder afzender te horen. De
+ * `sr-only`-prefix (al elders in dit project gebruikt, bv.
+ * RadioCardBottom.tsx) maakt dat verschil programmatisch beschikbaar
+ * zonder de zichtbare weergave te raken.
+ */
 function ChatMessage({ message, showAvatar }: { message: ChatMessageData; showAvatar: boolean }) {
   if (message.role === "user") {
     return (
       <div className="flex justify-end pl-6">
         <div className="max-w-[80%] rounded-md bg-[#eef4e3] px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
           <p className="break-words text-right text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+            <span className="sr-only">Jij zei: </span>
             {message.text}
           </p>
         </div>
@@ -59,6 +68,7 @@ function ChatMessage({ message, showAvatar }: { message: ChatMessageData; showAv
       {showAvatar && <AssistantAvatar />}
       <div className="rounded-md bg-white px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
         <p className="break-words text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+          <span className="sr-only">AI-assistent zei: </span>
           {message.text}
         </p>
       </div>
@@ -81,6 +91,7 @@ function ChatWelcome({
         <AssistantAvatar />
         <div className="flex w-full items-start rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
           <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+            <span className="sr-only">AI-assistent zei: </span>
             Hallo, ik ben de AI-assistent van a.s.r. Ik kan je snel helpen. En anders stuur ik je door naar de juiste persoon. Waar gaat je
             vraag over?
           </p>
