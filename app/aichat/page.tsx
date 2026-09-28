@@ -38,6 +38,52 @@ const FAQ_ITEMS: FaqItem[] = [
   },
 ];
 
+/**
+ * Lichtgewicht keyword-matching i.p.v. één generiek antwoord op elke vraag —
+ * op verzoek van de opdrachtgever, zodat de mock inhoudelijk blijft kloppen:
+ * elk onderwerp krijgt een eigen, plausibel antwoord zodra de getypte vraag
+ * een van de bijbehorende trefwoorden bevat. Geen match = eerlijke fallback
+ * i.p.v. een belofte ("ik zoek het uit") die deze mock toch niet waarmaakt.
+ */
+const TOPIC_ANSWERS: { keywords: string[]; answer: string }[] = [
+  {
+    keywords: ["vergoeding", "vergoed", "declaratie", "declareren"],
+    answer:
+      "Welke vergoedingen je krijgt hangt af van je polis. De meeste behandelingen kun je declareren via de Zorg app of Mijn a.s.r. — je ziet daar per behandeling of en hoeveel je vergoed krijgt.",
+  },
+  {
+    keywords: ["eigen risico", "risico"],
+    answer:
+      "Het verplicht eigen risico is in 2026 vastgesteld op €385 per jaar. Huisartsenzorg, verloskundige zorg en zorg voor kinderen tot 18 jaar vallen daar niet onder.",
+  },
+  {
+    keywords: ["collectie", "werkgever", "korting"],
+    answer:
+      "Heeft jouw werkgever een collectieve zorgverzekering afgesloten bij a.s.r.? Dan krijg je vaak korting op je premie. Check bij je werkgever of HR-afdeling of er een collectiviteitscode voor jou geldt.",
+  },
+  {
+    keywords: ["contact", "bellen", "telefoon", "spreken"],
+    answer:
+      "Je kunt ons bereiken via (0800) 00 00 000 (gratis, op werkdagen) of via het contactformulier op onze website. Voor dringende zaken raden we bellen aan.",
+  },
+  {
+    keywords: ["kind", "kinderen", "baby"],
+    answer: "Kinderen tot 18 jaar zijn gratis meeverzekerd op de polis van een ouder, zonder eigen risico. Je hoeft ze alleen apart aan te melden bij a.s.r.",
+  },
+  {
+    keywords: ["voorwaarde", "polis"],
+    answer: "De volledige polisvoorwaarden kun je downloaden via Mijn a.s.r. of opvragen via de klantenservice. Daarin staat precies wat wel en niet gedekt is.",
+  },
+];
+
+const FALLBACK_ANSWER = "Daar heb ik nu helaas geen pasklaar antwoord op. Neem voor de zekerheid contact op met onze klantenservice via (0800) 00 00 000.";
+
+function matchTopicAnswer(userText: string): string | null {
+  const lower = userText.toLowerCase();
+  const match = TOPIC_ANSWERS.find(({ keywords }) => keywords.some((keyword) => lower.includes(keyword)));
+  return match?.answer ?? null;
+}
+
 const FOOTER_COLUMNS: FooterColumn[] = [
   { title: "Klantenservice", links: ["Inloggen", "Schade melden", "Gegevens wijzigen", "Financieel advies", "Onze apps", "Contact"] },
   { title: "Onze impact", links: ["Duurzaamheid", "Maatschappij", "Toegankelijkheid", "a.s.r. Vitality", "Doenkracht", "De raad van doen"] },
@@ -60,42 +106,52 @@ export default function AiChatPage() {
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const chatActive = isOpen || messages.length > 0;
   const minimizedButtonRef = useRef<HTMLButtonElement>(null);
   const sectionButtonRef = useRef<HTMLButtonElement>(null);
 
-  const addAssistantReply = useCallback((fromTag: boolean) => {
+  /**
+   * `topic` wordt expliciet doorgegeven i.p.v. uit de `activeTopic`-state
+   * gelezen: `handleStartFromTag` zet die state en roept dit in dezelfde
+   * synchrone afhandeling aan, vóórdat React de state-update verwerkt heeft
+   * — lezen uit `activeTopic` zou dan nog de oude (vorige) waarde geven.
+   */
+  const addAssistantReply = useCallback((isFollowUpToTag: boolean, topic: string | null, userText: string) => {
     setIsTyping(true);
     setTimeout(() => {
       setIsTyping(false);
-      const text = fromTag ? "Wat is je vraag precies?" : "Bedankt voor je vraag. Ik zoek het voor je uit.";
+      const text = isFollowUpToTag && topic ? `Wat zou je willen weten over ${topic.toLowerCase()}?` : (matchTopicAnswer(userText) ?? FALLBACK_ANSWER);
       setMessages((prev) => [...prev, { id: nextMessageId++, role: "assistant", text }]);
     }, 800);
   }, []);
 
-  function openChat(firstMessage: string, fromTag: boolean) {
+  function openChat(firstMessage: string, fromTag: boolean, topic: string | null) {
     setMessages([{ id: nextMessageId++, role: "user", text: firstMessage }]);
     setIsOpen(true);
-    addAssistantReply(fromTag);
+    addAssistantReply(fromTag, topic, firstMessage);
   }
 
   function handleStartFromTag(tag: string) {
-    openChat(`Ik heb een vraag over ${tag.toLowerCase()}`, true);
+    setActiveTopic(tag);
+    openChat(`Ik heb een vraag over ${tag.toLowerCase()}`, true, tag);
   }
 
   function handleStartFromInput(text: string) {
-    openChat(text, false);
+    setActiveTopic(null);
+    openChat(text, false, null);
   }
 
   function handleSendMessage(text: string) {
     setMessages((prev) => [...prev, { id: nextMessageId++, role: "user", text }]);
-    addAssistantReply(false);
+    addAssistantReply(false, activeTopic, text);
   }
 
   function handleReset() {
     setMessages([]);
     setIsTyping(false);
     setIsOpen(true);
+    setActiveTopic(null);
   }
 
   return (
