@@ -136,16 +136,16 @@ export function AIChatBlock({
                       aria-pressed={selectedTag === label}
                       onClick={() => handleTagClick(label)}
                       className={[
-                        "group flex h-8 items-center justify-center gap-1 rounded-full border px-3 motion-safe:transition-shadow motion-safe:duration-150",
+                        "group flex h-8 items-center justify-center gap-1 rounded-full border px-3 motion-safe:transition-[box-shadow,border-color,gap] motion-safe:duration-150",
                         selectedTag === label
                           ? "border-transparent bg-[#eef4e3]"
-                          : "border-[#eda50f] bg-white hover:border-transparent hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] focus-visible:border-transparent focus-visible:shadow-[0_4px_16px_rgba(0,0,0,0.12)]",
+                          : "border-[#eda50f] bg-white hover:border-transparent hover:gap-3 hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] focus-visible:border-transparent focus-visible:gap-3 focus-visible:shadow-[0_4px_16px_rgba(0,0,0,0.12)]",
                       ].join(" ")}
                     >
                       <span className="whitespace-nowrap text-black text-sm leading-[1.5] [font-family:var(--font-avenir-book)] group-hover:[font-family:var(--font-avenir-medium)] group-focus-visible:[font-family:var(--font-avenir-medium)]">
                         {label}
                       </span>
-                      <Icon name="chevron-right" size="sm" />
+                      <Icon name="chevron-right-sm" size="sm" />
                     </button>
                   ))}
                 </div>

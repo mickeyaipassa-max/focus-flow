@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent, type RefObject } from "react";
+import { Icon } from "@/components/Icon";
 
 export type ChatMessageData = {
   id: number;
@@ -98,7 +99,7 @@ function ChatWelcome({
         </div>
       </div>
       {showTags && (
-        <div className="flex max-w-[480px] flex-wrap gap-2" style={{ filter: "drop-shadow(0px 4px 8px rgba(0,0,0,0.12))" }}>
+        <div className="flex max-w-[480px] flex-wrap gap-2">
           {TOPIC_LABELS.map((label) => (
             <button
               key={label}
@@ -106,14 +107,16 @@ function ChatWelcome({
               aria-pressed={selectedTag === label}
               onClick={() => onTagClick(label)}
               className={[
-                "flex h-8 items-center justify-center gap-1 rounded-full py-1 pr-3 pl-2",
-                selectedTag === label ? "bg-[#eef4e3]" : "bg-white hover:bg-[#fafafa]",
+                "group flex h-8 items-center justify-center gap-1 rounded-full border px-3 motion-safe:transition-[box-shadow,border-color,gap] motion-safe:duration-150",
+                selectedTag === label
+                  ? "border-transparent bg-[#eef4e3]"
+                  : "border-[#eda50f] bg-white hover:border-transparent hover:gap-3 hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] focus-visible:border-transparent focus-visible:gap-3 focus-visible:shadow-[0_4px_16px_rgba(0,0,0,0.12)]",
               ].join(" ")}
             >
-              <img src="/icons/comment.svg" alt="" className="size-4" />
-              <span className="whitespace-nowrap text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+              <span className="whitespace-nowrap text-black text-sm leading-[1.5] [font-family:var(--font-avenir-book)] group-hover:[font-family:var(--font-avenir-medium)] group-focus-visible:[font-family:var(--font-avenir-medium)]">
                 {label}
               </span>
+              <Icon name="chevron-right-sm" size="sm" />
             </button>
           ))}
         </div>
