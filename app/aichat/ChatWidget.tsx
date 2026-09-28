@@ -235,6 +235,39 @@ export function ChatWidget({
     if (isOpen) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping, isOpen]);
 
+  /**
+   * Onder 600px is de widget `position: fixed` met een vaste 24px-marge
+   * (`inset-6`). Op mobiele browsers (met name iOS Safari) is `fixed`
+   * relatief aan de layout-viewport, niet aan wat er daadwerkelijk
+   * zichtbaar is: zodra het toetsenbord opent en de visual viewport
+   * verschuift/krimpt, kan de widget zo verschoven raken dat de header
+   * erboven uit beeld valt (gemeld door de opdrachtgever, met screenshot).
+   * `window.visualViewport` volgt wél de echte zichtbare ruimte — top/
+   * hoogte van de widget worden daarom, alleen onder 600px, expliciet
+   * daarop gebaseerd i.p.v. op de statische `inset-6`.
+   */
+  const [mobileViewportRect, setMobileViewportRect] = useState<{ top: number; height: number } | null>(null);
+  useEffect(() => {
+    if (!isOpen || typeof window === "undefined" || !window.visualViewport) return;
+    const vv = window.visualViewport;
+    function update() {
+      if (window.innerWidth >= 600) {
+        setMobileViewportRect(null);
+        return;
+      }
+      setMobileViewportRect({ top: vv.offsetTop + 24, height: vv.height - 48 });
+    }
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    window.addEventListener("resize", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [isOpen]);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) setMenuOpen(false);
@@ -288,6 +321,7 @@ export function ChatWidget({
           opacity: isLeaving ? 0 : 1,
           transform: `translateY(calc(var(--y-base) + ${isLeaving ? "16px" : "0px"}))`,
           transition: "opacity 200ms ease-out, transform 200ms ease-out",
+          ...(mobileViewportRect ? { top: mobileViewportRect.top, bottom: "auto", height: mobileViewportRect.height } : {}),
         }}
       >
         {/* Header — relative + menuRef hier i.p.v. op de kleine knop-wrapper: het menu moet 24px minder breed zijn dan de widget aan beide kanten (op verzoek van de opdrachtgever). `left-0 right-0` bleek verkeerd — dat sluit aan op de PADDING-box van deze relative ouder, wat gelijk is aan de widget's eigen buitenrand (0px inset, want de header heeft zelf geen marge, alleen interne p-6). `left-6 right-6` (24px) is daarom nodig om echt 24px van de widget-rand af te blijven. */}
