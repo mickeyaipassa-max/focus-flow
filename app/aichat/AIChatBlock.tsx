@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type KeyboardEvent, type RefObject } from "react";
 import { Button } from "@/components/Button";
+import { Icon } from "@/components/Icon";
 
 const TOPIC_LABELS = ["Vergoedingen", "Eigen risico", "Collectieve zorg", "Contact met a.s.r.", "Zorg voor kinderen", "Voorwaarden"];
 
@@ -117,7 +118,17 @@ export function AIChatBlock({
               </p>
               {/* Volgorde en gap bevestigd via Figma (node 27:5854, "Frame 2609921"): tags staan nu bóven de invoerrij, gap 16px — het losse label "Typ je vraag of kies een onderwerp" dat hier eerder boven de textarea stond, is uit het ontwerp verwijderd en leeft nu alleen nog als `aria-label` op de textarea zelf. */}
               <div className="flex flex-col gap-4">
-                <div className="flex max-w-[480px] flex-wrap gap-2" style={{ filter: "drop-shadow(0px 4px 8px rgba(0,0,0,0.12))" }}>
+                {/*
+                  Pil-redesign bevestigd via Figma (node 67:14962, states "Default" en
+                  "Hover/Focus"): icoon verplaatst van vóór naar ná het label (chevron-right
+                  i.p.v. comment), rust-state heeft een oranje rand (color/yellow-500,
+                  #eda50f) i.p.v. de vroegere permanente schaduw, hover/focus krijgt een
+                  zachtere schaduw (0 4px 16px, 12% zwart) + vetter lettergewicht i.p.v. de
+                  rand. Contrast van die rand tegen de crème sectie-achtergrond is
+                  onder de 3:1 van WCAG 1.4.11 (gemeten ~1,98:1) — opdrachtgever heeft dit
+                  expliciet gezien en gevraagd om 'm zo te houden.
+                */}
+                <div className="flex max-w-[480px] flex-wrap gap-2">
                   {TOPIC_LABELS.map((label) => (
                     <button
                       key={label}
@@ -125,14 +136,16 @@ export function AIChatBlock({
                       aria-pressed={selectedTag === label}
                       onClick={() => handleTagClick(label)}
                       className={[
-                        "flex h-8 items-center justify-center gap-1 rounded-full py-1 pr-3 pl-2",
-                        selectedTag === label ? "bg-[#eef4e3]" : "bg-white hover:bg-[#fafafa]",
+                        "group flex h-8 items-center justify-center gap-1 rounded-full border px-3 motion-safe:transition-shadow motion-safe:duration-150",
+                        selectedTag === label
+                          ? "border-transparent bg-[#eef4e3]"
+                          : "border-[#eda50f] bg-white hover:border-transparent hover:shadow-[0_4px_16px_rgba(0,0,0,0.12)] focus-visible:border-transparent focus-visible:shadow-[0_4px_16px_rgba(0,0,0,0.12)]",
                       ].join(" ")}
                     >
-                      <img src="/icons/comment.svg" alt="" className="size-4" />
-                      <span className="whitespace-nowrap text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+                      <span className="whitespace-nowrap text-black text-sm leading-[1.5] [font-family:var(--font-avenir-book)] group-hover:[font-family:var(--font-avenir-medium)] group-focus-visible:[font-family:var(--font-avenir-medium)]">
                         {label}
                       </span>
+                      <Icon name="chevron-right" size="sm" />
                     </button>
                   ))}
                 </div>
