@@ -173,7 +173,7 @@ export function AIChatBlock({
                     className="flex h-[45px] w-[51px] shrink-0 items-center justify-center gap-2 rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] hover:border hover:border-b hover:border-[#f0b335] hover:bg-[#f0b335] min-[600px]:h-[51px] min-[600px]:w-auto min-[600px]:whitespace-nowrap min-[600px]:px-6"
                     style={{ fontFamily: "var(--font-avenir-medium)", fontWeight: 550 }}
                   >
-                    <img src="/icons/send.svg" alt="" className="size-6 min-[600px]:hidden" />
+                    <img src="/icons/send-black.svg" alt="" className="size-6 min-[600px]:hidden" />
                     <span className="hidden text-black text-lg leading-[1.5] min-[600px]:inline">Start je gesprek</span>
                   </button>
                 </div>
