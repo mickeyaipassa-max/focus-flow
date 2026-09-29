@@ -54,7 +54,7 @@ function ChatMessage({ message, showAvatar }: { message: ChatMessageData; showAv
   if (message.role === "user") {
     return (
       <div className="flex justify-end pl-6">
-        <div className="max-w-[80%] rounded-md bg-[#eef4e3] px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
+        <div className="max-w-full rounded-md bg-[#eef4e3] px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
           <p className="break-words text-right text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
             <span className="sr-only">Jij zei: </span>
             {message.text}
@@ -67,7 +67,7 @@ function ChatMessage({ message, showAvatar }: { message: ChatMessageData; showAv
   return (
     <div className="flex flex-col items-start gap-2 pr-6">
       {showAvatar && <AssistantAvatar />}
-      <div className="max-w-[80%] rounded-md bg-white px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
+      <div className="max-w-full rounded-md bg-white px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
         <p className="break-words text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
           <span className="sr-only">AI-assistent zei: </span>
           {message.text}
@@ -90,7 +90,7 @@ function ChatWelcome({
     <div className="flex w-full flex-col gap-4">
       <div className="flex w-full flex-col items-start gap-2 pr-6">
         <AssistantAvatar />
-        <div className="max-w-[80%] rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
+        <div className="max-w-full rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
           <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
             <span className="sr-only">AI-assistent zei: </span>
             Hallo, ik ben de AI-assistent van a.s.r. Ik kan je snel helpen. En anders stuur ik je door naar de juiste persoon. Waar gaat je
