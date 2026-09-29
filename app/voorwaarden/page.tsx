@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { AnchorTiles } from "@/components/AnchorTiles";
@@ -8,15 +8,22 @@ import { Select } from "@/components/Select";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { LinkList } from "@/components/LinkList";
+import { FileList } from "@/components/FileList";
 import { Accordion } from "@/components/Accordion";
+import { Icon } from "@/components/Icon";
 import { CardContact, CardContactCollage } from "@/components/CardContact";
 import { Footer, type FooterColumn } from "@/components/Footer";
 
 /**
- * De 7 echte verzekeringstypes, bevestigd via screenshot van de
- * opdrachtgever (een aparte lijst-weergave met schild-icoon + modelnummer
- * per rij). Alleen het label gaat in deze Select — icoon en modelnummer
- * horen daar expliciet niet in, op verzoek van de opdrachtgever.
+ * Bevestigd via screenshot van de opdrachtgever (een aparte lijst-weergave
+ * met schild-icoon + modelnummer per rij) én, na verificatie tegen de live
+ * a.s.r.-pagina die deze build vervangt, gecorrigeerd op twee punten:
+ * "Overgenomen Aegon-polissen" bestond niet als los keuze-item (Aegon-
+ * polissen horen alleen bij de wijzigingsoverzichten, niet in deze Select),
+ * en "Niet meer nieuw af te sluiten" was op de live site geen eigen keuze
+ * maar een kopje boven 4 losse producten — die 4 staan er nu voor in de
+ * plaats. `Select` ondersteunt geen gegroepeerde/geneste opties (geen
+ * Figma-precedent daarvoor), dus blijft dit bewust een platte lijst.
  */
 const VERZEKERING_OPTIONS = [
   { value: "aov", label: "AOV" },
@@ -24,22 +31,128 @@ const VERZEKERING_OPTIONS = [
   { value: "aov-2-5", label: "AOV 2.5" },
   { value: "langer-mee-aov", label: "Langer mee AOV" },
   { value: "wia-excedent", label: "WIA Excedent" },
-  { value: "overgenomen-aegon-polissen", label: "Overgenomen Aegon-polissen" },
-  { value: "niet-meer-nieuw-af-te-sluiten", label: "Niet meer nieuw af te sluiten" },
+  { value: "vaste-lasten-wia-volgend", label: "Vaste lasten WIA volgend" },
+  { value: "woonlastenverzekering", label: "Woonlastenverzekering" },
+  { value: "premie-terug-aov", label: "Premie Terug AOV" },
+  { value: "ongevallen-en-ernstige-aandoeningen", label: "Ongevallen en ernstige aandoeningen" },
 ];
 
+/** Gecorrigeerd van 7 naar de echte 6 items — "Vaste lasten AOV WIA Volgend" stond er ten onrechte bij; dat product hoort bij het "niet meer nieuw af te sluiten"-kopje, niet bij verzekeringskaarten. */
 const VERZEKERINGSKAARTEN = [
   { label: "AOV", href: "#" },
   { label: "AOV 2.5", href: "#" },
   { label: "Flexibele AOV", href: "#" },
-  { label: "Vaste lasten AOV WIA Volgend", href: "#" },
   { label: "Langer mee AOV", href: "#" },
   { label: "AOV vangnet", href: "#" },
   { label: "WIA Excedent", href: "#" },
 ];
 
-/** "Moedel 232/233/234" letterlijk uit Figma overgenomen — vermoedelijke tikfout (i.p.v. "Model"), bewust niet stilzwijgend gecorrigeerd; nog te bevestigen. */
-const OUDERE_MODELLEN = ["Moedel 232", "Moedel 233", "Moedel 234", "Oudere modellen t/m 220", "Aegon modellen"];
+/**
+ * Het modelnummer van de huidige/nieuwste voorwaarden — bevestigd via
+ * Figma's voorbeeld (het ingevulde "211" leidt tot verwijzingen naar
+ * "model 231" als de huidige voorwaarden). Vast, want er is geen echte
+ * achterliggende data — zelfde soort gemockte constante als elders in dit
+ * project (bv. /aichat's canned antwoorden).
+ */
+const HUIDIG_MODEL = "231";
+
+type ModelHistoryItem = { modelnummer: string; children?: string[] };
+type WijzigingsGroup = { title: string; items: ModelHistoryItem[] };
+
+/**
+ * Vervangt de eerdere Figma-placeholder ("Moedel 232/233/234, Oudere
+ * modellen t/m 220, Aegon modellen") door de echte structuur, geëxtraheerd
+ * van de live pagina die deze build moet verbeteren
+ * (asr.nl/arbeidsongeschiktheidsverzekering/overzicht-voorwaarden-en-vergoedingen).
+ * Geen platte lijst: sommige oude modellen (221, 222, 223, 224) zijn zelf
+ * weer een tussenstap met eigen oudere voorgangers — vandaar `children`,
+ * genest gerenderd als een Accordion-in-Accordion i.p.v. platgeslagen.
+ */
+const WIJZIGINGSOVERZICHTEN: WijzigingsGroup[] = [
+  {
+    title: "Wijzigingsoverzichten naar AOV-model 231",
+    items: [
+      {
+        modelnummer: "221",
+        children: ["211", "198", "193", "188", "184", "183", "179", "175", "168", "167", "166", "164", "156", "1", "B64", "F76"],
+      },
+      { modelnummer: "211" },
+      { modelnummer: "198" },
+      { modelnummer: "193" },
+      { modelnummer: "188" },
+      { modelnummer: "1FU" },
+    ],
+  },
+  {
+    title: "Wijzigingsoverzichten naar AOV-model 232",
+    items: [
+      { modelnummer: "222", children: ["212", "195", "194", "190", "187"] },
+      { modelnummer: "212" },
+      { modelnummer: "195" },
+      { modelnummer: "194" },
+      { modelnummer: "190" },
+    ],
+  },
+  {
+    title: "Wijzigingsoverzichten naar AOV-model 233",
+    items: [{ modelnummer: "223", children: ["215", "196", "189", "186"] }, { modelnummer: "215" }],
+  },
+  {
+    title: "Wijzigingsoverzichten naar AOV-model 234",
+    items: [{ modelnummer: "224", children: ["216", "197", "192"] }, { modelnummer: "216" }],
+  },
+  {
+    title: "Aegon – volledige AOV en AOV met uitsluiting psychische klachten",
+    items: [{ modelnummer: "1422" }, { modelnummer: "1439" }, { modelnummer: "1449" }, { modelnummer: "1450" }, { modelnummer: "1475" }],
+  },
+  {
+    title: "Aegon – AOV Ongevallen en ernstige aandoeningen",
+    items: [{ modelnummer: "1422" }, { modelnummer: "1439" }, { modelnummer: "1449" }, { modelnummer: "1450" }, { modelnummer: "1475" }],
+  },
+  {
+    title: "Aegon – AOV Ongevallen",
+    items: [{ modelnummer: "1422" }, { modelnummer: "1439" }, { modelnummer: "1449" }, { modelnummer: "1450" }, { modelnummer: "1475" }],
+  },
+];
+
+function ModelLink({ modelnummer }: { modelnummer: string }) {
+  return (
+    <a href="#" className="flex items-center gap-2 py-1">
+      <Icon name="chevron-right" size="sm" />
+      <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
+        Wijzigingen modelnummer {modelnummer}
+      </span>
+    </a>
+  );
+}
+
+function ModelHistoryList({ items }: { items: ModelHistoryItem[] }) {
+  return (
+    <div className="flex flex-col gap-1 pl-4">
+      {items.map((item) =>
+        item.children ? (
+          <Accordion
+            key={item.modelnummer}
+            items={[
+              {
+                title: `Wijzigingen modelnummer ${item.modelnummer}`,
+                content: (
+                  <div className="flex flex-col gap-1 pl-4">
+                    {item.children.map((child) => (
+                      <ModelLink key={child} modelnummer={child} />
+                    ))}
+                  </div>
+                ),
+              },
+            ]}
+          />
+        ) : (
+          <ModelLink key={item.modelnummer} modelnummer={item.modelnummer} />
+        ),
+      )}
+    </div>
+  );
+}
 
 const FOOTER_COLUMNS: FooterColumn[] = [
   { title: "Klantenservice", links: ["Inloggen", "Schade melden", "Gegevens wijzigen", "Financieel advies", "Onze apps", "Contact"] },
@@ -59,6 +172,15 @@ const FOOTER_COLUMNS: FooterColumn[] = [
 export default function VoorwaardenPage() {
   const [verzekering, setVerzekering] = useState("");
   const [modelnummer, setModelnummer] = useState("");
+  const [result, setResult] = useState<{ verzekeringLabel: string; modelnummer: string } | null>(null);
+
+  const verzekeringLabel = VERZEKERING_OPTIONS.find((option) => option.value === verzekering)?.label ?? "";
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!verzekeringLabel || !modelnummer.trim()) return;
+    setResult({ verzekeringLabel, modelnummer: modelnummer.trim() });
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start bg-white">
@@ -108,7 +230,7 @@ export default function VoorwaardenPage() {
                 </p>
               </div>
 
-              <form className="flex flex-col items-start gap-6" onSubmit={(event) => event.preventDefault()}>
+              <form className="flex flex-col items-start gap-6" onSubmit={handleSubmit}>
                 <Select
                   labelText="Welke verzekering heb je?"
                   options={VERZEKERING_OPTIONS}
@@ -131,6 +253,73 @@ export default function VoorwaardenPage() {
                   Toon mijn voorwaarden
                 </Button>
               </form>
+
+              {/*
+                Resultaat na versturen — Figma (node 2026:9459) toont dit
+                blok, ongewijzigd van vorm, direct onder het formulier bínnen
+                dezelfde crème sectie (geen aparte pagina/sectie). "model
+                231" (HUIDIG_MODEL) is een vaste, gemockte waarde: er is geen
+                echte achterliggende data over welk model daadwerkelijk het
+                nieuwste is.
+              */}
+              {result && (
+                <div className="flex w-full flex-col gap-12 rounded-md bg-white p-6 shadow-[0px_4px_8px_rgba(0,0,0,0.12)] min-[600px]:p-10">
+                  <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-2">
+                      <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                        {result.verzekeringLabel} model {result.modelnummer}
+                      </h2>
+                      <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                        Dit zijn de voorwaarden en wijzigingen die bij dit model horen.
+                      </p>
+                    </div>
+                    <FileList
+                      items={[
+                        {
+                          title: `Polisvoorwaarden model ${result.modelnummer}`,
+                          description: "Dit zijn de voorwaarden die gelden voor jouw verzekering.",
+                          href: "#",
+                        },
+                        {
+                          title: `Wijzigingen van model ${result.modelnummer} naar huidige voorwaarden`,
+                          description: `Bekijk welke belangrijke wijzigingen er zijn ten opzichte van de huidige voorwaarden (model ${HUIDIG_MODEL}).`,
+                          href: "#",
+                        },
+                      ]}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-2">
+                      <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                        De nieuwste voorwaarden en documenten
+                      </h2>
+                      <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                        Bekijk de meest recente voorwaarden, verzekeringskaart en vergelijkingskaart van de {result.verzekeringLabel}.
+                      </p>
+                    </div>
+                    <FileList
+                      items={[
+                        {
+                          title: `Polisvoorwaarden model ${HUIDIG_MODEL}`,
+                          description: "Dit zijn de voorwaarden die gelden voor jouw verzekering.",
+                          href: "#",
+                        },
+                        {
+                          title: `Verzekeringskaart ${result.verzekeringLabel}`,
+                          description: `Bekijk welke belangrijke wijzigingen er zijn ten opzichte van de huidige voorwaarden (model ${HUIDIG_MODEL}).`,
+                          href: "#",
+                        },
+                        {
+                          title: `Vergelijkingskaart ${result.verzekeringLabel}`,
+                          description:
+                            "Sluit je zelf een AOV af? Dan betaal je eenmalige afsluitkosten en bij de Flexibele AOV ook jaarlijkse onderhoudskosten. Bekijk de kosten en onze dienstverlening in de vergelijkingskaart.",
+                          href: "#",
+                        },
+                      ]}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -160,13 +349,18 @@ export default function VoorwaardenPage() {
             <div className="flex max-w-[800px] flex-col gap-4 min-[600px]:gap-6">
               <div className="flex flex-col gap-2">
                 <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                  Alle eerdere modellen
+                  Wijzigingsoverzichten
                 </h2>
                 <p className="max-w-[880px] text-black text-sm leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  Zoek je voorwaarden van een ouder model? Bekijk de volledige lijst met historische modellen.
+                  Klik op de versie met je oude modelnummer en je ziet wat de belangrijkste wijzigingen zijn ten opzichte van het nieuwe modelnummer.
                 </p>
               </div>
-              <Accordion items={OUDERE_MODELLEN.map((title) => ({ title }))} />
+              <Accordion
+                items={WIJZIGINGSOVERZICHTEN.map((group) => ({
+                  title: group.title,
+                  content: <ModelHistoryList items={group.items} />,
+                }))}
+              />
             </div>
           </div>
         </section>
@@ -186,9 +380,9 @@ export default function VoorwaardenPage() {
               <CardContactCollage>
                 <CardContact
                   title="Telefoon"
-                  availability="Availability"
+                  availability="Werkdagen van 8.30 tot 17.30 uur"
                   actionIcon="phone"
-                  actionLabel="(0800) 00 00 000"
+                  actionLabel="(030) 278 03 35"
                   className="flex min-w-px flex-1 flex-col items-start gap-8 self-stretch rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-6"
                 />
                 <CardContact
