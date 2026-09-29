@@ -211,7 +211,7 @@ export function ChatWidget({
   returnFocusOnMinimize,
   returnFocusOnClose,
 }: ChatWidgetProps) {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesLogRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
@@ -231,40 +231,46 @@ export function ChatWidget({
     }
   }, [isOpen, visible]);
 
+  /**
+   * `scrollTop` rechtstreeks op het berichtenvak i.p.v. `scrollIntoView()`
+   * op een sentinel-element onderaan: `scrollIntoView()` mag zelf kiezen
+   * welke scrollbare voorouders het meeneemt, en op mobiel Safari bleek dat
+   * ook de hele pagina te zijn — in combinatie met de `position: fixed`-
+   * widget schoof die dan zichtbaar omhoog bij elk nieuw bericht (gemeld
+   * door de opdrachtgever, specifiek bij het versturen van een bericht).
+   * Direct `scrollTop` zetten op dit ene element kan nooit buiten zichzelf
+   * scrollen.
+   */
   useEffect(() => {
-    if (isOpen) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isOpen && messagesLogRef.current) {
+      messagesLogRef.current.scrollTop = messagesLogRef.current.scrollHeight;
+    }
   }, [messages, isTyping, isOpen]);
 
   /**
-   * Onder 600px is de widget `position: fixed` met een vaste 24px-marge
-   * (`inset-6`). Op mobiele browsers (met name iOS Safari) is `fixed`
-   * relatief aan de layout-viewport, niet aan wat er daadwerkelijk
-   * zichtbaar is: zodra het toetsenbord opent en de visual viewport
-   * verschuift/krimpt, kan de widget zo verschoven raken dat de header
-   * erboven uit beeld valt (gemeld door de opdrachtgever, met screenshot).
-   * `window.visualViewport` volgt wél de echte zichtbare ruimte — top/
-   * hoogte van de widget worden daarom, alleen onder 600px, expliciet
-   * daarop gebaseerd i.p.v. op de statische `inset-6`.
+   * Onder 600px is de widget een volledig-scherm-achtige popup bovenop de
+   * pagina — op verzoek van de opdrachtgever mag de achtergrond daarachter
+   * dan niet meer scrollen zolang de widget open is. `overflow: hidden` op
+   * `<body>` alleen blokkeert op iOS Safari geen touch-scroll; de bekende
+   * werkende aanpak is `<body>` zelf `position: fixed` maken op de huidige
+   * scrollpositie (visueel blijft de pagina zo op zijn plek) en die bij het
+   * sluiten weer terugzetten.
    */
-  const [mobileViewportRect, setMobileViewportRect] = useState<{ top: number; height: number } | null>(null);
   useEffect(() => {
-    if (!isOpen || typeof window === "undefined" || !window.visualViewport) return;
-    const vv = window.visualViewport;
-    function update() {
-      if (window.innerWidth >= 600) {
-        setMobileViewportRect(null);
-        return;
-      }
-      setMobileViewportRect({ top: vv.offsetTop + 24, height: vv.height - 48 });
-    }
-    update();
-    vv.addEventListener("resize", update);
-    vv.addEventListener("scroll", update);
-    window.addEventListener("resize", update);
+    if (!isOpen || typeof window === "undefined" || window.innerWidth >= 600) return;
+    const scrollY = window.scrollY;
+    const { body } = document;
+    const original = { position: body.style.position, top: body.style.top, left: body.style.left, right: body.style.right };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
     return () => {
-      vv.removeEventListener("resize", update);
-      vv.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      body.style.position = original.position;
+      body.style.top = original.top;
+      body.style.left = original.left;
+      body.style.right = original.right;
+      window.scrollTo(0, scrollY);
     };
   }, [isOpen]);
 
@@ -297,9 +303,10 @@ export function ChatWidget({
 
   if (!visible) return null;
 
-  // Onder 600px voelt de widget als een echte popup: inset-6 (24px marge rondom) i.p.v. een vaste breedte/hoogte, met een donkere overlay erachter die de chat sluit bij een klik — bevestigd via Figma's mobiele "chat open"-frame plus expliciete aanvulling van de opdrachtgever (24px marge + scrim, i.p.v. Figma's eigen 11px/10px-marges zonder overlay).
+  // Onder 600px voelt de widget als een echte popup: 24px marge rondom, met een donkere overlay erachter die de chat sluit bij een klik — bevestigd via Figma's mobiele "chat open"-frame plus expliciete aanvulling van de opdrachtgever (24px marge + scrim, i.p.v. Figma's eigen 11px/10px-marges zonder overlay).
+  // Onder 600px expliciet `bottom-6` + `h-[calc(100dvh-48px)]` i.p.v. `inset-6` (top+bottom): op mobiele browsers (met name iOS Safari) verschuift een `position: fixed`-element met een vaste `top` mee met de layout-viewport i.p.v. de zichtbare visual viewport, waardoor de widget bij een openend toetsenbord van zijn plek kon schuiven (gemeld door de opdrachtgever, met screenshots — "moet altijd tegen de onderkant blijven staan"). Door i.p.v. `top` te verankeren aan `bottom` en de hoogte via `dvh` (die het toetsenbord al meeneemt, zoals ook bij de bredere breakpoints hieronder) te laten krimpen, blijft de onderkant altijd op zijn plek en groeit de widget vanaf de bovenkant mee — puur CSS, geen JS-workaround nodig (een eerdere versie deed dit via `window.visualViewport`-tracking in JS, wat in de praktijk juist een steeds verdere verschuiving veroorzaakte).
   // Vanaf 600px de bestaande, per breakpoint variërende positionering: breedte/rechtermarge 400px/60px tussen 900-1199px, 480px/64px tussen 1200-1439px, 528px/120px vanaf 1440px; verticaal gecentreerd (top-1/2 + translateY(-50%)) met een marge boven/onder van 24px tussen 900-1199px, 40px tussen 1200-1439px, 80px vanaf 1440px.
-  // `--y-base` is 0 op mobiel (inset-6 bepaalt de positie al volledig) en -50% vanaf 600px (voor de top-1/2-centrering) — zo hoeft de leave-animatie in de inline style niet los per breakpoint te vertakken.
+  // `--y-base` is 0 op mobiel (bottom-6 + vaste hoogte bepaalt de positie al volledig) en -50% vanaf 600px (voor de top-1/2-centrering) — zo hoeft de leave-animatie in de inline style niet los per breakpoint te vertakken.
   return (
     <>
       <div
@@ -315,13 +322,12 @@ export function ChatWidget({
         role="dialog"
         aria-label="AI-assistent van a.s.r."
         aria-modal="false"
-        className="fixed inset-6 z-50 flex flex-col overflow-hidden rounded-md bg-[#fff8e3] [--y-base:0] min-[600px]:inset-auto min-[600px]:top-1/2 min-[600px]:right-16 min-[600px]:h-[653px] min-[600px]:w-[480px] min-[600px]:max-h-[calc(100dvh-80px)] min-[600px]:[--y-base:-50%] min-[900px]:right-[60px] min-[900px]:max-h-[calc(100dvh-48px)] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:max-h-[calc(100dvh-80px)] min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:max-h-[calc(100dvh-160px)] min-[1440px]:w-[528px]"
+        className="fixed inset-x-6 bottom-6 h-[calc(100dvh-48px)] z-50 flex flex-col overflow-hidden rounded-md bg-[#fff8e3] [--y-base:0] min-[600px]:inset-auto min-[600px]:bottom-auto min-[600px]:top-1/2 min-[600px]:right-16 min-[600px]:h-[653px] min-[600px]:w-[480px] min-[600px]:max-h-[calc(100dvh-80px)] min-[600px]:[--y-base:-50%] min-[900px]:right-[60px] min-[900px]:max-h-[calc(100dvh-48px)] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:max-h-[calc(100dvh-80px)] min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:max-h-[calc(100dvh-160px)] min-[1440px]:w-[528px]"
         style={{
           boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
           opacity: isLeaving ? 0 : 1,
           transform: `translateY(calc(var(--y-base) + ${isLeaving ? "16px" : "0px"}))`,
           transition: "opacity 200ms ease-out, transform 200ms ease-out",
-          ...(mobileViewportRect ? { top: mobileViewportRect.top, bottom: "auto", height: mobileViewportRect.height } : {}),
         }}
       >
         {/* Header — relative + menuRef hier i.p.v. op de kleine knop-wrapper: het menu moet 24px minder breed zijn dan de widget aan beide kanten (op verzoek van de opdrachtgever). `left-0 right-0` bleek verkeerd — dat sluit aan op de PADDING-box van deze relative ouder, wat gelijk is aan de widget's eigen buitenrand (0px inset, want de header heeft zelf geen marge, alleen interne p-6). `left-6 right-6` (24px) is daarom nodig om echt 24px van de widget-rand af te blijven. */}
@@ -439,7 +445,13 @@ export function ChatWidget({
           blijft staan als bestaand, compatibiliteits-idioom en verandert niets aan het
           al geverifieerde aankondigingsgedrag.
         */}
-        <div role="log" aria-label="Gespreksberichten" aria-live="polite" className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-6">
+        <div
+          ref={messagesLogRef}
+          role="log"
+          aria-label="Gespreksberichten"
+          aria-live="polite"
+          className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto scroll-smooth p-6"
+        >
           <ChatWelcome onTagClick={handleTagClick} selectedTag={selectedTag} showTags={!hasMessages} />
           {messages.map((message, index) => {
             const previous = messages[index - 1];
@@ -447,7 +459,6 @@ export function ChatWidget({
             return <ChatMessage key={message.id} message={message} showAvatar={showAvatar} />;
           })}
           {isTyping && <TypingIndicator />}
-          <div ref={messagesEndRef} />
         </div>
 
         <ChatInput onSend={onSend} />
