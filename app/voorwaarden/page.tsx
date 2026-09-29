@@ -56,100 +56,49 @@ const VERZEKERINGSKAARTEN = [
  */
 const HUIDIG_MODEL = "231";
 
-type ModelHistoryItem = { modelnummer: string; children?: string[] };
-type WijzigingsGroup = { title: string; items: ModelHistoryItem[] };
+type WijzigingsGroup = { title: string; modelnummers: string[] };
 
 /**
  * Vervangt de eerdere Figma-placeholder ("Moedel 232/233/234, Oudere
  * modellen t/m 220, Aegon modellen") door de echte structuur, geëxtraheerd
  * van de live pagina die deze build moet verbeteren
  * (asr.nl/arbeidsongeschiktheidsverzekering/overzicht-voorwaarden-en-vergoedingen).
- * Geen platte lijst: sommige oude modellen (221, 222, 223, 224) zijn zelf
- * weer een tussenstap met eigen oudere voorgangers — vandaar `children`,
- * genest gerenderd als een Accordion-in-Accordion i.p.v. platgeslagen.
+ * De live pagina toont "naar AOV-model 221/222/223/224" zelf ook al als
+ * 4 eigen, losse top-level groepen (niet genest onder 231/232/233/234) —
+ * dus 11 platte groepen in totaal, elk met een eigen accordion-item, i.p.v.
+ * een accordion-in-accordion.
  */
 const WIJZIGINGSOVERZICHTEN: WijzigingsGroup[] = [
+  { title: "Wijzigingsoverzichten naar AOV-model 231", modelnummers: ["221", "211", "198", "193", "188", "1FU"] },
+  { title: "Wijzigingsoverzichten naar AOV-model 232", modelnummers: ["222", "212", "195", "194", "190"] },
+  { title: "Wijzigingsoverzichten naar AOV-model 233", modelnummers: ["223", "215"] },
+  { title: "Wijzigingsoverzichten naar AOV-model 234", modelnummers: ["224", "216"] },
   {
-    title: "Wijzigingsoverzichten naar AOV-model 231",
-    items: [
-      {
-        modelnummer: "221",
-        children: ["211", "198", "193", "188", "184", "183", "179", "175", "168", "167", "166", "164", "156", "1", "B64", "F76"],
-      },
-      { modelnummer: "211" },
-      { modelnummer: "198" },
-      { modelnummer: "193" },
-      { modelnummer: "188" },
-      { modelnummer: "1FU" },
-    ],
+    title: "Wijzigingsoverzichten naar AOV-model 221",
+    modelnummers: ["211", "198", "193", "188", "184", "183", "179", "175", "168", "167", "166", "164", "156", "1", "B64", "F76"],
   },
-  {
-    title: "Wijzigingsoverzichten naar AOV-model 232",
-    items: [
-      { modelnummer: "222", children: ["212", "195", "194", "190", "187"] },
-      { modelnummer: "212" },
-      { modelnummer: "195" },
-      { modelnummer: "194" },
-      { modelnummer: "190" },
-    ],
-  },
-  {
-    title: "Wijzigingsoverzichten naar AOV-model 233",
-    items: [{ modelnummer: "223", children: ["215", "196", "189", "186"] }, { modelnummer: "215" }],
-  },
-  {
-    title: "Wijzigingsoverzichten naar AOV-model 234",
-    items: [{ modelnummer: "224", children: ["216", "197", "192"] }, { modelnummer: "216" }],
-  },
+  { title: "Wijzigingsoverzichten naar Flexibele AOV-model 222", modelnummers: ["212", "195", "194", "190", "187"] },
   {
     title: "Aegon – volledige AOV en AOV met uitsluiting psychische klachten",
-    items: [{ modelnummer: "1422" }, { modelnummer: "1439" }, { modelnummer: "1449" }, { modelnummer: "1450" }, { modelnummer: "1475" }],
+    modelnummers: ["1422", "1439", "1449", "1450", "1475"],
   },
-  {
-    title: "Aegon – AOV Ongevallen en ernstige aandoeningen",
-    items: [{ modelnummer: "1422" }, { modelnummer: "1439" }, { modelnummer: "1449" }, { modelnummer: "1450" }, { modelnummer: "1475" }],
-  },
-  {
-    title: "Aegon – AOV Ongevallen",
-    items: [{ modelnummer: "1422" }, { modelnummer: "1439" }, { modelnummer: "1449" }, { modelnummer: "1450" }, { modelnummer: "1475" }],
-  },
+  { title: "Aegon – AOV Ongevallen en ernstige aandoeningen", modelnummers: ["1422", "1439", "1449", "1450", "1475"] },
+  { title: "Aegon – AOV Ongevallen", modelnummers: ["1422", "1439", "1449", "1450", "1475"] },
+  { title: "Wijzigingsoverzichten naar AOV 2.5 model 223", modelnummers: ["215", "196", "189", "186"] },
+  { title: "Wijzigingsoverzichten naar de Langer mee AOV-model 224", modelnummers: ["216", "197", "192"] },
 ];
 
-function ModelLink({ modelnummer }: { modelnummer: string }) {
-  return (
-    <a href="#" className="flex items-center gap-2 py-1">
-      <Icon name="chevron-right" size="sm" />
-      <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
-        Wijzigingen modelnummer {modelnummer}
-      </span>
-    </a>
-  );
-}
-
-function ModelHistoryList({ items }: { items: ModelHistoryItem[] }) {
+function ModelHistoryList({ modelnummers }: { modelnummers: string[] }) {
   return (
     <div className="flex flex-col gap-1 pl-4">
-      {items.map((item) =>
-        item.children ? (
-          <Accordion
-            key={item.modelnummer}
-            items={[
-              {
-                title: `Wijzigingen modelnummer ${item.modelnummer}`,
-                content: (
-                  <div className="flex flex-col gap-1 pl-4">
-                    {item.children.map((child) => (
-                      <ModelLink key={child} modelnummer={child} />
-                    ))}
-                  </div>
-                ),
-              },
-            ]}
-          />
-        ) : (
-          <ModelLink key={item.modelnummer} modelnummer={item.modelnummer} />
-        ),
-      )}
+      {modelnummers.map((modelnummer) => (
+        <a key={modelnummer} href="#" className="flex items-center gap-2 py-1">
+          <Icon name="chevron-right" size="sm" />
+          <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
+            Wijzigingen modelnummer {modelnummer}
+          </span>
+        </a>
+      ))}
     </div>
   );
 }
@@ -358,7 +307,7 @@ export default function VoorwaardenPage() {
               <Accordion
                 items={WIJZIGINGSOVERZICHTEN.map((group) => ({
                   title: group.title,
-                  content: <ModelHistoryList items={group.items} />,
+                  content: <ModelHistoryList modelnummers={group.modelnummers} />,
                 }))}
               />
             </div>
