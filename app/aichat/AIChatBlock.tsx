@@ -150,7 +150,14 @@ export function AIChatBlock({
                   ))}
                 </div>
                 <div className="flex w-full items-center gap-2">
-                  {/* Hoogte 45px en tekst 14px onder 600px, terug naar 51px/16px vanaf 600px — bevestigd via Figma's mobiele frame (node 56:9289). */}
+                  {/*
+                    Hoogte 45px en tekst 14px onder 600px, terug naar 51px/16px vanaf 600px — bevestigd via
+                    Figma's mobiele frame (node 56:9289). Beide +4px (49px/52px in de className): bij de
+                    Figma-waarden zelf was er al te weinig ruimte voor 13px padding + 1px rand + de
+                    regelhoogte van de tekst (17px beschikbaar tegen 21px nodig onder 600px, 23px tegen 24px
+                    nodig erboven) — dat gaf een permanente scrollbar in het lege veld, ook zonder focus.
+                    Dezelfde bug als eerst in `ChatWidget.tsx`'s `ChatInput` zat.
+                  */}
                   <textarea
                     aria-label="Typ je vraag of kies een onderwerp"
                     value={inputValue}
@@ -158,7 +165,7 @@ export function AIChatBlock({
                     onKeyDown={handleKeyDown}
                     placeholder="Je vraag of bericht..."
                     rows={1}
-                    className="h-[45px] min-w-0 flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-sm leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black min-[600px]:h-[51px] min-[600px]:text-base"
+                    className="h-[49px] min-w-0 flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-sm leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black min-[600px]:h-[52px] min-[600px]:text-base"
                     style={{ fontFamily: "var(--font-avenir-book)" }}
                   />
                   {/*
@@ -170,7 +177,7 @@ export function AIChatBlock({
                     type="button"
                     onClick={handleStart}
                     aria-label="Start je gesprek"
-                    className="flex h-[45px] w-[51px] shrink-0 items-center justify-center gap-2 rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] hover:border hover:border-b hover:border-[#f0b335] hover:bg-[#f0b335] min-[600px]:h-[51px] min-[600px]:w-auto min-[600px]:whitespace-nowrap min-[600px]:px-6"
+                    className="flex h-[49px] w-[51px] shrink-0 items-center justify-center gap-2 rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] hover:border hover:border-b hover:border-[#f0b335] hover:bg-[#f0b335] min-[600px]:h-[52px] min-[600px]:w-auto min-[600px]:whitespace-nowrap min-[600px]:px-6"
                     style={{ fontFamily: "var(--font-avenir-medium)", fontWeight: 550 }}
                   >
                     <img src="/icons/send-black.svg" alt="" className="size-6 min-[600px]:hidden" />
