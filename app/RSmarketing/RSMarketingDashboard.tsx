@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { campaignsByRecency } from "./campaigns";
 
 /**
- * Wachtwoord-beveiligd campagnedashboard voor RocketSourcers marketing
- * (/RSmarketing). Haalt ontvangers + opens/clicks op van twee
- * MailerLite-campagnes via /api/rs-marketing/subscribers. Port van de
- * geleverde vanilla-JS dashboard (zelfde markup/gedrag), zodat het als
- * Next.js-route in focus-flow past naast de andere klantprojecten.
+ * Wachtwoord-beveiligd, doorlopend marketingdashboard voor RocketSourcers
+ * (/RSmarketing). Elke verstuurde campagne uit ./campaigns.ts krijgt een
+ * eigen tab (nieuwste eerst), plus een "Alle campagnes"-tab die alles
+ * optelt. Haalt ontvangers + opens/clicks op per campagne-slug via
+ * /api/rs-marketing/subscribers.
  *
  * Bevat persoonsgegevens (AVG): wachtwoordgate + noindex (zie page.tsx)
  * moeten blijven staan.
@@ -15,12 +16,9 @@ import { useEffect, useMemo, useState } from "react";
 
 const API_URL = "/api/rs-marketing/subscribers";
 
-type CampaignKey = "m" | "s";
-
-const CAMPAIGNS: Record<CampaignKey, { label: string }> = {
-  m: { label: "Marjolein eerste 700" },
-  s: { label: "IT & Tech + Samantha" },
-};
+const CAMPAIGNS = campaignsByRecency();
+const CAMPAIGN_LABEL: Record<string, string> = Object.fromEntries(CAMPAIGNS.map((c) => [c.slug, c.label]));
+const CAMPAIGN_SLUGS = CAMPAIGNS.map((c) => c.slug);
 
 type Row = {
   email: string;
@@ -35,12 +33,12 @@ type FetchError = { code: "unauthorized" } | { code: "server"; message?: string 
 
 type SortKey = "name" | "opens" | "clicks";
 type FilterKey = "all" | "open" | "click";
-type CampaignFilter = "all" | CampaignKey;
+type CampaignFilter = "all" | string;
 
 const fmt = (n: number) => n.toLocaleString("nl-NL");
 
-async function fetchCampaign(key: CampaignKey, password: string, fresh: boolean) {
-  const res = await fetch(`${API_URL}?campaign=${key}${fresh ? "&fresh=1" : ""}`, {
+async function fetchCampaign(slug: string, password: string, fresh: boolean) {
+  const res = await fetch(`${API_URL}?campaign=${slug}${fresh ? "&fresh=1" : ""}`, {
     headers: { "X-Dashboard-Password": password },
   });
   if (res.status === 401) throw { code: "unauthorized" } as FetchError;
@@ -61,8 +59,8 @@ export default function RSMarketingDashboard() {
   const [pwInput, setPwInput] = useState("");
   const [pwWrong, setPwWrong] = useState(false);
 
-  const [data, setData] = useState<Record<CampaignKey, Row[] | null>>({ m: null, s: null });
-  const [errors, setErrors] = useState<Partial<Record<CampaignKey, FetchError>>>({});
+  const [data, setData] = useState<Record<string, Row[] | null>>({});
+  const [errors, setErrors] = useState<Record<string, FetchError>>({});
   const [stamp, setStamp] = useState<number | null>(null);
 
   const [campaign, setCampaign] = useState<CampaignFilter>("all");
@@ -88,7 +86,7 @@ export default function RSMarketingDashboard() {
 
   async function load(fresh: boolean) {
     await Promise.all(
-      (Object.keys(CAMPAIGNS) as CampaignKey[]).map(async (k) => {
+      CAMPAIGN_SLUGS.map(async (k) => {
         try {
           const res = await fetchCampaign(k, password, fresh);
           setData((d) => ({ ...d, [k]: res.rows }));
@@ -112,7 +110,7 @@ export default function RSMarketingDashboard() {
 
   useEffect(() => {
     if (loggedIn && password) {
-      setData({ m: null, s: null });
+      setData({});
       setErrors({});
       setStamp(null);
       load(false);
@@ -143,7 +141,7 @@ export default function RSMarketingDashboard() {
     setPwWrong(false);
   }
 
-  const keys: CampaignKey[] = campaign === "all" ? ["m", "s"] : [campaign];
+  const keys: string[] = campaign === "all" ? CAMPAIGN_SLUGS : [campaign];
   const loaded = keys.filter((k) => data[k]);
   const failed = keys.filter((k) => errors[k]);
 
@@ -192,7 +190,7 @@ export default function RSMarketingDashboard() {
     }
   }
 
-  const partial = failed.length && loaded.length ? ` · ${failed.map((k) => CAMPAIGNS[k].label).join(", ")} niet geladen` : "";
+  const partial = failed.length && loaded.length ? ` · ${failed.map((k) => CAMPAIGN_LABEL[k]).join(", ")} niet geladen` : "";
 
   if (!ready) return null;
 
@@ -228,20 +226,18 @@ export default function RSMarketingDashboard() {
           <div id="app">
             <header>
               <span className="kicker">Live campagnedashboard</span>
-              <h1>Hoeveel talent is bij jou al uit beeld?</h1>
-              <p>Ontvangers van de campagnes van 23 september, met opens en clicks per persoon. Live uit MailerLite.</p>
+              <h1>Marketingdashboard RocketSourcers</h1>
             </header>
 
             <div className="seg" role="group" aria-label="Campagne">
               <button aria-pressed={campaign === "all"} onClick={() => setCampaign("all")}>
-                Beide campagnes
+                Alle campagnes
               </button>
-              <button aria-pressed={campaign === "m"} onClick={() => setCampaign("m")}>
-                Marjolein eerste 700
-              </button>
-              <button aria-pressed={campaign === "s"} onClick={() => setCampaign("s")}>
-                IT &amp; Tech Utrecht + Lijst Samantha
-              </button>
+              {CAMPAIGNS.map((c) => (
+                <button key={c.slug} aria-pressed={campaign === c.slug} onClick={() => setCampaign(c.slug)}>
+                  {c.label}
+                </button>
+              ))}
             </div>
 
             <div className="kpis">
