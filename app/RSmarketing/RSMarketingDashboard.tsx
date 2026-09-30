@@ -199,39 +199,25 @@ export default function RSMarketingDashboard() {
   return (
     <>
       <style>{CSS}</style>
+      <div className="rsPage">
       <div className="wrap">
         {!loggedIn && (
-          <div id="login" className="panel" style={{ maxWidth: 380, margin: "60px auto", padding: 24 }}>
-            <h2 style={{ margin: "0 0 6px", fontSize: 18 }}>Inloggen</h2>
-            <p style={{ margin: "0 0 14px", color: "var(--mid)", fontSize: 14 }}>
-              Dit dashboard bevat persoonsgegevens en is beveiligd.
-            </p>
+          <div id="login" className="loginCard">
+            <span className="loginKicker">Beveiligde toegang</span>
+            <h2 className="loginTitle">Inloggen</h2>
+            <p className="loginHint">Dit dashboard bevat persoonsgegevens en is beveiligd.</p>
             <form onSubmit={handleLogin}>
               <input
+                className="loginInput"
                 type="password"
                 autoComplete="current-password"
                 placeholder="Wachtwoord"
                 aria-label="Wachtwoord"
                 value={pwInput}
                 onChange={(e) => setPwInput(e.target.value)}
-                style={{
-                  width: "100%",
-                  font: "inherit",
-                  padding: "10px 12px",
-                  border: "1px solid var(--line)",
-                  borderRadius: 8,
-                  background: "var(--bg)",
-                  color: "var(--ink)",
-                }}
               />
-              {pwWrong && (
-                <p style={{ color: "var(--bad)", fontSize: 13, margin: "8px 0 0" }}>Onjuist wachtwoord.</p>
-              )}
-              <button
-                type="submit"
-                className="refresh"
-                style={{ marginTop: 12, width: "100%", background: "var(--ink)", color: "var(--panel)", borderColor: "var(--ink)", padding: 10 }}
-              >
+              {pwWrong && <p className="loginError">Onjuist wachtwoord.</p>}
+              <button type="submit" className="loginSubmit">
                 Bekijk dashboard
               </button>
             </form>
@@ -241,6 +227,7 @@ export default function RSMarketingDashboard() {
         {loggedIn && (
           <div id="app">
             <header>
+              <span className="kicker">Live campagnedashboard</span>
               <h1>Hoeveel talent is bij jou al uit beeld?</h1>
               <p>Ontvangers van de campagnes van 23 september, met opens en clicks per persoon. Live uit MailerLite.</p>
             </header>
@@ -395,6 +382,7 @@ export default function RSMarketingDashboard() {
           </div>
         )}
       </div>
+      </div>
     </>
   );
 }
@@ -412,55 +400,68 @@ function Cell({ value, max, accent }: { value: number; max: number; accent?: boo
 
 const CSS = `
 :root{
-  --bg:#f5f6f8; --panel:#ffffff; --ink:#15213b; --mid:#667085; --line:#e4e7ec; --soft:#eef1f5;
-  --accent:#f5a623; --accent-soft:#fdf0d9; --good:#1f7a55; --bad:#b42318;
+  --bg:#f4ede0; --panel:#ffffff; --panel-alt:#f8f8f8; --ink:#1a1a1a; --mid:#6b6b6b; --line:#e6e1d8; --soft:#f4ede0;
+  --accent:#f66517; --accent-dark:#d93909; --accent-soft:#fff2e9; --good:#1f7a55; --bad:#d93909;
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){--bg:#0f1524;--panel:#171f33;--ink:#e8ecf4;--mid:#98a2b3;--line:#27314a;--soft:#1e2740;--accent-soft:#3a2f16;--good:#4ec38f;--bad:#f97066}
+  :root:not([data-theme="light"]){--bg:#17130f;--panel:#211c16;--panel-alt:#2a2319;--ink:#f5efe4;--mid:#b8ab97;--line:#3a3226;--soft:#2a2319;--accent-dark:#ff8a4c;--accent-soft:#3a2412;--good:#4ec38f;--bad:#ff6b4a}
 }
-:root[data-theme="dark"]{--bg:#0f1524;--panel:#171f33;--ink:#e8ecf4;--mid:#98a2b3;--line:#27314a;--soft:#1e2740;--accent-soft:#3a2f16;--good:#4ec38f;--bad:#f97066}
-.wrap{max-width:1040px;margin:0 auto;padding:32px 20px 48px;background:var(--bg);color:var(--ink);font-family:"Instrument Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45}
-.wrap header h1{font-size:clamp(22px,3vw,28px);margin:0 0 4px;font-weight:700}
-.wrap header p{margin:0;color:var(--mid);font-size:14px}
-.wrap .seg{display:inline-flex;background:var(--soft);border-radius:10px;padding:4px;margin:22px 0 18px;flex-wrap:wrap;gap:2px}
-.wrap .seg button{border:0;background:transparent;color:var(--mid);font:inherit;font-size:14px;font-weight:500;padding:8px 14px;border-radius:7px;cursor:pointer}
-.wrap .seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.08)}
+:root[data-theme="dark"]{--bg:#17130f;--panel:#211c16;--panel-alt:#2a2319;--ink:#f5efe4;--mid:#b8ab97;--line:#3a3226;--soft:#2a2319;--accent-dark:#ff8a4c;--accent-soft:#3a2412;--good:#4ec38f;--bad:#ff6b4a}
+.rsPage{min-height:100vh;background:var(--bg);color:var(--ink);font-family:var(--font-rs-inter),ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:48px 20px 56px;line-height:1.45}
+.wrap .kicker{display:inline-block;color:var(--accent);font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.wrap header h1{font-size:clamp(26px,3.4vw,34px);margin:0 0 6px;font-weight:900;letter-spacing:-.01em}
+.wrap header p{margin:0;color:var(--mid);font-size:14.5px}
+.wrap .loginCard{max-width:400px;margin:64px auto;padding:32px;background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 32px rgba(26,17,8,.06)}
+.wrap .loginKicker{display:block;color:var(--accent);font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.wrap .loginTitle{margin:0 0 6px;font-size:22px;font-weight:900}
+.wrap .loginHint{margin:0 0 18px;color:var(--mid);font-size:14px}
+.wrap .loginInput{width:100%;font:inherit;font-size:15px;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--panel-alt);color:var(--ink)}
+.wrap .loginError{color:var(--bad);font-size:13px;font-weight:600;margin:10px 0 0}
+.wrap .loginSubmit{margin-top:16px;width:100%;font:inherit;font-weight:700;font-size:15px;background:var(--accent);color:#fff;border:0;border-radius:999px;padding:13px;cursor:pointer;transition:background .15s}
+.wrap .loginSubmit:hover{background:var(--accent-dark)}
+.wrap .seg{display:inline-flex;background:var(--soft);border-radius:999px;padding:4px;margin:24px 0 18px;flex-wrap:wrap;gap:2px}
+.wrap .seg button{border:0;background:transparent;color:var(--mid);font:inherit;font-size:14px;font-weight:700;padding:9px 16px;border-radius:999px;cursor:pointer;transition:background .15s,color .15s}
+.wrap .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
 .wrap .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
-.wrap .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
-.wrap .kpi b{display:block;font-size:28px;font-weight:700;font-variant-numeric:tabular-nums}
-.wrap .kpi span{color:var(--mid);font-size:13px}
+.wrap .kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.wrap .kpi b{display:block;font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.wrap .kpi span{color:var(--mid);font-size:13px;font-weight:500}
 .wrap .kpi.hl{border-color:var(--accent);background:var(--accent-soft)}
-.wrap .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.wrap .toolbar{display:flex;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.wrap .toolbar input{flex:1;min-width:180px;font:inherit;font-size:14px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.wrap .kpi.hl b{color:var(--accent-dark)}
+.wrap .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.wrap .toolbar{display:flex;gap:10px;align-items:center;padding:14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.wrap .toolbar input{flex:1;min-width:180px;font:inherit;font-size:14px;padding:10px 14px;border:1.5px solid var(--line);border-radius:999px;background:var(--panel-alt);color:var(--ink)}
 .wrap .chips{display:flex;gap:6px;flex-wrap:wrap}
-.wrap .chips button{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--mid);padding:6px 11px;border-radius:999px;cursor:pointer}
+.wrap .chips button{font:inherit;font-size:13px;font-weight:700;border:1.5px solid var(--line);background:transparent;color:var(--mid);padding:7px 14px;border-radius:999px;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .wrap .chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
-.wrap .refresh{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer}
+.wrap .refresh{font:inherit;font-size:13px;font-weight:700;border:1.5px solid var(--accent);background:transparent;color:var(--accent-dark);padding:8px 16px;border-radius:999px;cursor:pointer;transition:background .15s,color .15s}
+.wrap .refresh:hover{background:var(--accent);color:#fff}
 .wrap button:focus-visible,.wrap input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .wrap .tablewrap{overflow-x:auto}
 .wrap table{width:100%;border-collapse:collapse;font-size:14px}
-.wrap th{text-align:left;font-weight:600;color:var(--mid);font-size:12.5px;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.wrap th{text-align:left;font-weight:700;color:var(--mid);font-size:12px;letter-spacing:.03em;text-transform:uppercase;padding:12px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
 .wrap th.num,.wrap td.num{text-align:right}
 .wrap th button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
 .wrap th button[data-active="true"]{color:var(--ink)}
-.wrap td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+.wrap td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
 .wrap tr:last-child td{border-bottom:0}
+.wrap tbody tr:hover{background:var(--panel-alt)}
 .wrap .who{display:flex;flex-direction:column;min-width:0}
-.wrap .who strong{font-weight:600}
+.wrap .who strong{font-weight:700}
 .wrap .who small{color:var(--mid);font-size:12.5px;overflow-wrap:anywhere}
-.wrap .badge{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;margin-left:6px;vertical-align:1px}
-.wrap .badge.bounced{background:rgba(180,35,24,.12);color:var(--bad)}
+.wrap .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:1px}
+.wrap .badge.bounced{background:rgba(217,57,9,.1);color:var(--bad)}
 .wrap .badge.unsubscribed{background:var(--soft);color:var(--mid)}
-.wrap .cnt{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;font-variant-numeric:tabular-nums;font-weight:600}
+.wrap .cnt{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;font-variant-numeric:tabular-nums;font-weight:700}
 .wrap .cnt i{display:block;height:6px;border-radius:3px;background:var(--line);width:64px;overflow:hidden}
 .wrap .cnt i::after{content:"";display:block;height:100%;width:var(--w);background:var(--ink)}
 .wrap .cnt.c i::after{background:var(--accent)}
 .wrap .zero{color:var(--mid);font-weight:400}
-.wrap .state{padding:40px 20px;text-align:center;color:var(--mid);font-size:14px}
-.wrap .state strong{display:block;color:var(--ink);margin-bottom:4px}
-.wrap .foot{display:flex;justify-content:space-between;gap:10px;color:var(--mid);font-size:12.5px;padding:10px 14px;border-top:1px solid var(--line);flex-wrap:wrap}
-.wrap .more{font:inherit;font-size:13px;border:0;background:none;color:var(--ink);text-decoration:underline;cursor:pointer}
+.wrap .state{padding:44px 20px;text-align:center;color:var(--mid);font-size:14px}
+.wrap .state strong{display:block;color:var(--ink);margin-bottom:4px;font-weight:800}
+.wrap .foot{display:flex;justify-content:space-between;gap:10px;color:var(--mid);font-size:12.5px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.wrap .more{font:inherit;font-size:13px;font-weight:700;border:0;background:none;color:var(--accent-dark);text-decoration:underline;cursor:pointer}
 @media (max-width:640px){.wrap .kpis{grid-template-columns:1fr 1fr}.wrap .kpis .kpi:first-child{grid-column:span 2}.wrap .cnt i{display:none}}
 @media (prefers-reduced-motion:reduce){.wrap *{transition:none!important}}
 `;
