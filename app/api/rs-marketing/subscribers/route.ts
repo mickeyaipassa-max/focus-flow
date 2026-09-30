@@ -1,18 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
+import { findCampaign } from "../../../RSmarketing/campaigns";
 
 /**
  * Server-side proxy naar MailerLite voor het RSmarketing-campagnedashboard
- * (/RSmarketing). Twee vaste campagnes van 23 sep 2026 ("Hoeveel talent is
- * bij jou al uit beeld?"). Vereist env vars MAILERLITE_API_KEY en
+ * (/RSmarketing). Campagnes (en welke MailerLite-ID's daarbij horen) staan
+ * in ../../RSmarketing/campaigns.ts. Vereist env vars MAILERLITE_API_KEY en
  * DASHBOARD_PASSWORD (Netlify site settings + lokaal .env.local) — nooit
  * in git.
  */
-
-const CAMPAIGNS: Record<string, string> = {
-  m: "199395607668851900", // Marjolein eerste 700
-  s: "199377868890834346", // IT & Tech Utrecht + Lijst Samantha
-};
 
 type Row = {
   email: string;
@@ -46,6 +42,57 @@ function safeEqual(given: string, expected: string) {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
+async function fetchMailerLiteRows(mailerliteId: string, apiKey: string): Promise<Row[]> {
+  const rows: Row[] = [];
+  let page = 1;
+  let last = 1;
+  do {
+    const r = await fetch(
+      `https://connect.mailerlite.com/api/campaigns/${mailerliteId}/reports/subscriber-activity?limit=100&page=${page}`,
+      {
+        headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json" },
+        cache: "no-store",
+      }
+    );
+    if (!r.ok) throw new Error("MailerLite status " + r.status);
+    const body = (await r.json()) as MailerLiteActivityResponse;
+    for (const item of body.data ?? []) {
+      const sub = item.subscriber ?? {};
+      const f = sub.fields ?? {};
+      rows.push({
+        email: (sub.email ?? "").toLowerCase(),
+        name: [f.name, f.last_name].filter(Boolean).join(" "),
+        company: f.company ?? "",
+        status: sub.status ?? "",
+        opens: Number(item.opens_count) || 0,
+        clicks: Number(item.clicks_count) || 0,
+      });
+    }
+    last = body.meta?.last_page ?? 1;
+    page++;
+  } while (page <= last && page <= 50);
+  return rows;
+}
+
+/** Rijen van meerdere MailerLite-ID's (zelfde campagne, andere lijst) samenvoegen per e-mailadres. */
+function mergeRows(rowLists: Row[][]): Row[] {
+  const map = new Map<string, Row>();
+  for (const rows of rowLists) {
+    for (const r of rows) {
+      const cur = map.get(r.email);
+      if (cur) {
+        cur.opens += r.opens;
+        cur.clicks += r.clicks;
+        if (!cur.name) cur.name = r.name;
+        if (!cur.company) cur.company = r.company;
+      } else {
+        map.set(r.email, { ...r });
+      }
+    }
+  }
+  return [...map.values()];
+}
+
 const NO_STORE = { "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" };
 
 export async function GET(request: NextRequest) {
@@ -55,9 +102,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Niet geautoriseerd" }, { status: 401, headers: NO_STORE });
   }
 
-  const campaign = request.nextUrl.searchParams.get("campaign") ?? "";
-  const id = CAMPAIGNS[campaign];
-  if (!id) {
+  const slug = request.nextUrl.searchParams.get("campaign") ?? "";
+  const campaign = findCampaign(slug);
+  if (!campaign) {
     return NextResponse.json({ error: "Onbekende campagne" }, { status: 400, headers: NO_STORE });
   }
 
@@ -70,35 +117,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const rows: Row[] = [];
-    let page = 1;
-    let last = 1;
-    do {
-      const r = await fetch(
-        `https://connect.mailerlite.com/api/campaigns/${id}/reports/subscriber-activity?limit=100&page=${page}`,
-        {
-          headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json" },
-          cache: "no-store",
-        }
-      );
-      if (!r.ok) throw new Error("MailerLite status " + r.status);
-      const body = (await r.json()) as MailerLiteActivityResponse;
-      for (const item of body.data ?? []) {
-        const sub = item.subscriber ?? {};
-        const f = sub.fields ?? {};
-        rows.push({
-          email: (sub.email ?? "").toLowerCase(),
-          name: [f.name, f.last_name].filter(Boolean).join(" "),
-          company: f.company ?? "",
-          status: sub.status ?? "",
-          opens: Number(item.opens_count) || 0,
-          clicks: Number(item.clicks_count) || 0,
-        });
-      }
-      last = body.meta?.last_page ?? 1;
-      page++;
-    } while (page <= last && page <= 50);
-
+    const rowLists = await Promise.all(campaign.mailerliteIds.map((id) => fetchMailerLiteRows(id, apiKey)));
+    const rows = mergeRows(rowLists);
     return NextResponse.json({ rows, fetchedAt: Date.now() }, { headers: NO_STORE });
   } catch {
     return NextResponse.json(
