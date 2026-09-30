@@ -16,6 +16,10 @@ import { campaignsByRecency } from "./campaigns";
 
 const API_URL = "/api/rs-marketing/subscribers";
 
+// Puntensysteem: elke open telt voor 1 punt, elke click voor 5 punten.
+const POINTS_PER_OPEN = 1;
+const POINTS_PER_CLICK = 5;
+
 const CAMPAIGNS = campaignsByRecency();
 const CAMPAIGN_LABEL: Record<string, string> = Object.fromEntries(CAMPAIGNS.map((c) => [c.slug, c.label]));
 const CAMPAIGN_SLUGS = CAMPAIGNS.map((c) => c.slug);
@@ -31,7 +35,8 @@ type Row = {
 
 type FetchError = { code: "unauthorized" } | { code: "server"; message?: string };
 
-type SortKey = "name" | "opens" | "clicks";
+type RowWithPoints = Row & { points: number };
+type SortKey = "name" | "opens" | "clicks" | "points";
 type FilterKey = "all" | "open" | "click";
 type CampaignFilter = "all" | string;
 
@@ -66,7 +71,7 @@ export default function RSMarketingDashboard() {
   const [campaign, setCampaign] = useState<CampaignFilter>("all");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [q, setQ] = useState("");
-  const [sort, setSort] = useState<SortKey>("opens");
+  const [sort, setSort] = useState<SortKey>("points");
   const [dir, setDir] = useState<1 | -1>(-1);
   const [limit, setLimit] = useState(100);
 
@@ -160,7 +165,10 @@ export default function RSMarketingDashboard() {
         }
       })
     );
-    return [...map.values()];
+    return [...map.values()].map((r): RowWithPoints => ({
+      ...r,
+      points: r.opens * POINTS_PER_OPEN + r.clicks * POINTS_PER_CLICK,
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, campaign]);
 
@@ -180,6 +188,7 @@ export default function RSMarketingDashboard() {
 
   const maxO = Math.max(1, ...all.map((r) => r.opens));
   const maxC = Math.max(1, ...all.map((r) => r.clicks));
+  const maxP = Math.max(1, ...all.map((r) => r.points));
 
   function toggleSort(key: SortKey) {
     if (sort === key) {
@@ -301,6 +310,11 @@ export default function RSMarketingDashboard() {
                           {sort === "clicks" ? `Clicks ${dir < 0 ? "↓" : "↑"}` : "Clicks"}
                         </button>
                       </th>
+                      <th className="num">
+                        <button data-active={sort === "points"} onClick={() => toggleSort("points")}>
+                          {sort === "points" ? `Punten ${dir < 0 ? "↓" : "↑"}` : "Punten"}
+                        </button>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -325,6 +339,7 @@ export default function RSMarketingDashboard() {
                           </td>
                           <Cell value={r.opens} max={maxO} />
                           <Cell value={r.clicks} max={maxC} accent />
+                          <Cell value={r.points} max={maxP} accent />
                         </tr>
                       );
                     })}
