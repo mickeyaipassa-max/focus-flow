@@ -326,6 +326,7 @@ export function ChatWidget({
         aria-hidden="true"
         onClick={() => {
           setTimeout(() => returnFocusOnClose?.current?.focus(), 50);
+          setSelectedTag(null);
           onClose();
         }}
         className="fixed inset-0 z-40 bg-black/50 min-[600px]:hidden"
@@ -433,6 +434,7 @@ export function ChatWidget({
                   onClick={() => {
                     setMenuOpen(false);
                     setTimeout(() => returnFocusOnClose?.current?.focus(), 50);
+                    setSelectedTag(null);
                     onClose();
                   }}
                   className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f6f6f7]"
