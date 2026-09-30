@@ -304,27 +304,30 @@ export default function RSMarketingDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {rows.slice(0, limit).map((r) => (
-                      <tr key={r.email}>
-                        <td>
-                          <div className="who">
-                            <strong>
-                              {r.name || r.email}
-                              {(r.status === "bounced" || r.status === "unsubscribed") && (
-                                <span className={`badge ${r.status}`}>
-                                  {r.status === "bounced" ? "bounced" : "afgemeld"}
-                                </span>
-                              )}
-                            </strong>
-                            {(r.name ? r.email : "") || r.company ? (
-                              <small>{[r.name ? r.email : "", r.company].filter(Boolean).join(" · ")}</small>
-                            ) : null}
-                          </div>
-                        </td>
-                        <Cell value={r.opens} max={maxO} />
-                        <Cell value={r.clicks} max={maxC} accent />
-                      </tr>
-                    ))}
+                    {rows.slice(0, limit).map((r) => {
+                      const inactive = r.status === "bounced" || r.status === "unsubscribed";
+                      return (
+                        <tr key={r.email} className={inactive ? "inactiveRow" : undefined}>
+                          <td>
+                            <div className="who">
+                              <strong>
+                                {r.name || r.email}
+                                {inactive && (
+                                  <span className={`badge ${r.status}`}>
+                                    {r.status === "bounced" ? "bounced" : "afgemeld"}
+                                  </span>
+                                )}
+                              </strong>
+                              {(r.name ? r.email : "") || r.company ? (
+                                <small>{[r.name ? r.email : "", r.company].filter(Boolean).join(" · ")}</small>
+                              ) : null}
+                            </div>
+                          </td>
+                          <Cell value={r.opens} max={maxO} />
+                          <Cell value={r.clicks} max={maxC} accent />
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -443,6 +446,9 @@ const CSS = `
 .wrap td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
 .wrap tr:last-child td{border-bottom:0}
 .wrap tbody tr:hover{background:var(--panel-alt)}
+.wrap tr.inactiveRow{opacity:.45}
+.wrap tr.inactiveRow:hover{background:none}
+.wrap tr.inactiveRow .who strong{font-weight:500}
 .wrap .who{display:flex;flex-direction:column;min-width:0}
 .wrap .who strong{font-weight:700}
 .wrap .who small{color:var(--mid);font-size:12.5px;overflow-wrap:anywhere}
