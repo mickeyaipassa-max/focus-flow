@@ -125,6 +125,19 @@ function ChatWelcome({
   );
 }
 
+/**
+ * Rand blijft altijd 1px (`border border-[#565656]`) en focus krijgt een
+ * `outline` i.p.v. een dikkere rand — een dikkere rand ging af van de vaste
+ * hoogte, waardoor de beschikbare hoogte onder de regelhoogte van de tekst
+ * zakte en het veld al een scrollbar kreeg vóór er iets getypt was. Zelfde
+ * patroon als de on-page textarea in `AIChatBlock.tsx`.
+ *
+ * Hoogte 52px i.p.v. 51px: bij 51px was er zelfs zonder de randgroei al
+ * exact 1px te weinig ruimte (51 − 2px rand − 26px padding = 23px, tegen
+ * 24px regelhoogte bij 16px tekst/leading-1.5) — ook dat gaf al een
+ * scrollbar. De verstuurknop ernaast is meegeschaald naar 52px zodat beide
+ * even hoog blijven.
+ */
 function ChatInput({ onSend }: { onSend: (text: string) => void }) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -158,14 +171,14 @@ function ChatInput({ onSend }: { onSend: (text: string) => void }) {
           aria-label="Typ je vraag of bericht"
           placeholder="Typ je vraag of bericht..."
           rows={1}
-          className="h-[51px] flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-base leading-[1.5] outline-none placeholder:text-[#565656] hover:border-2 hover:border-black focus:border-2 focus:border-black"
+          className="h-[52px] flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-base leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black"
           style={{ fontFamily: "var(--font-avenir-book)" }}
         />
         <button
           type="button"
           onClick={submit}
           aria-label="Verstuur bericht"
-          className="flex size-[51px] shrink-0 items-center justify-center rounded-[3px] bg-black hover:opacity-90"
+          className="flex size-[52px] shrink-0 items-center justify-center rounded-[3px] bg-black hover:opacity-90"
         >
           <img src="/icons/send.svg" alt="" className="size-6" />
         </button>
