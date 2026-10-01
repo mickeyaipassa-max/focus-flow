@@ -22,6 +22,8 @@ type ButtonProps = {
   fullWidth?: boolean | "mobile";
   /** Extra CSS-order, voor layout-herschikking (bv. FormNavigation's stacked-volgorde). */
   order?: number;
+  /** Staat tekstomloop toe i.p.v. de standaard `nowrap` — nodig voor knoppen met langere tekst die anders buiten hun vaste-breedte ouder uitsteken (bv. Card's CTA's). */
+  wrap?: boolean;
   className?: string;
 };
 
@@ -48,10 +50,12 @@ export function Button({
   onClick,
   fullWidth = false,
   order,
+  wrap = false,
   className,
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[3px] text-lg font-[550] leading-[1.5]";
+    "inline-flex items-center justify-center gap-2 rounded-[3px] text-lg font-[550] leading-[1.5] " +
+    (wrap ? "text-center whitespace-normal" : "whitespace-nowrap");
 
   const byType: Record<ButtonType, string> = {
     primary:

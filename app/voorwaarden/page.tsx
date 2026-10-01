@@ -11,6 +11,7 @@ import { LinkList } from "@/components/LinkList";
 import { FileList } from "@/components/FileList";
 import { Accordion } from "@/components/Accordion";
 import { Icon } from "@/components/Icon";
+import { Card } from "@/components/Card";
 import { CardContact, CardContactCollage } from "@/components/CardContact";
 import { Footer, type FooterColumn } from "@/components/Footer";
 
@@ -335,6 +336,19 @@ export default function VoorwaardenPage() {
                 }))}
               />
             </div>
+          </div>
+        </section>
+
+        {/* Gratis advies voor je AOV — Figma node 2048:2701, toegevoegd na de eerste build van deze pagina. */}
+        <section id="gratis-advies" className="w-full scroll-mt-6 px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
+          <div className="mx-auto max-w-[1200px]">
+            <Card
+              title="Gratis advies voor je AOV"
+              description="Je sluit niet elke dag een arbeidsongeschiktheidsverzekering af. Daarom bieden wij je de mogelijkheid vragen te stellen tijdens een vrijblijvend informatiegesprek. Wij helpen je graag."
+              image="/voorwaarden/aov-advies.png"
+              primaryAction={{ label: "Vraag een vrijblijvend AOV-gesprek aan" }}
+              secondaryAction={{ label: "Kijk hier of je een AOV nodig hebt" }}
+            />
           </div>
         </section>
 
