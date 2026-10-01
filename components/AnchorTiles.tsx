@@ -1,3 +1,6 @@
+"use client";
+
+import type { MouseEvent } from "react";
 import { Icon } from "./Icon";
 
 export type AnchorTileItem = {
@@ -27,8 +30,48 @@ type AnchorTilesProps = {
  * bevestigd via een mobiel Figma-frame voor déze pagina — hier bewust
  * hetzelfde patroon aangehouden als de bevestigde klantenservice-tegels,
  * als redelijke aanname totdat een mobiel frame dit bevestigt.
+ *
+ * Scroll-naar-sectie is een eigen eased animatie i.p.v. de browser-eigen
+ * `scroll-behavior: smooth` (op verzoek van de opdrachtgever: expliciet
+ * ease-in/ease-out, geen door de browser bepaalde curve) — `smoothScrollTo`
+ * hieronder animeert handmatig via `requestAnimationFrame` met
+ * `easeInOutCubic`. Respecteert de bestaande `scroll-mt-6` van elke
+ * sectie (leest `scrollMarginTop` i.p.v. die marge hier te hardcoden) en
+ * slaat de animatie over bij `prefers-reduced-motion`, zelfde discipline
+ * als de rest van dit project.
  */
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+}
+
+function smoothScrollTo(targetY: number, duration = 600) {
+  const startY = window.scrollY;
+  const diff = targetY - startY;
+  let startTime: number | null = null;
+
+  function step(timestamp: number) {
+    if (startTime === null) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    window.scrollTo(0, startY + diff * easeInOutCubic(progress));
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 export function AnchorTiles({ items, className }: AnchorTilesProps) {
+  function handleClick(event: MouseEvent<HTMLAnchorElement>, targetId: string) {
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    event.preventDefault();
+    history.pushState(null, "", `#${targetId}`);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      target.scrollIntoView();
+      return;
+    }
+    const scrollMarginTop = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+    smoothScrollTo(target.getBoundingClientRect().top + window.scrollY - scrollMarginTop);
+  }
+
   return (
     <div
       className={
@@ -40,6 +83,7 @@ export function AnchorTiles({ items, className }: AnchorTilesProps) {
         <a
           key={targetId}
           href={`#${targetId}`}
+          onClick={(event) => handleClick(event, targetId)}
           className="group flex items-center gap-3 bg-white px-4 py-3 text-left hover:bg-[#fafafa]"
         >
           <span className="flex size-10 min-[1440px]:size-12 shrink-0 scale-100 items-center justify-center rounded-full bg-[#fff8e3] group-hover:scale-[1.2] motion-safe:transition-transform motion-safe:duration-200 motion-safe:ease-[cubic-bezier(0,-0.4,0.4,1.6)]">
