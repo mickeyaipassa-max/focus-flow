@@ -186,10 +186,6 @@ export default function RSMarketingDashboard() {
     return out;
   }, [all, filter, q, sort, dir]);
 
-  const maxO = Math.max(1, ...all.map((r) => r.opens));
-  const maxC = Math.max(1, ...all.map((r) => r.clicks));
-  const maxP = Math.max(1, ...all.map((r) => r.points));
-
   function toggleSort(key: SortKey) {
     if (sort === key) {
       setDir((d) => (d === 1 ? -1 : 1) as 1 | -1);
@@ -250,18 +246,17 @@ export default function RSMarketingDashboard() {
             </div>
 
             <div className="kpis">
-              <div className="kpi">
-                <b>{loaded.length ? fmt(all.length) : "–"}</b>
-                <span>ontvangers</span>
-              </div>
-              <div className="kpi">
-                <b>{loaded.length ? fmt(all.filter((r) => r.opens > 0).length) : "–"}</b>
-                <span>hebben geopend</span>
-              </div>
-              <div className="kpi hl">
-                <b>{loaded.length ? fmt(all.filter((r) => r.clicks > 0).length) : "–"}</b>
-                <span>hebben geklikt</span>
-              </div>
+              <Kpi icon="users" value={loaded.length ? fmt(all.length) : "–"} label="ontvangers" />
+              <Kpi
+                icon="mail"
+                value={loaded.length ? fmt(all.filter((r) => r.opens > 0).length) : "–"}
+                label="hebben geopend"
+              />
+              <Kpi
+                icon="click"
+                value={loaded.length ? fmt(all.filter((r) => r.clicks > 0).length) : "–"}
+                label="hebben geklikt"
+              />
             </div>
 
             <div className="panel">
@@ -337,9 +332,9 @@ export default function RSMarketingDashboard() {
                               ) : null}
                             </div>
                           </td>
-                          <Cell value={r.opens} max={maxO} />
-                          <Cell value={r.clicks} max={maxC} accent />
-                          <Cell value={r.points} max={maxP} accent />
+                          <Cell value={r.opens} />
+                          <Cell value={r.clicks} />
+                          <Cell value={r.points} highlight />
                         </tr>
                       );
                     })}
@@ -401,13 +396,42 @@ export default function RSMarketingDashboard() {
   );
 }
 
-function Cell({ value, max, accent }: { value: number; max: number; accent?: boolean }) {
+const KPI_ICONS = {
+  users: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+    </svg>
+  ),
+  mail: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 7l9 6 9-6" />
+    </svg>
+  ),
+  click: (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M4 3l7.07 18 2.51-7.39L21 11.07z" />
+    </svg>
+  ),
+};
+
+function Kpi({ icon, value, label }: { icon: keyof typeof KPI_ICONS; value: string; label: string }) {
+  return (
+    <div className="kpi">
+      <span className="kpiIcon">{KPI_ICONS[icon]}</span>
+      <div className="kpiBody">
+        <b>{value}</b>
+        <span>{label}</span>
+      </div>
+    </div>
+  );
+}
+
+function Cell({ value, highlight }: { value: number; highlight?: boolean }) {
   return (
     <td className="num">
-      <span className={`cnt ${accent ? "c" : ""}`}>
-        <span className={value ? "" : "zero"}>{value}</span>
-        <i style={{ ["--w" as string]: `${(value / max) * 100}%` }} />
-      </span>
+      <span className={`cnt ${highlight ? "c" : ""} ${value ? "" : "zero"}`}>{value}</span>
     </td>
   );
 }
@@ -438,11 +462,11 @@ const CSS = `
 .wrap .seg button{border:0;background:transparent;color:var(--mid);font:inherit;font-size:14px;font-weight:700;padding:9px 16px;border-radius:999px;cursor:pointer;transition:background .15s,color .15s}
 .wrap .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
 .wrap .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
-.wrap .kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
-.wrap .kpi b{display:block;font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.wrap .kpi span{color:var(--mid);font-size:13px;font-weight:500}
-.wrap .kpi.hl{border-color:var(--accent);background:var(--accent-soft)}
-.wrap .kpi.hl b{color:var(--accent-dark)}
+.wrap .kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px}
+.wrap .kpiIcon{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:999px;background:var(--accent-soft);color:var(--accent-dark)}
+.wrap .kpiIcon svg{width:20px;height:20px}
+.wrap .kpiBody b{display:block;font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.wrap .kpiBody span{color:var(--mid);font-size:13px;font-weight:500}
 .wrap .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .wrap .toolbar{display:flex;gap:10px;align-items:center;padding:14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .wrap .toolbar input{flex:1;min-width:180px;font:inherit;font-size:14px;padding:10px 14px;border:1.5px solid var(--line);border-radius:999px;background:var(--panel-alt);color:var(--ink)}
@@ -470,15 +494,13 @@ const CSS = `
 .wrap .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:1px}
 .wrap .badge.bounced{background:rgba(217,57,9,.1);color:var(--bad)}
 .wrap .badge.unsubscribed{background:var(--soft);color:var(--mid)}
-.wrap .cnt{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end;font-variant-numeric:tabular-nums;font-weight:700}
-.wrap .cnt i{display:block;height:6px;border-radius:3px;background:var(--line);width:64px;overflow:hidden}
-.wrap .cnt i::after{content:"";display:block;height:100%;width:var(--w);background:var(--ink)}
-.wrap .cnt.c i::after{background:var(--accent)}
+.wrap .cnt{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+.wrap .cnt.c{color:var(--accent-dark)}
 .wrap .zero{color:var(--mid);font-weight:400}
 .wrap .state{padding:44px 20px;text-align:center;color:var(--mid);font-size:14px}
 .wrap .state strong{display:block;color:var(--ink);margin-bottom:4px;font-weight:800}
 .wrap .foot{display:flex;justify-content:space-between;gap:10px;color:var(--mid);font-size:12.5px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
 .wrap .more{font:inherit;font-size:13px;font-weight:700;border:0;background:none;color:var(--accent-dark);text-decoration:underline;cursor:pointer}
-@media (max-width:640px){.wrap .kpis{grid-template-columns:1fr 1fr}.wrap .kpis .kpi:first-child{grid-column:span 2}.wrap .cnt i{display:none}}
+@media (max-width:640px){.wrap .kpis{grid-template-columns:1fr 1fr}.wrap .kpis .kpi:first-child{grid-column:span 2}}
 @media (prefers-reduced-motion:reduce){.wrap *{transition:none!important}}
 `;
