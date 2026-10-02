@@ -22,6 +22,8 @@ type ButtonProps = {
   fullWidth?: boolean | "mobile";
   /** Extra CSS-order, voor layout-herschikking (bv. FormNavigation's stacked-volgorde). */
   order?: number;
+  /** Compacte variant: 8px/16px padding en 16px tekst (secondary gemeten in Figma: 40px hoog inclusief de rand, dus 7px + 1px rand). Alleen voor types met de gewone 12px/24px padding (primary, secondary, brand). */
+  compact?: boolean;
   /** Staat tekstomloop toe i.p.v. de standaard `nowrap` — nodig voor knoppen met langere tekst die anders buiten hun vaste-breedte ouder uitsteken (bv. Card's CTA's). */
   wrap?: boolean;
   className?: string;
@@ -38,8 +40,8 @@ type ButtonProps = {
  * Interactie-states zijn hier native CSS :hover/:active i.p.v. React-state:
  * Figma's varianten beschrijven hetzelfde gedrag dat de browser al gratis geeft.
  *
- * "compact" en "icon-only" zijn bewust niet gebouwd: geen van de bestaande
- * componenten in dit project gebruikt ze.
+ * "compact" is alleen gebouwd voor padding/tekstmaat (zie prop); "icon-only"
+ * is bewust niet gebouwd: geen van de bestaande componenten gebruikt het.
  */
 export function Button({
   children,
@@ -51,10 +53,12 @@ export function Button({
   fullWidth = false,
   order,
   wrap = false,
+  compact = false,
   className,
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-[3px] text-lg font-[550] leading-[1.5] " +
+    "inline-flex items-center justify-center gap-2 rounded-[3px] font-[550] leading-[1.5] " +
+    (compact ? "text-base " : "text-lg ") +
     (wrap ? "text-center whitespace-normal" : "whitespace-nowrap");
 
   const byType: Record<ButtonType, string> = {
@@ -76,6 +80,8 @@ export function Button({
       "active:border-0 active:bg-[#f0b335]",
   };
 
+  const classes = compact ? byType[type].replace("px-6 py-3", type === "secondary" ? "px-4 py-[7px]" : "px-4 py-2") : byType[type];
+
   return (
     <button
       type={htmlType}
@@ -84,7 +90,7 @@ export function Button({
         className ??
         [
           base,
-          byType[type],
+          classes,
           fullWidth === true ? "w-full" : fullWidth === "mobile" ? "w-full min-[600px]:w-auto" : "",
         ].join(" ")
       }

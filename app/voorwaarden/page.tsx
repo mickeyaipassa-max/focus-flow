@@ -12,7 +12,7 @@ import { FileList } from "@/components/FileList";
 import { Accordion } from "@/components/Accordion";
 import { Icon } from "@/components/Icon";
 import { Card } from "@/components/Card";
-import { CardContact, CardContactCollage } from "@/components/CardContact";
+import { CardContact } from "@/components/CardContact";
 import { Footer, type FooterColumn } from "@/components/Footer";
 
 /**
@@ -362,28 +362,28 @@ export default function VoorwaardenPage() {
                   Kun je je voorwaarden niet vinden? We helpen je graag bepalen welke voorwaarden bij jouw polis horen.
                 </p>
               </div>
-              <CardContactCollage>
+              <div className="grid w-full grid-cols-1 gap-4 min-[600px]:grid-cols-2 min-[1200px]:grid-cols-3">
                 <CardContact
                   title="Telefoon"
                   availability="Werkdagen van 8.30 tot 17.30 uur"
                   actionIcon="phone"
                   actionLabel="(030) 278 03 35"
-                  className="flex min-w-px flex-1 flex-col items-start gap-8 self-stretch rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-6"
+                  className="flex w-full flex-col items-start gap-8 self-start rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-[23px]"
                 />
                 <CardContact
                   title="Contactformulier"
                   availability="Binnen 10 werkdagen antwoord"
                   actionIcon="edit"
                   actionLabel="Contactformulier invullen"
-                  className="flex min-w-px flex-1 flex-col items-start gap-8 self-stretch rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-6"
+                  className="flex w-full flex-col items-start gap-8 self-start rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-[23px]"
                 />
-              </CardContactCollage>
+              </div>
             </div>
           </div>
         </section>
       </main>
 
-      <Footer columns={FOOTER_COLUMNS} centered />
+      <Footer columns={FOOTER_COLUMNS} showAppBadges centered linkSection />
     </div>
   );
 }

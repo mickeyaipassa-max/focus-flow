@@ -158,17 +158,24 @@ type FooterProps = {
    * smaller dan 1200px).
    */
   centered?: boolean;
+  /**
+   * Figma's "Link section"-variant (node 2002:1525): de linkkolommen staan in
+   * een eigen, edge-to-edge grijze band (#f6f6f7, 32px boven/onder) met 16px
+   * tussen de kolommen, boven de witte onderbalk. Standaard `false` = de
+   * bestaande, witte footer van /aichat.
+   */
+  linkSection?: boolean;
 };
 
-export function Footer({ className, columns, showAppBadges, centered = false }: FooterProps) {
-  const content = (
-    <>
-      {columns && columns.length > 0 && (
-        <>
+export function Footer({ className, columns, showAppBadges, centered = false, linkSection = false }: FooterProps) {
+  const columnsGap = linkSection ? "gap-4" : "gap-8";
+  const columnsBlock =
+    columns && columns.length > 0 ? (
+      <>
           <FooterMobileAccordion columns={columns} showAppBadges={showAppBadges} />
 
           {/* Bestaande enkele rij van kolommen, alleen vanaf 1440px (bevestigd via Figma's aparte 1200px-breakpointframe). */}
-          <div className="hidden w-full items-start gap-8 min-[1440px]:flex">
+          <div className={`hidden w-full items-start ${columnsGap} min-[1440px]:flex`}>
             {columns.map((column) => (
               <FooterLinkColumn key={column.title} column={column} />
             ))}
@@ -184,9 +191,11 @@ export function Footer({ className, columns, showAppBadges, centered = false }: 
             </div>
             {showAppBadges && <FooterAppBadgesColumn />}
           </div>
-        </>
-      )}
+      </>
+    ) : null;
 
+  const bottomBlock = (
+    <>
       {/* Links + copyright */}
       <div className="flex w-full flex-col items-start gap-6 min-[900px]:flex-row min-[900px]:items-start min-[900px]:gap-8">
         <div className="flex flex-wrap content-start items-start gap-x-5 gap-y-2 min-[900px]:flex-1">
@@ -232,6 +241,27 @@ export function Footer({ className, columns, showAppBadges, centered = false }: 
           <img src="/footer/logo-mini-4.svg" alt="" className="absolute inset-[13.34%_0_0_52.82%] h-auto w-auto" />
         </div>
       </div>
+    </>
+  );
+
+  if (linkSection && columnsBlock) {
+    const pad = "px-6 py-4 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32 min-[1200px]:py-8";
+    return (
+      <footer className={className ?? "flex w-full flex-col"}>
+        <div className={`w-full bg-[#f6f6f7] ${pad}`}>
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col items-start gap-8">{columnsBlock}</div>
+        </div>
+        <div className={`w-full bg-white ${pad}`}>
+          <div className="mx-auto flex w-full max-w-[1200px] flex-col items-start gap-8">{bottomBlock}</div>
+        </div>
+      </footer>
+    );
+  }
+
+  const content = (
+    <>
+      {columnsBlock}
+      {bottomBlock}
     </>
   );
 
