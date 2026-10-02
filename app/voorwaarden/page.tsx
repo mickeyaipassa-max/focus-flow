@@ -153,7 +153,7 @@ export default function VoorwaardenPage() {
         items={[{ label: "Home" }, { label: "Breadcrumb item" }, { label: "Breadcrumb item" }, { label: "Breadcrumb item" }, { label: "Current page" }]}
       />
 
-      <main className="flex w-full flex-col items-start gap-6 pb-0 min-[600px]:gap-12">
+      <main className="flex w-full flex-col items-start gap-6 pb-6 min-[600px]:gap-12 min-[600px]:pb-12">
         {/* Hero — H1 32px→40px, paragraaf 16px→20px, marge-schaal 24/48/64/128px: zelfde patroon als /aichat's hero. */}
         <section className="w-full px-6 pt-6 min-[600px]:px-12 min-[600px]:pt-10 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex max-w-[1200px] flex-col gap-2 min-[600px]:gap-3">
