@@ -81,7 +81,7 @@ export function TableOfContents({ items, className }: TableOfContentsProps) {
           <span className="flex shrink-0 items-center pt-1">
             <Icon name="arrow-down-blue" size="sm" />
           </span>
-          <span className="whitespace-nowrap text-[#0064a8] text-lg leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
+          <span className="min-[600px]:whitespace-nowrap text-[#0064a8] text-lg leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
             {label}
           </span>
         </a>
