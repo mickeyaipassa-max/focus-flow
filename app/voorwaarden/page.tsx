@@ -161,7 +161,7 @@ export default function VoorwaardenPage() {
               Vind de voorwaarden van je arbeidsongeschiktheidsverzekering
             </h1>
             <p className="max-w-[880px] text-black text-base leading-[1.4] min-[600px]:text-xl" style={{ fontFamily: "var(--font-avenir-book)" }}>
-              Wil je precies weten hoe het ook al weer zat met jouw AOV? Op deze pagina vind je een overzicht van de polisvoorwaarden voor onze AOV&apos;s voor ondernemers.
+              Wil je precies weten hoe het ook alweer zat met jouw AOV? Op deze pagina vind je een overzicht van de polisvoorwaarden voor onze AOV&apos;s voor ondernemers.
             </p>
           </div>
         </section>
@@ -240,7 +240,7 @@ export default function VoorwaardenPage() {
                       items={[
                         {
                           title: `Polisvoorwaarden model ${result.modelnummer}`,
-                          description: `Dit zijn de voorwaarden die gelden voor deze ${result.verzekeringLabel} verzekering.`,
+                          description: `Dit zijn de voorwaarden die gelden voor deze ${result.verzekeringLabel}-verzekering.`,
                           href: "#",
                         },
                       ]}
@@ -254,7 +254,7 @@ export default function VoorwaardenPage() {
                       items={[
                         {
                           title: `Polisvoorwaarden model ${HUIDIG_MODEL}`,
-                          description: `Dit zijn de nieuwste voorwaarden die gelden voor onze ${result.verzekeringLabel} verzekering`,
+                          description: `Dit zijn de nieuwste voorwaarden die gelden voor onze ${result.verzekeringLabel}-verzekering`,
                           href: "#",
                         },
                         {
@@ -350,16 +350,16 @@ export default function VoorwaardenPage() {
           </div>
         </section>
 
-        {/* Kun je je voorwaarden niet vinden? */}
+        {/* Hulp nodig? */}
         <section id="hulp-en-contact" className="w-full scroll-mt-6 px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto max-w-[1200px]">
             <div className="flex flex-col gap-4 min-[600px]:gap-6">
               <div className="flex max-w-[880px] flex-col gap-2">
                 <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                  Kun je je voorwaarden niet vinden?
+                  Hulp nodig?
                 </h2>
                 <p className="text-black text-sm leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  We helpen je graag bepalen welke voorwaarden bij jouw polis horen.
+                  Kun je je voorwaarden niet vinden? We helpen je graag bepalen welke voorwaarden bij jouw polis horen.
                 </p>
               </div>
               <CardContactCollage>
