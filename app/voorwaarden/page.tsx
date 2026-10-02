@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Breadcrumb } from "@/components/Breadcrumb";
-import { AnchorTiles } from "@/components/AnchorTiles";
+import { TableOfContents } from "@/components/TableOfContents";
 import { Select } from "@/components/Select";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
@@ -153,15 +153,16 @@ export default function VoorwaardenPage() {
           </div>
         </section>
 
-        {/* Anchor Tiles — springt naar de secties hieronder. */}
+        {/* Inhoudsopgave — springt naar de secties hieronder (Figma node 2061:7049). */}
         <section className="w-full px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto w-full max-w-[1200px]">
-            <AnchorTiles
+            <TableOfContents
               items={[
-                { label: "Voorwaarden vinden", targetId: "voorwaarden-vinden" },
-                { label: "Alle verzekeringskaarten", targetId: "verzekeringskaarten" },
-                { label: "Oudere voorwaarden", targetId: "oudere-voorwaarden" },
-                { label: "Hulp & contact", targetId: "hulp-en-contact" },
+                { label: "Bekijk je voorwaarden en documenten", targetId: "voorwaarden-vinden" },
+                { label: "Actuele polisvoorwaarden", targetId: "verzekeringskaarten" },
+                { label: "Alle eerdere modellen", targetId: "oudere-voorwaarden" },
+                { label: "Gratis advies", targetId: "gratis-advies" },
+                { label: "Hulp nodig", targetId: "hulp-en-contact" },
               ]}
             />
           </div>
