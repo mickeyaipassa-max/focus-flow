@@ -173,10 +173,10 @@ export default function VoorwaardenPage() {
             <div className="flex max-w-[800px] flex-col gap-4 min-[600px]:gap-6">
               <div className="flex flex-col gap-2">
                 <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                  Voorwaarden vinden
+                  Bekijk je voorwaarden en documenten
                 </h2>
                 <p className="max-w-[880px] text-black text-base leading-[1.4] min-[600px]:text-xl" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  Kies je verzekering en het modelnummer dat op je polisblad staat. Dan laten we zien welke voorwaarden daarvoor gelden.
+                  Kies je verzekering en vul het modelnummer op je polisblad in. Zo zie je welke voorwaarden en documenten bij jouw verzekering horen.
                 </p>
               </div>
 
@@ -200,93 +200,72 @@ export default function VoorwaardenPage() {
                   }
                 />
                 <Button type="primary" htmlType="submit">
-                  Toon mijn voorwaarden
+                  Bekijk voorwaarden en documenten
                 </Button>
               </form>
 
               {/*
-                Resultaat na versturen — Figma (node 2026:9511, bijgewerkt
-                vanaf de eerdere versie op node 2026:9459) toont nu 3 blokken
-                i.p.v. 2: het "Wijzigingen"-bestand is verhuisd van blok 1
-                naar blok 2, en Verzekeringskaart/Vergelijkingskaart zijn
-                verhuisd naar een nieuw derde blok "Overige documenten".
-                Titels van blok 3's bestanden blijven dynamisch per gekozen
-                verzekering (bevestigd door opdrachtgever), "Overige
-                documenten" zelf is een vaste titel zonder verzekeringsnaam.
-                De Vergelijkingskaart-beschrijving is letterlijk uit Figma
-                overgenomen (noemt specifiek "AOV"/"Flexibele AOV", niet
-                dynamisch). De Verzekeringskaart-beschrijving bevat nog
-                steeds de bekende Figma-contentbug (duplicaat van de
-                Wijzigingen-beschrijving i.p.v. een eigen tekst) — bewust
-                niet stilzwijgend gecorrigeerd. "model 231" (HUIDIG_MODEL) is
-                een vaste, gemockte waarde: er is geen echte achterliggende
-                data over welk model daadwerkelijk het nieuwste is.
+                Resultaat na versturen — Figma node 2026:9488 (derde versie):
+                hoofdtitel bovenaan de kaart, daarna 3 blokken zonder
+                introtekst. Alle "AOV"-verwijzingen zijn dynamisch per gekozen
+                verzekering (bevestigd door opdrachtgever), net als model
+                {modelnummer}. "model 231" (HUIDIG_MODEL) is een vaste,
+                gemockte waarde: er is geen echte achterliggende data over
+                welk model daadwerkelijk het nieuwste is.
               */}
               {result && (
                 <div className="flex w-full flex-col gap-12 rounded-md bg-white p-6 shadow-[0px_4px_8px_rgba(0,0,0,0.12)] min-[600px]:p-10">
-                  <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-2">
-                      <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                        {result.verzekeringLabel} model {result.modelnummer}
-                      </h2>
-                      <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                        Dit zijn de voorwaarden die bij dit model horen.
-                      </p>
-                    </div>
+                  <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                    Voorwaarden en documenten voor jouw {result.verzekeringLabel}
+                  </h2>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                      Jouw {result.verzekeringLabel}-voorwaarden
+                    </h3>
                     <FileList
                       items={[
                         {
                           title: `Polisvoorwaarden model ${result.modelnummer}`,
-                          description: "Dit zijn de voorwaarden die gelden voor jouw verzekering.",
+                          description: `Dit zijn de voorwaarden die gelden voor deze ${result.verzekeringLabel} verzekering.`,
                           href: "#",
                         },
                       ]}
                     />
                   </div>
-                  <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-2">
-                      <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                        De nieuwste {result.verzekeringLabel}-voorwaarden
-                      </h2>
-                      <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                        Bekijk de meest recente {result.verzekeringLabel}-voorwaarden of ontdek wat er is gewijzigd tussen jouw huidige model en de nieuwste voorwaarden.
-                      </p>
-                    </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                      Nieuwste {result.verzekeringLabel}-voorwaarden
+                    </h3>
                     <FileList
                       items={[
                         {
                           title: `Polisvoorwaarden model ${HUIDIG_MODEL}`,
-                          description: "Dit zijn de voorwaarden die gelden voor jouw verzekering.",
+                          description: `Dit zijn de nieuwste voorwaarden die gelden voor onze ${result.verzekeringLabel} verzekering`,
                           href: "#",
                         },
                         {
-                          title: `Wijzigingen van model ${result.modelnummer} naar de nieuwste voorwaarden`,
-                          description: `Bekijk welke belangrijke wijzigingen er zijn ten opzichte van de huidige voorwaarden (model ${HUIDIG_MODEL}).`,
+                          title: "Bekijk wat er is veranderd",
+                          description: `Bekijk de verschillen tussen model ${result.modelnummer} en model ${HUIDIG_MODEL}.`,
                           href: "#",
                         },
                       ]}
                     />
                   </div>
-                  <div className="flex flex-col gap-6">
-                    <div className="flex flex-col gap-2">
-                      <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                        Overige documenten
-                      </h2>
-                      <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                        Bekijk de verzekeringskaart en vergelijkingskaart van de {result.verzekeringLabel}.
-                      </p>
-                    </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                      Overige documenten
+                    </h3>
                     <FileList
                       items={[
                         {
                           title: `Verzekeringskaart ${result.verzekeringLabel}`,
-                          description: `Bekijk welke belangrijke wijzigingen er zijn ten opzichte van de huidige voorwaarden (model ${HUIDIG_MODEL}).`,
+                          description:
+                            "Met een verzekeringskaart zie je in één oogopslag wat wel en niet verzekerd is. Zo vergelijk je onze verzekering eenvoudig met die van andere verzekeraars.",
                           href: "#",
                         },
                         {
                           title: `Vergelijkingskaart ${result.verzekeringLabel}`,
-                          description:
-                            "Sluit je zelf een AOV af? Dan betaal je eenmalige afsluitkosten en bij de Flexibele AOV ook jaarlijkse onderhoudskosten. Bekijk de kosten en onze dienstverlening in de vergelijkingskaart.",
+                          description: `Sluit je bij a.s.r. zelf een ${result.verzekeringLabel} af? Bekijk dan de afsluit- en onderhoudskosten en wat je van onze dienstverlening kunt verwachten.`,
                           href: "#",
                         },
                       ]}
