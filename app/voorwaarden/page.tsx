@@ -148,7 +148,7 @@ export default function VoorwaardenPage() {
               Vind de voorwaarden van je arbeidsongeschiktheidsverzekering
             </h1>
             <p className="max-w-[880px] text-black text-base leading-[1.4] min-[600px]:text-xl" style={{ fontFamily: "var(--font-avenir-book)" }}>
-              Kies je verzekering en het modelnummer dat op je polisblad staat. Dan laten we zien welke voorwaarden voor jou gelden.
+              Wil je precies weten hoe het ook al weer zat met jouw AOV? Op deze pagina vind je een overzicht van de polisvoorwaarden voor onze AOV&apos;s voor ondernemers.
             </p>
           </div>
         </section>
