@@ -38,6 +38,19 @@ const VERZEKERING_OPTIONS = [
   { value: "ongevallen-en-ernstige-aandoeningen", label: "Ongevallen en ernstige aandoeningen" },
 ];
 
+/** Actuele polisvoorwaarden met modelnummer — letterlijk uit Figma (node 2051:6180). Links zijn placeholders: er zijn geen echte PDF-bestanden. */
+const ACTUELE_POLISVOORWAARDEN = [
+  "AOV (model 231)",
+  "Flexibele AOV (model 232)",
+  "AOV 2.5 (model 233)",
+  "Langer mee AOV (model 234)",
+  "Voorwaarden WIA Excedent (model 822)",
+  "Vaste lasten WIA volgend (model 681)",
+  "Woonlastenverzekering (model 226)",
+  "Premie Terug AOV (model 227)",
+  "Ongevallen en ernstige aandoeningen (model 225)",
+].map((label) => ({ label, href: "#" }));
+
 /** Gecorrigeerd van 7 naar de echte 6 items — "Vaste lasten AOV WIA Volgend" stond er ten onrechte bij; dat product hoort bij het "niet meer nieuw af te sluiten"-kopje, niet bij verzekeringskaarten. */
 const VERZEKERINGSKAARTEN = [
   { label: "AOV", href: "#" },
@@ -159,7 +172,7 @@ export default function VoorwaardenPage() {
             <TableOfContents
               items={[
                 { label: "Bekijk je voorwaarden en documenten", targetId: "voorwaarden-vinden" },
-                { label: "Actuele polisvoorwaarden", targetId: "verzekeringskaarten" },
+                { label: "Actuele polisvoorwaarden", targetId: "actuele-polisvoorwaarden" },
                 { label: "Alle eerdere modellen", targetId: "oudere-voorwaarden" },
                 { label: "Gratis advies", targetId: "gratis-advies" },
                 { label: "Hulp nodig", targetId: "hulp-en-contact" },
@@ -278,21 +291,26 @@ export default function VoorwaardenPage() {
           </div>
         </section>
 
-        {/* Alle verzekeringskaarten voor de ondernemer. */}
-        <section id="verzekeringskaarten" className="w-full scroll-mt-6 px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
+        {/* Actuele polisvoorwaarden & verzekeringskaarten — Figma node 2051:5490. Twee lijsten naast elkaar (80px ertussen) vanaf 900px, daaronder gestapeld: eigen aanname, geen mobiel frame. */}
+        <section id="actuele-polisvoorwaarden" className="w-full scroll-mt-6 px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto max-w-[1200px]">
-            <div className="flex max-w-[800px] flex-col gap-4 min-[600px]:gap-6">
-              <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4 min-[600px]:gap-6">
+              <div className="flex max-w-[880px] flex-col gap-2">
                 <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                  Alle verzekeringskaarten voor de ondernemer
+                  Alle actuele polisvoorwaarden en verzekeringskaarten van onze AOV&apos;s
                 </h2>
-                <p className="max-w-[880px] text-black text-sm leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  Met een verzekeringskaart zie je in één oogopslag wat wel en niet verzekerd is als je onze verzekering afsluit. Het laat je op
-                  begrijpelijke wijze zien wat de polisvoorwaarden zijn. Je kunt onze verzekeringskaarten ook goed vergelijken met de
-                  verzekeringskaarten van andere verzekeraars in Nederland.
+                <p className="text-black text-sm leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                  Bekijk de actuele polisvoorwaarden en verzekeringskaarten van onze AOV’s. In de polisvoorwaarden lees je wat er precies is verzekerd. Met de verzekeringskaart zie je de belangrijkste dekkingen in één oogopslag.
                 </p>
               </div>
-              <LinkList items={VERZEKERINGSKAARTEN} />
+              <div className="flex flex-col items-start gap-8 min-[900px]:flex-row min-[900px]:gap-20">
+                <LinkList
+                  title="Actuele polisvoorwaarden"
+                  items={ACTUELE_POLISVOORWAARDEN}
+                  className="flex flex-col items-start gap-2"
+                />
+                <LinkList title="Alle verzekeringskaarten" items={VERZEKERINGSKAARTEN} className="flex flex-col items-start gap-2" />
+              </div>
             </div>
           </div>
         </section>

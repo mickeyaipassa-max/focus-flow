@@ -7,6 +7,8 @@ export type LinkListItem = {
 
 type LinkListProps = {
   items: LinkListItem[];
+  /** Vetgedrukte kop boven de lijst (Figma: "Link List – …"-frames met titel, 8px boven de eerste link). */
+  title?: string;
   className?: string;
 };
 
@@ -20,9 +22,14 @@ type LinkListProps = {
  * van deze bibliotheek (FooterButton) consistente hover-aanduiding.
  * `target="_blank"` + `rel` passen bij het new-tab-icoon.
  */
-export function LinkList({ items, className }: LinkListProps) {
+export function LinkList({ items, title, className }: LinkListProps) {
   return (
     <div className={className ?? "flex w-full max-w-[800px] flex-col items-start gap-2"}>
+      {title && (
+        <p className="font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+          {title}
+        </p>
+      )}
       {items.map((item) => (
         <a
           key={item.href}
