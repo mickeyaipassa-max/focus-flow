@@ -188,7 +188,7 @@ export default function VoorwaardenPage() {
         <section className="w-full px-6 pt-6 min-[600px]:px-12 min-[600px]:pt-10 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex max-w-[1200px] flex-col gap-2 min-[600px]:gap-3">
             <h1 className="text-black text-[32px] leading-[1.2] min-[600px]:text-[40px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-              Vind de voorwaarden van je arbeids&shy;ongeschikt&shy;heids&shy;verzekering
+              Vind de polisvoorwaarden van je arbeids&shy;ongeschikt&shy;heids&shy;verzekering
             </h1>
             <p className="max-w-[880px] text-black text-base leading-[1.4] min-[600px]:text-xl" style={{ fontFamily: "var(--font-avenir-book)" }}>
               Wil je precies weten hoe het ook alweer zat met jouw AOV? Op deze pagina vind je een overzicht van de polisvoorwaarden voor onze AOV&apos;s voor ondernemers.
