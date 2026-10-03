@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { TableOfContents } from "@/components/TableOfContents";
+import { ResultSkeleton } from "@/components/ResultSkeleton";
+import { smoothScrollToElement } from "@/lib/smoothScroll";
 import { Select } from "@/components/Select";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
@@ -139,11 +141,39 @@ export default function VoorwaardenPage() {
 
   const verzekeringLabel = VERZEKERING_OPTIONS.find((option) => option.value === verzekering)?.label ?? "";
 
+  const [loading, setLoading] = useState(false);
+  const loadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (loadTimer.current) clearTimeout(loadTimer.current);
+    };
+  }, []);
+
+  // Zodra de laadstaat (skeleton) in de pagina staat: meteen eased naar het resultaat scrollen.
+  useEffect(() => {
+    if (!loading) return;
+    const target = document.getElementById("resultaat");
+    if (target) smoothScrollToElement(target);
+  }, [loading]);
+
+  /**
+   * Na "Bekijk voorwaarden en documenten": meteen naar het resultaat scrollen,
+   * 1 seconde een skeleton tonen en dan pas het resultaat. De wachttijd is
+   * puur UX (er is geen echte achterliggende aanvraag).
+   */
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!verzekeringLabel || !modelnummer.trim()) return;
-    setResult({ verzekeringLabel, modelnummer: modelnummer.trim() });
+    if (loading || !verzekeringLabel || !modelnummer.trim()) return;
+    const next = { verzekeringLabel, modelnummer: modelnummer.trim() };
+    setResult(null);
+    setLoading(true);
+    loadTimer.current = setTimeout(() => {
+      setResult(next);
+      setLoading(false);
+    }, 1000);
   }
+
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start bg-white">
@@ -227,7 +257,11 @@ export default function VoorwaardenPage() {
                 gemockte waarde: er is geen echte achterliggende data over
                 welk model daadwerkelijk het nieuwste is.
               */}
-              {result && (
+              {(loading || result) && (
+                <div id="resultaat" className="w-full scroll-mt-6" aria-live="polite" aria-busy={loading}>
+                  {loading || !result ? (
+                    <ResultSkeleton />
+                  ) : (
                 <div className="flex w-full flex-col gap-12 rounded-md bg-white p-6 shadow-[0px_4px_8px_rgba(0,0,0,0.12)] min-[600px]:p-10">
                   <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
                     Voorwaarden en documenten voor jouw {result.verzekeringLabel}
@@ -285,6 +319,8 @@ export default function VoorwaardenPage() {
                       ]}
                     />
                   </div>
+                </div>
+                  )}
                 </div>
               )}
             </div>
