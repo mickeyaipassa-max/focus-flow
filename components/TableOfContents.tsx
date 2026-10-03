@@ -21,13 +21,15 @@ type TableOfContentsProps = {
  * in-page ankerlinks, elk met een blauw pijl-omlaag-icoon (16×16, nieuw
  * gedownload asset `arrow-down-blue.svg` — bewust een apart bestand van het
  * zwarte 24px-icoon dat de tegels gebruikten) vóór een blauwe linktekst
- * (`#0064a8`, 18px). Het icoon staat 4px lager dan de top van de regel
- * (`pt-1`), zoals in Figma, zodat het optisch op de eerste tekstregel valt.
+ * (`#0064a8`). Compacte Link-variant (`compact=true`): 16px tekst met regelhoogte
+ * 24px (link 24px hoog), 24px tussen de links, 8px tussen pijl en tekst. Het
+ * icoon staat 3px lager dan de top van de regel (`pt-[3px]`, gemeten in
+ * Figma), zodat het optisch op de eerste tekstregel valt.
  *
  * Echte `<a href="#...">` i.p.v. `<button>`: native ankergedrag (werkt zonder
  * JS, verschijnt in de URL, "open in nieuw tabblad" werkt).
  *
- * Responsief: Figma toont alleen het desktop-frame (één rij, 8px tussen de
+ * Responsief: Figma toont alleen het desktop-frame (één rij, 24px tussen de
  * links). Onder 600px staan de links hier onder elkaar, vanaf 600px naast
  * elkaar met omloop — een eigen, niet via Figma bevestigde aanname.
  *
@@ -44,7 +46,7 @@ export function TableOfContents({ items, className }: TableOfContentsProps) {
   }
 
   return (
-    <nav aria-label="Inhoudsopgave" className={className ?? "flex w-full flex-col items-start gap-2 min-[600px]:flex-row min-[600px]:flex-wrap"}>
+    <nav aria-label="Inhoudsopgave" className={className ?? "flex w-full flex-col items-start gap-2 min-[600px]:flex-row min-[600px]:flex-wrap min-[600px]:gap-x-6"}>
       {items.map(({ label, targetId }) => (
         <a
           key={targetId}
@@ -52,10 +54,10 @@ export function TableOfContents({ items, className }: TableOfContentsProps) {
           onClick={(event) => handleClick(event, targetId)}
           className="flex items-start gap-2"
         >
-          <span className="flex shrink-0 items-center pt-1">
+          <span className="flex shrink-0 items-center pt-[3px]">
             <Icon name="arrow-down-blue" size="sm" />
           </span>
-          <span className="min-[600px]:whitespace-nowrap text-[#0064a8] text-lg leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
+          <span className="min-[600px]:whitespace-nowrap text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
             {label}
           </span>
         </a>
