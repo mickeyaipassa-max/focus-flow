@@ -31,6 +31,13 @@ type HeaderProps = {
   cancelButton?: boolean;
   onCancel?: () => void;
   /**
+   * Opmaak van de "Annuleren"-knop. Default `"default"`: dun sluit-icoon
+   * (`close`) vóór de tekst, zoals in de mutatie-funnel (Figma `icon-prepend`).
+   * `"cross-after"`: dik kruis-icoon (`cross`, 3px lijn) ná de tekst, zoals de
+   * Royeren-funnel het tekent (Figma `icon-append`: "Annuleren ✕").
+   */
+  cancelStyle?: "default" | "cross-after";
+  /**
    * Toont de "ik kies zelf"-sticker naast de titel (Figma: Header Funnel's
    * "Logo" instance, type="ikz-sticker-arrow-left" — bevestigd bestaande
    * property, destijds bewust niet gebouwd: "ikz is een label en is
@@ -51,7 +58,7 @@ function IkzSticker() {
   );
 }
 
-export function Header({ title, chatButton = true, phoneNumber, cancelButton = false, onCancel, ikzSticker = false, className }: HeaderProps) {
+export function Header({ title, chatButton = true, phoneNumber, cancelButton = false, onCancel, cancelStyle = "default", ikzSticker = false, className }: HeaderProps) {
   const showContactButton = cancelButton || Boolean(phoneNumber) || chatButton;
   return (
     <header className={className ?? "flex w-full justify-center bg-white"}>
@@ -106,8 +113,9 @@ export function Header({ title, chatButton = true, phoneNumber, cancelButton = f
                 className="flex items-center justify-center gap-2 rounded-[4px] border border-transparent px-3 py-2 font-[550] text-base text-black leading-[1.5] underline decoration-solid whitespace-nowrap [text-decoration-skip-ink:none] hover:border-[rgba(0,0,0,0.08)] hover:bg-[rgba(0,0,0,0.08)] hover:no-underline min-[1200px]:px-4 min-[1200px]:py-3 min-[1200px]:text-lg"
                 style={{ fontFamily: "var(--font-avenir-medium)" }}
               >
-                <Icon name={cancelButton ? "close" : phoneNumber ? "phone" : "chat"} size="md" />
+                {!(cancelButton && cancelStyle === "cross-after") && <Icon name={cancelButton ? "close" : phoneNumber ? "phone" : "chat"} size="md" />}
                 {cancelButton ? "Annuleren" : (phoneNumber ?? "Chat")}
+                {cancelButton && cancelStyle === "cross-after" && <Icon name="cross" size="md" />}
               </button>
             </div>
           )}
