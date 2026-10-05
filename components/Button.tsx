@@ -4,7 +4,7 @@ import { Icon } from "./Icon";
 type ButtonType = "primary" | "secondary" | "tertiary" | "text" | "brand";
 
 type ButtonProps = {
-  children: ReactNode;
+  children?: ReactNode;
   type?: ButtonType;
   /** Icoonnaam uit /public/icons/, vóór de tekst. */
   iconPrepend?: string;
@@ -26,6 +26,10 @@ type ButtonProps = {
   compact?: boolean;
   /** Staat tekstomloop toe i.p.v. de standaard `nowrap` — nodig voor knoppen met langere tekst die anders buiten hun vaste-breedte ouder uitsteken (bv. Card's CTA's). */
   wrap?: boolean;
+  /** Alleen een icoon (via `iconPrepend`), geen tekst: vierkant, 40×40 bij `compact` (24px icoon + 8px padding). Geef dan altijd een `ariaLabel` mee. */
+  iconOnly?: boolean;
+  /** Toegankelijke naam — verplicht bij `iconOnly`, waar geen zichtbare tekst is. */
+  ariaLabel?: string;
   className?: string;
 };
 
@@ -54,6 +58,8 @@ export function Button({
   order,
   wrap = false,
   compact = false,
+  iconOnly = false,
+  ariaLabel,
   className,
 }: ButtonProps) {
   const base =
@@ -70,9 +76,13 @@ export function Button({
       "border border-[#565656] px-6 py-3 text-black " +
       "hover:border-black hover:bg-[rgba(0,0,0,0.08)] " +
       "active:border-black active:bg-[rgba(0,0,0,0.08)]",
-    // Hover/active van "tertiary" zijn niet opgehaald (geen bestaand component
-    // gebruikt dit type) — alleen de bevestigde default-state hier.
-    tertiary: "px-4 py-3 text-black underline",
+    // Hover (zwart 8% vlak + 1px rand van 8%) en active (zwart 8% vlak, geen rand)
+    // uit Figma's tertiary-varianten. De hover-rand is een inset-schaduw i.p.v.
+    // een echte border, zodat de knop niet 2px groter wordt.
+    tertiary:
+      "px-4 py-3 text-black underline " +
+      "hover:bg-[rgba(0,0,0,0.08)] hover:shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)] " +
+      "active:bg-[rgba(0,0,0,0.08)] active:shadow-none",
     text: "px-0 py-0 text-black underline hover:no-underline active:no-underline",
     brand:
       "border-b-2 border-[rgba(0,0,0,0.08)] bg-[#eda50f] px-6 py-3 text-black " +
@@ -80,12 +90,15 @@ export function Button({
       "active:border-0 active:bg-[#f0b335]",
   };
 
-  const classes = compact ? byType[type].replace("px-6 py-3", type === "secondary" ? "px-4 py-[7px]" : "px-4 py-2") : byType[type];
+  let classes = compact ? byType[type].replace("px-6 py-3", type === "secondary" ? "px-4 py-[7px]" : "px-4 py-2") : byType[type];
+  // Icon-only: vierkant, geen tekstonderstreping. Compact = 40×40 (Figma "icon-only=true, compact=true").
+  if (iconOnly) classes = classes.replace(/px-\d+ py-\[?\d+\]?/, compact ? "size-10 p-2" : "size-[51px] p-[13.5px]").replace(" underline", "");
 
   return (
     <button
       type={htmlType}
       onClick={onClick}
+      aria-label={ariaLabel}
       className={
         className ??
         [
@@ -97,7 +110,7 @@ export function Button({
       style={{ fontFamily: "var(--font-avenir-medium)", order }}
     >
       {iconPrepend && <Icon name={iconPrepend} size="md" />}
-      {children}
+      {!iconOnly && children}
       {iconAppend && <Icon name={iconAppend} size="md" />}
     </button>
   );

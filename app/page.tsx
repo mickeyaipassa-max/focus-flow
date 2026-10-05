@@ -26,6 +26,7 @@ import { SummaryCard } from "@/components/SummaryCard";
 import { Toggle } from "@/components/Toggle";
 import { ProductSelectCard } from "@/components/ProductSelectCard";
 import { ProductSelectCardDemo } from "@/components/ProductSelectCardDemo";
+import { InputFileDemo } from "@/components/InputFileDemo";
 
 const DEKKING_OPTIES = [
   { value: "aov", label: "Arbeidsongeschiktheid" },
@@ -328,6 +329,7 @@ export default function Home() {
             </Popover>
           </div>
         </div>
+        <InputFileDemo />
         <DialogDemo />
         <div className="flex flex-wrap items-start gap-6">
           <div className="w-[400px]">
