@@ -59,6 +59,13 @@ type FunnelPageTemplateProps = {
    * gecontroleerd.
    */
   cardClassName?: string;
+  /**
+   * Override voor de className van de container om `children` heen (standaard
+   * `flex w-full flex-col items-start gap-10 p-6 min-[1200px]:p-10`). Nodig
+   * wanneer de eerste rij van de kaart een andere bovenmarge heeft dan de
+   * standaard 40px (bv. de terug-knop bovenaan de Royeren-bevestigingsstap).
+   */
+  contentClassName?: string;
   /** De navigatieknoppenrij onderaan de kaart — typisch een `<FormNavigation .../>`. Losse slot i.p.v. doorgeefprops, zodat de afnemer dat component zelf blijft aansturen. */
   navigation: ReactNode;
   className?: string;
@@ -99,6 +106,7 @@ export function FunnelPageTemplate({
   sidebar,
   sidebarClassName,
   cardClassName,
+  contentClassName,
   navigation,
   className,
 }: FunnelPageTemplateProps) {
@@ -189,7 +197,7 @@ export function FunnelPageTemplate({
                 cardClassName ?? "flex min-w-px flex-1 flex-col items-start overflow-hidden rounded-md bg-white shadow-[0px_4px_8px_rgba(0,0,0,0.12)]"
               }
             >
-              <div className="flex w-full flex-col items-start gap-10 p-6 min-[1200px]:p-10">{children}</div>
+              <div className={contentClassName ?? "flex w-full flex-col items-start gap-10 p-6 min-[1200px]:p-10"}>{children}</div>
               <div className="h-px w-full shrink-0 bg-[rgba(0,0,0,0.08)]" />
               {navigation}
             </div>

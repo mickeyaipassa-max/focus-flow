@@ -10,9 +10,8 @@ import { InputDate } from "@/components/InputDate";
 import { InputFile } from "@/components/InputFile";
 import { fromIsoDatum, toIsoDatum } from "@/lib/datum";
 import { ROYEREN_STEPS, useRoyerenFunnel } from "./funnel-context";
+import { ROYEREN_CARD_CLASS } from "./card";
 import { BEWIJSSTUK_LABEL, REDENEN, bewijsstukBeschrijving } from "./opzegreden";
-
-const CARD_CLASS = "flex w-full max-w-[784px] flex-col items-start overflow-hidden rounded-md bg-white shadow-[0px_4px_8px_rgba(0,0,0,0.12)]";
 
 type Errors = { reden?: string; bestanden?: string; ingangsdatum?: string };
 
@@ -65,7 +64,7 @@ export default function RoyerenPage() {
       activeStep={1}
       stepAnimationKey="royeren"
       stepIndicatorClassName="hidden w-full items-start justify-center min-[900px]:flex min-[1200px]:px-10"
-      cardClassName={CARD_CLASS}
+      cardClassName={ROYEREN_CARD_CLASS}
       navigation={<FormNavigation nextLabel="Naar samenvatting" onNext={handleNext} />}
     >
       <FunnelSection

@@ -75,7 +75,7 @@ export function Alert({
   return (
     <div
       className={
-        className ?? ["flex items-start gap-2 rounded-[3px] border p-2", bg, border].join(" ")
+        className ?? ["flex items-start gap-2 rounded-[3px] border p-[7px]", bg, border].join(" ")
       }
     >
       <div className="flex flex-1 items-start gap-2 p-2">

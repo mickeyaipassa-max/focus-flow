@@ -2,6 +2,13 @@ import { Icon } from "./Icon";
 
 type ValidationProps = {
   message: string;
+  /**
+   * Fouticoon: `"circle"` (cirkel met uitroepteken, Figma "Error Icon", de
+   * standaard) of `"triangle"` (driehoek, zoals de instance onder de akkoord-
+   * checkbox in de Royeren-funnel hem tekent — dezelfde Validation-component
+   * met een ander icoon in Figma).
+   */
+  icon?: "circle" | "triangle";
   className?: string;
 };
 
@@ -19,11 +26,11 @@ type ValidationProps = {
  * In Figma staat de tekst op `nowrap`; echte meldingen zijn langer dan de
  * demotekst, dus de tekst mag hier omlopen (`min-w-0`).
  */
-export function Validation({ message, className }: ValidationProps) {
+export function Validation({ message, icon = "circle", className }: ValidationProps) {
   return (
     <div className={className ?? "flex w-fit max-w-full items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1"}>
       <span className="flex shrink-0 items-center pt-[3px]">
-        <Icon name="validation-error" size="sm" />
+        <Icon name={icon === "triangle" ? "error-triangle" : "validation-error"} size="sm" />
       </span>
       <span className="flex min-w-0 items-center pt-[2px] text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir)" }}>
         {message}

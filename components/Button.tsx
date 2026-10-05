@@ -73,7 +73,8 @@ export function Button({
       "hover:border hover:border-black hover:bg-[#292929] " +
       "active:bg-[#292929]",
     secondary:
-      "border border-[#565656] px-6 py-3 text-black " +
+      // 23px/11px i.p.v. 24px/12px: Figma's rand ligt binnen het kader (51px hoog), de CSS-rand van 1px erbuiten.
+      "border border-[#565656] px-[23px] py-[11px] text-black " +
       "hover:border-black hover:bg-[rgba(0,0,0,0.08)] " +
       "active:border-black active:bg-[rgba(0,0,0,0.08)]",
     // Hover (zwart 8% vlak + 1px rand van 8%) en active (zwart 8% vlak, geen rand)
@@ -85,12 +86,15 @@ export function Button({
       "active:bg-[rgba(0,0,0,0.08)] active:shadow-none",
     text: "px-0 py-0 text-black underline hover:no-underline active:no-underline",
     brand:
-      "border-b-2 border-[rgba(0,0,0,0.08)] bg-[#eda50f] px-6 py-3 text-black " +
+      // pb-2.5 i.p.v. pb-3: Figma's onderrand van 2px ligt binnen het kader (51px hoog), de CSS-rand erbuiten.
+      "border-b-2 border-[rgba(0,0,0,0.08)] bg-[#eda50f] px-6 pt-3 pb-2.5 text-black " +
       "hover:border hover:border-b hover:border-[#f0b335] hover:bg-[#f0b335] " +
       "active:border-0 active:bg-[#f0b335]",
   };
 
-  let classes = compact ? byType[type].replace("px-6 py-3", type === "secondary" ? "px-4 py-[7px]" : "px-4 py-2") : byType[type];
+  const regularPadding = type === "secondary" ? "px-[23px] py-[11px]" : type === "brand" ? "px-6 pt-3 pb-2.5" : "px-6 py-3";
+  const compactPadding = type === "secondary" ? "px-[15px] py-[7px]" : "px-4 py-2";
+  let classes = compact ? byType[type].replace(regularPadding, compactPadding) : byType[type];
   // Icon-only: vierkant, geen tekstonderstreping. Compact = 40×40 (Figma "icon-only=true, compact=true").
   if (iconOnly) classes = classes.replace(/px-\d+ py-\[?\d+\]?/, compact ? "size-10 p-2" : "size-[51px] p-[13.5px]").replace(" underline", "");
 
