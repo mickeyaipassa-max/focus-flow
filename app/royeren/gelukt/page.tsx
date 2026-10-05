@@ -22,23 +22,27 @@ import { ROYEREN_STEPS, useRoyerenFunnel } from "../funnel-context";
  *
  * "Naar je Autoverzekering" en "Naar je account" hebben (nog) geen bestemming
  * in Figma; beide gaan naar de startpagina. Zonder datum (rechtstreeks
- * geopend) gaat de klant terug naar stap 1.
+ * geopend of na een refresh) gaat de klant terug naar stap 1; "Annuleren" wist
+ * de funnel en gaat ook naar stap 1.
  */
 export default function RoyerenGeluktPage() {
   const router = useRouter();
-  const { state, isHydrated } = useRoyerenFunnel();
+  const { state, reset } = useRoyerenFunnel();
   const { ingangsdatum } = state;
 
   useEffect(() => {
-    if (isHydrated && !ingangsdatum) router.replace("/royeren");
-  }, [isHydrated, ingangsdatum, router]);
+    if (!ingangsdatum) router.replace("/royeren");
+  }, [ingangsdatum, router]);
 
   return (
     <FunnelPageTemplate
       headerTitle="Opzeggen Autoverzekering"
       cancelButton
       cancelStyle="cross-after"
-      onCancel={() => router.push("/")}
+      onCancel={() => {
+        reset();
+        router.push("/royeren");
+      }}
       ikzSticker
       steps={ROYEREN_STEPS}
       activeStep={ROYEREN_STEPS.length + 1}

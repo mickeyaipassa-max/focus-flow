@@ -33,7 +33,7 @@ import { REDENEN, bewijsstukBeschrijving } from "../opzegreden";
  */
 export default function RoyerenBevestigenPage() {
   const router = useRouter();
-  const { state, isHydrated, bestanden } = useRoyerenFunnel();
+  const { state, reset, bestanden } = useRoyerenFunnel();
   const { reden, ingangsdatum } = state;
   const [akkoord, setAkkoord] = useState(false);
   const [akkoordError, setAkkoordError] = useState(false);
@@ -41,8 +41,8 @@ export default function RoyerenBevestigenPage() {
   const compleet = Boolean(reden && ingangsdatum) && !(bewijsstukBeschrijving(reden) && bestanden.length === 0);
 
   useEffect(() => {
-    if (isHydrated && !compleet) router.replace("/royeren");
-  }, [isHydrated, compleet, router]);
+    if (!compleet) router.replace("/royeren");
+  }, [compleet, router]);
 
   const redenLabel = REDENEN.find((option) => option.value === reden)?.label ?? "";
   const datum = ingangsdatum ? formatDatum(fromIsoDatum(ingangsdatum)) : "";
@@ -60,7 +60,10 @@ export default function RoyerenBevestigenPage() {
       headerTitle="Opzeggen Autoverzekering"
       cancelButton
       cancelStyle="cross-after"
-      onCancel={() => router.push("/")}
+      onCancel={() => {
+        reset();
+        router.push("/royeren");
+      }}
       ikzSticker
       steps={ROYEREN_STEPS}
       activeStep={2}

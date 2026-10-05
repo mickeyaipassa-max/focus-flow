@@ -30,6 +30,9 @@ function vandaag() {
  * vaste kaartbreedte van 784px (zoals Woonverzekeringen), `Select` (reden),
  * `InputFile` (alleen bij een reden die een bewijsstuk vraagt) en `InputDate`.
  *
+ * "Annuleren" zet de funnel terug naar de lege beginstand op deze pagina; ook een refresh
+ * start leeg (geen sessionStorage).
+ *
  * Eigen keuzes (niet uit Figma): validatie gebeurt bij "Naar samenvatting";
  * de datum mag niet in het verleden liggen; foutteksten voor reden/datum zijn
  * hier gekozen (Figma tekent alleen de akkoord-fout op de volgende stap); het
@@ -37,7 +40,7 @@ function vandaag() {
  */
 export default function RoyerenPage() {
   const router = useRouter();
-  const { state, setState, bestanden, setBestanden } = useRoyerenFunnel();
+  const { state, setState, reset, bestanden, setBestanden } = useRoyerenFunnel();
   const { reden, ingangsdatum } = state;
   const [errors, setErrors] = useState<Errors>({});
 
@@ -58,7 +61,11 @@ export default function RoyerenPage() {
       headerTitle="Opzeggen Autoverzekering"
       cancelButton
       cancelStyle="cross-after"
-      onCancel={() => router.push("/")}
+      onCancel={() => {
+        reset();
+        setErrors({});
+        router.push("/royeren");
+      }}
       ikzSticker
       steps={ROYEREN_STEPS}
       activeStep={1}
