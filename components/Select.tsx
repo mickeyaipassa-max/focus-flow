@@ -107,7 +107,7 @@ export function Select({
   })();
 
   return (
-    <div ref={rootRef} className={className ?? ["flex w-full flex-col items-start gap-2", fieldWidthClass[fieldWidth]].join(" ")}>
+    <div ref={rootRef} className={className ?? "flex w-full flex-col items-start gap-2"}>
       <div className="flex w-full flex-col items-start justify-center gap-1">
         <div className="flex flex-wrap items-center gap-1">
           <div className="flex items-center gap-1 text-lg leading-[1.5]">
@@ -144,90 +144,93 @@ export function Select({
 
       {beforeField}
 
-      <div className="relative w-full">
-        <button
-          type="button"
-          disabled={disabled}
-          aria-haspopup="listbox"
-          aria-expanded={open}
-          aria-controls={listboxId}
-          onClick={() => setOpen((o) => !o)}
-          className={triggerClasses}
-        >
-          <span
-            className={[
-              "min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-lg leading-[1.5]",
-              selected ? "text-black" : "text-[#565656]",
-            ].join(" ")}
-            style={{ fontFamily: "var(--font-avenir)" }}
+      {/* De veldbreedte (96/160/320/480px) geldt voor het veld en de melding, niet voor het label: in Figma loopt het label door buiten de 320px-Select (label-container 356px in een 320px-frame). */}
+      <div className={["flex w-full flex-col items-start gap-2", className ? "" : fieldWidthClass[fieldWidth]].join(" ")}>
+        <div className="relative w-full">
+          <button
+            type="button"
+            disabled={disabled}
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            aria-controls={listboxId}
+            onClick={() => setOpen((o) => !o)}
+            className={triggerClasses}
           >
-            {selected ? selected.label : placeholder}
-          </span>
-          <Icon name={open ? "chevron-up" : "chevron-down"} size="md" />
-        </button>
-
-        {open && !disabled && (
-          <div
-            id={listboxId}
-            role="listbox"
-            className="absolute left-0 top-full z-10 mt-1 flex max-h-[206px] w-full flex-col items-start overflow-y-auto rounded-[3px] bg-white py-1 shadow-[0px_8px_24px_0px_rgba(0,0,0,0.16)]"
-          >
-            <button
-              type="button"
-              role="option"
-              aria-selected={!selected}
-              onClick={() => handleSelect("")}
-              className="flex w-full items-start px-1"
+            <span
+              className={[
+                "min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-lg leading-[1.5]",
+                selected ? "text-black" : "text-[#565656]",
+              ].join(" ")}
+              style={{ fontFamily: "var(--font-avenir)" }}
             >
-              <span className="flex flex-1 items-center gap-2 rounded-[3px] px-3 py-2 text-left text-lg leading-[1.5] hover:bg-[rgba(0,0,0,0.08)]">
-                <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-black" style={{ fontFamily: "var(--font-avenir)" }}>
-                  {placeholder}
-                </span>
-                {!selected && (
-                  <span className="flex shrink-0 items-center pt-1">
-                    <Icon name="dropdown-check" size="sm" />
+              {selected ? selected.label : placeholder}
+            </span>
+            <Icon name={open ? "chevron-up" : "chevron-down"} size="md" />
+          </button>
+
+          {open && !disabled && (
+            <div
+              id={listboxId}
+              role="listbox"
+              className="absolute left-0 top-full z-10 mt-1 flex max-h-[206px] w-full flex-col items-start overflow-y-auto rounded-[3px] bg-white py-1 shadow-[0px_8px_24px_0px_rgba(0,0,0,0.16)]"
+            >
+              <button
+                type="button"
+                role="option"
+                aria-selected={!selected}
+                onClick={() => handleSelect("")}
+                className="flex w-full items-start px-1"
+              >
+                <span className="flex flex-1 items-center gap-2 rounded-[3px] px-3 py-2 text-left text-lg leading-[1.5] hover:bg-[rgba(0,0,0,0.08)]">
+                  <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-black" style={{ fontFamily: "var(--font-avenir)" }}>
+                    {placeholder}
                   </span>
-                )}
-              </span>
-            </button>
-            {options.map((option) => {
-              const isSelected = option.value === value;
-              return (
-                <button
-                  key={option.value}
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  onClick={() => handleSelect(option.value)}
-                  className="flex w-full items-start px-1"
-                >
-                  <span className="flex flex-1 items-center gap-2 rounded-[3px] px-3 py-2 text-left text-lg leading-[1.5] hover:bg-[rgba(0,0,0,0.08)]">
-                    <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-black" style={{ fontFamily: "var(--font-avenir)" }}>
-                      {option.label}
+                  {!selected && (
+                    <span className="flex shrink-0 items-center pt-1">
+                      <Icon name="dropdown-check" size="sm" />
                     </span>
-                    {isSelected && (
-                      <span className="flex shrink-0 items-center pt-1">
-                        <Icon name="dropdown-check" size="sm" />
+                  )}
+                </span>
+              </button>
+              {options.map((option) => {
+                const isSelected = option.value === value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => handleSelect(option.value)}
+                    className="flex w-full items-start px-1"
+                  >
+                    <span className="flex flex-1 items-center gap-2 rounded-[3px] px-3 py-2 text-left text-lg leading-[1.5] hover:bg-[rgba(0,0,0,0.08)]">
+                      <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-black" style={{ fontFamily: "var(--font-avenir)" }}>
+                        {option.label}
                       </span>
-                    )}
-                  </span>
-                </button>
-              );
-            })}
+                      {isSelected && (
+                        <span className="flex shrink-0 items-center pt-1">
+                          <Icon name="dropdown-check" size="sm" />
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {error && (
+          <div className="flex w-full items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
+            <span className="flex shrink-0 items-center pt-[3px]">
+              <Icon name="validation-error" size="sm" />
+            </span>
+            <span className="flex items-center pt-[2px] text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir)" }}>
+              {error}
+            </span>
           </div>
         )}
       </div>
-
-      {error && (
-        <div className="flex w-full items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
-          <span className="flex shrink-0 items-center pt-[3px]">
-            <Icon name="validation-error" size="sm" />
-          </span>
-          <span className="flex items-center pt-[2px] text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir)" }}>
-            {error}
-          </span>
-        </div>
-      )}
     </div>
   );
 }

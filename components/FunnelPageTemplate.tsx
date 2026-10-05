@@ -12,12 +12,21 @@ type FunnelPageTemplateProps = {
   /** Doorgegeven aan `Header`; toont "Annuleren" i.p.v. Chat/telefoonnummer (bevestigd op de mutatie-funnel). */
   cancelButton?: boolean;
   onCancel?: () => void;
+  /** Doorgegeven aan `Header`: opmaak van de "Annuleren"-knop (icoon en positie). */
+  cancelStyle?: "default" | "cross-after";
   /** Doorgegeven aan `Header`; toont de "ik kies zelf"-sticker (bevestigd nodig voor de Autoverzekering-funnel, niet voor Verzuim). */
   ikzSticker?: boolean;
   steps: string[];
   activeStep: number;
   /** Doorgegeven aan `StepIndicator`'s `animationKey` — zet de vul-animatie van de stapper-balk aan bij paginanavigatie tussen stappen. Zonder deze prop (default) ongewijzigd gedrag. */
   stepAnimationKey?: string;
+  /**
+   * Override voor de className van de desktop-`StepIndicator` (≥900px). Standaard
+   * `min-[1200px]:pl-10`: alleen links 40px extra, voor de sidebar-layouts. Het
+   * Royeren-ontwerp (zonder sidebar) heeft in Figma 40px aan beide kanten
+   * (Step Indicator, padding 0/40/0/40) — daar wordt `min-[1200px]:px-10` meegegeven.
+   */
+  stepIndicatorClassName?: string;
   /**
    * De formulierkaart-content — normaliter een of meer `FunnelSection`s.
    * Komt overeen met Figma's "Form sections"-slot binnen "Funnel Template".
@@ -80,10 +89,12 @@ export function FunnelPageTemplate({
   phoneNumber,
   cancelButton,
   onCancel,
+  cancelStyle,
   ikzSticker,
   steps,
   activeStep,
   stepAnimationKey,
+  stepIndicatorClassName,
   children,
   sidebar,
   sidebarClassName,
@@ -99,6 +110,7 @@ export function FunnelPageTemplate({
         phoneNumber={phoneNumber}
         cancelButton={cancelButton}
         onCancel={onCancel}
+        cancelStyle={cancelStyle}
         ikzSticker={ikzSticker}
       />
 
@@ -148,7 +160,7 @@ export function FunnelPageTemplate({
             steps={steps}
             activeStep={activeStep}
             animationKey={stepAnimationKey}
-            className="hidden w-full items-start justify-center min-[900px]:flex min-[1200px]:pl-10"
+            className={stepIndicatorClassName ?? "hidden w-full items-start justify-center min-[900px]:flex min-[1200px]:pl-10"}
           />
 
           {/*
