@@ -1,13 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState, type KeyboardEvent, type RefObject } from "react";
+import { Alert } from "@/components/Alert";
 import { Icon } from "@/components/Icon";
+import { Spinner } from "@/components/Spinner";
+import type { ChatSource } from "@/lib/chatPdf";
 
 export type ChatMessageData = {
   id: number;
   role: "user" | "assistant";
   text: string;
+  /** Bronnen bij een AI-antwoord; ze komen in de PDF-export direct onder dat antwoord. */
+  sources?: ChatSource[];
 };
+
+/** Eerste (vaste) bericht van de assistent; staat ook in de PDF-export. */
+const WELCOME_TEXT =
+  "Hallo, ik ben de AI-assistent van a.s.r. Ik kan je snel helpen. En anders stuur ik je door naar de juiste persoon. Waar gaat je vraag over?";
 
 const TOPIC_LABELS = ["Vergoedingen", "Eigen risico", "Collectieve zorg", "Contact met a.s.r.", "Zorg voor kinderen", "Voorwaarden"];
 
@@ -93,8 +102,7 @@ function ChatWelcome({
         <div className="max-w-full rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
           <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
             <span className="sr-only">AI-assistent zei: </span>
-            Hallo, ik ben de AI-assistent van a.s.r. Ik kan je snel helpen. En anders stuur ik je door naar de juiste persoon. Waar gaat je
-            vraag over?
+            {WELCOME_TEXT}
           </p>
         </div>
       </div>
@@ -229,6 +237,8 @@ export function ChatWidget({
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
+  const [pdfStatus, setPdfStatus] = useState<"idle" | "busy" | "error">("idle");
+  const [pdfAnnouncement, setPdfAnnouncement] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
   const hasMessages = messages.length > 0 || isTyping;
@@ -308,6 +318,40 @@ export function ChatWidget({
       document.removeEventListener("keydown", handleEscape);
     };
   }, [menuOpen, onMinimize, returnFocusOnMinimize]);
+
+  // Een fout bij het maken van de PDF blijft even staan en verdwijnt dan vanzelf (opnieuw proberen wist 'm direct).
+  useEffect(() => {
+    if (pdfStatus !== "error") return;
+    const timeout = setTimeout(() => setPdfStatus("idle"), 8000);
+    return () => clearTimeout(timeout);
+  }, [pdfStatus]);
+
+  /**
+   * "Download als PDF": exporteert het volledige zichtbare gesprek, inclusief
+   * de vaste welkomstboodschap bovenaan. De PDF-bibliotheek wordt pas hier
+   * geladen (dynamic import), zodat de pagina zelf niet zwaarder wordt. De
+   * korte minimale wachttijd voorkomt dat de voortgangsmelding bij een kort
+   * gesprek na een fractie van een seconde weer verdwijnt.
+   */
+  async function handleDownloadPdf() {
+    setMenuOpen(false);
+    menuBtnRef.current?.focus();
+    if (pdfStatus === "busy" || messages.length === 0) return;
+    setPdfStatus("busy");
+    setPdfAnnouncement("");
+    try {
+      const { buildChatPdf, downloadPdf } = await import("@/lib/chatPdf");
+      const [result] = await Promise.all([
+        buildChatPdf([{ role: "assistant", text: WELCOME_TEXT }, ...messages.map(({ role, text, sources }) => ({ role, text, sources }))]),
+        new Promise((resolve) => setTimeout(resolve, 500)),
+      ]);
+      downloadPdf(result);
+      setPdfStatus("idle");
+      setPdfAnnouncement("PDF van het gesprek gedownload.");
+    } catch {
+      setPdfStatus("error");
+    }
+  }
 
   function handleTagClick(label: string) {
     setSelectedTag(label);
@@ -413,6 +457,20 @@ export function ChatWidget({
                 <button
                   role="menuitem"
                   type="button"
+                  onClick={handleDownloadPdf}
+                  disabled={messages.length === 0 || pdfStatus === "busy"}
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-[#f6f6f7] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white"
+                >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f6f6f7]">
+                    <img src="/icons/download.svg" alt="" className="size-4" />
+                  </span>
+                  <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                    Download als PDF
+                  </span>
+                </button>
+                <button
+                  role="menuitem"
+                  type="button"
                   onClick={() => {
                     setMenuOpen(false);
                     setTimeout(() => returnFocusOnMinimize?.current?.focus(), 50);
@@ -450,6 +508,21 @@ export function ChatWidget({
             )}
           </div>
         </div>
+
+        {/* Voortgang/fout van "Download als PDF": direct onder de header, buiten het scrollende berichtenvak zodat het altijd zichtbaar is. */}
+        {pdfStatus === "busy" && (
+          <div role="status" className="flex shrink-0 items-center bg-white px-6 py-3" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
+            <Spinner size="sm" label="PDF wordt gemaakt…" labelPosition="horizontal" />
+          </div>
+        )}
+        {pdfStatus === "error" && (
+          <div role="alert" className="shrink-0 px-6 pt-4">
+            <Alert type="error" closable={false} title="Downloaden mislukt" description="We konden het gesprek niet als PDF maken. Probeer het opnieuw via het menu." />
+          </div>
+        )}
+        <p role="status" className="sr-only">
+          {pdfAnnouncement}
+        </p>
 
         {/*
           Berichtengebied — Chrome maakt deze scrollbare container (overflow-y-auto)
