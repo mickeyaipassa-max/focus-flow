@@ -61,27 +61,40 @@ const DEKKINGEN: Dekking[] = [
  * Native scroll-snap i.p.v. een carrousel-bibliotheek: swipen werkt gratis, en
  * de bolletjes volgen de scrollpositie. Een tik op een bolletje scrollt naar
  * die kaart.
+ *
+ * Uitlijning per kaart: de eerste staat 24px vanaf links (scrollpositie 0),
+ * een kaart daartussen staat gecentreerd, en de laatste staat 24px vanaf
+ * rechts (uiterste scrollpositie, met 24px padding rechts). Dat geven
+ * `snap-start`, `snap-center` en `snap-end` met 24px `scroll-padding`.
  */
 export function DekkingCarousel({ onBerekenen }: { onBerekenen: () => void }) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
+
+  /** Scrollpositie waarop kaart `index` goed staat: eerste links, laatste rechts, de rest gecentreerd. */
+  function scrollTargetFor(track: HTMLUListElement, index: number): number {
+    const items = Array.from(track.children) as HTMLElement[];
+    if (index <= 0) return 0;
+    if (index >= items.length - 1) return track.scrollWidth - track.clientWidth;
+    const item = items[index];
+    return item.offsetLeft + item.offsetWidth / 2 - track.clientWidth / 2;
+  }
 
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
     function onScroll() {
       if (!track) return;
-      const items = Array.from(track.children) as HTMLElement[];
-      // De kaart waarvan de linkerrand het dichtst bij de linkerrand van de track ligt (min. de 24px marge).
+      // De kaart waarvan de "goede" scrollpositie het dichtst bij de huidige ligt.
       let best = 0;
       let bestDistance = Infinity;
-      items.forEach((item, index) => {
-        const distance = Math.abs(item.offsetLeft - 24 - track.scrollLeft);
+      for (let index = 0; index < track.children.length; index++) {
+        const distance = Math.abs(scrollTargetFor(track, index) - track.scrollLeft);
         if (distance < bestDistance) {
           bestDistance = distance;
           best = index;
         }
-      });
+      }
       setActive(best);
     }
     track.addEventListener("scroll", onScroll, { passive: true });
@@ -90,21 +103,23 @@ export function DekkingCarousel({ onBerekenen }: { onBerekenen: () => void }) {
 
   function goTo(index: number) {
     const track = trackRef.current;
-    const item = track?.children[index] as HTMLElement | undefined;
-    if (!track || !item) return;
-    track.scrollTo({ left: item.offsetLeft - 24, behavior: "smooth" });
+    if (!track) return;
+    track.scrollTo({ left: scrollTargetFor(track, index), behavior: "smooth" });
   }
 
   return (
     <div className="flex w-full flex-col items-center gap-6" role="group" aria-roledescription="carrousel" aria-label="Dekkingen">
       <ul
         ref={trackRef}
-        className="relative flex w-full snap-x snap-mandatory gap-2 overflow-x-auto px-6 pb-px [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="relative flex w-full snap-x snap-mandatory scroll-px-6 gap-2 overflow-x-auto px-6 pb-px [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {DEKKINGEN.map((dekking, index) => (
           <li
             key={dekking.title}
-            className="w-[320px] shrink-0 snap-start"
+            className={[
+              "w-[320px] shrink-0",
+              index === 0 ? "snap-start" : index === DEKKINGEN.length - 1 ? "snap-end" : "snap-center",
+            ].join(" ")}
             aria-roledescription="dia"
             aria-label={`${index + 1} van ${DEKKINGEN.length}: ${dekking.title}`}
           >
@@ -119,8 +134,6 @@ export function DekkingCarousel({ onBerekenen }: { onBerekenen: () => void }) {
             />
           </li>
         ))}
-        {/* Ruimte rechts zodat de laatste kaart ook tegen de linkerrand kan snappen. */}
-        <li aria-hidden="true" className="w-[49px] shrink-0" />
       </ul>
 
       <div className="flex items-center gap-2">
