@@ -23,7 +23,7 @@ const DEKKINGEN: Dekking[] = [
     subtitle: "Meest gekozen bij auto's van 10 jaar en ouder",
     features: [
       { text: "Schade aan anderen", included: true },
-      { text: "Schade door brand, storm en natuur", included: false },
+      { text: "Schade door brand en natuur", included: false },
       { text: "Ruitschade", included: false },
       { text: "Diefstal", included: false },
       { text: "Standaard 1 jaar nieuwwaarde", included: false },
@@ -36,7 +36,7 @@ const DEKKINGEN: Dekking[] = [
     subtitle: "Meest gekozen voor auto's van 10 jaar en ouder",
     features: [
       { text: "Schade aan anderen", included: true },
-      { text: "Schade door brand, storm en natuur", included: true },
+      { text: "Schade door brand en natuur", included: true },
       { text: "Ruitschade", included: true },
       { text: "Diefstal", included: true },
       { text: "Standaard 1 jaar nieuwwaarde", included: true },
@@ -49,7 +49,7 @@ const DEKKINGEN: Dekking[] = [
     subtitle: "Meest gekozen voor auto's van 10 jaar en ouder",
     features: [
       { text: "Schade aan anderen", included: true },
-      { text: "Schade door brand, storm en natuur", included: true },
+      { text: "Schade door brand en natuur", included: true },
       { text: "Ruitschade", included: true },
       { text: "Diefstal", included: true },
       { text: "Standaard 1 jaar nieuwwaarde", included: true },
