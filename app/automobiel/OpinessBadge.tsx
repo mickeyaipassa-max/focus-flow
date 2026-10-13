@@ -46,5 +46,5 @@ export function OpinessBadge() {
     return () => observer.disconnect();
   }, []);
 
-  return <img ref={ref} src="/automobiel/opiness-2026.png" alt="Opiness 2026: best beoordeeld, autoverzekeraars" className="size-[118px]" />;
+  return <img ref={ref} src="/automobiel/opiness-badge.png" alt="Opiness 2026: best beoordeeld, autoverzekeraars" className="size-[118px]" />;
 }
