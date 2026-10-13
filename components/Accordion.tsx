@@ -35,7 +35,7 @@ export function Accordion({ items, className }: AccordionProps) {
       {items.map((item, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={item.title} className="border-[#e5e5e5] border-b">
+          <div key={`${item.title}-${index}`} className="border-[#e5e5e5] border-b">
             <button
               type="button"
               onClick={() => setOpenIndex(isOpen ? null : index)}
