@@ -9,6 +9,7 @@ import { Footer, type FooterColumn } from "@/components/Footer";
 import { Icon } from "@/components/Icon";
 import { DekkingCarousel } from "./DekkingCarousel";
 import { KentekenVeld } from "./KentekenVeld";
+import { OpinessBadge } from "./OpinessBadge";
 import { STICKY_BAR_HEIGHT, StickyKentekenBar } from "./StickyKentekenBar";
 
 /**
@@ -279,7 +280,7 @@ export function AutomobielContent() {
         <section className="flex flex-col gap-10 bg-white px-[30px] py-10">
           <div className="flex flex-col items-center">
             <div className="p-2.5">
-              <img src="/automobiel/opiness-2026.png" alt="Opiness 2026: best beoordeeld, autoverzekeraars" className="size-[98px]" />
+              <OpinessBadge />
             </div>
             <div className="flex flex-col items-center text-center">
               <h2 className="text-2xl text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
