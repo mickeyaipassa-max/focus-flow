@@ -286,7 +286,7 @@ export function AutomobielContent() {
               <h2 className="text-2xl text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
                 Als beste beoordeeld in 2026
               </h2>
-              <Body>Klanten hebben ons….. blabla</Body>
+              <Body className="text-base text-black leading-[1.5]">Opiness heeft a.s.r. in 2026 uitgeroepen tot best beoordeelde autoverzekeraar.</Body>
             </div>
           </div>
         </section>
