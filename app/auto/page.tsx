@@ -92,7 +92,13 @@ export default function AutoJouwSituatiePage() {
     if (!funnel.isHydrated || hasRestoredRef.current) return;
     hasRestoredRef.current = true;
     const saved = funnel.state.situatie;
-    if (!saved) return;
+    // Een kenteken uit `?kenteken=` (ingevuld op /automobiel) gaat voor op een bewaard kenteken: het wordt
+    // opgezocht alsof je het hier zelf typte. Bewaarde antwoorden op de andere vragen blijven staan.
+    const param = new URLSearchParams(window.location.search).get("kenteken")?.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 10);
+    if (!saved) {
+      if (param) setKenteken(param);
+      return;
+    }
     isRestoringRef.current = true;
     setKenteken(saved.kenteken);
     setVehicle(saved.vehicle);
@@ -105,6 +111,12 @@ export default function AutoJouwSituatiePage() {
     setPostcode(saved.postcode);
     setHuisnummer(saved.huisnummer);
     setToevoeging(saved.toevoeging);
+    if (param && param !== saved.kenteken.replace(/[^A-Za-z0-9]/g, "").toUpperCase()) {
+      setKenteken(param);
+      setVehicle(null);
+      setVehicleState("default");
+      isRestoringRef.current = false;
+    }
   }, [funnel.isHydrated, funnel.state.situatie]);
 
   const searchGenRef = useRef(0);

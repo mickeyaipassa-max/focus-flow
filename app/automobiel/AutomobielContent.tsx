@@ -1,13 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Accordion } from "@/components/Accordion";
 import { Footer, type FooterColumn } from "@/components/Footer";
 import { Icon } from "@/components/Icon";
 import { DekkingCarousel } from "./DekkingCarousel";
+import { KentekenVeld } from "./KentekenVeld";
+import { STICKY_BAR_HEIGHT, StickyKentekenBar } from "./StickyKentekenBar";
 
 /**
  * Mobiele autoverzekering-pagina (<600px), gebouwd uit Figma "Autoverzekering"
@@ -120,7 +122,50 @@ const LINKLIJST = ["Auto verzekeren", "Extra verzekeringen", "Service", "Informa
 
 export function AutomobielContent() {
   const router = useRouter();
-  const naarFunnel = () => router.push("/auto");
+  const [kenteken, setKenteken] = useState("");
+  const [stickyZichtbaar, setStickyZichtbaar] = useState(false);
+  const voorbijProductkaartenRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * De sticky balk verschijnt zodra de productkaarten voorbij zijn gescrold:
+   * een onzichtbaar markeerpunt direct onder de gele productsectie is dan
+   * boven de bovenrand van het scherm. Terug omhoog scrollen verbergt hem weer.
+   *
+   * Scroll-listener i.p.v. een IntersectionObserver: die meldt niets als het
+   * markeerpunt in één sprong van boven het scherm naar eronder gaat (bv.
+   * "terug naar boven"), en dan bleef de balk onterecht staan.
+   */
+  useEffect(() => {
+    const markeerpunt = voorbijProductkaartenRef.current;
+    if (!markeerpunt) return;
+    let frame = 0;
+    function bepaal() {
+      frame = 0;
+      setStickyZichtbaar(markeerpunt!.getBoundingClientRect().top < 0);
+    }
+    function planBepaling() {
+      if (!frame) frame = requestAnimationFrame(bepaal);
+    }
+    bepaal();
+    window.addEventListener("scroll", planBepaling, { passive: true });
+    window.addEventListener("resize", planBepaling);
+    return () => {
+      window.removeEventListener("scroll", planBepaling);
+      window.removeEventListener("resize", planBepaling);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  /** Naar de funnel; een ingevuld kenteken gaat mee, `/auto` zoekt het zelf op. */
+  function naarFunnel() {
+    const schoon = kenteken.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+    router.push(schoon ? `/auto?kenteken=${encodeURIComponent(schoon)}` : "/auto");
+  }
+
+  function handleKentekenSubmit(event: FormEvent) {
+    event.preventDefault();
+    naarFunnel();
+  }
 
   return (
     <div className="w-full bg-white">
@@ -169,34 +214,17 @@ export function AutomobielContent() {
                   <Body>Met een autoverzekering van a.s.r. ga je met een gerust gevoel de weg op.</Body>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                  {/* Kenteken: in Figma zonder zichtbaar label, daarom een onzichtbaar label voor schermlezers. */}
-                  <div className="flex h-[51px] w-full items-center gap-2 rounded-[3px] border border-[#565656] bg-[#fff8e3] py-3 pr-6 pl-px focus-within:border-black">
-                    <span className="flex shrink-0 items-center rounded-tl-[1px] rounded-bl-[1px] bg-[#0064a8] px-3 py-2">
-                      <Icon name="flag-nl-plate" className="inline-flex shrink-0 items-center justify-center" />
-                    </span>
-                    <label htmlFor="kenteken" className="sr-only">
-                      Kenteken
-                    </label>
-                    <input
-                      id="kenteken"
-                      name="kenteken"
-                      type="text"
-                      autoComplete="off"
-                      className="min-w-0 flex-1 bg-transparent text-center text-[20px] text-black leading-[1.4] outline-none"
-                      style={{ fontFamily: "var(--font-avenir-bold)" }}
-                    />
-                  </div>
+                <form onSubmit={handleKentekenSubmit} className="flex flex-col gap-4">
+                  <KentekenVeld id="kenteken" value={kenteken} onChange={setKenteken} />
 
                   <button
-                    type="button"
-                    onClick={naarFunnel}
+                    type="submit"
                     className="flex w-full items-center justify-center rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] px-6 pt-3 pb-2.5 font-[550] text-black text-lg leading-[1.5] hover:bg-[#f0b335]"
                     style={{ fontFamily: FONT_MEDIUM }}
                   >
                     Bereken je premie
                   </button>
-                </div>
+                </form>
               </div>
 
               <ul className="-mt-[3px] flex flex-col gap-2">
@@ -243,8 +271,9 @@ export function AutomobielContent() {
               schade aan je eigen auto ook verzekerd is? Kies dan voor Casco beperkt of Casco allrisk.
             </Body>
           </div>
-          <DekkingCarousel />
+          <DekkingCarousel onBerekenen={naarFunnel} />
         </section>
+        <div ref={voorbijProductkaartenRef} aria-hidden="true" className="h-px" />
 
         {/* Opiness-badge, aanvullende dekkingen en extra opties. */}
         <section className="flex flex-col gap-10 bg-white px-[30px] py-10">
@@ -433,6 +462,11 @@ export function AutomobielContent() {
       </main>
 
       <Footer linkSection columns={FOOTER_COLUMNS} />
+
+      {/* Ruimte onderaan, zodat de sticky balk de footer niet bedekt. */}
+      <div aria-hidden="true" style={{ height: STICKY_BAR_HEIGHT }} />
+
+      <StickyKentekenBar visible={stickyZichtbaar} value={kenteken} onChange={setKenteken} onSubmit={naarFunnel} />
     </div>
   );
 }

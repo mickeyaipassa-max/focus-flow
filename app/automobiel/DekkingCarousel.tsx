@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { CardProduct, type CardProductFeature } from "@/components/CardProduct";
 
 type Dekking = {
@@ -63,8 +62,7 @@ const DEKKINGEN: Dekking[] = [
  * de bolletjes volgen de scrollpositie. Een tik op een bolletje scrollt naar
  * die kaart.
  */
-export function DekkingCarousel() {
-  const router = useRouter();
+export function DekkingCarousel({ onBerekenen }: { onBerekenen: () => void }) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
 
@@ -116,7 +114,7 @@ export function DekkingCarousel() {
               features={dekking.features}
               primaryLabel="Bereken je premie"
               secondaryLabel="Meer informatie"
-              onPrimaryClick={() => router.push("/auto")}
+              onPrimaryClick={onBerekenen}
               className="flex w-full flex-col overflow-clip rounded-md border border-[rgba(0,0,0,0.12)] bg-white"
             />
           </li>
