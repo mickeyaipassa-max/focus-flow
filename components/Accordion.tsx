@@ -11,6 +11,8 @@ export type AccordionItem = {
 type AccordionProps = {
   items: AccordionItem[];
   className?: string;
+  /** 16px i.p.v. 18px voor de titels (Figma-variant van de Autoverzekering-pagina). Standaard `false`. */
+  compactTitles?: boolean;
 };
 
 /**
@@ -27,7 +29,7 @@ type AccordionProps = {
  * en hier nog niet ingevuld; zonder `content` klapt een item niet zichtbaar
  * open (geen lege ruimte).
  */
-export function Accordion({ items, className }: AccordionProps) {
+export function Accordion({ items, className, compactTitles = false }: AccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -42,7 +44,7 @@ export function Accordion({ items, className }: AccordionProps) {
               aria-expanded={isOpen}
               className="flex w-full items-center gap-4 py-4 text-left"
             >
-              <span className="flex-1 text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+              <span className={`flex-1 text-black ${compactTitles ? "text-base" : "text-lg"} leading-[1.5]`} style={{ fontFamily: "var(--font-avenir-bold)" }}>
                 {item.title}
               </span>
               <span

@@ -6,6 +6,8 @@ import { Icon } from "./Icon";
 type FooterButtonProps = {
   label: string;
   children?: React.ReactNode;
+  /** 16px i.p.v. 14px (alleen voor de juridische links, zie `compactText` van Footer). */
+  large?: boolean;
 };
 
 /**
@@ -15,11 +17,11 @@ type FooterButtonProps = {
  * Hover-styling (underline + gray-840) is wél een bevestigde Figma-state
  * en puur CSS, dus als :hover geïmplementeerd.
  */
-function FooterButton({ label, children }: FooterButtonProps) {
+function FooterButton({ label, children, large = false }: FooterButtonProps) {
   return (
     <button
       type="button"
-      className="flex items-center justify-center whitespace-nowrap text-sm text-black leading-[1.5] hover:text-[#2a292e] hover:underline"
+      className={`flex items-center justify-center whitespace-nowrap ${large ? "text-base" : "text-sm"} text-black leading-[1.5] hover:text-[#2a292e] hover:underline`}
       style={{ fontFamily: "var(--font-avenir)" }}
     >
       {children ?? label}
@@ -73,7 +75,15 @@ function FooterAppBadgesColumn({ className }: { className?: string }) {
  * andere opmaak (bold titel + gray-100-onderrand, geen apart vraag/antwoord-
  * onderscheid).
  */
-function FooterMobileAccordion({ columns, showAppBadges }: { columns: FooterColumn[]; showAppBadges?: boolean }) {
+function FooterMobileAccordion({
+  columns,
+  showAppBadges,
+  compactText = false,
+}: {
+  columns: FooterColumn[];
+  showAppBadges?: boolean;
+  compactText?: boolean;
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const items: { title: string; column: FooterColumn | null }[] = [
     ...columns.map((column) => ({ title: column.title, column })),
@@ -92,7 +102,7 @@ function FooterMobileAccordion({ columns, showAppBadges }: { columns: FooterColu
               aria-expanded={isOpen}
               className="flex w-full items-center gap-4 py-4 text-left"
             >
-              <span className="flex-1 text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+              <span className={`flex-1 text-black ${compactText ? "text-base" : "text-lg"} leading-[1.5]`} style={{ fontFamily: "var(--font-avenir-bold)" }}>
                 {item.title}
               </span>
               <span
@@ -165,14 +175,19 @@ type FooterProps = {
    * bestaande, witte footer van /aichat.
    */
   linkSection?: boolean;
+  /**
+   * Figma-variant van de Autoverzekering-pagina: de accordion-titels (mobiel) zijn 16px i.p.v. 18px en de
+   * juridische links 16px i.p.v. 14px. Standaard `false` = ongewijzigd voor alle andere pagina's.
+   */
+  compactText?: boolean;
 };
 
-export function Footer({ className, columns, showAppBadges, centered = false, linkSection = false }: FooterProps) {
+export function Footer({ className, columns, showAppBadges, centered = false, linkSection = false, compactText = false }: FooterProps) {
   const columnsGap = linkSection ? "gap-4" : "gap-8";
   const columnsBlock =
     columns && columns.length > 0 ? (
       <>
-          <FooterMobileAccordion columns={columns} showAppBadges={showAppBadges} />
+          <FooterMobileAccordion columns={columns} showAppBadges={showAppBadges} compactText={compactText} />
 
           {/* Bestaande enkele rij van kolommen, alleen vanaf 1440px (bevestigd via Figma's aparte 1200px-breakpointframe). */}
           <div className={`hidden w-full items-start ${columnsGap} min-[1440px]:flex`}>
@@ -200,7 +215,7 @@ export function Footer({ className, columns, showAppBadges, centered = false, li
       <div className="flex w-full flex-col items-start gap-6 min-[900px]:flex-row min-[900px]:items-start min-[900px]:gap-8">
         <div className="flex flex-wrap content-start items-start gap-x-5 gap-y-2 min-[900px]:flex-1">
           {LEGAL_LINKS.map((label) => (
-            <FooterButton key={label} label={label} />
+            <FooterButton key={label} label={label} large={compactText} />
           ))}
         </div>
         <p
