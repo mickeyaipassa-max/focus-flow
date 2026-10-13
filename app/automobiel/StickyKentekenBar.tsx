@@ -11,8 +11,8 @@ type StickyKentekenBarProps = {
   onSubmit: () => void;
 };
 
-/** Hoogte van de balk (Figma: 99px). De pagina houdt onderaan zoveel ruimte vrij, zodat de footer niet bedekt wordt. */
-export const STICKY_BAR_HEIGHT = 99;
+/** Hoogte van de balk (Figma: 99px, hier 16px hoger gezet zodat hij onderaan niet wegvalt). De pagina houdt onderaan zoveel ruimte vrij, zodat de footer niet bedekt wordt. */
+export const STICKY_BAR_HEIGHT = 115;
 
 const DURATION_MS = 300;
 const EASING = "cubic-bezier(0.4, 0, 0.2, 1)";
@@ -20,7 +20,9 @@ const EASING = "cubic-bezier(0.4, 0, 0.2, 1)";
 /**
  * Sticky CTA met kentekenveld, uit Figma "Autoverzekering" (Frame 4, node
  * 11:1454, bestand aGZg6VV6…): witte balk van volle breedte met 16px
- * padding (32px onderaan, ruimte voor de streep van de iPhone), radius 6,
+ * padding (32px onderaan, ruimte voor de streep van de iPhone; +16px extra
+ * zodat de inhoud op een echte telefoon niet tegen de onderrand van het scherm of de
+ * browserbalk aan zit), radius 6,
  * schaduw 0/8/24 zwart 16%, daarin het kentekenveld en een gele knop
  * "Berekenen" (110×51, 16px).
  *
@@ -44,7 +46,7 @@ export function StickyKentekenBar({ visible, value, onChange, onSubmit }: Sticky
       onSubmit={handleSubmit}
       aria-label="Premie berekenen met je kenteken"
       inert={!visible}
-      className="fixed inset-x-0 bottom-0 z-40 flex items-start gap-2 rounded-md bg-white px-4 pt-4 pb-[max(32px,env(safe-area-inset-bottom))] shadow-[0_8px_24px_rgba(0,0,0,0.16)] motion-reduce:!transition-none"
+      className="fixed inset-x-0 bottom-0 z-40 flex items-start gap-2 rounded-md bg-white px-4 pt-4 pb-[calc(max(32px,env(safe-area-inset-bottom))+16px)] shadow-[0_8px_24px_rgba(0,0,0,0.16)] motion-reduce:!transition-none"
       style={{
         transform: visible ? "translateY(0)" : "translateY(calc(100% + 32px))",
         visibility: visible ? "visible" : "hidden",
