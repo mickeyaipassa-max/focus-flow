@@ -72,7 +72,7 @@ function BlackButton({ children, onClick }: { children: ReactNode; onClick?: () 
 /** Een witte kaart met 1px rand (zwart 12%) en radius 6, zoals de "Card" in Figma. */
 function OutlineCard({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={["rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-6", className].filter(Boolean).join(" ")}>{children}</div>
+    <div className={["rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-[23px]", className].filter(Boolean).join(" ")}>{children}</div>
   );
 }
 
@@ -212,7 +212,7 @@ export function AutomobielContent() {
                   <h1 id="hero-titel" className="text-[28px] text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
                     Autoverzekering
                   </h1>
-                  <Body>Met een autoverzekering van a.s.r. ga je met een gerust gevoel de weg op.</Body>
+                  <Body className="text-base text-black leading-[1.5]">Met een autoverzekering van a.s.r. ga je met een gerust gevoel de weg op.</Body>
                 </div>
 
                 <form onSubmit={handleKentekenSubmit} className="flex flex-col gap-4">
@@ -220,7 +220,7 @@ export function AutomobielContent() {
 
                   <button
                     type="submit"
-                    className="flex w-full items-center justify-center rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] px-6 pt-3 pb-2.5 font-[550] text-black text-lg leading-[1.5] hover:bg-[#f0b335]"
+                    className="flex w-full items-center justify-center h-[51px] rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] px-6 font-[550] text-base text-black leading-[1.5] hover:bg-[#f0b335]"
                     style={{ fontFamily: FONT_MEDIUM }}
                   >
                     Bereken je premie
@@ -247,7 +247,7 @@ export function AutomobielContent() {
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#fff8e3]">
                       <Icon name={tegel.icon} size="sm" />
                     </span>
-                    <span className="flex-1 font-[550] text-black text-sm leading-[1.5]" style={{ fontFamily: FONT_MEDIUM }}>
+                    <span className="flex-1 font-[550] text-base text-black leading-[1.5]" style={{ fontFamily: FONT_MEDIUM }}>
                       {tegel.label}
                     </span>
                   </button>
@@ -258,7 +258,7 @@ export function AutomobielContent() {
         </section>
 
         {/* Welke autoverzekering heb ik nodig? — gele band met de drie dekkingskaarten. */}
-        <section aria-labelledby="dekking-titel" className="mt-10 flex flex-col gap-6 bg-[#fff8e3] py-10">
+        <section aria-labelledby="dekking-titel" className="mt-[37px] flex flex-col gap-4 bg-[#fff8e3] pt-10 pb-9">
           <div className="flex flex-col px-6">
             <SectionTitle>
               <span id="dekking-titel">
@@ -267,7 +267,7 @@ export function AutomobielContent() {
                 heb ik nodig?
               </span>
             </SectionTitle>
-            <Body className="max-w-[327px] text-black text-sm leading-[1.5]">
+            <Body className="max-w-[328px] text-base text-black leading-[1.5]">
               Als je een auto hebt, is een WA-verzekering verplicht. Hiermee is schade aan anderen verzekerd die je met je auto veroorzaakt. Wil je dat
               schade aan je eigen auto ook verzekerd is? Kies dan voor Casco beperkt of Casco allrisk.
             </Body>
@@ -276,8 +276,8 @@ export function AutomobielContent() {
         </section>
         <div ref={voorbijProductkaartenRef} aria-hidden="true" className="h-px" />
 
-        {/* Opiness-badge, aanvullende dekkingen en extra opties. */}
-        <section className="flex flex-col gap-10 bg-white px-[30px] py-10">
+        {/* Opiness-badge op een lichtgroene band (Figma: #eef4e3, 237px hoog). */}
+        <section className="bg-[#eef4e3] px-6 pt-6 pb-[23px]">
           <div className="flex flex-col items-center">
             <div className="p-2.5">
               <OpinessBadge />
@@ -289,11 +289,20 @@ export function AutomobielContent() {
               <Body>Klanten hebben ons….. blabla</Body>
             </div>
           </div>
+        </section>
 
-          <div className="flex flex-col gap-6">
+        {/* Aanvullende dekkingen en extra opties. */}
+        <section className="flex flex-col bg-white px-[30px] pt-[41px] pb-10">
+          <div className="flex flex-col gap-4">
             <div className="flex flex-col">
-              <SectionTitle>Aanvullende dekkingen &amp; Extra opties</SectionTitle>
-              <Body>Wil je meer zekerheid? Breid dan je autoverzekering uit met aanvullende dekkingen en opties.</Body>
+              <SectionTitle>
+                Aanvullende dekkingen
+                <br />
+                &amp; Extra opties
+              </SectionTitle>
+              <Body className="text-base text-black leading-[1.5]">
+                Wil je meer zekerheid? Breid dan je autoverzekering uit met aanvullende dekkingen en opties.
+              </Body>
             </div>
 
             <div className="flex flex-col gap-6">
@@ -314,12 +323,12 @@ export function AutomobielContent() {
                       </span>
                     )}
                     <div className="flex flex-col gap-2">
-                      <h4 className="text-[20px] text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
+                      <h4 className="text-[20px] text-black leading-[1.4]" style={{ fontFamily: FONT_MEMPHIS }}>
                         {dekking.title}
                       </h4>
-                      <Body>{dekking.text}</Body>
+                      <Body className="text-base text-black leading-[1.5]">{dekking.text}</Body>
                     </div>
-                    <button type="button" className="flex items-center gap-1 self-start font-[550] text-black text-sm leading-[1.5]" style={{ fontFamily: FONT_MEDIUM }}>
+                    <button type="button" className="flex items-center gap-1 self-start font-[550] text-base text-black leading-[1.5]" style={{ fontFamily: FONT_MEDIUM }}>
                       Button
                       <Icon name="chevron-right-sm" size="md" />
                     </button>
@@ -327,19 +336,19 @@ export function AutomobielContent() {
                 ))}
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 pt-4">
                 <h3 className="text-[20px] text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
                   Extra opties
                 </h3>
                 {EXTRA_OPTIES.map((optie, index) => (
                   <OutlineCard key={index} className="flex flex-col gap-4">
                     <div className="flex flex-col gap-2">
-                      <h4 className="text-[20px] text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
+                      <h4 className="text-[20px] text-black leading-[1.4]" style={{ fontFamily: FONT_MEMPHIS }}>
                         {optie.title}
                       </h4>
-                      <Body>{optie.text}</Body>
+                      <Body className="text-base text-black leading-[1.5]">{optie.text}</Body>
                     </div>
-                    <button type="button" className="flex items-center gap-1 self-start font-[550] text-black text-sm leading-[1.5]" style={{ fontFamily: FONT_MEDIUM }}>
+                    <button type="button" className="flex items-center gap-1 self-start font-[550] text-base text-black leading-[1.5]" style={{ fontFamily: FONT_MEDIUM }}>
                       Button
                       <Icon name="chevron-right-sm" size="md" />
                     </button>
@@ -374,7 +383,7 @@ export function AutomobielContent() {
           <div className="flex flex-col gap-4">
             <OutlineCard className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <h3 className="text-[20px] text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
+                <h3 className="text-[20px] text-black leading-[1.4]" style={{ fontFamily: FONT_MEMPHIS }}>
                   Schadevrije jaren
                 </h3>
                 <Body>
@@ -388,7 +397,7 @@ export function AutomobielContent() {
             </OutlineCard>
             <OutlineCard className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <h3 className="text-[20px] text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
+                <h3 className="text-[20px] text-black leading-[1.4]" style={{ fontFamily: FONT_MEMPHIS }}>
                   Tweede auto korting
                 </h3>
                 <Body>
@@ -406,10 +415,10 @@ export function AutomobielContent() {
         {/* Onafhankelijk advies. */}
         <section className="bg-[#fff8e3] px-6 py-10">
           <div className="flex flex-col rounded-md border border-[rgba(0,0,0,0.12)] bg-white">
-            <div className="p-3">
+            <div className="px-[11px] pt-[11px]">
               <div className={`h-[200px] w-full ${CHECKER}`} role="img" aria-label="Afbeelding volgt" />
             </div>
-            <div className="flex flex-col gap-4 px-6 pt-2 pb-6">
+            <div className="flex flex-col gap-4 px-6 pt-6 pb-[23px]">
               <div className="flex flex-col gap-2">
                 <SectionTitle>Liever onafhankelijk advies?</SectionTitle>
                 <Body>
@@ -442,7 +451,7 @@ export function AutomobielContent() {
           {FOTO_TEGELS.map((tegel) => (
             <div key={tegel.id} className="flex flex-col overflow-clip rounded-md bg-white shadow-[0_4px_16px_rgba(0,0,0,0.12)]">
               <div className={`h-[200px] w-full ${CHECKER}`} role="img" aria-label="Afbeelding volgt" />
-              <div className="flex flex-col gap-1.5 px-6 pt-6 pb-[19px]">
+              <div className="flex flex-col gap-[5px] p-6">
                 <h2 className="text-2xl text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
                   {tegel.title}
                 </h2>

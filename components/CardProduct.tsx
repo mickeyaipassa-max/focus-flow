@@ -108,7 +108,7 @@ export function CardProduct({
         <button
           type="button"
           onClick={onPrimaryClick}
-          className="flex w-full items-center justify-center gap-2 rounded-[3px] bg-black px-6 py-3 font-[550] text-sm text-white leading-[1.5] hover:bg-[#292929]"
+          className="flex w-full items-center justify-center gap-2 rounded-[3px] bg-black px-6 py-3 font-[550] text-base text-white leading-[1.5] hover:bg-[#292929]"
           style={{ fontFamily: "var(--font-avenir-medium)" }}
         >
           {primaryLabel}
