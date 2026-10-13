@@ -1,8 +1,8 @@
-/** Vinkje en kruisje zoals Figma ze in de 16px-cirkel tekent: kleine glyphs (±12/10px), vinkje groen, kruisje gray-660. */
+/** Vinkje en kruisje zoals Figma ze in de 16px-cirkel tekent: kleine glyphs (±12/10px), vinkje groen, kruisje #858585. */
 function CheckGlyph() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M13 4.5L6.5 11 3 7.5" stroke="#0F865D" strokeWidth="1.5" />
+      <path d="M13.5 3.75L6.5 11.5 2.5 7.5" stroke="#0F865D" strokeWidth="2" />
     </svg>
   );
 }
@@ -10,7 +10,7 @@ function CheckGlyph() {
 function CrossGlyph() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M4.5 4.5l7 7M11.5 4.5l-7 7" stroke="#565656" strokeWidth="1.5" />
+      <path d="M2.75 2.75l10.5 10.5M13.25 2.75l-10.5 10.5" stroke="#858585" strokeWidth="2" />
     </svg>
   );
 }
@@ -87,7 +87,7 @@ export function CardProduct({
                 >
                   {feature.included ? <CheckGlyph /> : <CrossGlyph />}
                 </span>
-                <span className="min-w-0 flex-1 pt-px text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                <span className="min-w-0 flex-1 pt-px text-base text-black leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                   {feature.text.trim()}
                   <span className="sr-only">{feature.included ? " (inbegrepen)" : " (niet inbegrepen)"}</span>
                 </span>
