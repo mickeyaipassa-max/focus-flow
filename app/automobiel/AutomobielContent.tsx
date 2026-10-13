@@ -61,7 +61,7 @@ function BlackButton({ children, onClick }: { children: ReactNode; onClick?: () 
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center justify-center rounded-[3px] bg-black px-6 py-3 font-[550] text-sm text-white leading-[1.5] hover:bg-[#292929]"
+      className="inline-flex items-center justify-center whitespace-nowrap rounded-[3px] bg-black px-6 py-3 font-[550] text-base text-white leading-[1.5] hover:bg-[#292929]"
       style={{ fontFamily: FONT_MEDIUM }}
     >
       {children}
@@ -364,12 +364,12 @@ export function AutomobielContent() {
           <OutlineCard className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <SectionTitle>Op zoek naar een zakelijke autoverzekering?</SectionTitle>
-              <Body>
+              <Body className="text-base text-black leading-[1.5]">
                 Staat je auto op naam van je bedrijf? Of gebruik je de auto zakelijk? Kies dan voor onze zakelijke autoverzekering.
               </Body>
             </div>
             <div>
-              <BlackButton>Bekijk onze zakelijke autoverzekering</BlackButton>
+              <BlackButton>Bekijk de zakelijke autoverzekering</BlackButton>
             </div>
           </OutlineCard>
         </section>
@@ -378,7 +378,7 @@ export function AutomobielContent() {
         <section className="flex flex-col gap-4 bg-white px-[32px] py-10">
           <div className="flex flex-col">
             <SectionTitle>Schadevrije jaren en tweede auto korting</SectionTitle>
-            <Body>Wil je meer zekerheid? Breid dan je autoverzekering uit met aanvullende dekkingen en opties.</Body>
+            <Body className="text-base text-black leading-[1.5]">Wil je meer zekerheid? Breid dan je autoverzekering uit met aanvullende dekkingen en opties.</Body>
           </div>
           <div className="flex flex-col gap-4">
             <OutlineCard className="flex flex-col gap-4">
@@ -386,7 +386,7 @@ export function AutomobielContent() {
                 <h3 className="text-[20px] text-black leading-[1.4]" style={{ fontFamily: FONT_MEMPHIS }}>
                   Schadevrije jaren
                 </h3>
-                <Body>
+                <Body className="text-base text-black leading-[1.5]">
                   Hoe langer je schadevrij rijdt, hoe meer no-claimkorting je krijgt op je autoverzekering. Tot wel 75%. We leggen je uit hoe je
                   schadevrije jaren en korting opbouwt en wat er gebeurt als je schade veroorzaakt.
                 </Body>
@@ -400,7 +400,7 @@ export function AutomobielContent() {
                 <h3 className="text-[20px] text-black leading-[1.4]" style={{ fontFamily: FONT_MEMPHIS }}>
                   Tweede auto korting
                 </h3>
-                <Body>
+                <Body className="text-base text-black leading-[1.5]">
                   Verzeker je meerdere auto’s bij Ik kies zelf van a.s.r.? Met de tweede auto kortingsregeling krijg je 10% korting op al je
                   verzekerde auto’s. Dit is een extra korting naast je no-claimkorting.
                 </Body>
@@ -421,7 +421,7 @@ export function AutomobielContent() {
             <div className="flex flex-col gap-4 px-6 pt-6 pb-[23px]">
               <div className="flex flex-col gap-2">
                 <SectionTitle>Liever onafhankelijk advies?</SectionTitle>
-                <Body>
+                <Body className="text-base text-black leading-[1.5]">
                   Onze autoverzekering Ik kies zelf van a.s.r. sluit je zelf online af. Wil je liever advies? Een onafhankelijk adviseur denkt met je
                   mee en zoekt de autoverzekering die het beste bij jouw situatie past.
                 </Body>
@@ -467,11 +467,11 @@ export function AutomobielContent() {
 
         {/* Link-lijst. */}
         <section className="bg-white px-[33px] py-10">
-          <Accordion items={LINKLIJST.map((title) => ({ title }))} />
+          <Accordion compactTitles items={LINKLIJST.map((title) => ({ title }))} />
         </section>
       </main>
 
-      <Footer linkSection columns={FOOTER_COLUMNS} />
+      <Footer linkSection compactText columns={FOOTER_COLUMNS} />
 
       {/* Ruimte onderaan, zodat de sticky balk de footer niet bedekt. */}
       <div aria-hidden="true" style={{ height: STICKY_BAR_HEIGHT }} />
