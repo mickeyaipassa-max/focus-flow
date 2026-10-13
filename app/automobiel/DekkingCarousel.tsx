@@ -6,6 +6,8 @@ import { CardProduct, type CardProductFeature } from "@/components/CardProduct";
 type Dekking = {
   title: string;
   subtitle: string;
+  /** Tekst van de tweede knop; Figma noemt hier het product ("Meer over WA"). */
+  secondaryLabel: string;
   features: CardProductFeature[];
 };
 
@@ -17,6 +19,7 @@ type Dekking = {
 const DEKKINGEN: Dekking[] = [
   {
     title: "WA",
+    secondaryLabel: "Meer over WA",
     subtitle: "Meest gekozen bij auto's van 10 jaar en ouder",
     features: [
       { text: "Schade aan anderen", included: true },
@@ -29,6 +32,7 @@ const DEKKINGEN: Dekking[] = [
   },
   {
     title: "WA + Casco beperkt",
+    secondaryLabel: "Meer over WA + Casco beperkt",
     subtitle: "Meest gekozen voor auto's van 10 jaar en ouder",
     features: [
       { text: "Schade aan anderen", included: true },
@@ -40,7 +44,8 @@ const DEKKINGEN: Dekking[] = [
     ],
   },
   {
-    title: "WA + Casco allrisk",
+    title: "Allrisk",
+    secondaryLabel: "Meer over Allrisk",
     subtitle: "Meest gekozen voor auto's van 10 jaar en ouder",
     features: [
       { text: "Schade aan anderen", included: true },
@@ -108,7 +113,7 @@ export function DekkingCarousel({ onBerekenen }: { onBerekenen: () => void }) {
   }
 
   return (
-    <div className="flex w-full flex-col items-center gap-6" role="group" aria-roledescription="carrousel" aria-label="Dekkingen">
+    <div className="flex w-full flex-col items-center gap-[21px]" role="group" aria-roledescription="carrousel" aria-label="Dekkingen">
       <ul
         ref={trackRef}
         className="relative flex w-full snap-x snap-mandatory scroll-px-6 gap-2 overflow-x-auto px-6 pb-px [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -128,7 +133,7 @@ export function DekkingCarousel({ onBerekenen }: { onBerekenen: () => void }) {
               subtitle={dekking.subtitle}
               features={dekking.features}
               primaryLabel="Bereken je premie"
-              secondaryLabel="Meer informatie"
+              secondaryLabel={dekking.secondaryLabel}
               onPrimaryClick={onBerekenen}
               className="flex w-full flex-col overflow-clip rounded-md border border-[rgba(0,0,0,0.12)] bg-white"
             />
