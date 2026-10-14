@@ -422,7 +422,11 @@ export function AutomobielContent() {
         <section className="bg-[#fff8e3] px-6 py-10">
           <div className="flex flex-col rounded-md border border-[rgba(0,0,0,0.12)] bg-white">
             <div className="px-[11px] pt-[11px]">
-              <div className={`h-[200px] w-full ${CHECKER}`} role="img" aria-label="Afbeelding volgt" />
+              <img
+                src="/automobiel/advies-gesprek.jpg"
+                alt="Een adviseur in gesprek met een klant"
+                className="block h-[200px] w-full rounded-[3px] object-cover"
+              />
             </div>
             <div className="flex flex-col gap-4 px-[23px] pt-6 pb-[23px]">
               <div className="flex flex-col gap-2">
