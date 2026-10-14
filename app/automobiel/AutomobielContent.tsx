@@ -86,14 +86,17 @@ const SNELKOPPELINGEN = [
 const AANVULLENDE_DEKKINGEN = [
   {
     title: "Pechhulp",
+    icon: "/automobiel/pictogram-pechhulp.svg",
     text: "De a.s.r. Alarmcentrale staat 24/7 voor je klaar als je niet verder kan rijden door pech.",
   },
   {
     title: "Schade inzittenden",
+    icon: "/automobiel/pictogram-schade-inzittenden.svg",
     text: "Passagiers en bestuurder verzekerd voor letsel en schade aan hun spullen na een ongeval.",
   },
   {
     title: "Rechtsbijstand Motorrijtuigen",
+    icon: "/automobiel/pictogram-rechtsbijstand.svg",
     text: "Juridische hulp bij conflicten in het verkeer waarbij je auto is betrokken.",
   },
 ];
@@ -312,16 +315,10 @@ export function AutomobielContent() {
                 </h3>
                 {AANVULLENDE_DEKKINGEN.map((dekking) => (
                   <OutlineCard key={dekking.title} className="flex flex-col gap-4">
-                    {(
-                      <span className="flex size-14 items-center justify-center rounded-full bg-[#fff8e3]" aria-hidden="true">
-                        {/* Figma toont hier een plaatshouder-afbeeldingsicoon. */}
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" rx="2" />
-                          <circle cx="9" cy="9" r="1.6" />
-                          <path d="M21 16l-5-5-8 8" />
-                        </svg>
-                      </span>
-                    )}
+                    {/* Pictogram (Figma: 32px-kader op een gele cirkel van 56px; het pictogram staat op zijn eigen formaat in het midden). */}
+                    <span className="flex size-14 items-center justify-center rounded-full bg-[#fff8e3]" aria-hidden="true">
+                      <img src={dekking.icon} alt="" />
+                    </span>
                     <div className="flex flex-col gap-2">
                       <h4 className="text-[20px] text-black leading-[1.4]" style={{ fontFamily: FONT_MEMPHIS }}>
                         {dekking.title}
@@ -361,17 +358,26 @@ export function AutomobielContent() {
 
         {/* Zakelijke autoverzekering. */}
         <section className="bg-[#f6f6f7] px-6 py-10">
-          <OutlineCard className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <SectionTitle>Op zoek naar een zakelijke autoverzekering?</SectionTitle>
-              <Body className="text-base text-black leading-[1.5]">
-                Staat je auto op naam van je bedrijf? Of gebruik je de auto zakelijk? Kies dan voor onze zakelijke autoverzekering.
-              </Body>
+          <div className="flex flex-col rounded-md border border-[rgba(0,0,0,0.12)] bg-white">
+            <div className="px-[11px] pt-[11px]">
+              <img
+                src="/automobiel/zakelijk-auto.jpg"
+                alt="Man in pak achter het stuur van een auto"
+                className="block h-[200px] w-full rounded-[3px] object-cover"
+              />
             </div>
-            <div>
-              <BlackButton>Bekijk de zakelijke autoverzekering</BlackButton>
+            <div className="flex flex-col gap-4 px-[23px] pt-6 pb-[23px]">
+              <div className="flex flex-col gap-2">
+                <SectionTitle>Op zoek naar een zakelijke autoverzekering?</SectionTitle>
+                <Body className="text-base text-black leading-[1.5]">
+                  Staat je auto op naam van je bedrijf? Of gebruik je de auto zakelijk? Kies dan voor onze zakelijke autoverzekering.
+                </Body>
+              </div>
+              <div>
+                <BlackButton>Bekijk de zakelijke autoverzekering</BlackButton>
+              </div>
             </div>
-          </OutlineCard>
+          </div>
         </section>
 
         {/* Schadevrije jaren en tweede auto korting. */}
@@ -418,7 +424,7 @@ export function AutomobielContent() {
             <div className="px-[11px] pt-[11px]">
               <div className={`h-[200px] w-full ${CHECKER}`} role="img" aria-label="Afbeelding volgt" />
             </div>
-            <div className="flex flex-col gap-4 px-6 pt-6 pb-[23px]">
+            <div className="flex flex-col gap-4 px-[23px] pt-6 pb-[23px]">
               <div className="flex flex-col gap-2">
                 <SectionTitle>Liever onafhankelijk advies?</SectionTitle>
                 <Body className="text-base text-black leading-[1.5]">
