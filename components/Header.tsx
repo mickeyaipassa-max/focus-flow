@@ -44,6 +44,12 @@ type HeaderProps = {
    * optioneel, wordt niet gebruikt bij verzuim". Wel nodig voor Auto.
    */
   ikzSticker?: boolean;
+  /**
+   * Maakt het logo klikbaar (bv. om de funnel opnieuw te beginnen). Zonder prop
+   * blijft het logo een gewoon plaatje, ongewijzigd. Bevat het toegankelijke
+   * label "a.s.r. – opnieuw beginnen" zodat schermlezers weten wat de knop doet.
+   */
+  onLogoClick?: () => void;
   className?: string;
 };
 
@@ -58,8 +64,28 @@ function IkzSticker() {
   );
 }
 
-export function Header({ title, chatButton = true, phoneNumber, cancelButton = false, onCancel, cancelStyle = "default", ikzSticker = false, className }: HeaderProps) {
+export function Header({ title, chatButton = true, phoneNumber, cancelButton = false, onCancel, cancelStyle = "default", ikzSticker = false, onLogoClick, className }: HeaderProps) {
   const showContactButton = cancelButton || Boolean(phoneNumber) || chatButton;
+  const logo = (
+    <div className="relative h-[57.75px] w-[120px] overflow-hidden bg-white shadow-[0_3px_12px_0_rgba(0,0,0,0.12)] min-[1200px]:h-[77px] min-[1200px]:w-[160px] min-[1200px]:shadow-[0_4px_16px_0_rgba(0,0,0,0.12)]">
+      <picture>
+        <source media="(min-width: 1200px)" srcSet="/header/logo-underline-lg.svg" />
+        <img
+          src="/header/logo-underline-sm.svg"
+          alt=""
+          className="absolute inset-x-0 bottom-0 block h-[3.916px] w-full min-[1200px]:h-[5.222px]"
+        />
+      </picture>
+      <picture>
+        <source media="(min-width: 1200px)" srcSet="/header/logo-asr-lg.svg" />
+        <img
+          src="/header/logo-asr-sm.svg"
+          alt="a.s.r."
+          className="-translate-x-1/2 absolute left-1/2 top-[19.94px] h-[14.074px] w-[79.529px] min-[1200px]:top-[26.59px] min-[1200px]:h-[18.766px] min-[1200px]:w-[106.039px]"
+        />
+      </picture>
+    </div>
+  );
   return (
     <header className={className ?? "flex w-full justify-center bg-white"}>
       {/*
@@ -84,24 +110,13 @@ export function Header({ title, chatButton = true, phoneNumber, cancelButton = f
         <div className="flex w-full items-center justify-between min-[900px]:contents">
           {/* Logo */}
           <div className="order-1 flex shrink-0 flex-col items-start pb-4">
-            <div className="relative h-[57.75px] w-[120px] overflow-hidden bg-white shadow-[0_3px_12px_0_rgba(0,0,0,0.12)] min-[1200px]:h-[77px] min-[1200px]:w-[160px] min-[1200px]:shadow-[0_4px_16px_0_rgba(0,0,0,0.12)]">
-              <picture>
-                <source media="(min-width: 1200px)" srcSet="/header/logo-underline-lg.svg" />
-                <img
-                  src="/header/logo-underline-sm.svg"
-                  alt=""
-                  className="absolute inset-x-0 bottom-0 block h-[3.916px] w-full min-[1200px]:h-[5.222px]"
-                />
-              </picture>
-              <picture>
-                <source media="(min-width: 1200px)" srcSet="/header/logo-asr-lg.svg" />
-                <img
-                  src="/header/logo-asr-sm.svg"
-                  alt="a.s.r."
-                  className="-translate-x-1/2 absolute left-1/2 top-[19.94px] h-[14.074px] w-[79.529px] min-[1200px]:top-[26.59px] min-[1200px]:h-[18.766px] min-[1200px]:w-[106.039px]"
-                />
-              </picture>
-            </div>
+            {onLogoClick ? (
+              <button type="button" onClick={onLogoClick} aria-label="a.s.r. – opnieuw beginnen" className="block cursor-pointer">
+                {logo}
+              </button>
+            ) : (
+              logo
+            )}
           </div>
 
           {/* Chat-knop / telefoonnummer-knop */}

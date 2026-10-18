@@ -164,7 +164,7 @@ export function Select({
                 "min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-lg leading-[1.5]",
                 selected ? "text-black" : "text-[#565656]",
               ].join(" ")}
-              style={{ fontFamily: "var(--font-avenir)" }}
+              style={{ fontFamily: "var(--font-avenir-book)" }}
             >
               {selected ? selected.label : placeholder}
             </span>
@@ -185,7 +185,7 @@ export function Select({
                 className="flex w-full items-start px-1"
               >
                 <span className="flex flex-1 items-center gap-2 rounded-[3px] px-3 py-2 text-left text-lg leading-[1.5] hover:bg-[rgba(0,0,0,0.08)]">
-                  <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-black" style={{ fontFamily: "var(--font-avenir)" }}>
+                  <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-black" style={{ fontFamily: "var(--font-avenir-book)" }}>
                     {placeholder}
                   </span>
                   {!selected && (
@@ -209,7 +209,7 @@ export function Select({
                     <span className="flex flex-1 items-center gap-2 rounded-[3px] px-3 py-2 text-left text-lg leading-[1.5] hover:bg-[rgba(0,0,0,0.08)]">
                       <span
                         className={wrapOptions ? "min-w-0 flex-1 text-black" : "flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-black"}
-                        style={{ fontFamily: "var(--font-avenir)" }}
+                        style={{ fontFamily: "var(--font-avenir-book)" }}
                       >
                         {option.label}
                       </span>

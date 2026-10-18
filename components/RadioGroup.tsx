@@ -21,8 +21,6 @@ type RadioGroupProps = {
    * bestaat niet als eigen Figma-variant.
    */
   horizontal?: boolean;
-  /** Verticale lijst over de volle breedte i.p.v. de vaste 272px, voor lange opties die in Figma over meerdere regels lopen. Zonder prop ongewijzigd. */
-  fullWidth?: boolean;
   error?: string;
   name?: string;
   className?: string;
@@ -54,7 +52,6 @@ export function RadioGroup({
   onChange,
   required = true,
   horizontal = false,
-  fullWidth = false,
   error,
   name,
   className,
@@ -82,8 +79,8 @@ export function RadioGroup({
         </p>
       )}
 
-      {/* Vaste 272px-breedte hier i.p.v. op het hele fieldset (die nu vol-breed is, zodat `description` niet meer geknepen wordt in dezelfde smalle kolom als deze losse verticale keuzelijst). */}
-      <div className={horizontal ? "flex w-fit flex-wrap items-start gap-2" : ["flex max-w-full flex-col items-start gap-2", fullWidth ? "w-full" : "w-[272px]"].join(" ")}>
+      {/* De verticale lijst loopt over de volle breedte (zoals de Storybook-referentie), zodat lange opties netjes over meerdere regels lopen. */}
+      <div className={horizontal ? "flex w-fit flex-wrap items-start gap-2" : "flex w-full flex-col items-start gap-2"}>
         {options.map((option) => {
           const checked = option.value === value;
           const inputId = `${groupName}-${option.value}`;

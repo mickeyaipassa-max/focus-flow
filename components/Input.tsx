@@ -112,7 +112,7 @@ export function Input({
           fieldWidth ? fieldWidthClass[fieldWidth] : "",
           error ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
         ].join(" ")}
-        style={{ fontFamily: "var(--font-avenir)" }}
+        style={{ fontFamily: "var(--font-avenir-book)" }}
       />
 
       {error && (
