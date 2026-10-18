@@ -251,6 +251,8 @@ type InputDateProps = {
   /** Figma's eigen default voor dit component is letterlijk "Datum (dd-mm-jjjj)" — echte vaste tekst, geen demo-placeholder (zelfde redenering als InputEmail/InputPhone). */
   labelText?: string;
   required?: boolean;
+  /** Hint tussen het label en het veld (Figma's Label-subcomponent heeft die ook, zoals bij `Input`). Zonder prop ongewijzigd. */
+  description?: string;
   error?: string;
   /** Bevestigde Figma-property, default false — de kalenderknop is dus optioneel, niet standaard aan. */
   showPickerButton?: boolean;
@@ -288,6 +290,7 @@ type InputDateProps = {
 export function InputDate({
   labelText = "Datum (dd-mm-jjjj)",
   required = true,
+  description,
   error,
   showPickerButton = false,
   range = false,
@@ -400,6 +403,11 @@ export function InputDate({
             </span>
           )}
         </div>
+        {description && (
+          <p className="font-[350] text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+            {description}
+          </p>
+        )}
       </div>
 
       <div
