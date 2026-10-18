@@ -142,6 +142,7 @@ export default function BehandelingPage() {
               labelText="Waarom is er een nieuwe chronische indicatie van toepassing?"
               options={REDENEN}
               fieldWidth="lg"
+              wrapOptions
               value={state.reden}
               error={fouten.reden}
               onChange={(value) => wijzig({ reden: value, toelichting: "" })}

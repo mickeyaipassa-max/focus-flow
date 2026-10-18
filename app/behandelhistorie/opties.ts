@@ -22,11 +22,14 @@ export const REDEN_ANDERS = "anders";
 
 /**
  * Opties van "Waarom is er een nieuwe chronische indicatie van toepassing?".
- *
- * LET OP: de draw.io ("Webform Fysio Zorg") noemt hier zes opties, maar die
- * waren in het aangeleverde plaatje niet leesbaar en Figma toont alleen het
- * gekozen "Anders, namelijk". Daarom staat hier voorlopig alleen die ene,
- * letterlijk uit Figma. De overige opties moeten uit de draw.io hierboven
- * worden aangevuld (voeg ze vóór "Anders, namelijk" toe).
+ * De eerste vijf zijn aangeleverd; de laatste is Figma's "Anders, namelijk",
+ * die de vervolgvraag "Licht je reden toe" toont.
  */
-export const REDENEN: SelectOption[] = [{ value: REDEN_ANDERS, label: "Anders, namelijk" }];
+export const REDENEN: SelectOption[] = [
+  { value: "heroperatie", label: "Nieuwe operatie/heroperatie (dezelfde aandoening)" },
+  { value: "andere-zijde", label: "Operatie aan andere zijde (links/rechts) of andere lichaamslocatie" },
+  { value: "nieuw-trauma", label: "Nieuw trauma, ongeval of blessure aan hetzelfde lichaamsdeel" },
+  { value: "revisie-prothese", label: "Revisieoperatie of vervanging van prothese" },
+  { value: "na-afgesloten-traject", label: "Nieuwe chronische indicatie na eerder afgesloten traject" },
+  { value: REDEN_ANDERS, label: "Anders, namelijk" },
+];

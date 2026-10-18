@@ -31,6 +31,8 @@ type SelectProps = {
   showInfo?: boolean;
   onInfoClick?: () => void;
   compact?: boolean;
+  /** Lange optieteksten lopen in de lijst over meerdere regels i.p.v. te worden afgekapt met "…". Zonder prop ongewijzigd. */
+  wrapOptions?: boolean;
   fieldWidth?: FieldWidth;
   /** Foutmelding — aanwezigheid bepaalt de error-state (rode rand + Validation-bericht), matcht Figma's `validation`-boolean. */
   error?: string;
@@ -64,6 +66,7 @@ export function Select({
   showInfo = false,
   onInfoClick,
   compact = false,
+  wrapOptions = false,
   fieldWidth = "md",
   error,
   disabled = false,
@@ -172,7 +175,7 @@ export function Select({
             <div
               id={listboxId}
               role="listbox"
-              className="absolute left-0 top-full z-10 mt-1 flex max-h-[206px] w-full flex-col items-start overflow-y-auto rounded-[3px] bg-white py-1 shadow-[0px_8px_24px_0px_rgba(0,0,0,0.16)]"
+              className={`absolute left-0 top-full z-10 mt-1 flex ${wrapOptions ? "max-h-80" : "max-h-[206px]"} w-full flex-col items-start overflow-y-auto rounded-[3px] bg-white py-1 shadow-[0px_8px_24px_0px_rgba(0,0,0,0.16)]`}
             >
               <button
                 type="button"
@@ -204,7 +207,10 @@ export function Select({
                     className="flex w-full items-start px-1"
                   >
                     <span className="flex flex-1 items-center gap-2 rounded-[3px] px-3 py-2 text-left text-lg leading-[1.5] hover:bg-[rgba(0,0,0,0.08)]">
-                      <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-black" style={{ fontFamily: "var(--font-avenir)" }}>
+                      <span
+                        className={wrapOptions ? "min-w-0 flex-1 text-black" : "flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-black"}
+                        style={{ fontFamily: "var(--font-avenir)" }}
+                      >
                         {option.label}
                       </span>
                       {isSelected && (
