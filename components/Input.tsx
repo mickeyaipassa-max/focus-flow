@@ -3,6 +3,16 @@
 import type { ReactNode } from "react";
 import { Icon } from "./Icon";
 
+type FieldWidth = "xs" | "sm" | "md" | "lg";
+
+/** Zelfde bevestigde veldbreedtes als `Select` (96/160/320/480px), als `max-w-*` zodat het veld in een smallere ouder niet overflowt. */
+const fieldWidthClass: Record<FieldWidth, string> = {
+  xs: "max-w-24",
+  sm: "max-w-40",
+  md: "max-w-80",
+  lg: "max-w-[480px]",
+};
+
 type InputProps = {
   labelText: string;
   required?: boolean;
@@ -18,6 +28,12 @@ type InputProps = {
   error?: string;
   name?: string;
   id?: string;
+  /** Toetsenbord op mobiel (bv. `numeric` voor nummervelden). Zonder prop ongewijzigd. */
+  /** Breedte van het veld zelf (het label en de hint behouden de volle breedte). Zonder prop vult het veld de breedte van het blok, ongewijzigd. */
+  fieldWidth?: FieldWidth;
+  inputMode?: "text" | "numeric" | "email" | "tel";
+  maxLength?: number;
+  autoComplete?: string;
   className?: string;
 };
 
@@ -42,6 +58,10 @@ export function Input({
   error,
   name,
   id,
+  fieldWidth,
+  inputMode,
+  maxLength,
+  autoComplete,
   className,
 }: InputProps) {
   return (
@@ -81,11 +101,15 @@ export function Input({
         id={id}
         name={name}
         type="text"
+        inputMode={inputMode}
+        maxLength={maxLength}
+        autoComplete={autoComplete}
         value={value ?? ""}
         onChange={(event) => onChange?.(event.target.value)}
         placeholder={placeholder}
         className={[
           "h-[51px] w-full rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
+          fieldWidth ? fieldWidthClass[fieldWidth] : "",
           error ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
         ].join(" ")}
         style={{ fontFamily: "var(--font-avenir)" }}

@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 type FunnelSectionProps = {
   /** Figma's "Form title"/"Title" zijn placeholder-demotekst — geen default, elke afnemer geeft zijn eigen titel mee. */
   title: string;
-  description?: string;
+  /** Tekst of opmaak (bv. met een regeleinde) onder de titel. */
+  description?: ReactNode;
   /** De component-slots binnen deze sectie (Figma's roze "swap this"-placeholders) — echte formuliervelden van de afnemer. */
   children?: ReactNode;
   /** Grotere 40px kop + 24px gap — Figma's "Intro section" (het eerste, altijd-aanwezige blok in de kaart). Standaard uit: een gewone 32px "Form section"-kop met 40px gap. */
@@ -87,7 +88,8 @@ export function FunnelSection({
 
       {children && <div className="flex w-full flex-col items-start gap-10">{children}</div>}
 
-      {intro && (
+      {/* Zonder verplichte-velden-regel én zonder divider blijft er niets over: dan ook geen lege rij (die zou 24px extra gap geven). */}
+      {intro && (showRequiredFieldsNote || !hideIntroDivider) && (
         <div className="flex w-full flex-col items-end gap-2">
           {showRequiredFieldsNote &&
             (requiredFieldsNote ?? (
