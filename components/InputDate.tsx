@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Icon } from "./Icon";
 
 const WEEKDAY_LABELS = ["ma", "di", "wo", "do", "vr", "za", "zo"];
@@ -314,6 +314,10 @@ export function InputDate({
   const [viewMonth, setViewMonth] = useState(referenceDate.getMonth());
   const [viewYear, setViewYear] = useState(referenceDate.getFullYear());
   const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // De kiezer opent onder het veld. Valt hij daar buiten een afkappende ouder (bv. een kaart met
+  // `overflow-hidden` waar dit veld onderaan staat), dan klapt hij naar boven open.
+  const [openAbove, setOpenAbove] = useState(false);
   const inputId = useId();
 
   // Getypte tekst staat apart van `value`: een half ingetypte datum ("12-0") is nog geen
@@ -345,6 +349,29 @@ export function InputDate({
       document.removeEventListener("mousedown", handleClick);
       document.removeEventListener("keydown", handleKey);
     };
+  }, [open]);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setOpenAbove(false);
+      return;
+    }
+    const panel = panelRef.current;
+    const field = panel?.parentElement;
+    if (!panel || !field) return;
+    let clip: HTMLElement | null = field.parentElement;
+    while (clip && clip !== document.body) {
+      const { overflowY } = getComputedStyle(clip);
+      if (overflowY !== "visible") break;
+      clip = clip.parentElement;
+    }
+    if (!clip || clip === document.body) return;
+    const clipRect = clip.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
+    const fieldRect = field.getBoundingClientRect();
+    const fitsBelow = panelRect.bottom <= clipRect.bottom;
+    const fitsAbove = fieldRect.top - panelRect.height - 4 >= clipRect.top;
+    if (!fitsBelow && fitsAbove) setOpenAbove(true);
   }, [open]);
 
   function handleSelectDate(date: Date) {
@@ -439,9 +466,9 @@ export function InputDate({
           error ? "border-[#ce0a1e]" : "border-[#565656] focus-within:border-black",
         ].join(" ")}
       >
-        {/* Opent onder het veld, links uitgelijnd (zoals de Storybook-referentie). */}
+        {/* Opent onder het veld, links uitgelijnd (zoals de Storybook-referentie); alleen als dat afgekapt zou worden erboven. */}
         {open && (
-          <div className="absolute left-0 top-full z-10 mt-1">
+          <div ref={panelRef} className={["absolute left-0 z-10", openAbove ? "bottom-full mb-1" : "top-full mt-1"].join(" ")}>
             <CalendarPanel
               month={viewMonth}
               year={viewYear}
