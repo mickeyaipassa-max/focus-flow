@@ -155,7 +155,7 @@ export function InputPhone({
           onChange={(event) => onChange?.(event.target.value)}
           placeholder={placeholder}
           className="min-w-0 flex-1 text-black text-lg leading-[1.5] outline-none"
-          style={{ fontFamily: "var(--font-avenir)" }}
+          style={{ fontFamily: "var(--font-avenir-book)" }}
         />
 
         {open && !nlOnly && (

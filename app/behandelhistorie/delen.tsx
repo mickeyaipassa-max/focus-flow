@@ -1,8 +1,11 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
 import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { BACK_BUTTON_CLASS, BEHANDELHISTORIE_CARD_CLASS, STEP_INDICATOR_CLASS } from "./card";
-import { BEHANDELHISTORIE_STEPS, HEADER_TITLE } from "./funnel-context";
+import { BEHANDELHISTORIE_STEPS, HEADER_TITLE, ROUTES, useBehandelhistorieFunnel } from "./funnel-context";
 
 /** "* Verplichte velden" zoals Figma het tekent (asterisk eerst), rechts boven het formulier. */
 export function VerplichteVelden() {
@@ -29,7 +32,10 @@ export function TerugKnop({ children, onClick }: { children: ReactNode; onClick:
   );
 }
 
-/** De schermen van de funnel delen header, stappenindicator en kaartbreedte; alleen stap en inhoud verschillen. */
+/**
+ * De schermen van de funnel delen header, stappenindicator en kaartbreedte; alleen stap en inhoud verschillen.
+ * Een klik op het logo wist alles wat is ingevuld en begint de flow opnieuw bij de intro.
+ */
 export function BehandelhistorieScherm({
   activeStep,
   navigation,
@@ -39,9 +45,16 @@ export function BehandelhistorieScherm({
   navigation: ReactNode;
   children: ReactNode;
 }) {
+  const router = useRouter();
+  const { reset } = useBehandelhistorieFunnel();
+
   return (
     <FunnelPageTemplate
       headerTitle={HEADER_TITLE}
+      onLogoClick={() => {
+        reset();
+        router.push(ROUTES.intro);
+      }}
       steps={BEHANDELHISTORIE_STEPS}
       activeStep={activeStep}
       stepAnimationKey="behandelhistorie"

@@ -107,7 +107,6 @@ export default function BehandelingPage() {
           labelText="Welke situatie is van toepassing?"
           description="Kies de situatie die van toepassing is. De relevante vervolgvraag verschijnt direct."
           options={SITUATIES}
-          fullWidth
           name="situatie"
           value={state.situatie}
           error={fouten.situatie}

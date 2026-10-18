@@ -53,7 +53,7 @@ function AddressField({ id, name, labelText, required, value, onChange, error, c
           inputClassName ?? "w-full",
           error ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
         ].join(" ")}
-        style={{ fontFamily: "var(--font-avenir)" }}
+        style={{ fontFamily: "var(--font-avenir-book)" }}
       />
       {error && (
         <div id={`${id}-error`} className="flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">

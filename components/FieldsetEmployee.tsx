@@ -127,7 +127,7 @@ export function FieldsetEmployee({ index, value, onChange, onRemove, errors, nam
                 "h-[51px] w-full max-w-[160px] rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
                 errors?.birthYear ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
               ].join(" ")}
-              style={{ fontFamily: "var(--font-avenir)" }}
+              style={{ fontFamily: "var(--font-avenir-book)" }}
             />
             {errors?.birthYear && <FieldError id={`${birthYearId}-error`} message={errors.birthYear} />}
           </div>
@@ -191,7 +191,7 @@ export function FieldsetEmployee({ index, value, onChange, onRemove, errors, nam
                 aria-invalid={errors?.salary ? true : undefined}
                 aria-describedby={errors?.salary ? `${salaryId}-error` : undefined}
                 className="min-w-px flex-1 text-black text-lg leading-[1.5] outline-none"
-                style={{ fontFamily: "var(--font-avenir)" }}
+                style={{ fontFamily: "var(--font-avenir-book)" }}
               />
             </div>
             {errors?.salary && <FieldError id={`${salaryId}-error`} message={errors.salary} />}

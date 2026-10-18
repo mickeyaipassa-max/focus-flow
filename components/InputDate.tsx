@@ -316,6 +316,21 @@ export function InputDate({
   const rootRef = useRef<HTMLDivElement>(null);
   const inputId = useId();
 
+  // Getypte tekst staat apart van `value`: een half ingetypte datum ("12-0") is nog geen
+  // Date, maar moet in het veld blijven staan. `lastEmitted` onthoudt wat we zelf aan
+  // `onChange` hebben doorgegeven, zodat we alleen bij een wijziging van buitenaf (kalender,
+  // "Vandaag", "Wis selectie", reset) de tekst vervangen.
+  const [text, setText] = useState(() => (value ? formatDate(value) : ""));
+  const lastEmitted = useRef<number | null>(value ? value.getTime() : null);
+  useEffect(() => {
+    if (range) return;
+    const incoming = value ? value.getTime() : null;
+    if (incoming !== lastEmitted.current) {
+      lastEmitted.current = incoming;
+      setText(value ? formatDate(value) : "");
+    }
+  }, [value, range]);
+
   useEffect(() => {
     if (!open) return;
     function handleClick(event: MouseEvent) {
@@ -349,6 +364,33 @@ export function InputDate({
     setOpen(false);
   }
 
+  function handleTyping(raw: string) {
+    let next: string;
+    if (raw.includes("-")) {
+      // Zelf getypte streepjes blijven staan ("1-3-1985" mag ook).
+      next = raw.replace(/[^\d-]/g, "");
+    } else {
+      // Alleen cijfers (ook geplakt: "12031985"): de streepjes komen vanzelf.
+      const digits = raw.replace(/\D/g, "").slice(0, 8);
+      next = digits.slice(0, 2);
+      if (digits.length > 2) next += `-${digits.slice(2, 4)}`;
+      if (digits.length > 4) next += `-${digits.slice(4)}`;
+    }
+    // Bij het typen vooruit komt het streepje na dag en maand vanzelf; bij wissen niet.
+    if (raw.length > text.length && /^(\d{2}|\d{2}-\d{2})$/.test(next)) next += "-";
+    setText(next);
+    const match = /^(\d{1,2})-(\d{1,2})-(\d{4})$/.exec(next);
+    let parsed: Date | null = null;
+    if (match) {
+      const [, dd, mm, yyyy] = match;
+      const candidate = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+      // Alleen een echte datum: 31-02 rolt anders stilletjes door naar maart.
+      if (candidate.getDate() === Number(dd) && candidate.getMonth() === Number(mm) - 1) parsed = candidate;
+    }
+    lastEmitted.current = parsed ? parsed.getTime() : null;
+    onChange?.(parsed);
+  }
+
   function handleToday() {
     const today = startOfDay(new Date());
     setViewMonth(today.getMonth());
@@ -363,35 +405,16 @@ export function InputDate({
 
   const displayValue = range
     ? [rangeValue?.start ? formatDate(rangeValue.start) : "", rangeValue?.end ? formatDate(rangeValue.end) : ""].filter(Boolean).join(" – ")
-    : value
-      ? formatDate(value)
-      : "";
+    : text;
 
   return (
-    <div ref={rootRef} className={className ?? "relative isolate flex w-[333px] flex-col items-start gap-2"}>
-      {open && (
-        <div className="absolute bottom-[43px] left-[164px] z-10">
-          <CalendarPanel
-            month={viewMonth}
-            year={viewYear}
-            onMonthChange={setViewMonth}
-            onYearChange={setViewYear}
-            value={value}
-            rangeValue={rangeValue}
-            range={range}
-            minDate={minDate}
-            maxDate={maxDate}
-            onSelectDate={handleSelectDate}
-            showTodayButton={showTodayButton}
-            showClearButton={showClearButton}
-            todayButtonText={todayButtonText}
-            clearButtonText={clearButtonText}
-            onToday={handleToday}
-            onClear={handleClear}
-          />
-        </div>
-      )}
-
+    // `isolate` + `relative` maakt van dit veld één stapelcontext: zolang de kiezer open staat
+    // moet die boven de velden eronder (bv. radio's, die zelf `relative` zijn) liggen.
+    <div
+      ref={rootRef}
+      className={className ?? "relative isolate flex w-[333px] flex-col items-start gap-2"}
+      style={{ zIndex: open ? 30 : undefined }}
+    >
       <div className="flex w-full flex-col items-start justify-center gap-1">
         <div className="flex items-center gap-1 text-lg leading-[1.5]">
           <span className="font-bold text-black" style={{ fontFamily: "var(--font-avenir-bold)" }}>
@@ -412,32 +435,67 @@ export function InputDate({
 
       <div
         className={[
-          "flex h-[51px] w-full max-w-[320px] items-center gap-2 rounded-[3px] border bg-white py-3 pr-[6px] pl-4",
+          "relative flex h-[51px] w-full max-w-[320px] items-center gap-2 rounded-[3px] border bg-white py-3 pr-[6px] pl-4",
           error ? "border-[#ce0a1e]" : "border-[#565656] focus-within:border-black",
         ].join(" ")}
       >
+        {/* Opent onder het veld, links uitgelijnd (zoals de Storybook-referentie). */}
+        {open && (
+          <div className="absolute left-0 top-full z-10 mt-1">
+            <CalendarPanel
+              month={viewMonth}
+              year={viewYear}
+              onMonthChange={setViewMonth}
+              onYearChange={setViewYear}
+              value={value}
+              rangeValue={rangeValue}
+              range={range}
+              minDate={minDate}
+              maxDate={maxDate}
+              onSelectDate={handleSelectDate}
+              showTodayButton={showTodayButton}
+              showClearButton={showClearButton}
+              todayButtonText={todayButtonText}
+              clearButtonText={clearButtonText}
+              onToday={handleToday}
+              onClear={handleClear}
+            />
+          </div>
+        )}
+
         <input
           id={id}
           name={name}
           type="text"
-          readOnly={showPickerButton}
+          // De kalender gaat alleen open met het icoon; in het veld zelf kun je gewoon typen.
+          // Alleen een bereik (twee datums) kan niet getypt worden en blijft via de kalender.
+          readOnly={range && showPickerButton}
+          inputMode={range ? undefined : "numeric"}
+          maxLength={range ? undefined : 10}
           value={displayValue}
           onChange={(event) => {
-            if (showPickerButton) return;
-            const [dd, mm, yyyy] = event.target.value.split("-");
-            const parsed = dd && mm && yyyy && yyyy.length === 4 ? new Date(Number(yyyy), Number(mm) - 1, Number(dd)) : null;
-            onChange?.(parsed && !Number.isNaN(parsed.getTime()) ? parsed : null);
+            if (range) return;
+            handleTyping(event.target.value);
           }}
-          onClick={() => showPickerButton && setOpen(true)}
+          onClick={() => range && showPickerButton && setOpen(true)}
           placeholder={placeholder}
           className="min-w-0 flex-1 text-black text-lg leading-[1.5] outline-none"
-          style={{ fontFamily: "var(--font-avenir)" }}
+          style={{ fontFamily: "var(--font-avenir-book)" }}
         />
         {showPickerButton && (
           <button
             type="button"
-            onClick={() => setOpen((current) => !current)}
-            aria-label="Kalender openen"
+            onClick={() => {
+              if (!open) {
+                const shown = range ? rangeValue?.start : value;
+                if (shown) {
+                  setViewMonth(shown.getMonth());
+                  setViewYear(shown.getFullYear());
+                }
+              }
+              setOpen((current) => !current);
+            }}
+            aria-label="Datumkiezer openen"
             aria-expanded={open}
             className="flex size-10 shrink-0 items-center justify-center gap-1 rounded-[3px] p-3"
           >

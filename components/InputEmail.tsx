@@ -97,7 +97,7 @@ export function InputEmail({
           "h-[51px] w-full rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
           error ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
         ].join(" ")}
-        style={{ fontFamily: "var(--font-avenir)" }}
+        style={{ fontFamily: "var(--font-avenir-book)" }}
       />
 
       {error && (

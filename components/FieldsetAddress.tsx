@@ -101,7 +101,7 @@ export function FieldsetAddress({
               "h-[51px] w-[112px] rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
               errors?.postalCode ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
             ].join(" ")}
-            style={{ fontFamily: "var(--font-avenir)" }}
+            style={{ fontFamily: "var(--font-avenir-book)" }}
           />
           {errors?.postalCode && (
             <div id={`${fieldName}-postal-code-error`} className="flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
@@ -137,7 +137,7 @@ export function FieldsetAddress({
                 "h-[51px] w-full rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
                 errors?.houseNumber ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
               ].join(" ")}
-              style={{ fontFamily: "var(--font-avenir)" }}
+              style={{ fontFamily: "var(--font-avenir-book)" }}
             />
             {errors?.houseNumber && (
               <div id={`${fieldName}-house-number-error`} className="flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">

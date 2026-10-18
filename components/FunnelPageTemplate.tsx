@@ -16,6 +16,8 @@ type FunnelPageTemplateProps = {
   cancelStyle?: "default" | "cross-after";
   /** Doorgegeven aan `Header`; toont de "ik kies zelf"-sticker (bevestigd nodig voor de Autoverzekering-funnel, niet voor Verzuim). */
   ikzSticker?: boolean;
+  /** Doorgegeven aan `Header`; maakt het logo klikbaar (bv. om de funnel opnieuw te beginnen). */
+  onLogoClick?: () => void;
   steps: string[];
   activeStep: number;
   /** Doorgegeven aan `StepIndicator`'s `animationKey` — zet de vul-animatie van de stapper-balk aan bij paginanavigatie tussen stappen. Zonder deze prop (default) ongewijzigd gedrag. */
@@ -98,6 +100,7 @@ export function FunnelPageTemplate({
   onCancel,
   cancelStyle,
   ikzSticker,
+  onLogoClick,
   steps,
   activeStep,
   stepAnimationKey,
@@ -120,6 +123,7 @@ export function FunnelPageTemplate({
         onCancel={onCancel}
         cancelStyle={cancelStyle}
         ikzSticker={ikzSticker}
+        onLogoClick={onLogoClick}
       />
 
       <main className={className ?? "flex w-full flex-1 justify-center bg-[#fff8e3] py-10"}>

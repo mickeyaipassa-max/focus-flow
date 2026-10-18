@@ -22,8 +22,10 @@ type TextareaProps = {
  * Meerregelig tekstveld, gebaseerd op Figma's "Textarea" (Formulier-
  * behandelhistorie, "Licht je reden toe": veld van 272×128px). Opgebouwd als
  * `Input`: zelfde label, `*`, hint, rand (#565656, zwart bij focus, rood bij
- * fout) en foutmelding; alleen het veld is een `<textarea>` van 128px hoog.
- * Figma tekent geen sleepgreep, dus het formaat is vast (`resize-none`).
+ * fout) en foutmelding; alleen het veld is een `<textarea>` van 128px hoog met
+ * 8px boven- en onderpadding (Figma "Textarea Field"). Net als in de Storybook-
+ * referentie is de hoogte te vergroten (`resize-y`). Met `maxLength` staat rechts
+ * onder het veld de teller "1/200" (Figma "Character count": 14px Book, #565656).
  */
 export function Textarea({
   labelText,
@@ -74,11 +76,17 @@ export function Textarea({
         placeholder={placeholder}
         maxLength={maxLength}
         className={[
-          "h-[128px] w-full resize-none rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
+          "min-h-[128px] w-full resize-y rounded-[3px] border bg-white px-4 py-2 text-black text-lg leading-[1.5] outline-none",
           error ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
         ].join(" ")}
-        style={{ fontFamily: "var(--font-avenir)" }}
+        style={{ fontFamily: "var(--font-avenir-book)" }}
       />
+
+      {maxLength !== undefined && (
+        <p className="w-full text-right text-[#565656] text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }} aria-live="off">
+          {(value ?? "").length}/{maxLength}
+        </p>
+      )}
 
       {error && (
         <div className="flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">

@@ -59,7 +59,7 @@ export function InputCurrency({ labelText, description, required = true, value, 
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
           className="min-w-px flex-1 text-black text-lg leading-[1.5] outline-none"
-          style={{ fontFamily: "var(--font-avenir)" }}
+          style={{ fontFamily: "var(--font-avenir-book)" }}
         />
       </div>
       {error && (
