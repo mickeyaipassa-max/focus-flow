@@ -17,7 +17,6 @@ import {
   actueleDocumentVoorModel,
   documentUrl,
   isBekendModel,
-  productVoorModel,
   wijzigingenVoorModel,
 } from "./documenten";
 
@@ -103,7 +102,6 @@ export default function VoorwaardenPage() {
   }
 
   const { naarDitModel, vanDitModel } = result ? wijzigingenVoorModel(result.modelnummer) : { naarDitModel: [], vanDitModel: [] };
-  const product = result ? productVoorModel(result.modelnummer) : null;
   const beideRichtingen = naarDitModel.length > 0 && vanDitModel.length > 0;
   const wijzigingenUitleg = beideRichtingen
     ? "Bekijk wat er is veranderd tussen dit model en de oudere en nieuwere modellen."
@@ -187,11 +185,6 @@ export default function VoorwaardenPage() {
                         >
                           {naarDitModel.length + vanDitModel.length > 0 ? "Voorwaarden en wijzigingen" : "Voorwaarden"} voor model {result.modelnummer}
                         </h2>
-                        {product && (
-                          <p className="text-black text-base leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                            {product}
-                          </p>
-                        )}
                       </div>
                       <FileList
                         items={[
