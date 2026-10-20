@@ -103,6 +103,7 @@ export default function VerzekerdePage() {
           maxDate={vandaag()}
           value={state.geboortedatum ? fromIsoDatum(state.geboortedatum) : null}
           error={fouten.geboortedatum}
+          onTextChange={(tekst) => setState({ geboortedatumTekst: tekst })}
           onChange={(date) => wijzig({ geboortedatum: date ? toIsoDatum(date) : "" })}
         />
       </div>

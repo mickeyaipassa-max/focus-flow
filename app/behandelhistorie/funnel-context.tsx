@@ -31,9 +31,13 @@ export type BehandelhistorieState = {
   achternaam: string;
   /** yyyy-mm-dd (zie `toIsoDatum`/`fromIsoDatum` in lib/datum.ts), leeg tot de gebruiker kiest. */
   geboortedatum: string;
+  /** Wat de gebruiker in het geboortedatumveld typte; onderscheidt 'niets ingevuld' van 'geen geldige datum'. */
+  geboortedatumTekst: string;
   // Stap 2: Gegevens behandeling
   diagnosecode: string;
   ingangsdatum: string;
+  /** Idem voor de ingangsdatum. */
+  ingangsdatumTekst: string;
   situatie: Situatie | "";
   aantalBehandelingen: string;
   reden: string;
@@ -49,8 +53,10 @@ export const LEGE_STATE: BehandelhistorieState = {
   tussenvoegsel: "",
   achternaam: "",
   geboortedatum: "",
+  geboortedatumTekst: "",
   diagnosecode: "",
   ingangsdatum: "",
+  ingangsdatumTekst: "",
   situatie: "",
   aantalBehandelingen: "",
   reden: "",

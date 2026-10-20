@@ -98,6 +98,7 @@ export default function BehandelingPage() {
           maxDate={vandaag()}
           value={state.ingangsdatum ? fromIsoDatum(state.ingangsdatum) : null}
           error={fouten.ingangsdatum}
+          onTextChange={(tekst) => setState({ ingangsdatumTekst: tekst })}
           onChange={(date) => wijzig({ ingangsdatum: date ? toIsoDatum(date) : "" })}
         />
       </FunnelSection>
