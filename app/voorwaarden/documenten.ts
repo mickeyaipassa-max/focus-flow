@@ -169,25 +169,33 @@ export const WIJZIGINGSOVERZICHTEN_DOCS: WijzigingsGroep[] = [
 /** Het "naar"-model van een groep ("… naar AOV-model 231" wordt "231"), of null bij de Aegon-groepen. */
 const doelmodelVanGroep = (title: string) => title.match(/model (\S+)$/)?.[1] ?? null;
 
-/** "Wijzigingsoverzichten naar AOV-model 231" wordt "Wijzigingen naar AOV-model 231"; de Aegon-groepen houden hun naam. */
-const groepLabel = (title: string) => title.replace(/^Wijzigingsoverzichten naar /, "Wijzigingen naar ");
-
 /**
  * Alle wijzigingsoverzichten die bij dit modelnummer horen, in twee richtingen:
- * - het nummer is een "naar"-model (231, 232, 221, …): alle overzichten van de oudere modellen naar dit model,
- *   zoals "Wijzigingen modelnummer 222" (zo is Figma's voorbeeld bij 232 gevuld: 222, 212, 195, 194, 190);
- * - het nummer is zelf een ouder model: de overzichten waarin het voorkomt, zoals "Wijzigingen naar AOV-model 231".
- * Dubbele documenten komen één keer voor.
+ * - `naarDitModel`: het nummer is een "naar"-model (231, 232, 221, …): de overzichten van oudere modellen naar dit
+ *   model (zo is Figma's voorbeeld bij 232 gevuld: 222, 212, 195, 194, 190);
+ * - `vanDitModel`: het nummer is zelf een ouder model: de overzichten waarin het voorkomt.
+ * Elk label zegt van welk model naar welk model het overzicht gaat; dubbele documenten komen één keer voor.
  */
-export function wijzigingenVoorModel(modelnummer: string): { label: string; href: string }[] {
+export type Wijziging = { label: string; href: string };
+
+export function wijzigingenVoorModel(modelnummer: string): { naarDitModel: Wijziging[]; vanDitModel: Wijziging[] } {
   const gezocht = modelnummer.trim().toUpperCase();
+  const ontdubbel = (lijst: Wijziging[]) => lijst.filter((item, index) => lijst.findIndex((ander) => ander.href === item.href && ander.label === item.label) === index);
+
   const naarDitModel = WIJZIGINGSOVERZICHTEN_DOCS.filter((groep) => doelmodelVanGroep(groep.title)?.toUpperCase() === gezocht).flatMap((groep) =>
-    groep.links.map((link) => ({ label: `Wijzigingen modelnummer ${link.modelnummer}`, href: documentUrl(link.href) })),
+    groep.links.map((link) => ({ label: `Wijzigingen van model ${link.modelnummer} naar ${doelmodelVanGroep(groep.title)}`, href: documentUrl(link.href) })),
   );
   const vanDitModel = WIJZIGINGSOVERZICHTEN_DOCS.flatMap((groep) =>
-    groep.links.filter((link) => link.modelnummer.toUpperCase() === gezocht).map((link) => ({ label: groepLabel(groep.title), href: documentUrl(link.href) })),
+    groep.links
+      .filter((link) => link.modelnummer.toUpperCase() === gezocht)
+      .map((link) => {
+        const doel = doelmodelVanGroep(groep.title);
+        // De Aegon-groepen hebben geen "naar"-model: daar staat het Aegon-product in de groepsnaam.
+        const label = doel ? `Wijzigingen van model ${link.modelnummer} naar ${doel}` : `Wijzigingen Aegon-model ${link.modelnummer} – ${groep.title.replace(/^Aegon – /, "")}`;
+        return { label, href: documentUrl(link.href) };
+      }),
   );
-  return [...naarDitModel, ...vanDitModel].filter((item, index, alle) => alle.findIndex((ander) => ander.href === item.href && ander.label === item.label) === index);
+  return { naarDitModel: ontdubbel(naarDitModel), vanDitModel: ontdubbel(vanDitModel) };
 }
 
 /** Het modelnummer uit een label als "AOV (model 231)", of null. */
@@ -210,4 +218,13 @@ export function isBekendModel(modelnummer: string): boolean {
       (groep) => doelmodelVanGroep(groep.title)?.toUpperCase() === gezocht || groep.links.some((link) => link.modelnummer.toUpperCase() === gezocht),
     )
   );
+}
+
+/** Naam van het product bij dit modelnummer ("Flexibele AOV" bij 232), of null als die niet bekend is (oudere modellen). */
+export function productVoorModel(modelnummer: string): string | null {
+  const gezocht = modelnummer.trim().toUpperCase();
+  const actueel = ACTUELE_POLISVOORWAARDEN_DOCS.find((doc) => modelUitLabel(doc.label)?.toUpperCase() === gezocht);
+  if (actueel) return actueel.label.replace(/ \(model [^)]+\)$/, "").replace(/^Voorwaarden /, "");
+  const groep = WIJZIGINGSOVERZICHTEN_DOCS.find((g) => doelmodelVanGroep(g.title)?.toUpperCase() === gezocht);
+  return groep?.title.match(/^Wijzigingsoverzichten naar (?:de )?(.+?)[- ]model \S+$/)?.[1] ?? null;
 }
