@@ -185,7 +185,7 @@ export default function VoorwaardenPage() {
                           className="text-black text-[20px] leading-[1.3] outline-none min-[600px]:text-[24px]"
                           style={{ fontFamily: "var(--font-memphis-medium)" }}
                         >
-                          Voorwaarden en documenten voor model {result.modelnummer}
+                          {naarDitModel.length + vanDitModel.length > 0 ? "Voorwaarden en wijzigingen" : "Voorwaarden"} voor model {result.modelnummer}
                         </h2>
                         {product && (
                           <p className="text-black text-base leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
@@ -206,21 +206,16 @@ export default function VoorwaardenPage() {
                           Ander modelnummer zoeken
                         </button>
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                          Jouw AOV-voorwaarden
-                        </h3>
-                        <FileList
-                          items={[
-                            {
-                              title: `Polisvoorwaarden model ${result.modelnummer}`,
-                              description: "Dit zijn de voorwaarden die gelden voor deze AOV-verzekering.",
-                              // Alleen voor de actuele modellen bestaat een PDF; voor oudere modellen is er (nog) geen document.
-                              href: actueleDocumentVoorModel(result.modelnummer) ?? "#",
-                            },
-                          ]}
-                        />
-                      </div>
+                      <FileList
+                        items={[
+                          {
+                            title: `Polisvoorwaarden model ${result.modelnummer}`,
+                            description: "Dit zijn de voorwaarden die gelden voor deze AOV-verzekering.",
+                            // Alleen voor de actuele modellen bestaat een PDF; voor oudere modellen is er (nog) geen document.
+                            href: actueleDocumentVoorModel(result.modelnummer) ?? "#",
+                          },
+                        ]}
+                      />
                       {(naarDitModel.length > 0 || vanDitModel.length > 0) && (
                         <div className="flex flex-col gap-4">
                           <div className="flex flex-col gap-2">
