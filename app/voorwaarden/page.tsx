@@ -192,19 +192,6 @@ export default function VoorwaardenPage() {
                             {product}
                           </p>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setZoek("");
-                            setFout(undefined);
-                            wisResultaat();
-                            document.getElementById("modelnummer")?.focus();
-                          }}
-                          className="text-[#0064a8] text-base underline"
-                          style={{ fontFamily: "var(--font-avenir-book)" }}
-                        >
-                          Ander modelnummer zoeken
-                        </button>
                       </div>
                       <FileList
                         items={[
