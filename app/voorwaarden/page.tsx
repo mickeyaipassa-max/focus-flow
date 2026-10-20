@@ -28,9 +28,6 @@ const VERZEKERINGSKAARTEN = VERZEKERINGSKAARTEN_DOCS;
 const FOUT_LEEG = "Je hebt niets ingevuld. Vul het modelnummer van je polisblad in.";
 const FOUT_ONBEKEND = "We hebben geen voorwaarden gevonden voor dit modelnummer. Controleer het nummer op je polisblad.";
 
-/** "Wijzigingsoverzichten naar AOV-model 231" wordt "Wijzigingen naar AOV-model 231"; de Aegon-groepen houden hun naam. */
-const wijzigingLabel = (groep: string) => groep.replace(/^Wijzigingsoverzichten naar /, "Wijzigingen naar ");
-
 const FOOTER_COLUMNS: FooterColumn[] = [
   { title: "Klantenservice", links: ["Inloggen", "Schade melden", "Gegevens wijzigen", "Financieel advies", "Onze apps", "Contact"] },
   { title: "Onze impact", links: ["Duurzaamheid", "Maatschappij", "Toegankelijkheid", "a.s.r. Vitality", "Doenkracht", "De raad van doen"] },
@@ -178,10 +175,10 @@ export default function VoorwaardenPage() {
                           </h3>
                           <div className="flex flex-col gap-1">
                             {wijzigingen.map((wijziging) => (
-                              <a key={wijziging.groep + wijziging.href} href={wijziging.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-1">
+                              <a key={wijziging.href} href={wijziging.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-1">
                                 <Icon name="chevron-right" size="sm" />
                                 <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                                  {wijzigingLabel(wijziging.groep)}
+                                  {wijziging.label}
                                 </span>
                               </a>
                             ))}
