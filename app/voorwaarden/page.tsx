@@ -177,7 +177,8 @@ export default function VoorwaardenPage() {
                     <ResultSkeleton />
                   ) : (
                     <section aria-labelledby="resultaat-kop" className="flex w-full flex-col gap-12 rounded-md bg-white p-6 shadow-[0px_4px_8px_rgba(0,0,0,0.12)] min-[600px]:p-10">
-                      <div className="flex flex-col items-start gap-1">
+                      {/* Titel en bestand (of de uitleg bij een model zonder PDF) horen bij elkaar: 16px ertussen, 48px tot het volgende blok. */}
+                      <div className="flex flex-col gap-4">
                         <h2
                           id="resultaat-kop"
                           ref={resultaatKop}
@@ -187,19 +188,19 @@ export default function VoorwaardenPage() {
                         >
                           {naarDitModel.length + vanDitModel.length > 0 ? "Polisvoorwaarden en wijzigingen" : "Polisvoorwaarden"} voor model {result.modelnummer}
                         </h2>
+                        {pdfHref ? (
+                          <FileList items={[{ title: `Polisvoorwaarden model ${result.modelnummer}`, href: pdfHref }]} />
+                        ) : (
+                          // Alleen voor de actuele modellen bestaat een PDF; voor oudere modellen zeggen we dat eerlijk i.p.v. een dode downloadkaart.
+                          <p
+                            className="w-full rounded-md border border-[rgba(0,0,0,0.12)] bg-[#fafafa] p-4 text-black text-base leading-[1.5]"
+                            style={{ fontFamily: "var(--font-avenir-book)" }}
+                          >
+                            Voor model {result.modelnummer} hebben we geen losse polisvoorwaarden online.{" "}
+                            {naarDitModel.length + vanDitModel.length > 0 ? "Bel (030) 278 03 35 of bekijk hieronder wat er is veranderd." : "Bel (030) 278 03 35 voor meer informatie."}
+                          </p>
+                        )}
                       </div>
-                      {pdfHref ? (
-                        <FileList items={[{ title: `Polisvoorwaarden model ${result.modelnummer}`, href: pdfHref }]} />
-                      ) : (
-                        // Alleen voor de actuele modellen bestaat een PDF; voor oudere modellen zeggen we dat eerlijk i.p.v. een dode downloadkaart.
-                        <p
-                          className="w-full rounded-md border border-[rgba(0,0,0,0.12)] bg-[#fafafa] p-4 text-black text-base leading-[1.5]"
-                          style={{ fontFamily: "var(--font-avenir-book)" }}
-                        >
-                          Voor model {result.modelnummer} hebben we geen losse polisvoorwaarden online.{" "}
-                          {naarDitModel.length + vanDitModel.length > 0 ? "Bel (030) 278 03 35 of bekijk hieronder wat er is veranderd." : "Bel (030) 278 03 35 voor meer informatie."}
-                        </p>
-                      )}
                       {(naarDitModel.length > 0 || vanDitModel.length > 0) && (
                         <div className="flex flex-col gap-4">
                           <div className="flex flex-col gap-2">
