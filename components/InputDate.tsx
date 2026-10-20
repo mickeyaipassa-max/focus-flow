@@ -260,6 +260,12 @@ type InputDateProps = {
   range?: boolean;
   value?: Date | null;
   onChange?: (value: Date | null) => void;
+  /**
+   * De getypte tekst, bij elke wijziging. Nodig als een pagina onderscheid wil maken tussen
+   * "niets ingevuld" en "geen geldige datum": `onChange` geeft in beide gevallen `null`.
+   * Zonder prop ongewijzigd.
+   */
+  onTextChange?: (text: string) => void;
   rangeValue?: DateRangeValue;
   onRangeChange?: (value: DateRangeValue) => void;
   minDate?: Date;
@@ -296,6 +302,7 @@ export function InputDate({
   range = false,
   value,
   onChange,
+  onTextChange,
   rangeValue,
   onRangeChange,
   minDate,
@@ -406,6 +413,7 @@ export function InputDate({
     // Bij het typen vooruit komt het streepje na dag en maand vanzelf; bij wissen niet.
     if (raw.length > text.length && /^(\d{2}|\d{2}-\d{2})$/.test(next)) next += "-";
     setText(next);
+    onTextChange?.(next);
     const match = /^(\d{1,2})-(\d{1,2})-(\d{4})$/.exec(next);
     let parsed: Date | null = null;
     if (match) {
