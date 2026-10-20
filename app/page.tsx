@@ -27,6 +27,7 @@ import { Toggle } from "@/components/Toggle";
 import { ProductSelectCard } from "@/components/ProductSelectCard";
 import { ProductSelectCardDemo } from "@/components/ProductSelectCardDemo";
 import { InputFileDemo } from "@/components/InputFileDemo";
+import { InputSearchDemo } from "@/components/InputSearchDemo";
 
 const DEKKING_OPTIES = [
   { value: "aov", label: "Arbeidsongeschiktheid" },
@@ -269,6 +270,7 @@ export default function Home() {
           <InputEmail optional required={false} description="Zodat we contact kunnen opnemen." showInfo />
           <InputEmail error="Vul een geldig e-mailadres in" />
         </div>
+        <InputSearchDemo />
         <div className="flex flex-wrap items-start gap-6">
           <InputLicensePlate />
           <InputLicensePlate value="K - 24 - ASR" state="loading" />
