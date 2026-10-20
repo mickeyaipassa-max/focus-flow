@@ -24,9 +24,10 @@ import {
 const ACTUELE_POLISVOORWAARDEN = ACTUELE_POLISVOORWAARDEN_DOCS.map((doc) => ({ label: doc.label, href: documentUrl(doc.href) }));
 const VERZEKERINGSKAARTEN = VERZEKERINGSKAARTEN_DOCS;
 
-/** Foutteksten van het zoekveld. Figma tekent geen foutstaat: dit volgt het patroon van de andere formulieren ("Je hebt niets ingevuld. …"). */
-const FOUT_LEEG = "Je hebt niets ingevuld. Vul het modelnummer van je polisblad in.";
-const FOUT_ONBEKEND = "We hebben geen voorwaarden gevonden voor dit modelnummer. Controleer het nummer op je polisblad.";
+/** Foutteksten van het zoekveld. Figma tekent geen foutstaat; de onbekend-melding geeft een vervolgstap (actuele lijst of bellen). */
+const FOUT_LEEG = "Vul het modelnummer van je polisblad in.";
+const FOUT_ONBEKEND =
+  "We hebben geen voorwaarden gevonden voor dit modelnummer. Controleer het nummer op je polisblad. Kom je er niet uit? Bekijk hieronder de actuele polisvoorwaarden of bel (030) 278 03 35.";
 
 const FOOTER_COLUMNS: FooterColumn[] = [
   { title: "Klantenservice", links: ["Inloggen", "Schade melden", "Gegevens wijzigen", "Financieel advies", "Onze apps", "Contact"] },
@@ -102,11 +103,12 @@ export default function VoorwaardenPage() {
   }
 
   const { naarDitModel, vanDitModel } = result ? wijzigingenVoorModel(result.modelnummer) : { naarDitModel: [], vanDitModel: [] };
+  const pdfHref = result ? actueleDocumentVoorModel(result.modelnummer) : null;
   const beideRichtingen = naarDitModel.length > 0 && vanDitModel.length > 0;
   const wijzigingenUitleg = beideRichtingen
     ? "Bekijk wat er is veranderd tussen dit model en de oudere en nieuwere modellen."
     : naarDitModel.length > 0
-      ? `Heb je een ouder modelnummer? Kies het overzicht van jouw oude model om te zien wat er is veranderd ten opzichte van model ${result?.modelnummer}.`
+      ? `Had je polis eerder een ouder model? Hier zie je per oud model wat er is veranderd naar model ${result?.modelnummer}.`
       : "Bekijk wat er is veranderd ten opzichte van de nieuwere voorwaarden.";
 
   return (
@@ -137,10 +139,10 @@ export default function VoorwaardenPage() {
             <div className="flex max-w-[880px] flex-col gap-4 min-[600px]:gap-6">
               <div className="flex flex-col gap-2">
                 <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                  Bekijk je voorwaarden en documenten
+                  Zoek je polisvoorwaarden
                 </h2>
                 <p className="max-w-[880px] text-black text-base leading-[1.4] min-[600px]:text-xl" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  Kies je verzekering en vul het modelnummer op je polisblad in. Zo zie je welke voorwaarden en documenten bij jouw verzekering horen.
+                  Vul het modelnummer van je polisblad in. Dan zie je de voorwaarden en wat er is veranderd.
                 </p>
               </div>
 
@@ -164,7 +166,7 @@ export default function VoorwaardenPage() {
                 }
               />
 
-              {/* Resultaat: Figma "Result card" (880px breed, padding 40): titel, "Jouw AOV-voorwaarden" en "Alle wijzigingen voor dit model". */}
+              {/* Resultaat: Figma "Result card" (880px breed, padding 40): titel, bestandskaart en de wijzigingen. */}
               {(loading || result) && (
                 <div id="resultaat" className="w-full scroll-mt-6" aria-busy={loading}>
                   {/* Voor screenreaders: alleen het laden wordt aangekondigd; bij het resultaat gaat de focus naar de kop. */}
@@ -183,24 +185,26 @@ export default function VoorwaardenPage() {
                           className="text-black text-[20px] leading-[1.3] outline-none min-[600px]:text-[24px]"
                           style={{ fontFamily: "var(--font-memphis-medium)" }}
                         >
-                          {naarDitModel.length + vanDitModel.length > 0 ? "Voorwaarden en wijzigingen" : "Voorwaarden"} voor model {result.modelnummer}
+                          {naarDitModel.length + vanDitModel.length > 0 ? "Polisvoorwaarden en wijzigingen" : "Polisvoorwaarden"} voor model {result.modelnummer}
                         </h2>
                       </div>
-                      <FileList
-                        items={[
-                          {
-                            title: `Polisvoorwaarden model ${result.modelnummer}`,
-                            description: "Dit zijn de voorwaarden die gelden voor deze AOV-verzekering.",
-                            // Alleen voor de actuele modellen bestaat een PDF; voor oudere modellen is er (nog) geen document.
-                            href: actueleDocumentVoorModel(result.modelnummer) ?? "#",
-                          },
-                        ]}
-                      />
+                      {pdfHref ? (
+                        <FileList items={[{ title: `Polisvoorwaarden model ${result.modelnummer}`, href: pdfHref }]} />
+                      ) : (
+                        // Alleen voor de actuele modellen bestaat een PDF; voor oudere modellen zeggen we dat eerlijk i.p.v. een dode downloadkaart.
+                        <p
+                          className="w-full rounded-md border border-[rgba(0,0,0,0.12)] bg-[#fafafa] p-4 text-black text-base leading-[1.5]"
+                          style={{ fontFamily: "var(--font-avenir-book)" }}
+                        >
+                          Voor model {result.modelnummer} hebben we geen losse polisvoorwaarden online.{" "}
+                          {naarDitModel.length + vanDitModel.length > 0 ? "Bel (030) 278 03 35 of bekijk hieronder wat er is veranderd." : "Bel (030) 278 03 35 voor meer informatie."}
+                        </p>
+                      )}
                       {(naarDitModel.length > 0 || vanDitModel.length > 0) && (
                         <div className="flex flex-col gap-4">
                           <div className="flex flex-col gap-2">
                             <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                              Alle wijzigingen voor dit model
+                              Wat is er veranderd?
                             </h3>
                             <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
                               {wijzigingenUitleg}
