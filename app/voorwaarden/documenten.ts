@@ -166,12 +166,28 @@ export const WIJZIGINGSOVERZICHTEN_DOCS: WijzigingsGroep[] = [
   },
 ];
 
-/** Alle wijzigingsoverzichten waarin dit modelnummer voorkomt, met de groep ("naar model …") erbij. */
-export function wijzigingenVoorModel(modelnummer: string): { groep: string; href: string }[] {
+/** Het "naar"-model van een groep ("… naar AOV-model 231" wordt "231"), of null bij de Aegon-groepen. */
+const doelmodelVanGroep = (title: string) => title.match(/model (\S+)$/)?.[1] ?? null;
+
+/** "Wijzigingsoverzichten naar AOV-model 231" wordt "Wijzigingen naar AOV-model 231"; de Aegon-groepen houden hun naam. */
+const groepLabel = (title: string) => title.replace(/^Wijzigingsoverzichten naar /, "Wijzigingen naar ");
+
+/**
+ * Alle wijzigingsoverzichten die bij dit modelnummer horen, in twee richtingen:
+ * - het nummer is een "naar"-model (231, 232, 221, …): alle overzichten van de oudere modellen naar dit model,
+ *   zoals "Wijzigingen modelnummer 222" (zo is Figma's voorbeeld bij 232 gevuld: 222, 212, 195, 194, 190);
+ * - het nummer is zelf een ouder model: de overzichten waarin het voorkomt, zoals "Wijzigingen naar AOV-model 231".
+ * Dubbele documenten komen één keer voor.
+ */
+export function wijzigingenVoorModel(modelnummer: string): { label: string; href: string }[] {
   const gezocht = modelnummer.trim().toUpperCase();
-  return WIJZIGINGSOVERZICHTEN_DOCS.flatMap((groep) =>
-    groep.links.filter((link) => link.modelnummer.toUpperCase() === gezocht).map((link) => ({ groep: groep.title, href: documentUrl(link.href) })),
+  const naarDitModel = WIJZIGINGSOVERZICHTEN_DOCS.filter((groep) => doelmodelVanGroep(groep.title)?.toUpperCase() === gezocht).flatMap((groep) =>
+    groep.links.map((link) => ({ label: `Wijzigingen modelnummer ${link.modelnummer}`, href: documentUrl(link.href) })),
   );
+  const vanDitModel = WIJZIGINGSOVERZICHTEN_DOCS.flatMap((groep) =>
+    groep.links.filter((link) => link.modelnummer.toUpperCase() === gezocht).map((link) => ({ label: groepLabel(groep.title), href: documentUrl(link.href) })),
+  );
+  return [...naarDitModel, ...vanDitModel].filter((item, index, alle) => alle.findIndex((ander) => ander.href === item.href) === index);
 }
 
 /** Het modelnummer uit een label als "AOV (model 231)", of null. */
@@ -184,12 +200,14 @@ export function actueleDocumentVoorModel(modelnummer: string): string | null {
   return doc && doc.href !== "#" ? documentUrl(doc.href) : null;
 }
 
-/** Een modelnummer is bekend als het een actueel model is of in een wijzigingsoverzicht voorkomt. */
+/** Een modelnummer is bekend als het een actueel model is, een "naar"-model is of in een wijzigingsoverzicht voorkomt. */
 export function isBekendModel(modelnummer: string): boolean {
   const gezocht = modelnummer.trim().toUpperCase();
   if (!gezocht) return false;
   return (
     ACTUELE_POLISVOORWAARDEN_DOCS.some((d) => modelUitLabel(d.label)?.toUpperCase() === gezocht) ||
-    WIJZIGINGSOVERZICHTEN_DOCS.some((groep) => groep.links.some((link) => link.modelnummer.toUpperCase() === gezocht))
+    WIJZIGINGSOVERZICHTEN_DOCS.some(
+      (groep) => doelmodelVanGroep(groep.title)?.toUpperCase() === gezocht || groep.links.some((link) => link.modelnummer.toUpperCase() === gezocht),
+    )
   );
 }
