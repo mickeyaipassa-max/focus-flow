@@ -2,7 +2,8 @@ import { Icon } from "./Icon";
 
 export type FileListItem = {
   title: string;
-  description: string;
+  /** Optioneel: zonder beschrijving blijft alleen de titel staan. */
+  description?: string;
   href: string;
 };
 
@@ -44,9 +45,11 @@ export function FileList({ items, className }: FileListProps) {
               <p className="w-full text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
                 {item.title}
               </p>
-              <p className="w-full text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                {item.description}
-              </p>
+              {item.description && (
+                <p className="w-full text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                  {item.description}
+                </p>
+              )}
             </div>
             <span
               className="flex h-8 shrink-0 items-center justify-center rounded-full bg-[rgba(0,0,0,0.08)] px-3 text-black text-sm leading-[1.5]"
