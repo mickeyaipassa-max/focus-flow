@@ -16,6 +16,13 @@ import { Icon } from "@/components/Icon";
 import { Card } from "@/components/Card";
 import { CardContact } from "@/components/CardContact";
 import { Footer, type FooterColumn } from "@/components/Footer";
+import {
+  ACTUELE_POLISVOORWAARDEN_DOCS,
+  HUIDIG_MODEL_DOCUMENT,
+  VERZEKERINGSKAARTEN_DOCS,
+  WIJZIGINGSOVERZICHTEN_DOCS,
+  documentUrl,
+} from "./documenten";
 
 /**
  * Bevestigd via screenshot van de opdrachtgever (een aparte lijst-weergave
@@ -40,28 +47,9 @@ const VERZEKERING_OPTIONS = [
   { value: "ongevallen-en-ernstige-aandoeningen", label: "Ongevallen en ernstige aandoeningen" },
 ];
 
-/** Actuele polisvoorwaarden met modelnummer — letterlijk uit Figma (node 2051:6180). Links zijn placeholders: er zijn geen echte PDF-bestanden. */
-const ACTUELE_POLISVOORWAARDEN = [
-  "AOV (model 231)",
-  "Flexibele AOV (model 232)",
-  "AOV 2.5 (model 233)",
-  "Langer mee AOV (model 234)",
-  "Voorwaarden WIA Excedent (model 822)",
-  "Vaste lasten WIA volgend (model 681)",
-  "Woonlastenverzekering (model 226)",
-  "Premie Terug AOV (model 227)",
-  "Ongevallen en ernstige aandoeningen (model 225)",
-].map((label) => ({ label, href: "#" }));
-
-/** Gecorrigeerd van 7 naar de echte 6 items — "Vaste lasten AOV WIA Volgend" stond er ten onrechte bij; dat product hoort bij het "niet meer nieuw af te sluiten"-kopje, niet bij verzekeringskaarten. */
-const VERZEKERINGSKAARTEN = [
-  { label: "AOV", href: "#" },
-  { label: "AOV 2.5", href: "#" },
-  { label: "Flexibele AOV", href: "#" },
-  { label: "Langer mee AOV", href: "#" },
-  { label: "AOV vangnet", href: "#" },
-  { label: "WIA Excedent", href: "#" },
-];
+/** Actuele polisvoorwaarden en verzekeringskaarten: echte links van de live pagina, zie `documenten.ts`. */
+const ACTUELE_POLISVOORWAARDEN = ACTUELE_POLISVOORWAARDEN_DOCS.map((doc) => ({ label: doc.label, href: documentUrl(doc.href) }));
+const VERZEKERINGSKAARTEN = VERZEKERINGSKAARTEN_DOCS;
 
 /**
  * Het modelnummer van de huidige/nieuwste voorwaarden — bevestigd via
@@ -72,46 +60,18 @@ const VERZEKERINGSKAARTEN = [
  */
 const HUIDIG_MODEL = "231";
 
-type WijzigingsGroup = { title: string; modelnummers: string[] };
-
 /**
- * Vervangt de eerdere Figma-placeholder ("Moedel 232/233/234, Oudere
- * modellen t/m 220, Aegon modellen") door de echte structuur, geëxtraheerd
- * van de live pagina die deze build moet verbeteren
- * (asr.nl/arbeidsongeschiktheidsverzekering/overzicht-voorwaarden-en-vergoedingen).
- * De live pagina toont "naar AOV-model 221/222/223/224" zelf ook al als
- * 4 eigen, losse top-level groepen (niet genest onder 231/232/233/234) —
- * dus 11 platte groepen in totaal, elk met een eigen accordion-item, i.p.v.
- * een accordion-in-accordion.
+ * "Alle eerdere modellen": de wijzigingsoverzichten uit `documenten.ts` (11 platte groepen, zoals op de
+ * live pagina; "naar AOV-model 221/222/223/224" staan daar ook als eigen groepen), elk met de echte PDF-links.
  */
-const WIJZIGINGSOVERZICHTEN: WijzigingsGroup[] = [
-  { title: "Wijzigingsoverzichten naar AOV-model 231", modelnummers: ["221", "211", "198", "193", "188", "1FU"] },
-  { title: "Wijzigingsoverzichten naar AOV-model 232", modelnummers: ["222", "212", "195", "194", "190"] },
-  { title: "Wijzigingsoverzichten naar AOV-model 233", modelnummers: ["223", "215"] },
-  { title: "Wijzigingsoverzichten naar AOV-model 234", modelnummers: ["224", "216"] },
-  {
-    title: "Wijzigingsoverzichten naar AOV-model 221",
-    modelnummers: ["211", "198", "193", "188", "184", "183", "179", "175", "168", "167", "166", "164", "156", "1", "B64", "F76"],
-  },
-  { title: "Wijzigingsoverzichten naar Flexibele AOV-model 222", modelnummers: ["212", "195", "194", "190", "187"] },
-  {
-    title: "Aegon – volledige AOV en AOV met uitsluiting psychische klachten",
-    modelnummers: ["1422", "1439", "1449", "1450", "1475"],
-  },
-  { title: "Aegon – AOV Ongevallen en ernstige aandoeningen", modelnummers: ["1422", "1439", "1449", "1450", "1475"] },
-  { title: "Aegon – AOV Ongevallen", modelnummers: ["1422", "1439", "1449", "1450", "1475"] },
-  { title: "Wijzigingsoverzichten naar AOV 2.5 model 223", modelnummers: ["215", "196", "189", "186"] },
-  { title: "Wijzigingsoverzichten naar de Langer mee AOV-model 224", modelnummers: ["216", "197", "192"] },
-];
-
-function ModelHistoryList({ modelnummers }: { modelnummers: string[] }) {
+function ModelHistoryList({ links }: { links: { modelnummer: string; href: string }[] }) {
   return (
     <div className="flex flex-col gap-1 pl-4">
-      {modelnummers.map((modelnummer) => (
-        <a key={modelnummer} href="#" className="flex items-center gap-2 py-1">
+      {links.map((link) => (
+        <a key={link.modelnummer + link.href} href={documentUrl(link.href)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-1">
           <Icon name="chevron-right" size="sm" />
           <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
-            Wijzigingen modelnummer {modelnummer}
+            Wijzigingen modelnummer {link.modelnummer}
           </span>
         </a>
       ))}
@@ -290,7 +250,7 @@ export default function VoorwaardenPage() {
                         {
                           title: `Polisvoorwaarden model ${HUIDIG_MODEL}`,
                           description: `Dit zijn de nieuwste voorwaarden die gelden voor onze ${result.verzekeringLabel}-verzekering`,
-                          href: "#",
+                          href: documentUrl(HUIDIG_MODEL_DOCUMENT),
                         },
                         {
                           title: "Bekijk wat er is veranderd",
@@ -365,9 +325,9 @@ export default function VoorwaardenPage() {
                 </p>
               </div>
               <Accordion
-                items={WIJZIGINGSOVERZICHTEN.map((group) => ({
+                items={WIJZIGINGSOVERZICHTEN_DOCS.map((group) => ({
                   title: group.title,
-                  content: <ModelHistoryList modelnummers={group.modelnummers} />,
+                  content: <ModelHistoryList links={group.links} />,
                 }))}
               />
             </div>
