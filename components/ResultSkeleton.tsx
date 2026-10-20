@@ -28,8 +28,8 @@ function SkeletonBlock({ rows, headingWidth }: { rows: number[]; headingWidth: n
 
 /**
  * Laadstaat van de resultaatkaart op /voorwaarden: zelfde witte kaart en
- * zelfde opbouw als het echte resultaat (hoofdtitel + drie blokken met 1, 2 en
- * 2 bestanden). Zelfde balk-stijl als `ProductAccordionSkeleton`, met
+ * zelfde opbouw als het echte resultaat (hoofdtitel, een blok met 1 bestand
+ * en een blok met een lijst links). Zelfde balk-stijl als `ProductAccordionSkeleton`, met
  * `motion-safe:` zodat de puls bij `prefers-reduced-motion` uitblijft.
  */
 export function ResultSkeleton() {
@@ -42,8 +42,12 @@ export function ResultSkeleton() {
       <div aria-hidden="true" className="flex flex-col gap-12">
         <div className={`${bar} h-8 min-[600px]:h-[31px]`} style={{ width: 360, maxWidth: "100%" }} />
         <SkeletonBlock rows={[0]} headingWidth={200} />
-        <SkeletonBlock rows={[1, 2]} headingWidth={240} />
-        <SkeletonBlock rows={[3, 4]} headingWidth={180} />
+        <div className="flex flex-col gap-2">
+          <div className={`${bar} h-7`} style={{ width: 240 }} />
+          {[0, 1, 2].map((index) => (
+            <div key={index} className={`${bar} h-6`} style={{ width: 260 }} />
+          ))}
+        </div>
       </div>
     </div>
   );
