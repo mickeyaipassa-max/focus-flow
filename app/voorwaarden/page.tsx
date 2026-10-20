@@ -108,7 +108,7 @@ export default function VoorwaardenPage() {
   const wijzigingenUitleg = beideRichtingen
     ? "Bekijk wat er is veranderd tussen dit model en de oudere en nieuwere modellen."
     : naarDitModel.length > 0
-      ? `Had je polis eerder een ouder model? Hier zie je per oud model wat er is veranderd naar model ${result?.modelnummer}.`
+      ? `Bekijk wat er is veranderd tussen eerdere versies van de polisvoorwaarden en model ${result?.modelnummer}.`
       : "Bekijk wat er is veranderd ten opzichte van de nieuwere voorwaarden.";
 
   return (
@@ -186,10 +186,10 @@ export default function VoorwaardenPage() {
                           className="text-black text-[20px] leading-[1.3] outline-none min-[600px]:text-[24px]"
                           style={{ fontFamily: "var(--font-memphis-medium)" }}
                         >
-                          {naarDitModel.length + vanDitModel.length > 0 ? "Polisvoorwaarden en wijzigingen" : "Polisvoorwaarden"} voor model {result.modelnummer}
+                          Polisvoorwaarden voor model {result.modelnummer}
                         </h2>
                         {pdfHref ? (
-                          <FileList items={[{ title: `Polisvoorwaarden model ${result.modelnummer}`, href: pdfHref }]} />
+                          <FileList items={[{ title: `Polisvoorwaarden model ${result.modelnummer} (pdf)`, href: pdfHref }]} showTag={false} />
                         ) : (
                           // Alleen voor de actuele modellen bestaat een PDF; voor oudere modellen zeggen we dat eerlijk i.p.v. een dode downloadkaart.
                           <p
