@@ -9,7 +9,7 @@
  *   (`file:///C:/Users/…/Downloads/…pdf`); die link werkt daar niet en staat hier op "#".
  * - Vier overzichten verwijzen live naar `/api/pod/getpdfbyid?id=1688x…` (211 → 221, 212 → 222,
  *   215 → 223, 216 → 224). Die geven op 20 oktober 2026 ook op asr.nl zelf een 404; ze staan hier
- *   zoals live, zodat ze vanzelf werken als a.s.r. ze herstelt.
+ *   daarom op "#". Zodra a.s.r. ze herstelt kan de live link weer worden overgenomen.
  * - De Aegon-links zijn live verpakt in Outlook SafeLinks (met o.a. een e-mailadres
  *   van een medewerker); hier staat het uitgepakte asr.nl-adres.
  */
@@ -89,7 +89,7 @@ export const WIJZIGINGSOVERZICHTEN_DOCS: WijzigingsGroep[] = [
   {
     title: "Wijzigingsoverzichten naar AOV-model 221",
     links: [
-      { modelnummer: "211", href: "/api/pod/getpdfbyid?id=16886&name=Wijzigingen%20van%20Model%20211%20naar%20Model%20221.pdf" },
+      { modelnummer: "211", href: "#" },
       { modelnummer: "198", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43456_0522.pdf&name=Wijzigingen%20modelnummer%20198" },
       { modelnummer: "193", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43352_0522.pdf&name=Wijzigingen%20modelnummer%20193" },
       { modelnummer: "188", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43359_0522.pdf&name=Wijzigingen%20modelnummer%20188" },
@@ -110,7 +110,7 @@ export const WIJZIGINGSOVERZICHTEN_DOCS: WijzigingsGroep[] = [
   {
     title: "Wijzigingsoverzichten naar Flexibele AOV-model 222",
     links: [
-      { modelnummer: "212", href: "/api/pod/getpdfbyid?id=16887&name=wijzigingen%20van%20Model%20212%20naar%20Model%20222.pdf" },
+      { modelnummer: "212", href: "#" },
       { modelnummer: "195", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43453_0522.pdf&name=Wijzigingen%20modelnummer%20195" },
       { modelnummer: "194", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43353_0522.pdf&name=Wijzigingen%20modelnummer%20194" },
       { modelnummer: "190", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43482_0522.pdf&name=Wijzigingen%20modelnummer%20190" },
@@ -150,7 +150,7 @@ export const WIJZIGINGSOVERZICHTEN_DOCS: WijzigingsGroep[] = [
   {
     title: "Wijzigingsoverzichten naar AOV 2.5 model 223",
     links: [
-      { modelnummer: "215", href: "/api/pod/getpdfbyid?id=16888&name=wijzigingen%20van%20Model%20215%20naar%20Model%20223.pdf" },
+      { modelnummer: "215", href: "#" },
       { modelnummer: "196", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43454_0522.pdf&name=Wijzigingen%20modelnummer%20196" },
       { modelnummer: "189", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43351_0522.pdf&name=Wijzigingen%20modelnummer%20189" },
       { modelnummer: "186", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43349_0522.pdf&name=Wijzigingen%20modelnummer%20186" },
@@ -159,7 +159,7 @@ export const WIJZIGINGSOVERZICHTEN_DOCS: WijzigingsGroep[] = [
   {
     title: "Wijzigingsoverzichten naar de Langer mee AOV-model 224",
     links: [
-      { modelnummer: "216", href: "/api/pod/getpdfbyid?id=16889&name=wijzigingen%20van%20Model%20216%20naar%20Model%20224.pdf" },
+      { modelnummer: "216", href: "#" },
       { modelnummer: "197", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43455_0522.pdf&name=Wijzigingen%20modelnummer%20197" },
       { modelnummer: "192", href: "/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/43354_0522.pdf&name=Wijzigingen%20modelnummer%20192" },
     ],
@@ -187,7 +187,7 @@ export function wijzigingenVoorModel(modelnummer: string): { label: string; href
   const vanDitModel = WIJZIGINGSOVERZICHTEN_DOCS.flatMap((groep) =>
     groep.links.filter((link) => link.modelnummer.toUpperCase() === gezocht).map((link) => ({ label: groepLabel(groep.title), href: documentUrl(link.href) })),
   );
-  return [...naarDitModel, ...vanDitModel].filter((item, index, alle) => alle.findIndex((ander) => ander.href === item.href) === index);
+  return [...naarDitModel, ...vanDitModel].filter((item, index, alle) => alle.findIndex((ander) => ander.href === item.href && ander.label === item.label) === index);
 }
 
 /** Het modelnummer uit een label als "AOV (model 231)", of null. */
