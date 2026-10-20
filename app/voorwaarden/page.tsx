@@ -17,6 +17,7 @@ import {
   actueleDocumentVoorModel,
   documentUrl,
   isBekendModel,
+  productVoorModel,
   wijzigingenVoorModel,
 } from "./documenten";
 
@@ -49,6 +50,7 @@ export default function VoorwaardenPage() {
   const [result, setResult] = useState<{ modelnummer: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const loadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resultaatKop = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     return () => {
@@ -62,6 +64,18 @@ export default function VoorwaardenPage() {
     const target = document.getElementById("resultaat");
     if (target) smoothScrollToElement(target);
   }, [loading]);
+
+  // Zodra het resultaat er staat: focus naar de kop, zodat toetsenbord- en screenreadergebruikers weten dat het er is.
+  useEffect(() => {
+    if (result) resultaatKop.current?.focus({ preventScroll: true });
+  }, [result]);
+
+  /** Een nieuwe zoekopdracht begint: het oude resultaat (en een lopende zoekopdracht) mag niet blijven staan naast een veranderde invoer. */
+  function wisResultaat() {
+    if (loadTimer.current) clearTimeout(loadTimer.current);
+    setLoading(false);
+    setResult(null);
+  }
 
   /**
    * Na "Zoeken" (of Enter): controleer het modelnummer, scroll meteen naar het resultaat, toon 1 seconde een
@@ -88,7 +102,14 @@ export default function VoorwaardenPage() {
     }, 1000);
   }
 
-  const wijzigingen = result ? wijzigingenVoorModel(result.modelnummer) : [];
+  const { naarDitModel, vanDitModel } = result ? wijzigingenVoorModel(result.modelnummer) : { naarDitModel: [], vanDitModel: [] };
+  const product = result ? productVoorModel(result.modelnummer) : null;
+  const beideRichtingen = naarDitModel.length > 0 && vanDitModel.length > 0;
+  const wijzigingenUitleg = beideRichtingen
+    ? "Bekijk wat er is veranderd tussen dit model en de oudere en nieuwere modellen."
+    : naarDitModel.length > 0
+      ? `Heb je een ouder modelnummer? Kies het overzicht van jouw oude model om te zien wat er is veranderd ten opzichte van model ${result?.modelnummer}.`
+      : "Bekijk wat er is veranderd ten opzichte van de nieuwere voorwaarden.";
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start bg-white">
@@ -128,12 +149,14 @@ export default function VoorwaardenPage() {
               <InputSearch
                 labelText="Welk modelnummer staat op je polisblad?"
                 submitButton
+                id="modelnummer"
                 value={zoek}
                 loading={loading}
                 error={fout}
                 onChange={(waarde) => {
                   setZoek(waarde);
                   setFout(undefined);
+                  wisResultaat();
                 }}
                 onSubmit={handleSubmit}
                 beforeField={
@@ -145,14 +168,44 @@ export default function VoorwaardenPage() {
 
               {/* Resultaat: Figma "Result card" (880px breed, padding 40): titel, "Jouw AOV-voorwaarden" en "Alle wijzigingen voor dit model". */}
               {(loading || result) && (
-                <div id="resultaat" className="w-full scroll-mt-6" aria-live="polite" aria-busy={loading}>
+                <div id="resultaat" className="w-full scroll-mt-6" aria-busy={loading}>
+                  {/* Voor screenreaders: alleen het laden wordt aangekondigd; bij het resultaat gaat de focus naar de kop. */}
+                  <p role="status" className="sr-only">
+                    {loading ? "Resultaten worden geladen." : ""}
+                  </p>
                   {loading || !result ? (
                     <ResultSkeleton />
                   ) : (
-                    <div className="flex w-full flex-col gap-12 rounded-md bg-white p-6 shadow-[0px_4px_8px_rgba(0,0,0,0.12)] min-[600px]:p-10">
-                      <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                        Voorwaarden en documenten voor jouw AOV
-                      </h2>
+                    <section aria-labelledby="resultaat-kop" className="flex w-full flex-col gap-12 rounded-md bg-white p-6 shadow-[0px_4px_8px_rgba(0,0,0,0.12)] min-[600px]:p-10">
+                      <div className="flex flex-col items-start gap-1">
+                        <h2
+                          id="resultaat-kop"
+                          ref={resultaatKop}
+                          tabIndex={-1}
+                          className="text-black text-[20px] leading-[1.3] outline-none min-[600px]:text-[24px]"
+                          style={{ fontFamily: "var(--font-memphis-medium)" }}
+                        >
+                          Voorwaarden en documenten voor model {result.modelnummer}
+                        </h2>
+                        {product && (
+                          <p className="text-black text-base leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                            {product}
+                          </p>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setZoek("");
+                            setFout(undefined);
+                            wisResultaat();
+                            document.getElementById("modelnummer")?.focus();
+                          }}
+                          className="text-[#0064a8] text-base underline"
+                          style={{ fontFamily: "var(--font-avenir-book)" }}
+                        >
+                          Ander modelnummer zoeken
+                        </button>
+                      </div>
                       <div className="flex flex-col gap-2">
                         <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
                           Jouw AOV-voorwaarden
@@ -168,24 +221,46 @@ export default function VoorwaardenPage() {
                           ]}
                         />
                       </div>
-                      {wijzigingen.length > 0 && (
-                        <div className="flex flex-col gap-2">
-                          <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                            Alle wijzigingen voor dit model
-                          </h3>
-                          <div className="flex flex-col gap-1">
-                            {wijzigingen.map((wijziging) => (
-                              <a key={wijziging.label + wijziging.href} href={wijziging.href} {...(wijziging.href === "#" ? {} : { target: "_blank", rel: "noopener noreferrer" })} className="flex items-center gap-2 py-1">
-                                <Icon name="chevron-right" size="sm" />
-                                <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                                  {wijziging.label}
-                                </span>
-                              </a>
-                            ))}
+                      {(naarDitModel.length > 0 || vanDitModel.length > 0) && (
+                        <div className="flex flex-col gap-4">
+                          <div className="flex flex-col gap-2">
+                            <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                              Alle wijzigingen voor dit model
+                            </h3>
+                            <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                              {wijzigingenUitleg}
+                            </p>
                           </div>
+                          {[
+                            { kop: "Van oudere modellen naar dit model", items: naarDitModel },
+                            { kop: "Van dit model naar nieuwere modellen", items: vanDitModel },
+                          ]
+                            .filter((groep) => groep.items.length > 0)
+                            .map((groep) => (
+                              <div key={groep.kop} className="flex flex-col gap-1">
+                                {beideRichtingen && (
+                                  <p className="font-bold text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+                                    {groep.kop}
+                                  </p>
+                                )}
+                                {groep.items.map((wijziging) => (
+                                  <a
+                                    key={wijziging.label + wijziging.href}
+                                    href={wijziging.href}
+                                    {...(wijziging.href === "#" ? {} : { target: "_blank", rel: "noopener noreferrer" })}
+                                    className="flex items-center gap-2 py-1"
+                                  >
+                                    <Icon name="chevron-right" size="sm" />
+                                    <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                                      {wijziging.label}
+                                    </span>
+                                  </a>
+                                ))}
+                              </div>
+                            ))}
                         </div>
                       )}
-                    </div>
+                    </section>
                   )}
                 </div>
               )}
