@@ -173,3 +173,23 @@ export function wijzigingenVoorModel(modelnummer: string): { groep: string; href
     groep.links.filter((link) => link.modelnummer.toUpperCase() === gezocht).map((link) => ({ groep: groep.title, href: documentUrl(link.href) })),
   );
 }
+
+/** Het modelnummer uit een label als "AOV (model 231)", of null. */
+const modelUitLabel = (label: string) => label.match(/\(model ([^)]+)\)/)?.[1] ?? null;
+
+/** Echte PDF van de actuele voorwaarden voor dit modelnummer, of null als dit geen actueel model is (of het document ontbreekt). */
+export function actueleDocumentVoorModel(modelnummer: string): string | null {
+  const gezocht = modelnummer.trim().toUpperCase();
+  const doc = ACTUELE_POLISVOORWAARDEN_DOCS.find((d) => modelUitLabel(d.label)?.toUpperCase() === gezocht);
+  return doc && doc.href !== "#" ? documentUrl(doc.href) : null;
+}
+
+/** Een modelnummer is bekend als het een actueel model is of in een wijzigingsoverzicht voorkomt. */
+export function isBekendModel(modelnummer: string): boolean {
+  const gezocht = modelnummer.trim().toUpperCase();
+  if (!gezocht) return false;
+  return (
+    ACTUELE_POLISVOORWAARDEN_DOCS.some((d) => modelUitLabel(d.label)?.toUpperCase() === gezocht) ||
+    WIJZIGINGSOVERZICHTEN_DOCS.some((groep) => groep.links.some((link) => link.modelnummer.toUpperCase() === gezocht))
+  );
+}

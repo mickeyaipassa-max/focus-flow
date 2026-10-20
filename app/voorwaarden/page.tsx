@@ -1,83 +1,35 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Breadcrumb } from "@/components/Breadcrumb";
-import { TableOfContents } from "@/components/TableOfContents";
 import { ResultSkeleton } from "@/components/ResultSkeleton";
 import { smoothScrollToElement } from "@/lib/smoothScroll";
-import { Select } from "@/components/Select";
-import { Input } from "@/components/Input";
-import { Button } from "@/components/Button";
+import { InputSearch } from "@/components/InputSearch";
 import { LinkList } from "@/components/LinkList";
 import { FileList } from "@/components/FileList";
-import { Accordion } from "@/components/Accordion";
 import { Icon } from "@/components/Icon";
-import { Card } from "@/components/Card";
 import { CardContact } from "@/components/CardContact";
 import { Footer, type FooterColumn } from "@/components/Footer";
 import {
   ACTUELE_POLISVOORWAARDEN_DOCS,
-  HUIDIG_MODEL_DOCUMENT,
   VERZEKERINGSKAARTEN_DOCS,
-  WIJZIGINGSOVERZICHTEN_DOCS,
+  actueleDocumentVoorModel,
   documentUrl,
+  isBekendModel,
+  wijzigingenVoorModel,
 } from "./documenten";
-
-/**
- * Bevestigd via screenshot van de opdrachtgever (een aparte lijst-weergave
- * met schild-icoon + modelnummer per rij) én, na verificatie tegen de live
- * a.s.r.-pagina die deze build vervangt, gecorrigeerd op twee punten:
- * "Overgenomen Aegon-polissen" bestond niet als los keuze-item (Aegon-
- * polissen horen alleen bij de wijzigingsoverzichten, niet in deze Select),
- * en "Niet meer nieuw af te sluiten" was op de live site geen eigen keuze
- * maar een kopje boven 4 losse producten — die 4 staan er nu voor in de
- * plaats. `Select` ondersteunt geen gegroepeerde/geneste opties (geen
- * Figma-precedent daarvoor), dus blijft dit bewust een platte lijst.
- */
-const VERZEKERING_OPTIONS = [
-  { value: "aov", label: "AOV" },
-  { value: "flexibele-aov", label: "Flexibele AOV" },
-  { value: "aov-2-5", label: "AOV 2.5" },
-  { value: "langer-mee-aov", label: "Langer mee AOV" },
-  { value: "wia-excedent", label: "WIA Excedent" },
-  { value: "vaste-lasten-wia-volgend", label: "Vaste lasten WIA volgend" },
-  { value: "woonlastenverzekering", label: "Woonlastenverzekering" },
-  { value: "premie-terug-aov", label: "Premie Terug AOV" },
-  { value: "ongevallen-en-ernstige-aandoeningen", label: "Ongevallen en ernstige aandoeningen" },
-];
 
 /** Actuele polisvoorwaarden en verzekeringskaarten: echte links van de live pagina, zie `documenten.ts`. */
 const ACTUELE_POLISVOORWAARDEN = ACTUELE_POLISVOORWAARDEN_DOCS.map((doc) => ({ label: doc.label, href: documentUrl(doc.href) }));
 const VERZEKERINGSKAARTEN = VERZEKERINGSKAARTEN_DOCS;
 
-/**
- * Het modelnummer van de huidige/nieuwste voorwaarden — bevestigd via
- * Figma's voorbeeld (het ingevulde "211" leidt tot verwijzingen naar
- * "model 231" als de huidige voorwaarden). Vast, want er is geen echte
- * achterliggende data — zelfde soort gemockte constante als elders in dit
- * project (bv. /aichat's canned antwoorden).
- */
-const HUIDIG_MODEL = "231";
+/** Foutteksten van het zoekveld. Figma tekent geen foutstaat: dit volgt het patroon van de andere formulieren ("Je hebt niets ingevuld. …"). */
+const FOUT_LEEG = "Je hebt niets ingevuld. Vul het modelnummer van je polisblad in.";
+const FOUT_ONBEKEND = "We hebben geen voorwaarden gevonden voor dit modelnummer. Controleer het nummer op je polisblad.";
 
-/**
- * "Alle eerdere modellen": de wijzigingsoverzichten uit `documenten.ts` (11 platte groepen, zoals op de
- * live pagina; "naar AOV-model 221/222/223/224" staan daar ook als eigen groepen), elk met de echte PDF-links.
- */
-function ModelHistoryList({ links }: { links: { modelnummer: string; href: string }[] }) {
-  return (
-    <div className="flex flex-col gap-1 pl-4">
-      {links.map((link) => (
-        <a key={link.modelnummer + link.href} href={documentUrl(link.href)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-1">
-          <Icon name="chevron-right" size="sm" />
-          <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
-            Wijzigingen modelnummer {link.modelnummer}
-          </span>
-        </a>
-      ))}
-    </div>
-  );
-}
+/** "Wijzigingsoverzichten naar AOV-model 231" wordt "Wijzigingen naar AOV-model 231"; de Aegon-groepen houden hun naam. */
+const wijzigingLabel = (groep: string) => groep.replace(/^Wijzigingsoverzichten naar /, "Wijzigingen naar ");
 
 const FOOTER_COLUMNS: FooterColumn[] = [
   { title: "Klantenservice", links: ["Inloggen", "Schade melden", "Gegevens wijzigen", "Financieel advies", "Onze apps", "Contact"] },
@@ -95,12 +47,9 @@ const FOOTER_COLUMNS: FooterColumn[] = [
  * 16→20px) — geen apart mobiel Figma-frame voor déze pagina geraadpleegd.
  */
 export default function VoorwaardenPage() {
-  const [verzekering, setVerzekering] = useState("");
-  const [modelnummer, setModelnummer] = useState("");
-  const [result, setResult] = useState<{ verzekeringLabel: string; modelnummer: string } | null>(null);
-
-  const verzekeringLabel = VERZEKERING_OPTIONS.find((option) => option.value === verzekering)?.label ?? "";
-
+  const [zoek, setZoek] = useState("");
+  const [fout, setFout] = useState<string | undefined>();
+  const [result, setResult] = useState<{ modelnummer: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const loadTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -118,22 +67,31 @@ export default function VoorwaardenPage() {
   }, [loading]);
 
   /**
-   * Na "Bekijk voorwaarden en documenten": meteen naar het resultaat scrollen,
-   * 1 seconde een skeleton tonen en dan pas het resultaat. De wachttijd is
-   * puur UX (er is geen echte achterliggende aanvraag).
+   * Na "Zoeken" (of Enter): controleer het modelnummer, scroll meteen naar het resultaat, toon 1 seconde een
+   * skeleton en dan pas het resultaat. De wachttijd is puur UX (er is geen echte achterliggende aanvraag).
    */
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (loading || !verzekeringLabel || !modelnummer.trim()) return;
-    const next = { verzekeringLabel, modelnummer: modelnummer.trim() };
+  function handleSubmit(waarde: string) {
+    const modelnummer = waarde.trim();
+    if (loading) return;
+    if (!modelnummer) {
+      setFout(FOUT_LEEG);
+      return;
+    }
+    if (!isBekendModel(modelnummer)) {
+      setFout(FOUT_ONBEKEND);
+      setResult(null);
+      return;
+    }
+    setFout(undefined);
     setResult(null);
     setLoading(true);
     loadTimer.current = setTimeout(() => {
-      setResult(next);
+      setResult({ modelnummer });
       setLoading(false);
     }, 1000);
   }
 
+  const wijzigingen = result ? wijzigingenVoorModel(result.modelnummer) : [];
 
   return (
     <div className="flex min-h-screen w-full flex-col items-start bg-white">
@@ -157,25 +115,10 @@ export default function VoorwaardenPage() {
           </div>
         </section>
 
-        {/* Inhoudsopgave — springt naar de secties hieronder (Figma node 2061:7049). */}
-        <section className="w-full px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
-          <div className="mx-auto w-full max-w-[1200px]">
-            <TableOfContents
-              items={[
-                { label: "Bekijk je voorwaarden en documenten", targetId: "voorwaarden-vinden" },
-                { label: "Actuele polisvoorwaarden", targetId: "actuele-polisvoorwaarden" },
-                { label: "Alle eerdere modellen", targetId: "oudere-voorwaarden" },
-                { label: "Gratis advies", targetId: "gratis-advies" },
-                { label: "Hulp nodig", targetId: "hulp-en-contact" },
-              ]}
-            />
-          </div>
-        </section>
-
-        {/* Voorwaarden vinden — zoekformulier. py-6 mobiel i.p.v. de vaste py-12, zelfde aanpassing als AIChatBlock's crème sectie op /aichat. */}
+        {/* Voorwaarden vinden — zoekveld met knop (Figma "Hero – voorwaarden zoeken"); het resultaat staat in hetzelfde crème vlak. */}
         <section id="voorwaarden-vinden" className="w-full scroll-mt-6 bg-[#fff8e3] px-6 py-6 min-[600px]:px-12 min-[600px]:py-12 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto max-w-[1200px]">
-            <div className="flex max-w-[800px] flex-col gap-4 min-[600px]:gap-6">
+            <div className="flex max-w-[880px] flex-col gap-4 min-[600px]:gap-6">
               <div className="flex flex-col gap-2">
                 <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
                   Bekijk je voorwaarden en documenten
@@ -185,102 +128,67 @@ export default function VoorwaardenPage() {
                 </p>
               </div>
 
-              <form className="flex flex-col items-start gap-6" onSubmit={handleSubmit}>
-                <Select
-                  labelText="Welke verzekering heb je?"
-                  options={VERZEKERING_OPTIONS}
-                  value={verzekering}
-                  onChange={setVerzekering}
-                  placeholder="Maak een keuze..."
-                  fieldWidth="lg"
-                />
-                <Input
-                  labelText="Welk modelnummer staat op je polisblad?"
-                  value={modelnummer}
-                  onChange={setModelnummer}
-                  beforeField={
-                    <a href="#" className="text-[#0064a8] text-base underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                      Bekijk een voorbeeld van een polisblad
-                    </a>
-                  }
-                />
-                <Button type="primary" htmlType="submit" wrap>
-                  Bekijk voorwaarden en documenten
-                </Button>
-              </form>
+              <InputSearch
+                labelText="Welk modelnummer staat op je polisblad?"
+                submitButton
+                value={zoek}
+                loading={loading}
+                error={fout}
+                onChange={(waarde) => {
+                  setZoek(waarde);
+                  setFout(undefined);
+                }}
+                onSubmit={handleSubmit}
+                beforeField={
+                  <a href="#" className="text-[#0064a8] text-base underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                    Bekijk een voorbeeld van een polisblad
+                  </a>
+                }
+              />
 
-              {/*
-                Resultaat na versturen — Figma node 2026:9488 (derde versie):
-                hoofdtitel bovenaan de kaart, daarna 3 blokken zonder
-                introtekst. Alle "AOV"-verwijzingen zijn dynamisch per gekozen
-                verzekering (bevestigd door opdrachtgever), net als model
-                {modelnummer}. "model 231" (HUIDIG_MODEL) is een vaste,
-                gemockte waarde: er is geen echte achterliggende data over
-                welk model daadwerkelijk het nieuwste is.
-              */}
+              {/* Resultaat: Figma "Result card" (880px breed, padding 40): titel, "Jouw AOV-voorwaarden" en "Alle wijzigingen voor dit model". */}
               {(loading || result) && (
                 <div id="resultaat" className="w-full scroll-mt-6" aria-live="polite" aria-busy={loading}>
                   {loading || !result ? (
                     <ResultSkeleton />
                   ) : (
-                <div className="flex w-full flex-col gap-12 rounded-md bg-white p-6 shadow-[0px_4px_8px_rgba(0,0,0,0.12)] min-[600px]:p-10">
-                  <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                    Voorwaarden en documenten voor jouw {result.verzekeringLabel}
-                  </h2>
-                  <div className="flex flex-col gap-2">
-                    <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                      Jouw {result.verzekeringLabel}-voorwaarden
-                    </h3>
-                    <FileList
-                      items={[
-                        {
-                          title: `Polisvoorwaarden model ${result.modelnummer}`,
-                          description: `Dit zijn de voorwaarden die gelden voor deze ${result.verzekeringLabel}-verzekering.`,
-                          href: "#",
-                        },
-                      ]}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                      Nieuwste {result.verzekeringLabel}-voorwaarden
-                    </h3>
-                    <FileList
-                      items={[
-                        {
-                          title: `Polisvoorwaarden model ${HUIDIG_MODEL}`,
-                          description: `Dit zijn de nieuwste voorwaarden die gelden voor onze ${result.verzekeringLabel}-verzekering`,
-                          href: documentUrl(HUIDIG_MODEL_DOCUMENT),
-                        },
-                        {
-                          title: "Bekijk wat er is veranderd",
-                          description: `Bekijk de verschillen tussen model ${result.modelnummer} en model ${HUIDIG_MODEL}.`,
-                          href: "#",
-                        },
-                      ]}
-                    />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                      Overige documenten
-                    </h3>
-                    <FileList
-                      items={[
-                        {
-                          title: `Verzekeringskaart ${result.verzekeringLabel}`,
-                          description:
-                            "Met een verzekeringskaart zie je in één oogopslag wat wel en niet verzekerd is. Zo vergelijk je onze verzekering eenvoudig met die van andere verzekeraars.",
-                          href: "#",
-                        },
-                        {
-                          title: `Vergelijkingskaart ${result.verzekeringLabel}`,
-                          description: `Sluit je bij a.s.r. zelf een ${result.verzekeringLabel} af? Bekijk dan de afsluit- en onderhoudskosten en wat je van onze dienstverlening kunt verwachten.`,
-                          href: "#",
-                        },
-                      ]}
-                    />
-                  </div>
-                </div>
+                    <div className="flex w-full flex-col gap-12 rounded-md bg-white p-6 shadow-[0px_4px_8px_rgba(0,0,0,0.12)] min-[600px]:p-10">
+                      <h2 className="text-black text-[20px] leading-[1.3] min-[600px]:text-[24px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                        Voorwaarden en documenten voor jouw AOV
+                      </h2>
+                      <div className="flex flex-col gap-2">
+                        <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                          Jouw AOV-voorwaarden
+                        </h3>
+                        <FileList
+                          items={[
+                            {
+                              title: `Polisvoorwaarden model ${result.modelnummer}`,
+                              description: "Dit zijn de voorwaarden die gelden voor deze AOV-verzekering.",
+                              // Alleen voor de actuele modellen bestaat een PDF; voor oudere modellen is er (nog) geen document.
+                              href: actueleDocumentVoorModel(result.modelnummer) ?? "#",
+                            },
+                          ]}
+                        />
+                      </div>
+                      {wijzigingen.length > 0 && (
+                        <div className="flex flex-col gap-2">
+                          <h3 className="text-black text-lg leading-[1.4] min-[600px]:text-[20px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                            Alle wijzigingen voor dit model
+                          </h3>
+                          <div className="flex flex-col gap-1">
+                            {wijzigingen.map((wijziging) => (
+                              <a key={wijziging.groep + wijziging.href} href={wijziging.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-1">
+                                <Icon name="chevron-right" size="sm" />
+                                <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                                  {wijzigingLabel(wijziging.groep)}
+                                </span>
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
@@ -309,41 +217,6 @@ export default function VoorwaardenPage() {
                 <LinkList title="Alle verzekeringskaarten" items={VERZEKERINGSKAARTEN} className="flex flex-col items-start gap-2" />
               </div>
             </div>
-          </div>
-        </section>
-
-        {/* Alle eerdere modellen. Grijze achtergrond, zelfde 24px-mobiel-py-aanpassing als de andere secties op deze pagina. */}
-        <section id="oudere-voorwaarden" className="w-full scroll-mt-6 bg-[#f6f6f7] px-6 py-6 min-[600px]:px-12 min-[600px]:py-12 min-[900px]:px-16 min-[1200px]:px-32">
-          <div className="mx-auto max-w-[1200px]">
-            <div className="flex max-w-[800px] flex-col gap-4 min-[600px]:gap-6">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                  Wijzigingsoverzichten
-                </h2>
-                <p className="max-w-[880px] text-black text-sm leading-[1.5] min-[600px]:text-lg" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  Klik op de versie met je oude modelnummer en je ziet wat de belangrijkste wijzigingen zijn ten opzichte van het nieuwe modelnummer.
-                </p>
-              </div>
-              <Accordion
-                items={WIJZIGINGSOVERZICHTEN_DOCS.map((group) => ({
-                  title: group.title,
-                  content: <ModelHistoryList links={group.links} />,
-                }))}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Gratis advies voor je AOV — Figma node 2048:2701, toegevoegd na de eerste build van deze pagina. */}
-        <section id="gratis-advies" className="w-full scroll-mt-6 px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32">
-          <div className="mx-auto max-w-[1200px]">
-            <Card
-              title="Gratis advies voor je AOV"
-              description={"Je sluit niet elke dag een arbeids\u00ADongeschikt\u00ADheids\u00ADverzekering af. Daarom bieden wij je de mogelijkheid vragen te stellen tijdens een vrijblijvend informatiegesprek. Wij helpen je graag."}
-              image="/voorwaarden/aov-advies.png"
-              primaryAction={{ label: "Vraag een vrijblijvend AOV-gesprek aan" }}
-              secondaryAction={{ label: "Kijk hier of je een AOV nodig hebt" }}
-            />
           </div>
         </section>
 
