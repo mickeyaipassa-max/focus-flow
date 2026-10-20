@@ -9,6 +9,8 @@ export type FileListItem = {
 
 type FileListProps = {
   items: FileListItem[];
+  /** Figma's "PDF"-badge naast de titel. Uit te zetten als het bestandstype al in de titel staat. */
+  showTag?: boolean;
   className?: string;
 };
 
@@ -27,7 +29,7 @@ type FileListProps = {
  * `download.svg`: de paden verschillen net genoeg (andere pijl-verhouding)
  * om niet zonder meer als hetzelfde asset te hergebruiken.
  */
-export function FileList({ items, className }: FileListProps) {
+export function FileList({ items, showTag = true, className }: FileListProps) {
   return (
     <div className={className ?? "flex w-full flex-col items-start gap-2"}>
       {items.map((item) => (
@@ -51,12 +53,14 @@ export function FileList({ items, className }: FileListProps) {
                 </p>
               )}
             </div>
-            <span
-              className="flex h-8 shrink-0 items-center justify-center rounded-full bg-[rgba(0,0,0,0.08)] px-3 text-black text-sm leading-[1.5]"
-              style={{ fontFamily: "var(--font-avenir-medium)" }}
-            >
-              PDF
-            </span>
+            {showTag && (
+              <span
+                className="flex h-8 shrink-0 items-center justify-center rounded-full bg-[rgba(0,0,0,0.08)] px-3 text-black text-sm leading-[1.5]"
+                style={{ fontFamily: "var(--font-avenir-medium)" }}
+              >
+                PDF
+              </span>
+            )}
           </div>
           <span className="shrink-0">
             <Icon name="download-file" size="md" />

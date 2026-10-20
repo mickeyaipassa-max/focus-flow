@@ -183,7 +183,7 @@ export function wijzigingenVoorModel(modelnummer: string): { naarDitModel: Wijzi
   const ontdubbel = (lijst: Wijziging[]) => lijst.filter((item, index) => lijst.findIndex((ander) => ander.href === item.href && ander.label === item.label) === index);
 
   const naarDitModel = WIJZIGINGSOVERZICHTEN_DOCS.filter((groep) => doelmodelVanGroep(groep.title)?.toUpperCase() === gezocht).flatMap((groep) =>
-    groep.links.map((link) => ({ label: `Wijzigingen van model ${link.modelnummer} naar ${doelmodelVanGroep(groep.title)}`, href: documentUrl(link.href) })),
+    groep.links.map((link) => ({ label: `Wat is er veranderd van model ${link.modelnummer} naar ${doelmodelVanGroep(groep.title)}?`, href: documentUrl(link.href) })),
   );
   const vanDitModel = WIJZIGINGSOVERZICHTEN_DOCS.flatMap((groep) =>
     groep.links
@@ -191,7 +191,7 @@ export function wijzigingenVoorModel(modelnummer: string): { naarDitModel: Wijzi
       .map((link) => {
         const doel = doelmodelVanGroep(groep.title);
         // De Aegon-groepen hebben geen "naar"-model: daar staat het Aegon-product in de groepsnaam.
-        const label = doel ? `Wijzigingen van model ${link.modelnummer} naar ${doel}` : `Wijzigingen Aegon-model ${link.modelnummer} – ${groep.title.replace(/^Aegon – /, "")}`;
+        const label = doel ? `Wat is er veranderd van model ${link.modelnummer} naar ${doel}?` : `Wat is er veranderd voor Aegon-model ${link.modelnummer} – ${groep.title.replace(/^Aegon – /, "")}?`;
         return { label, href: documentUrl(link.href) };
       }),
   );
