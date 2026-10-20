@@ -175,7 +175,7 @@ export default function VoorwaardenPage() {
                           </h3>
                           <div className="flex flex-col gap-1">
                             {wijzigingen.map((wijziging) => (
-                              <a key={wijziging.href} href={wijziging.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 py-1">
+                              <a key={wijziging.label + wijziging.href} href={wijziging.href} {...(wijziging.href === "#" ? {} : { target: "_blank", rel: "noopener noreferrer" })} className="flex items-center gap-2 py-1">
                                 <Icon name="chevron-right" size="sm" />
                                 <span className="text-[#0064a8] text-base leading-[1.5] hover:underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
                                   {wijziging.label}
