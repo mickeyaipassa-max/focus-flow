@@ -22,15 +22,17 @@ export type WoonverzekeringenProductMeta = {
    */
   shortTitle: string;
   icon: string;
-  /**
-   * Overlijdensrisico- en Rechtsbijstandverzekering hebben in Figma dezelfde
-   * beschrijving als Opstalverzekering gekregen (kopieerfout in het
-   * bronbestand) — bewust letterlijk overgenomen i.p.v. zelf iets anders te
-   * verzinnen, zie ook de toelichting in `app/woonverzekeringen/page.tsx`.
-   */
   description: string;
 };
 
+/**
+ * Producten die op de entry te kiezen zijn: alleen Opstal, Inboedel en
+ * Aansprakelijkheid. Overlijdensrisico en Rechtsbijstand zijn bewust uit de
+ * lijst gehaald; hun type-ids en de uitklap-inhoud (`OverlijdenBody`,
+ * `RechtsbijstandBody`) staan nog in de code en komen terug door ze hier weer
+ * toe te voegen (pictogrammen `pictogram-overlijdensrisicoverzekering` en
+ * `pictogram-rechtsbijstandsverzekering` bestaan nog).
+ */
 export const WOONVERZEKERINGEN_PRODUCTEN: WoonverzekeringenProductMeta[] = [
   { id: "opstal", icon: "pictogram-house", title: "Opstalverzekering", shortTitle: "Opstal", description: "Verzeker je woning voor bijvoorbeeld brand, storm of inbraak." },
   { id: "inboedel", icon: "pictogram-inboedel", title: "Inboedelverzekering", shortTitle: "Inboedel", description: "Verzeker je spullen voor schade of diefstal." },
@@ -40,20 +42,6 @@ export const WOONVERZEKERINGEN_PRODUCTEN: WoonverzekeringenProductMeta[] = [
     title: "Aansprakelijkheidsverzekering",
     shortTitle: "Aansprakelijkheid",
     description: "Verzeker jezelf voor schade die jij per ongeluk veroorzaakt.",
-  },
-  {
-    id: "overlijden",
-    icon: "pictogram-overlijdensrisicoverzekering",
-    title: "Overlijdensrisicoverzekering",
-    shortTitle: "Overlijdensrisico",
-    description: "Verzeker je woning voor bijvoorbeeld brand, storm of inbraak.",
-  },
-  {
-    id: "rechtsbijstand",
-    icon: "pictogram-rechtsbijstandsverzekering",
-    title: "Rechtsbijstandverzekering",
-    shortTitle: "Rechtsbijstand",
-    description: "Verzeker je woning voor bijvoorbeeld brand, storm of inbraak.",
   },
 ];
 
