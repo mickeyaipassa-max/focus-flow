@@ -186,7 +186,7 @@ export default function VoorwaardenPage() {
                           className="text-black text-[20px] leading-[1.3] outline-none min-[600px]:text-[24px]"
                           style={{ fontFamily: "var(--font-memphis-medium)" }}
                         >
-                          Polisvoorwaarden voor model {result.modelnummer}
+                          {naarDitModel.length + vanDitModel.length > 0 ? "Voorwaarden en wijzigingen" : "Voorwaarden"} van model {result.modelnummer}
                         </h2>
                         {pdfHref ? (
                           <FileList items={[{ title: `Polisvoorwaarden model ${result.modelnummer} (pdf)`, href: pdfHref }]} showTag={false} />
