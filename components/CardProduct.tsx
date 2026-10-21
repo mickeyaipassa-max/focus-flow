@@ -1,3 +1,5 @@
+import { Tag } from "./Tag";
+
 /** Vinkje en kruisje zoals Figma ze in de 16px-cirkel tekent: kleine glyphs (±12/10px), vinkje groen, kruisje #858585. */
 function CheckGlyph() {
   return (
@@ -25,8 +27,15 @@ type CardProductProps = {
   /** Kleine regel onder de titel (Figma: "Meest gekozen … auto's van 10 jaar en ouder"). */
   subtitle?: string;
   features: CardProductFeature[];
+  /** Opt-in: korte beschrijving (16px, gecentreerd) onder de titel, voor kaarten die een productkeuze toelichten. */
+  description?: string;
+  /** Opt-in: label bovenaan de kaart, bv. "Vaak gekozen" (gele Tag). */
+  tag?: string;
+  /** Opt-in: extra visuele nadruk (2px zwarte rand en een schaduw). */
+  emphasis?: boolean;
   primaryLabel: string;
-  secondaryLabel: string;
+  /** Opt-in: zonder secundaire tekstknop blijft alleen de primaire knop staan. */
+  secondaryLabel?: string;
   onPrimaryClick?: () => void;
   onSecondaryClick?: () => void;
   className?: string;
@@ -51,6 +60,9 @@ export function CardProduct({
   title,
   subtitle,
   features,
+  description,
+  tag,
+  emphasis = false,
   primaryLabel,
   secondaryLabel,
   onPrimaryClick,
@@ -60,10 +72,15 @@ export function CardProduct({
   return (
     <div
       className={
-        className ?? "flex w-[320px] shrink-0 flex-col overflow-clip rounded-md border border-[rgba(0,0,0,0.12)] bg-white"
+        className ??
+        [
+          "flex w-[320px] shrink-0 flex-col overflow-clip rounded-md bg-white",
+          emphasis ? "border-2 border-black shadow-[0px_8px_24px_rgba(0,0,0,0.16)]" : "border border-[rgba(0,0,0,0.12)]",
+        ].join(" ")
       }
     >
-      <div className="flex flex-col items-center gap-4 p-6">
+      <div className="flex flex-1 flex-col items-center gap-4 p-6">
+        {tag && <Tag text={tag} color="yellow" />}
         <div className="flex w-full flex-col text-center">
           <p className="-mb-0.5 text-2xl text-black leading-[1.4]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
             {title}
@@ -71,6 +88,11 @@ export function CardProduct({
           {subtitle && (
             <p className="text-[#565656] text-xs leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
               {subtitle}
+            </p>
+          )}
+          {description && (
+            <p className="mt-2 text-base text-black leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              {description}
             </p>
           )}
         </div>
@@ -113,14 +135,16 @@ export function CardProduct({
         >
           {primaryLabel}
         </button>
-        <button
-          type="button"
-          onClick={onSecondaryClick}
-          className="flex w-full items-center justify-center gap-2 rounded-[3px] font-[550] text-black text-sm leading-[1.5] hover:underline"
-          style={{ fontFamily: "var(--font-avenir-medium)" }}
-        >
-          {secondaryLabel}
-        </button>
+        {secondaryLabel && (
+          <button
+            type="button"
+            onClick={onSecondaryClick}
+            className="flex w-full items-center justify-center gap-2 rounded-[3px] font-[550] text-black text-sm leading-[1.5] hover:underline"
+            style={{ fontFamily: "var(--font-avenir-medium)" }}
+          >
+            {secondaryLabel}
+          </button>
+        )}
       </div>
     </div>
   );
