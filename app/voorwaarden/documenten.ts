@@ -219,3 +219,12 @@ export function isBekendModel(modelnummer: string): boolean {
     )
   );
 }
+
+/** Naam van het product bij dit modelnummer ("Flexibele AOV" bij 232), of null als die niet bekend is (oudere modellen). */
+export function productVoorModel(modelnummer: string): string | null {
+  const gezocht = modelnummer.trim().toUpperCase();
+  const actueel = ACTUELE_POLISVOORWAARDEN_DOCS.find((doc) => modelUitLabel(doc.label)?.toUpperCase() === gezocht);
+  if (actueel) return actueel.label.replace(/ \(model [^)]+\)$/, "").replace(/^Voorwaarden /, "");
+  const groep = WIJZIGINGSOVERZICHTEN_DOCS.find((g) => doelmodelVanGroep(g.title)?.toUpperCase() === gezocht);
+  return groep?.title.match(/^Wijzigingsoverzichten naar (?:de )?(.+?)[- ]model \S+$/)?.[1] ?? null;
+}
