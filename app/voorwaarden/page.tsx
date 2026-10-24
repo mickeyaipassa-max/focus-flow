@@ -17,6 +17,7 @@ import {
   actueleDocumentVoorModel,
   documentUrl,
   isBekendModel,
+  productVoorModel,
   wijzigingenVoorModel,
 } from "./documenten";
 
@@ -103,6 +104,7 @@ export default function VoorwaardenPage() {
   }
 
   const { naarDitModel, vanDitModel } = result ? wijzigingenVoorModel(result.modelnummer) : { naarDitModel: [], vanDitModel: [] };
+  const product = result ? productVoorModel(result.modelnummer) : null;
   const pdfHref = result ? actueleDocumentVoorModel(result.modelnummer) : null;
   const beideRichtingen = naarDitModel.length > 0 && vanDitModel.length > 0;
   const wijzigingenUitleg = beideRichtingen
@@ -124,11 +126,10 @@ export default function VoorwaardenPage() {
         <section className="w-full px-6 pt-6 min-[600px]:px-12 min-[600px]:pt-10 min-[900px]:px-16 min-[1200px]:px-32">
           <div className="mx-auto flex max-w-[1200px] flex-col gap-2 min-[600px]:gap-3">
             <h1 className="text-black text-[32px] leading-[1.2] min-[600px]:text-[40px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-              Vind de polisvoorwaarden van je{" "}
-              <span className="min-[900px]:whitespace-nowrap">arbeids&shy;ongeschikt&shy;heids&shy;verzekering</span>
+              Vind de polisvoorwaarden van je AOV
             </h1>
             <p className="max-w-[880px] text-black text-base leading-[1.4] min-[600px]:text-xl" style={{ fontFamily: "var(--font-avenir-book)" }}>
-              Wil je precies weten hoe het ook alweer zat met jouw AOV? Op deze pagina vind je een overzicht van de polisvoorwaarden voor onze AOV&apos;s voor ondernemers.
+              Zoek met het modelnummer op je polisblad de voorwaarden van je arbeidsongeschiktheidsverzekering. Je kunt ook bekijken wat er is veranderd ten opzichte van eerdere versies.
             </p>
           </div>
         </section>
@@ -139,16 +140,22 @@ export default function VoorwaardenPage() {
             <div className="flex max-w-[880px] flex-col gap-4 min-[600px]:gap-6">
               <div className="flex flex-col gap-2">
                 <h2 className="text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                  Zoek je polisvoorwaarden
+                  Zoek de voorwaarden van jouw polis
                 </h2>
                 <p className="max-w-[880px] text-black text-base leading-[1.4] min-[600px]:text-xl" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                  Vul het modelnummer van je polisblad in. Dan zie je de voorwaarden en wat er is veranderd.
+                  Vul het modelnummer in dat op je polisblad staat.
+                  <br />
+                  <a href="#" className="text-[#0064a8] underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                    Waar vind ik mijn modelnummer?
+                  </a>
                 </p>
               </div>
 
               <InputSearch
-                labelText="Welk modelnummer staat op je polisblad?"
+                labelText="Modelnummer"
+                placeholder="Bijv. 231"
                 submitButton
+                submitLabel="Zoek voorwaarden"
                 id="modelnummer"
                 value={zoek}
                 loading={loading}
@@ -159,11 +166,6 @@ export default function VoorwaardenPage() {
                   wisResultaat();
                 }}
                 onSubmit={handleSubmit}
-                beforeField={
-                  <a href="#" className="text-[#0064a8] text-base underline" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    Bekijk een voorbeeld van een polisblad
-                  </a>
-                }
               />
 
               {/* Resultaat: Figma "Result card" (880px breed, padding 40): titel, bestandskaart en de wijzigingen. */}
@@ -186,10 +188,10 @@ export default function VoorwaardenPage() {
                           className="text-black text-[20px] leading-[1.3] outline-none min-[600px]:text-[24px]"
                           style={{ fontFamily: "var(--font-memphis-medium)" }}
                         >
-                          {naarDitModel.length + vanDitModel.length > 0 ? "Voorwaarden en wijzigingen" : "Voorwaarden"} van model {result.modelnummer}
+                          Voorwaarden voor model {result.modelnummer}
                         </h2>
                         {pdfHref ? (
-                          <FileList items={[{ title: `Polisvoorwaarden model ${result.modelnummer} (pdf)`, href: pdfHref }]} showTag={false} />
+                          <FileList items={[{ title: product ? `Polisvoorwaarden ${product} — model ${result.modelnummer}` : `Polisvoorwaarden model ${result.modelnummer}`, href: pdfHref }]} />
                         ) : (
                           // Alleen voor de actuele modellen bestaat een PDF; voor oudere modellen zeggen we dat eerlijk i.p.v. een dode downloadkaart.
                           <p
