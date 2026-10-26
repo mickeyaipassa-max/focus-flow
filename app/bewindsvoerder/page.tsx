@@ -37,7 +37,7 @@ export default function BewindvoerderPage() {
       activeStep={1}
       terugLabel="Terug"
       onTerug={() => router.back()}
-      navigation={<FormNavigation previousStep previousLabel="Terug" onPrevious={() => router.back()} onNext={handleNext} />}
+      navigation={<FormNavigation previousStep previousLabel="Terug" nextLabel="Naar bewindgegevens" onPrevious={() => router.back()} onNext={handleNext} />}
     >
       <FunnelSection intro title="Bewindvoerder" showRequiredFieldsNote requiredFieldsNote={<VerplichteVelden />} />
 

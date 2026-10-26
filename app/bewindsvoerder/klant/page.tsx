@@ -34,7 +34,7 @@ export default function KlantPage() {
       terugLabel="Bewindgegevens"
       onTerug={() => router.push(ROUTES.bewindgegevens)}
       navigation={
-        <FormNavigation previousStep previousLabel="Bewindgegevens" onPrevious={() => router.push(ROUTES.bewindgegevens)} onNext={handleNext} />
+        <FormNavigation previousStep previousLabel="Bewindgegevens" nextLabel="Naar samenvatting" onPrevious={() => router.push(ROUTES.bewindgegevens)} onNext={handleNext} />
       }
     >
       <FunnelSection intro title="Klant" showRequiredFieldsNote requiredFieldsNote={<VerplichteVelden />} />
