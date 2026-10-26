@@ -34,7 +34,7 @@ export function FaqAccordion({ items, className }: FaqAccordionProps) {
       {items.map((item, index) => {
         const isOpen = openIndex === index;
         return (
-          <div key={item.question} className="border-[#e5e5e5] border-b">
+          <div key={`${index}-${item.question}`} className="border-[#e5e5e5] border-b">
             <button
               type="button"
               onClick={() => setOpenIndex(isOpen ? null : index)}
