@@ -1,13 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FieldsetAddress } from "@/components/FieldsetAddress";
 import { FormNavigation } from "@/components/FormNavigation";
 import { FunnelSection } from "@/components/FunnelSection";
 import { Input } from "@/components/Input";
 import { InputDate } from "@/components/InputDate";
 import { RadioGroup } from "@/components/RadioGroup";
 import { fromIsoDatum, toIsoDatum } from "@/lib/datum";
+import { AdresBlok } from "../adres";
 import { BewindScherm, Scheidingslijn, SectieTitel, useStap, VerplichteVelden } from "../delen";
 import { ROUTES, type JaNee } from "../funnel-context";
 import { isGeldig, valideerKlant } from "../validatie";
@@ -83,12 +83,27 @@ export default function KlantPage() {
         onChange={(date) => wijzig({ klantGeboortedatum: date ? toIsoDatum(date) : "" })}
       />
 
-      <FieldsetAddress
-        className="flex w-full max-w-[400px] flex-col items-start gap-4"
-        value={{ postalCode: state.klantPostcode, houseNumber: state.klantHuisnummer, addition: state.klantToevoeging }}
-        errors={{ postalCode: fouten.klantPostcode, houseNumber: fouten.klantHuisnummer }}
-        onChange={(value) =>
-          wijzig({ klantPostcode: value.postalCode, klantHuisnummer: value.houseNumber, klantToevoeging: value.addition })
+      <AdresBlok
+        waarde={{
+          postcode: state.klantPostcode,
+          huisnummer: state.klantHuisnummer,
+          toevoeging: state.klantToevoeging,
+          straat: state.klantStraat,
+          plaats: state.klantWoonplaats,
+          handmatig: state.klantHandmatig,
+          gevonden: state.klantAdresGevonden,
+        }}
+        fouten={{ postcode: fouten.klantPostcode, huisnummer: fouten.klantHuisnummer, straat: fouten.klantStraat, plaats: fouten.klantWoonplaats }}
+        onChange={(u) =>
+          wijzig({
+            ...(u.postcode !== undefined && { klantPostcode: u.postcode }),
+            ...(u.huisnummer !== undefined && { klantHuisnummer: u.huisnummer }),
+            ...(u.toevoeging !== undefined && { klantToevoeging: u.toevoeging }),
+            ...(u.straat !== undefined && { klantStraat: u.straat }),
+            ...(u.plaats !== undefined && { klantWoonplaats: u.plaats }),
+            ...(u.handmatig !== undefined && { klantHandmatig: u.handmatig }),
+            ...(u.gevonden !== undefined && { klantAdresGevonden: u.gevonden }),
+          })
         }
       />
 

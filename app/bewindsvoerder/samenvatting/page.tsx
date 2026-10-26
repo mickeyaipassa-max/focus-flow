@@ -5,6 +5,7 @@ import { CardDetails, type DetailRowData } from "@/components/CardDetails";
 import { FormNavigation } from "@/components/FormNavigation";
 import { FunnelSection } from "@/components/FunnelSection";
 import { formatDatum, fromIsoDatum } from "@/lib/datum";
+import { straatEnHuisnummer } from "../adres";
 import { BewindScherm, VerplichteVelden } from "../delen";
 import { ROUTES, useBewindFunnel, type BewindState } from "../funnel-context";
 
@@ -18,7 +19,13 @@ const jaNee = (waarde: string) => (waarde === "ja" ? "Ja" : waarde === "nee" ? "
 
 function postadres(s: BewindState) {
   if (s.postbus) return tekst([`Postbus ${s.postbusnummer.trim()}`, `${s.postcode.trim()} ${s.plaats.trim()}`.trim()].join(", "));
-  return naam(s.postcode, `${s.huisnummer.trim()}${s.toevoeging.trim()}`);
+  return adres(s.straat, s.huisnummer, s.toevoeging, s.postcode, s.woonplaats);
+}
+
+/** "Archimedeslaan 10, 3584 BA Utrecht"; zonder opgehaalde straat alleen postcode en huisnummer. */
+function adres(straat: string, huisnummer: string, toevoeging: string, postcode: string, plaats: string) {
+  if (!straat.trim()) return naam(postcode, `${huisnummer.trim()}${toevoeging.trim()}`);
+  return `${straatEnHuisnummer({ straat, huisnummer, toevoeging })}, ${naam(postcode, plaats)}`;
 }
 
 /**
@@ -63,7 +70,7 @@ export default function SamenvattingPage() {
     { label: "Voornamen", value: tekst(s.klantVoornamen) },
     { label: "Naam", value: naam(s.klantVoornamen, s.klantTussenvoegsel, s.klantAchternaam) },
     { label: "Geboortedatum", value: datum(s.klantGeboortedatum) },
-    { label: "Adres", value: naam(s.klantPostcode, `${s.klantHuisnummer.trim()}${s.klantToevoeging.trim()}`) },
+    { label: "Adres", value: adres(s.klantStraat, s.klantHuisnummer, s.klantToevoeging, s.klantPostcode, s.klantWoonplaats) },
     { label: "Overzicht betalingsachterstand", value: jaNee(s.betalingsachterstand) },
     { label: "Polisblad ontvangen", value: jaNee(s.polisblad) },
   ];

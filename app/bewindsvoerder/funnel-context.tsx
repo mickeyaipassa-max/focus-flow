@@ -43,6 +43,11 @@ export type BewindState = {
   toevoeging: string;
   postbusnummer: string;
   plaats: string;
+  /** Opgehaald via de adres-lookup of handmatig ingevoerd (zie `./adres.tsx`). */
+  straat: string;
+  woonplaats: string;
+  handmatig: boolean;
+  adresGevonden: boolean;
   // Stap 2: Bewindgegevens
   zaaknummer: string;
   startdatum: string;
@@ -64,6 +69,10 @@ export type BewindState = {
   klantPostcode: string;
   klantHuisnummer: string;
   klantToevoeging: string;
+  klantStraat: string;
+  klantWoonplaats: string;
+  klantHandmatig: boolean;
+  klantAdresGevonden: boolean;
   betalingsachterstand: JaNee;
   polisblad: JaNee;
 };
@@ -86,6 +95,10 @@ export const LEGE_STATE: BewindState = {
   toevoeging: "",
   postbusnummer: "",
   plaats: "",
+  straat: "",
+  woonplaats: "",
+  handmatig: false,
+  adresGevonden: false,
   zaaknummer: "",
   startdatum: "",
   startdatumTekst: "",
@@ -105,6 +118,10 @@ export const LEGE_STATE: BewindState = {
   klantPostcode: "",
   klantHuisnummer: "",
   klantToevoeging: "",
+  klantStraat: "",
+  klantWoonplaats: "",
+  klantHandmatig: false,
+  klantAdresGevonden: false,
   betalingsachterstand: "",
   polisblad: "",
 };
