@@ -37,7 +37,7 @@ export default function BewindgegevensPage() {
       terugLabel="Bewindvoerder"
       onTerug={() => router.push(ROUTES.bewindvoerder)}
       navigation={
-        <FormNavigation previousStep previousLabel="Bewindvoerder" onPrevious={() => router.push(ROUTES.bewindvoerder)} onNext={handleNext} />
+        <FormNavigation previousStep previousLabel="Bewindvoerder" nextLabel="Naar klant" onPrevious={() => router.push(ROUTES.bewindvoerder)} onNext={handleNext} />
       }
     >
       <FunnelSection intro title="Bewindgegevens" showRequiredFieldsNote requiredFieldsNote={<VerplichteVelden />} />
