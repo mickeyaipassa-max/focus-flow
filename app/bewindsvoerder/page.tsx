@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/Checkbox";
-import { FieldsetAddress } from "@/components/FieldsetAddress";
 import { FormNavigation } from "@/components/FormNavigation";
 import { FunnelSection } from "@/components/FunnelSection";
 import { Input } from "@/components/Input";
@@ -11,6 +10,7 @@ import { InputEmail } from "@/components/InputEmail";
 import { InputPhone } from "@/components/InputPhone";
 import { RadioGroup } from "@/components/RadioGroup";
 import { fromIsoDatum, toIsoDatum } from "@/lib/datum";
+import { AdresBlok } from "./adres";
 import { BewindScherm, Scheidingslijn, SectieTitel, useStap, VerplichteVelden } from "./delen";
 import { ROUTES, type SoortBewindvoerder } from "./funnel-context";
 import { isGeldig, valideerBewindvoerder } from "./validatie";
@@ -143,11 +143,13 @@ export default function BewindvoerderPage() {
       <Scheidingslijn />
       <SectieTitel>Postadres</SectieTitel>
 
-      <div className="flex w-full max-w-[400px] flex-col items-start gap-6">
+      <div className="flex w-full flex-col items-start gap-6">
         <Checkbox
           label="Dit adres is een postbusadres"
           checked={state.postbus}
-          onChange={(checked) => wijzig({ postbus: checked, huisnummer: "", toevoeging: "", postbusnummer: "", plaats: "" })}
+          onChange={(checked) =>
+            wijzig({ postbus: checked, huisnummer: "", toevoeging: "", postbusnummer: "", plaats: "", straat: "", woonplaats: "", handmatig: false, adresGevonden: false })
+          }
         />
 
         {state.postbus ? (
@@ -180,10 +182,24 @@ export default function BewindvoerderPage() {
             />
           </>
         ) : (
-          <FieldsetAddress
-            value={{ postalCode: state.postcode, houseNumber: state.huisnummer, addition: state.toevoeging }}
-            errors={{ postalCode: fouten.postcode, houseNumber: fouten.huisnummer }}
-            onChange={(value) => wijzig({ postcode: value.postalCode, huisnummer: value.houseNumber, toevoeging: value.addition })}
+          <AdresBlok
+            waarde={{
+              postcode: state.postcode,
+              huisnummer: state.huisnummer,
+              toevoeging: state.toevoeging,
+              straat: state.straat,
+              plaats: state.woonplaats,
+              handmatig: state.handmatig,
+              gevonden: state.adresGevonden,
+            }}
+            fouten={{ postcode: fouten.postcode, huisnummer: fouten.huisnummer, straat: fouten.straat, plaats: fouten.woonplaats }}
+            onChange={({ plaats, gevonden, ...rest }) =>
+              wijzig({
+                ...rest,
+                ...(plaats !== undefined && { woonplaats: plaats }),
+                ...(gevonden !== undefined && { adresGevonden: gevonden }),
+              })
+            }
           />
         )}
       </div>

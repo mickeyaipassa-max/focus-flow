@@ -28,6 +28,13 @@ type FieldsetAddressProps = {
   helperText?: string;
   isLoading?: boolean;
   loadingText?: string;
+  /**
+   * Figma-status "not found": postcode én huisnummer krijgen een rode rand, de melding staat onder het
+   * huisnummer (alleen als dat veld geen eigen fout heeft). Standaard niet gezet = ongewijzigd gedrag.
+   */
+  notFoundMessage?: string;
+  /** Figma-status "manually": Toevoeging is een vrij tekstveld i.p.v. een keuzelijst. */
+  additionAsText?: boolean;
   name?: string;
   className?: string;
 };
@@ -67,11 +74,16 @@ export function FieldsetAddress({
   helperText = "Straatnaam en plaats worden automatisch opgehaald",
   isLoading = false,
   loadingText = "Straatnaam en plaats ophalen",
+  notFoundMessage,
+  additionAsText = false,
   name,
   className,
 }: FieldsetAddressProps) {
   const generatedName = useId();
   const fieldName = name ?? generatedName;
+  const postalCodeInvalid = Boolean(errors?.postalCode || notFoundMessage);
+  const houseNumberInvalid = Boolean(errors?.houseNumber || notFoundMessage);
+  const houseNumberMessage = errors?.houseNumber ?? notFoundMessage;
 
   function set(key: keyof FieldsetAddressValue, fieldValue: string) {
     onChange?.({ ...value, [key]: fieldValue });
@@ -95,11 +107,11 @@ export function FieldsetAddress({
             type="text"
             value={value.postalCode}
             onChange={(event) => set("postalCode", event.target.value)}
-            aria-invalid={errors?.postalCode ? true : undefined}
+            aria-invalid={postalCodeInvalid ? true : undefined}
             aria-describedby={errors?.postalCode ? `${fieldName}-postal-code-error` : undefined}
             className={[
               "h-[51px] w-[112px] rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
-              errors?.postalCode ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
+              postalCodeInvalid ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
             ].join(" ")}
             style={{ fontFamily: "var(--font-avenir-book)" }}
           />
@@ -131,35 +143,52 @@ export function FieldsetAddress({
               type="text"
               value={value.houseNumber}
               onChange={(event) => set("houseNumber", event.target.value)}
-              aria-invalid={errors?.houseNumber ? true : undefined}
-              aria-describedby={errors?.houseNumber ? `${fieldName}-house-number-error` : undefined}
+              aria-invalid={houseNumberInvalid ? true : undefined}
+              aria-describedby={houseNumberMessage ? `${fieldName}-house-number-error` : undefined}
               className={[
                 "h-[51px] w-full rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
-                errors?.houseNumber ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
+                houseNumberInvalid ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
               ].join(" ")}
               style={{ fontFamily: "var(--font-avenir-book)" }}
             />
-            {errors?.houseNumber && (
+            {houseNumberMessage && (
               <div id={`${fieldName}-house-number-error`} className="flex w-fit items-start gap-2 rounded-[3px] bg-[#f8d3dd] px-2 py-1">
                 <span className="flex shrink-0 items-center pt-[3px]">
                   <Icon name="validation-error" size="sm" />
                 </span>
                 <span className="flex items-center pt-[2px] text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir)" }}>
-                  {errors.houseNumber}
+                  {houseNumberMessage}
                 </span>
               </div>
             )}
           </div>
 
           <div className="w-[160px] max-w-full shrink-0">
-            <Select
-              labelText="Toevoeging"
-              required={false}
-              options={additionOptions}
-              value={value.addition}
-              onChange={(v) => set("addition", v)}
-              disabled={additionOptions.length === 0}
-            />
+            {additionAsText ? (
+              <div className="flex w-full flex-col items-start gap-2">
+                <label htmlFor={`${fieldName}-addition`} className="font-bold text-black text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
+                  Toevoeging
+                </label>
+                <input
+                  id={`${fieldName}-addition`}
+                  name={`${fieldName}-addition`}
+                  type="text"
+                  value={value.addition}
+                  onChange={(event) => set("addition", event.target.value)}
+                  className="h-[51px] w-full rounded-[3px] border border-[#565656] bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none focus:border-black"
+                  style={{ fontFamily: "var(--font-avenir-book)" }}
+                />
+              </div>
+            ) : (
+              <Select
+                labelText="Toevoeging"
+                required={false}
+                options={additionOptions}
+                value={value.addition}
+                onChange={(v) => set("addition", v)}
+                disabled={additionOptions.length === 0}
+              />
+            )}
           </div>
         </div>
       </div>

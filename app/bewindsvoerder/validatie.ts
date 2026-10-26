@@ -1,4 +1,5 @@
 import { fromIsoDatum } from "@/lib/datum";
+import { ADRES_ONBEKEND, isOpzoekbaar } from "./adres";
 import type { BewindState } from "./funnel-context";
 
 /*
@@ -44,6 +45,10 @@ export const FOUT = {
   klantGeboortedatumLeeg: "Je hebt niets ingevuld. Vul de geboortedatum van je cliënt in.",
   klantPostcodeLeeg: "Je hebt niets ingevuld. Vul de postcode van je cliënt in.",
   klantHuisnummerLeeg: "Je hebt niets ingevuld. Vul het huisnummer van je cliënt in.",
+  straatLeeg: "Je hebt niets ingevuld. Vul je straatnaam in.",
+  woonplaatsLeeg: "Je hebt niets ingevuld. Vul je plaats in.",
+  klantStraatLeeg: "Je hebt niets ingevuld. Vul de straatnaam van je cliënt in.",
+  klantWoonplaatsLeeg: "Je hebt niets ingevuld. Vul de plaats van je cliënt in.",
   jaNeeLeeg: "Je hebt niets gekozen. Kies ja of nee.",
 } as const;
 
@@ -103,6 +108,11 @@ function huisnummer(waarde: string, leeg: string) {
   return n > 99999 ? FOUT.huisnummerTeHoog : null;
 }
 
+/** Geldige postcode + huisnummer die niet gevonden zijn en niet handmatig zijn ingevuld: adres onbekend. */
+function adres(fouten: Fouten, postcode: string, nummer: string, handmatig: boolean, gevonden: boolean, veld: string) {
+  if (!handmatig && !gevonden && !fouten[veld] && isOpzoekbaar(postcode, nummer)) fouten[veld] = ADRES_ONBEKEND;
+}
+
 function zet(fouten: Fouten, veld: string, fout: string | null) {
   if (fout) fouten[veld] = fout;
 }
@@ -141,7 +151,14 @@ export function valideerBewindvoerder(s: BewindState): Fouten {
   if (s.postbus) {
     if (!s.postbusnummer.trim()) f.postbusnummer = FOUT.postbusnummerLeeg;
     if (!s.plaats.trim()) f.plaats = FOUT.plaatsLeeg;
-  } else zet(f, "huisnummer", huisnummer(s.huisnummer, FOUT.huisnummerLeeg));
+  } else {
+    zet(f, "huisnummer", huisnummer(s.huisnummer, FOUT.huisnummerLeeg));
+    adres(f, s.postcode, s.huisnummer, s.handmatig, s.adresGevonden, "huisnummer");
+    if (s.handmatig) {
+      if (!s.straat.trim()) f.straat = FOUT.straatLeeg;
+      if (!s.woonplaats.trim()) f.woonplaats = FOUT.woonplaatsLeeg;
+    }
+  }
   return f;
 }
 
@@ -173,6 +190,11 @@ export function valideerKlant(s: BewindState): Fouten {
   if (!postcode) f.klantPostcode = FOUT.klantPostcodeLeeg;
   else if (!POSTCODE.test(postcode)) f.klantPostcode = FOUT.postcodeOngeldig;
   zet(f, "klantHuisnummer", huisnummer(s.klantHuisnummer, FOUT.klantHuisnummerLeeg));
+  adres(f, s.klantPostcode, s.klantHuisnummer, s.klantHandmatig, s.klantAdresGevonden, "klantHuisnummer");
+  if (s.klantHandmatig) {
+    if (!s.klantStraat.trim()) f.klantStraat = FOUT.klantStraatLeeg;
+    if (!s.klantWoonplaats.trim()) f.klantWoonplaats = FOUT.klantWoonplaatsLeeg;
+  }
   if (!s.betalingsachterstand) f.betalingsachterstand = FOUT.jaNeeLeeg;
   if (!s.polisblad) f.polisblad = FOUT.jaNeeLeeg;
   return f;
