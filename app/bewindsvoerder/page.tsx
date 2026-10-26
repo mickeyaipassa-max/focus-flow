@@ -51,10 +51,12 @@ export default function BewindvoerderPage() {
           { value: "zakelijk", label: "Zakelijk" },
         ]}
         value={state.soort}
+        error={fouten.soort}
         onChange={(value) => wijzig({ soort: value as SoortBewindvoerder })}
       />
 
-      {particulier ? (
+      {/* Velden die bij de keuze horen verschijnen pas na het kiezen (Figma "1 Bewindvoerder": geen voorselectie). */}
+      {particulier && (
         <>
           <div className="flex w-full max-w-[480px] flex-col items-start gap-6">
             <div className="flex w-full flex-wrap items-end gap-x-2 gap-y-6">
@@ -98,7 +100,8 @@ export default function BewindvoerderPage() {
             onChange={(date) => wijzig({ geboortedatum: date ? toIsoDatum(date) : "" })}
           />
         </>
-      ) : (
+      )}
+      {state.soort === "zakelijk" && (
         <>
           <Input
             labelText="Statutaire naam"

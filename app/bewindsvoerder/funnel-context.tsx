@@ -19,7 +19,7 @@ export const ROUTES = {
   samenvatting: "/bewindsvoerder/samenvatting",
 } as const;
 
-export type SoortBewindvoerder = "particulier" | "zakelijk";
+export type SoortBewindvoerder = "particulier" | "zakelijk" | "";
 export type Betaalvoorkeur = "incasso" | "email";
 export type JaNee = "ja" | "nee" | "";
 
@@ -77,9 +77,9 @@ export type BewindState = {
   polisblad: JaNee;
 };
 
-/** Particulier en Automatische incasso staan in Figma voorgeselecteerd. */
+/** Particulier/Zakelijk is bij binnenkomst niet gekozen; Automatische incasso staat in Figma voorgeselecteerd. */
 export const LEGE_STATE: BewindState = {
-  soort: "particulier",
+  soort: "",
   voornamen: "",
   tussenvoegsel: "",
   achternaam: "",

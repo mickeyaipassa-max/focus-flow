@@ -119,7 +119,8 @@ function zet(fouten: Fouten, veld: string, fout: string | null) {
 
 export function valideerBewindvoerder(s: BewindState): Fouten {
   const f: Fouten = {};
-  if (s.soort === "particulier") {
+  if (!s.soort) f.soort = FOUT.soortLeeg;
+  else if (s.soort === "particulier") {
     zet(f, "voornamen", naam(s.voornamen, FOUT.voornamenLeeg));
     if (s.tussenvoegsel.trim() && !NAAM.test(s.tussenvoegsel.trim())) f.tussenvoegsel = FOUT.tekens;
     zet(f, "achternaam", naam(s.achternaam, FOUT.achternaamLeeg));
