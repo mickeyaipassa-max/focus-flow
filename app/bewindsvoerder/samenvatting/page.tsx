@@ -82,7 +82,7 @@ export default function SamenvattingPage() {
       onTerug={() => router.push(ROUTES.klant)}
       feedback
       navigation={
-        <FormNavigation previousStep previousLabel="Klant" nextStep={false} submit submitLabel="Indienen" onPrevious={() => router.push(ROUTES.klant)} />
+        <FormNavigation previousStep previousLabel="Klant" nextStep={false} submit submitLabel="Indienen" onPrevious={() => router.push(ROUTES.klant)} onSubmit={() => router.push(ROUTES.gelukt)} />
       }
     >
       <FunnelSection

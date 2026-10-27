@@ -17,6 +17,7 @@ export const ROUTES = {
   bewindgegevens: "/bewindsvoerder/bewindgegevens",
   klant: "/bewindsvoerder/klant",
   samenvatting: "/bewindsvoerder/samenvatting",
+  gelukt: "/bewindsvoerder/gelukt",
 } as const;
 
 export type SoortBewindvoerder = "particulier" | "zakelijk" | "";
