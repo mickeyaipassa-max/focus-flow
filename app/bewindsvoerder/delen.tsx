@@ -116,7 +116,8 @@ function Feedback() {
 
 /**
  * Gedeelde paginaschil van alle stappen; alleen de actieve stap, de terug-link, de kaartinhoud en de
- * navigatie verschillen. `feedback` toont het blok "We zijn benieuwd naar je mening" (alleen op de samenvatting).
+ * navigatie verschillen. `feedback` toont het blok "We zijn benieuwd naar je mening" (samenvatting en succespagina).
+ * Zonder `terugLabel` en `navigation` (de succespagina) heeft de kaart geen terug-link en geen navigatiebalk.
  */
 export function BewindScherm({
   activeStep,
@@ -127,9 +128,9 @@ export function BewindScherm({
   children,
 }: {
   activeStep: number;
-  terugLabel: string;
-  onTerug: () => void;
-  navigation: ReactNode;
+  terugLabel?: string;
+  onTerug?: () => void;
+  navigation?: ReactNode;
   feedback?: boolean;
   children: ReactNode;
 }) {
@@ -170,15 +171,21 @@ export function BewindScherm({
             />
             <div className={KAART_KLASSE}>
               <div className="flex w-full flex-col items-start gap-6 p-6 min-[1200px]:p-10">
-                <div className="flex w-full items-start">
-                  <Button type="tertiary" iconPrepend="arrow-left" onClick={onTerug} className={BACK_BUTTON_CLASS}>
-                    {terugLabel}
-                  </Button>
-                </div>
+                {terugLabel && (
+                  <div className="flex w-full items-start">
+                    <Button type="tertiary" iconPrepend="arrow-left" onClick={onTerug} className={BACK_BUTTON_CLASS}>
+                      {terugLabel}
+                    </Button>
+                  </div>
+                )}
                 <div className="flex w-full flex-col items-start gap-10">{children}</div>
               </div>
-              <Scheidingslijn />
-              {navigation}
+              {navigation && (
+                <>
+                  <Scheidingslijn />
+                  {navigation}
+                </>
+              )}
             </div>
           </div>
         </section>
