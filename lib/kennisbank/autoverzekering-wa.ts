@@ -92,7 +92,7 @@ export const KENNISBANK_WA: KennisItem[] = [
   {
     id: "wa-bestuurder",
     artikelen: { wa: "3.1 Gebeurtenis 7 - schade van de bestuurder" },
-    trefwoorden: ["eigen letsel", "letsel bestuurder", "schade bestuurder", "bestuurder gewond", "spullen van de bestuurder", "eigen schade", "zelf gewond", "mijn letsel"],
+    trefwoorden: ["gewond geraakt", "als bestuurder", "bestuurder gewond", "eigen letsel", "letsel bestuurder", "schade bestuurder", "bestuurder gewond", "spullen van de bestuurder", "eigen schade", "zelf gewond", "mijn letsel"],
     tekst: "Je bent niet verzekerd voor personenschade van de bestuurder van de auto of schade aan zijn spullen.",
   },
   {
@@ -161,7 +161,7 @@ export const KENNISBANK_WA: KennisItem[] = [
   {
     id: "uitsluiting-toestemming",
     artikelen: { wa: "3.1 Uitsluiting 8 - geen toestemming" },
-    trefwoorden: ["toestemming", "zonder toestemming", "geleend", "uitlenen aan", "mijn auto geleend", "joyrijden", "joyriding"],
+    trefwoorden: ["zonder dat ik het wist", "zonder mijn medeweten", "zonder mijn toestemming", "zonder te vragen", "stiekem", "toestemming", "zonder toestemming", "geleend", "uitlenen aan", "mijn auto geleend", "joyrijden", "joyriding"],
     tekst:
       "Je bent niet verzekerd voor schade die wordt veroorzaakt door iemand die geen toestemming heeft om de auto te gebruiken als bestuurder of als passagier. Als verzekeringnemer ben je wel verzekerd als je kunt aantonen dat je daar niets van wist, of dat het tegen je wil gebeurde en dat je niets te verwijten valt. Met joyrijden bedoelen wij een auto besturen zonder toestemming van de eigenaar of houder, en zonder de bedoeling de auto te houden.",
   },
@@ -427,7 +427,7 @@ export const KENNISBANK_WA: KennisItem[] = [
   {
     id: "begrippen",
     artikelen: { wa: "Begrippenlijst" },
-    trefwoorden: ["begrippenlijst", "wat is een atoomkernreactie", "wat is molest", "restanten", "wat is een schademelding", "binnenlandse onlusten", "burgeroorlog", "gewapend conflict", "muiterij", "oproer", "opstand"],
+    trefwoorden: ["begrippenlijst", "wat betekent molest", "molest", "atoomkernreactie", "wat is een atoomkernreactie", "wat is molest", "restanten", "wat is een schademelding", "binnenlandse onlusten", "burgeroorlog", "gewapend conflict", "muiterij", "oproer", "opstand"],
     tekst:
       "Uit de begrippenlijst: Atoomkernreactie is een kernreactie waarbij energie vrijkomt, zoals kernfusie, kernsplijting of kunstmatige en natuurlijke radioactiviteit; die schade vergoeden we alleen onder strikte voorwaarden (radioactieve nucliden buiten een kerninstallatie, gebruikt voor niet-militaire doeleinden, met vergunning van de overheid en zonder aansprakelijke derde volgens de Wet aansprakelijkheid kernongevallen). Molest is binnenlandse onlusten, burgeroorlog, gewapend conflict, muiterij, oproer of opstand. Restanten is alles wat na een schade nog over is van de auto of de aanhanger. Een gebeurtenis is een plotseling en onvoorzien voorval of een reeks van voorvallen die met elkaar verband houden, waardoor schade ontstaat. Een schademelding is een melding van of vraag naar schade op je verzekering waarbij de toedracht, plaats en datum bekend zijn.",
   },

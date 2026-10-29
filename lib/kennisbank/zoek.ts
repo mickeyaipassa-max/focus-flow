@@ -168,6 +168,7 @@ const SYNONIEMEN: [RegExp, string][] = [
   [/\b(op kamers|op zichzelf|uit huis|uitwonend)\b/, "uitwonend"],
   [/\bpremie\b.{0,15}\b(duurder|hoger|omhoog|gestegen|verhoogd|stijgt|stijgen)\b|\b(duurder|hoger)\b.{0,10}\bpremie\b/, "premie verhoging premieverhoging"],
   [/\b(jullie|a s r|asr|de verzekeraar|verzekeraar)\b.{0,30}\b(opzeggen|opzegt|beeindigen|beeindigt|stopzetten)\b/, "opzegging door ons"],
+  [/\b(verzekerd|gedekt|dekking|werkt)\b.{0,30}\b(spanje|frankrijk|duitsland|belgie|italie|portugal|engeland|polen|turkije|marokko|griekenland|oostenrijk|zwitserland|kroatie|noorwegen|zweden|denemarken)\b|\b(spanje|frankrijk|duitsland|belgie|italie|portugal|engeland|polen|turkije|marokko|griekenland|oostenrijk|zwitserland|kroatie|noorwegen|zweden|denemarken)\b.{0,30}\b(verzekerd|gedekt|dekking)\b/, "welke landen groene kaart"],
   [/\b(gedronken|dronken|stoned|onder invloed|biertje|wijntje)\b/, "alcohol onder invloed"],
 ];
 

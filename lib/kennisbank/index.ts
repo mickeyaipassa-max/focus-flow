@@ -1,6 +1,7 @@
 import { KENNISBANK_ALGEMEEN } from "./algemene-voorwaarden";
 import { PROEFARTIKELEN } from "./proefartikelen";
 import { VERRIJKING_ALGEMEEN } from "./verrijking-algemeen";
+import { VERRIJKING_WA } from "./verrijking-wa";
 import { KENNISBANK_WEBSITE } from "./website-asr";
 import { KENNISBANK_CASCO_ALLRISK } from "./autoverzekering-casco-allrisk";
 import { KENNISBANK_CASCO_BEPERKT } from "./autoverzekering-casco-beperkt";
@@ -113,6 +114,7 @@ const CASCO_BEPERKT_MET_ALLRISK: KennisItem[] = KENNISBANK_CASCO_BEPERKT.map((it
 export const VERRIJKING_GROEPEN: Record<string, Record<string, Verrijking>> = {
   proefartikelen: PROEFARTIKELEN,
   "algemene-voorwaarden": VERRIJKING_ALGEMEEN,
+  wa: VERRIJKING_WA,
 };
 const VERRIJKINGEN: Record<string, Verrijking> = Object.assign({}, ...Object.values(VERRIJKING_GROEPEN));
 
