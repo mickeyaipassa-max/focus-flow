@@ -278,7 +278,7 @@ export const KENNISBANK_CASCO_BEPERKT: KennisItem[] = [
   {
     id: "cb-aangifte",
     artikelen: { "casco-beperkt": "6.2 Aangifte doen" },
-    trefwoorden: ["aangifte", "aangifte doen", "politie", "inbraak melden", "vandalisme melden", "binnen 14 dagen", "14 dagen", "doorrijden", "onbekenden", "aangifte in nederland", "binnen 24 uur", "diefstal melden"],
+    trefwoorden: ["aangifte", "aangifte doen", "auto gestolen", "gestolen", "wat moet ik doen bij diefstal", "politie", "inbraak melden", "vandalisme melden", "binnen 14 dagen", "14 dagen", "doorrijden", "onbekenden", "aangifte in nederland", "binnen 24 uur", "diefstal melden"],
     tekst:
       "Je moet direct, maar uiterlijk binnen 14 dagen, aangifte bij de politie doen bij inbraak of vandalisme, bij beschadiging door onbekenden en bij doorrijden na een ongeval door een tegenpartij. Bij diefstal of joyrijden moet je nog dezelfde dag aangifte doen, of de volgende ochtend als het 's avonds of 's nachts is gebeurd. Vindt de gebeurtenis in het buitenland plaats, doe dan aangifte in dat land; bij diefstal van de auto moet je ook aangifte doen in Nederland, binnen 24 uur na thuiskomst. Meld bij diefstal de gegevens van de auto zo snel mogelijk bij de helpdesk van het Verzekeringsbureau Voertuigcriminaliteit (VbV), telefoon 071 - 3641777 (dag en nacht bereikbaar).",
   },

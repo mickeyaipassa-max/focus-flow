@@ -1,8 +1,9 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
+import type { ChatSource } from "@/lib/chatPdf";
 import { zoekContext, type KennisContext } from "@/lib/kennisbank/zoek";
 import type { Product } from "@/lib/kennisbank";
-import { GEEN_BRON, systeemInstructie } from "@/lib/chat/systeem-instructie";
+import { GEEN_BRON, STIJLHERINNERING, systeemInstructie } from "@/lib/chat/systeem-instructie";
 
 /**
  * Taalmodel achter de chat op /workshop. De klant stelt een vraag, de kennisbank (lib/kennisbank) levert de
@@ -21,7 +22,10 @@ const MAX_TOKENS = 4000;
 
 const MAX_BERICHTEN = 20;
 const MAX_TEKENS = 1000;
-const AANTAL_ONDERDELEN = 5;
+/** Hoeveel kennisbankonderdelen maximaal meegaan; minder tekst geeft kortere, gerichtere antwoorden. */
+const AANTAL_ONDERDELEN = 3;
+/** Een vervolgvraag korter dan dit aantal woorden ("en bij allrisk?") zoekt ook op de vraag ervoor. */
+const KORTE_VRAAG_WOORDEN = 7;
 
 /** Welke voorwaarden en pagina's bij welke basisdekking horen; hetzelfde als op /workshop. */
 const PRODUCTEN_PER_DEKKING: Record<string, Product[]> = {
@@ -61,11 +65,62 @@ function leesBerichten(body: unknown): Bericht[] | null {
   return resultaat.length > 0 && resultaat[resultaat.length - 1].role === "user" ? resultaat : null;
 }
 
+const lijst = (regels: string[]) => regels.map((regel) => `- ${regel}`).join("\n");
+
+/**
+ * Eén onderdeel voor het model. Heeft het een klantvriendelijke laag, dan krijgt het model die als bouwsteen voor het
+ * antwoord en de brontekst alleen ter controle; zonder die laag is de brontekst de enige bron.
+ */
+function onderdeelTekst({ verrijking, tekst }: KennisContext): string {
+  if (!verrijking) return tekst;
+  const soort = verrijking.brontekstSoort === "samenvatting" ? "een samenvatting, geen letterlijke voorwaardentekst" : "volgt de voorwaarden";
+  return [
+    `Uitleg: ${verrijking.uitleg}`,
+    verrijking.direct.length > 0 ? `Noem direct (deadlines en veiligheidsstappen):\n${lijst(verrijking.direct)}` : "",
+    verrijking.aandachtspunten.length > 0 ? `Let ook op (noem alleen wat voor deze klant telt):\n${lijst(verrijking.aandachtspunten)}` : "",
+    verrijking.klantinfo.length > 0 ? `Dit moet je van de klant weten voor een juist antwoord:\n${lijst(verrijking.klantinfo)}` : "",
+    verrijking.vervolgvragen.length > 0 ? `Logische vervolgvraag (hooguit één, alleen als die informatie nog ontbreekt):\n${lijst(verrijking.vervolgvragen.map(({ als, vraag }) => `Als ${als.charAt(0).toLowerCase()}${als.slice(1)}: "${vraag}"`))}` : "",
+    `Brontekst, alleen om je antwoord te controleren (${soort}); neem er niets letterlijk uit over:\n${tekst}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 function kennisbankBlok(context: KennisContext[]): string {
   if (context.length === 0) return "<kennisbank>\nEr is geen passend onderdeel gevonden.\n</kennisbank>";
-  const onderdelen = context.map((onderdeel, index) => `<onderdeel nummer="${index + 1}" bij-gekozen-dekking="${onderdeel.bijGekozenDekking ? "ja" : "nee"}" herkomst="${onderdeel.herkomst.replace(/"/g, "'")}">\n${onderdeel.tekst}\n</onderdeel>`);
+  const onderdelen = context.map(
+    (onderdeel, index) =>
+      `<onderdeel nummer="${index + 1}" bij-gekozen-dekking="${onderdeel.bijGekozenDekking ? "ja" : "nee"}"${onderdeel.aanvullend ? ' aanvullend="ja"' : ""} herkomst="${onderdeel.herkomst.replace(/"/g, "'")}">\n${onderdeelTekst(onderdeel)}\n</onderdeel>`,
+  );
   return `<kennisbank>\n${onderdelen.join("\n")}\n</kennisbank>`;
 }
+
+const inhoudswoorden = (tekst: string) => new Set(tekst.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/[a-z0-9]{5,}/g) ?? []);
+
+/**
+ * De bron onder het antwoord is die van het onderdeel waar het antwoord het meest op lijkt (de meeste woorden gemeen,
+ * gecorrigeerd voor de lengte van het onderdeel), niet automatisch die van het eerst gevonden onderdeel. Lijkt het op
+ * niets, dan geen bron.
+ */
+function bronVanAntwoord(tekst: string, context: KennisContext[]): ChatSource[] {
+  const antwoord = inhoudswoorden(tekst);
+  let beste = { score: 0, bronnen: [] as ChatSource[] };
+  for (const onderdeel of context) {
+    const v = onderdeel.verrijking;
+    const woorden = inhoudswoorden([onderdeel.tekst, v?.uitleg, ...(v?.direct ?? []), ...(v?.aandachtspunten ?? [])].filter(Boolean).join(" "));
+    const gemeen = [...antwoord].filter((woord) => woorden.has(woord)).length;
+    const score = gemeen / Math.sqrt(woorden.size || 1);
+    if (gemeen >= 3 && score > beste.score) beste = { score, bronnen: onderdeel.bronnen };
+  }
+  return beste.bronnen;
+}
+
+const aantalWoorden = (tekst: string) => tekst.split(/\s+/).filter(Boolean).length;
+const aantalZinnen = (tekst: string) => tekst.split(/(?<=[.!?])\s+/).filter((zin) => /\w/.test(zin)).length;
+/** Een antwoord langer dan dit wordt één keer laten inkorten. */
+const MAX_WOORDEN = 70;
+const MAX_ZINNEN = 4;
+const INKORT_OPDRACHT = "Dat is te lang. Schrijf je antwoord opnieuw: maximaal 4 korte zinnen en ongeveer 50 woorden, elke zin maximaal 20 woorden. Laat elk bedrag, elke deadline en elke uitzondering staan die voor de klant telt, en voeg niets nieuws toe.";
 
 export async function POST(request: NextRequest) {
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ fout: "niet-geconfigureerd" }, { status: 503 });
@@ -83,16 +138,22 @@ export async function POST(request: NextRequest) {
   if (!berichten) return NextResponse.json({ fout: "ongeldig-verzoek" }, { status: 400 });
   const dekking = typeof (body as { dekking?: unknown }).dekking === "string" ? (body as { dekking: string }).dekking : undefined;
 
-  // Zoek op de laatste vraag en de vraag daarvoor, zodat een korte vervolgvraag ("en bij allrisk?") toch iets vindt.
-  const vragen = berichten.filter((bericht) => bericht.role === "user").slice(-2);
-  const context = zoekContext(vragen.map((vraag) => vraag.text).join(" "), { producten: dekking ? PRODUCTEN_PER_DEKKING[dekking] : undefined }, AANTAL_ONDERDELEN);
+  // Zoek op de laatste vraag. Is die heel kort ("en bij allrisk?"), zoek dan ook op de vraag ervoor.
+  const vragen = berichten.filter((bericht) => bericht.role === "user");
+  const laatsteVraag = vragen[vragen.length - 1].text;
+  const vorigeVraag = vragen.length > 1 ? vragen[vragen.length - 2].text : "";
+  const opties = { producten: dekking ? PRODUCTEN_PER_DEKKING[dekking] : undefined };
+  let context = zoekContext(laatsteVraag.split(/\s+/).length < KORTE_VRAAG_WOORDEN && vorigeVraag ? `${vorigeVraag} ${laatsteVraag}` : laatsteVraag, opties, AANTAL_ONDERDELEN);
+  // Vindt de laatste vraag niets ("Wat kan ik dan doen?"), zoek dan op het onderwerp van de vraag ervoor.
+  if (context.length === 0 && vorigeVraag) context = zoekContext(`${vorigeVraag} ${laatsteVraag}`, opties, AANTAL_ONDERDELEN);
 
   const laatste = berichten[berichten.length - 1];
   const messages: Anthropic.MessageParam[] = [
     ...berichten.slice(0, -1).map((bericht): Anthropic.MessageParam => ({ role: bericht.role, content: bericht.text })),
-    { role: "user", content: `${kennisbankBlok(context)}\n\nVraag van de klant:\n<klantbericht>\n${laatste.text}\n</klantbericht>` },
+    { role: "user", content: `${kennisbankBlok(context)}\n\nVraag van de klant:\n<klantbericht>\n${laatste.text}\n</klantbericht>\n\n${STIJLHERINNERING}` },
   ];
 
+  const gestart = Date.now();
   try {
     const client = new Anthropic({ maxRetries: 1, timeout: 25_000 });
     const response = await client.messages.create({
@@ -105,14 +166,20 @@ export async function POST(request: NextRequest) {
 
     if (response.stop_reason === "refusal") return NextResponse.json({ fout: "geweigerd" }, { status: 502 });
 
-    const ruw = response.content.flatMap((blok) => (blok.type === "text" ? [blok.text] : [])).join("\n").trim();
+    const tekstVan = (antwoord: Anthropic.Message) => antwoord.content.flatMap((blok) => (blok.type === "text" ? [blok.text] : [])).join("\n").trim();
+    let ruw = tekstVan(response);
+    // Te lang (veel meer dan 4 zinnen of 70 woorden)? Dan één keer laten inkorten, als er nog tijd is.
+    if ((aantalWoorden(ruw) > MAX_WOORDEN || aantalZinnen(ruw) > MAX_ZINNEN) && Date.now() - gestart < 12_000) {
+      const korter = await client.messages.create({ model: MODEL, max_tokens: MAX_TOKENS, system: systeemInstructie(dekking), messages: [...messages, { role: "assistant", content: ruw }, { role: "user", content: INKORT_OPDRACHT }], output_config: { effort: "low" } });
+      const kortAntwoord = tekstVan(korter);
+      if (korter.stop_reason !== "refusal" && kortAntwoord && aantalWoorden(kortAntwoord) < aantalWoorden(ruw)) ruw = kortAntwoord;
+    }
     const zonderBron = ruw.includes(GEEN_BRON);
-    const tekst = ruw.replace(GEEN_BRON, "").trim();
+    const tekst = ruw.replaceAll(GEEN_BRON, "").trim();
     if (!tekst) return NextResponse.json({ fout: "leeg-antwoord" }, { status: 502 });
 
     // De bron is die van het best passende onderdeel; bij een antwoord zonder kennisbank (begroeting, vervolgvraag) geen bron.
-    const bronnen = zonderBron || context.length === 0 ? [] : context[0].bronnen;
-    return NextResponse.json({ tekst, bronnen });
+    return NextResponse.json({ tekst, bronnen: zonderBron ? [] : bronVanAntwoord(tekst, context) });
   } catch (error) {
     if (error instanceof Anthropic.RateLimitError) return NextResponse.json({ fout: "te-druk" }, { status: 429 });
     if (error instanceof Anthropic.APIError) {

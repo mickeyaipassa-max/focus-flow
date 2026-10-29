@@ -43,7 +43,7 @@ export const KENNISBANK_WEBSITE: KennisItem[] = [
   {
     id: "sw-premie",
     artikelen: ALLE_PAGINAS("Wat kost een autoverzekering?"),
-    trefwoorden: ["wat kost mijn", "wat kost de", "wat kost een auto", "wat kost een wa", "wat kost een casco", "wat kost een allrisk", "hoeveel kost mijn", "hoeveel kost de", "hoeveel kost een auto", "prijs verzekering", "prijs autoverzekering", "prijs van de verzekering", "premie berekenen", "bereken je premie", "bereken premie", "waar hangt de premie van af", "waarvan hangt de premie af", "hoe wordt de premie berekend", "premie bepaald", "wat betaal ik per maand", "kosten verzekering", "hoe duur is", "premie afhankelijk", "leeftijd bestuurder premie"],
+    trefwoorden: ["wat kost mijn verzekering", "wat kost de verzekering", "wat kost de autoverzekering", "wat kost een auto", "wat kost een wa", "wat kost een casco", "wat kost een allrisk", "hoeveel kost mijn verzekering", "hoeveel kost de verzekering", "hoeveel kost een auto", "prijs verzekering", "prijs autoverzekering", "prijs van de verzekering", "premie berekenen", "bereken je premie", "bereken premie", "waar hangt de premie van af", "waarvan hangt de premie af", "hoe wordt de premie berekend", "premie bepaald", "wat betaal ik per maand", "kosten verzekering", "hoe duur is", "premie afhankelijk", "leeftijd bestuurder premie"],
     tekst:
       "De premie hangt af van een aantal dingen. Bij het berekenen van de premie kijkt a.s.r. bijvoorbeeld naar de leeftijd van de bestuurder, het merk, model, type en bouwjaar van je auto, je woonplaats en het aantal schadevrije jaren dat je hebt opgebouwd. Binnen 1 minuut bereken je je premie en sluit je direct online af.",
   },
