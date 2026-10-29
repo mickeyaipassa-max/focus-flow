@@ -1,10 +1,11 @@
 import { KENNISBANK_ALGEMEEN } from "./algemene-voorwaarden";
 import { PROEFARTIKELEN } from "./proefartikelen";
+import { VERRIJKING_ALGEMEEN } from "./verrijking-algemeen";
 import { KENNISBANK_WEBSITE } from "./website-asr";
 import { KENNISBANK_CASCO_ALLRISK } from "./autoverzekering-casco-allrisk";
 import { KENNISBANK_CASCO_BEPERKT } from "./autoverzekering-casco-beperkt";
 import { KENNISBANK_WA } from "./autoverzekering-wa";
-import type { KennisItem } from "./types";
+import type { KennisItem, Verrijking } from "./types";
 
 export { NIEUWWAARDE_STANDAARD } from "./autoverzekering-casco-beperkt";
 export { NO_CLAIM_LADDER, SCHADEVRIJE_JAREN } from "./autoverzekering-wa";
@@ -106,9 +107,20 @@ const CASCO_BEPERKT_MET_ALLRISK: KennisItem[] = KENNISBANK_CASCO_BEPERKT.map((it
 });
 
 /**
+ * De klantvriendelijke laag per uitrolgroep (zie `Verrijking`): eerst de tien proefartikelen, daarna per document.
+ * `scripts/kennisbank-overzicht.mts <groep>` maakt per groep het overzicht oud/nieuw.
+ */
+export const VERRIJKING_GROEPEN: Record<string, Record<string, Verrijking>> = {
+  proefartikelen: PROEFARTIKELEN,
+  "algemene-voorwaarden": VERRIJKING_ALGEMEEN,
+};
+const VERRIJKINGEN: Record<string, Verrijking> = Object.assign({}, ...Object.values(VERRIJKING_GROEPEN));
+
+/**
  * Alle onderdelen: de vier voorwaardendocumenten (WA, Casco Beperkt, Casco Allrisk met de gedeelde teksten, Algemene
  * voorwaarden) en de productpagina's op asr.nl. De website staat als laatste: bij gelijke score wint de voorwaardentekst.
  */
-export const KENNISBANK: KennisItem[] = [...WA_MET_CASCO, ...CASCO_BEPERKT_MET_ALLRISK, ...KENNISBANK_CASCO_ALLRISK, ...KENNISBANK_ALGEMEEN, ...KENNISBANK_WEBSITE].map((item) =>
-  PROEFARTIKELEN[item.id] ? { ...item, verrijking: PROEFARTIKELEN[item.id] } : item,
-);
+export const KENNISBANK: KennisItem[] = [...WA_MET_CASCO, ...CASCO_BEPERKT_MET_ALLRISK, ...KENNISBANK_CASCO_ALLRISK, ...KENNISBANK_ALGEMEEN, ...KENNISBANK_WEBSITE].map((item) => {
+  const verrijking = VERRIJKINGEN[item.id];
+  return verrijking ? { ...item, verrijking } : item;
+});

@@ -12,6 +12,8 @@ import { writeFileSync } from "node:fs";
 import { KENNISBANK } from "../lib/kennisbank/index";
 
 const BASE_URL = process.env.BASE_URL ?? "http://localhost:3000";
+/** Optioneel: draai alleen de gesprekken waarvan onderwerp of naam bij dit patroon past, bv. FILTER="Premie|Klacht". Het rapport gaat dan naar een apart bestand. */
+const FILTER = process.env.FILTER ? new RegExp(process.env.FILTER, "i") : null;
 
 type Dekking = "wa" | "wa-casco-beperkt" | "wa-casco-allrisk";
 type Controle = { naam: string; ok: (antwoord: string) => boolean };
@@ -73,6 +75,21 @@ const gesprekken: Gesprek[] = [
   // 10. Uitsluitingen
   { onderwerp: "Uitsluitingen", naam: "Uitsluiting: dronken vriend", dekking: "wa-casco-beperkt", beurten: [{ klant: "Als mijn vriend dronken rijdt met mijn auto, ben ik dan verzekerd?", bron: /3\.1 Uitsluiting 1/, controles: [bevat("dat er geen vergoeding is", /(geen|niet).{0,50}(vergoed|vergoeding|verzekerd)|(vergoed|vergoeding|verzekerd).{0,30}niet/i), bevat("terugvragen bij schade aan een ander", /terug|verhal/i)] }] },
   { onderwerp: "Uitsluitingen", naam: "Uitsluiting: verhuur", dekking: "wa-casco-beperkt", beurten: [{ klant: "Mag ik mijn auto verhuren via een deelplatform?", controles: [bevat("dat verhuur niet gedekt is", /niet|geen/i)] }] },
+  // Algemene voorwaarden
+  { onderwerp: "Premie betalen", naam: "Premie niet betaald", dekking: "wa-casco-beperkt", beurten: [
+    { klant: "Ik heb mijn premie niet betaald, wat nu?", bron: /Algemene/i, controles: [bevat("de 14 dagen na de aanmaning", /14/), bevat("dat je dan niet verzekerd bent", /niet (meer )?verzekerd/i)] },
+    { klant: "Ik heb geen aanmaning gekregen", controles: [bevatNiet("opnieuw vragen naar de aanmaning", /aanmaning gekregen\?/i)] },
+  ] },
+  { onderwerp: "Begin verzekering", naam: "Wanneer ingegaan", dekking: "wa-casco-beperkt", beurten: [{ klant: "Vanaf wanneer ben ik verzekerd?", controles: [bevat("de ingangsdatum op het polisblad", /ingangsdatum|polisblad/i), bevat("de eerste premie", /eerste premie/i)] }] },
+  { onderwerp: "Verhuizen", naam: "Naar het buitenland", dekking: "wa-casco-beperkt", beurten: [{ klant: "Ik ga naar Duitsland verhuizen, wat betekent dat voor mijn verzekering?", controles: [bevat("dat de verzekering stopt", /stopt|eindigt/i), bevat("EU of verlengingsdatum", /europese unie|eu|verlengingsdatum/i)] }] },
+  { onderwerp: "Premie wijzigen", naam: "Premie wordt duurder", dekking: "wa-casco-beperkt", beurten: [
+    { klant: "Mijn premie wordt duurder, mag dat?", controles: [bevat("de verlengingsdatum", /verlenging|elk jaar|jaarlijks/i)] },
+    { klant: "Ik vind dat niet goed, wat kan ik doen?", controles: [bevat("opzeggen", /opzeggen|opzeg/i), bevat("ook in het eerste jaar", /eerste (verzekerings)?jaar|ook in het eerste/i)] },
+  ] },
+  { onderwerp: "Opzegging door a.s.r.", naam: "Mag a.s.r. opzeggen", dekking: "wa-casco-beperkt", beurten: [{ klant: "Mag a.s.r. mijn verzekering opzeggen als ik veel schade heb gehad?", controles: [bevat("30 dagen", /30/), bevat("dat het kan", /kan|mag|kunnen/i)] }] },
+  { onderwerp: "Klacht", naam: "Klacht indienen", dekking: "wa-casco-beperkt", beurten: [{ klant: "Ik ben ontevreden over hoe mijn schade is afgehandeld en wil klagen", controles: [bevat("het klachtenformulier of KiFiD", /klachtenformulier|kifid/i)] }] },
+  { onderwerp: "Fraude", naam: "Wat is fraude", dekking: "wa-casco-beperkt", beurten: [{ klant: "Wat is fraude eigenlijk?", controles: [bevat("een voorbeeld", /meer claimen|nota|niet eerlijk|afgewezen/i)] }] },
+  { onderwerp: "Telefoongesprekken", naam: "Gesprek terugluisteren", dekking: "wa-casco-beperkt", beurten: [{ klant: "Kan ik een telefoongesprek met jullie terugluisteren?", controles: [bevat("dat het bij een geschil kan", /geschil/i)] }] },
   // Randgevallen
   { onderwerp: "Randgeval", naam: "Onduidelijke vraag", dekking: "wa-casco-beperkt", beurten: [
     { klant: "Ik heb een vraag over mijn auto", controles: [stelt("onduidelijke vraag"), bevatNiet("feiten over dekking", /€|\d+ dagen|verzekerd voor/i)] },
@@ -125,7 +142,7 @@ let mislukt = 0;
 let aantal = 0;
 let totaalWoorden = 0;
 const rapport: string[] = [`# Testresultaten chat (${new Date().toISOString().slice(0, 10)})`, "", `Getest tegen ${BASE_URL}. Elk antwoord is gecontroleerd op: ${ALGEMEEN.map((c) => c.naam).join("; ")}, plus de feiten en de bron van het onderwerp.`, ""];
-for (const gesprek of gesprekken) {
+for (const gesprek of gesprekken.filter((g) => !FILTER || FILTER.test(`${g.onderwerp} ${g.naam}`))) {
   console.log(`\n=== ${gesprek.onderwerp}: ${gesprek.naam} [${gesprek.dekking}]`);
   rapport.push(`## ${gesprek.onderwerp}: ${gesprek.naam}`, `Dekking: ${gesprek.dekking}`, "");
   const berichten: { role: "user" | "assistant"; text: string }[] = [];
@@ -158,5 +175,5 @@ for (const gesprek of gesprekken) {
 const samenvatting = `${aantal} antwoorden, gemiddeld ${Math.round(totaalWoorden / Math.max(aantal, 1))} woorden, ${mislukt} controles mislukt`;
 console.log(`\n${samenvatting}`);
 rapport.splice(2, 0, `**${samenvatting}**`, "");
-writeFileSync("docs/kennisbank-testresultaten.md", rapport.join("\n"));
+writeFileSync(FILTER ? "docs/kennisbank-testresultaten-deelrun.md" : "docs/kennisbank-testresultaten.md", rapport.join("\n"));
 process.exit(mislukt > 0 ? 1 : 0);

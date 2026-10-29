@@ -36,10 +36,9 @@ export const PROEFARTIKELEN: Record<string, Verrijking> = {
     direct: ["Een aanrijding met een ander voertuig staat niet in de lijst van gedekte gebeurtenissen; die schade is wel gedekt met Casco allrisk."],
     aandachtspunten: [
       "Gedekt: bevriezing (door een gedekte gebeurtenis), blikseminslag, botsing met dieren, brand, (poging tot) diefstal, inbraak of joyrijden, diefstal van sleutels, kortsluiting, luchtverkeer, natuurramp, ontploffing, rellen, ruitschade, storm en vervoer door een transportondernemer.",
-      "Storm betekent wind van 14 meter per seconde of meer.",
       "Niet gedekt: normaal onderhoud, onvoldoende onderhoud, onvoldoende zorg (bijvoorbeeld doorrijden met een waarschuwingslampje, een verlopen APK, een laptop in het zicht) en slijtage.",
       "Standaard is 1 jaar nieuwwaarde meeverzekerd; dat kan tot 3 jaar.",
-      "Extra's (later ingebouwde spullen) zijn verzekerd tot € 1.000, beeld-, geluids- en navigatieapparatuur tot € 500.",
+      "Extra's (later ingebouwde spullen) zijn ook verzekerd, tot een maximumbedrag.",
       "Op je polisblad kan een eigen risico staan.",
     ],
     klantinfo: ["Wat er met de auto is gebeurd (de oorzaak van de schade).", "Of de klant WA + Casco beperkt heeft."],
@@ -56,7 +55,7 @@ export const PROEFARTIKELEN: Record<string, Verrijking> = {
     aandachtspunten: [
       "Gedekt zijn onder meer aanrijding, botsing, slippen, omslaan, in het water raken, van de weg raken, brand, diefstal, storm, natuurramp, ruitschade, vandalisme en een overige oorzaak van buitenaf.",
       "Niet gedekt: normaal onderhoud, onvoldoende onderhoud, onvoldoende zorg (bijvoorbeeld doorrijden met een waarschuwingslampje, een verlopen APK) en slijtage.",
-      "Motor, aandrijving, elektrische installatie en transmissie zijn alleen gedekt bij een eigen gebrek, en alleen als de auto nieuw was bij afgifte, niet ouder is dan 36 maanden, niet meer dan 100.000 kilometer heeft gereden en het onderhoud door een BOVAG-erkend bedrijf of de merkdealer is gedaan.",
+      "Motor, aandrijving, elektrische installatie en transmissie zijn alleen gedekt bij een eigen gebrek en onder strikte voorwaarden over de leeftijd en het aantal kilometers van de auto en over het onderhoud.",
       "Is de bestuurder jonger dan 24 en de vaste bestuurder op je polis 24 of ouder, dan geldt bij een aanrijding een extra eigen risico van € 250.",
     ],
     klantinfo: ["Wat er met de auto is gebeurd.", "Bij een aanrijding: wie er reed en hoe oud die persoon is."],
@@ -80,7 +79,6 @@ export const PROEFARTIKELEN: Record<string, Verrijking> = {
       "Moet je auto een beveiligingssysteem hebben (dat staat op je polisblad) en voldoe je daar niet aan, dan krijg je geen vergoeding voor diefstal.",
       "De vergoeding krijg je 30 dagen na je melding, als je het eigendom van de auto aan a.s.r. overdraagt en het kentekenbewijs, het overschrijvingsbewijs en alle sleutels inlevert.",
       "Wordt de auto binnen 30 dagen teruggevonden, dan moet je hem terugnemen en krijg je de schade vergoed die tijdens de diefstal is ontstaan. Meld het a.s.r. zodra je weet dat hij terecht is.",
-      "Diefstal van sleutels: vervanging van sleutels, sloten en het omcoderen vergoedt a.s.r. tot € 500, als je direct aangifte deed en alles binnen 24 uur is vervangen. Verlies van sleutels is niet verzekerd.",
       "Met alleen WA is de gestolen auto zelf niet verzekerd.",
     ],
     klantinfo: ["Heeft de klant WA + Casco (beperkt of allrisk)? Met alleen WA is de auto zelf niet gedekt.", "Is het in Nederland of in het buitenland gebeurd?", "Is er al aangifte gedaan?"],
@@ -88,7 +86,7 @@ export const PROEFARTIKELEN: Record<string, Verrijking> = {
       { als: "Het is niet bekend of de klant al aangifte deed", vraag: "Heb je al aangifte gedaan bij de politie?" },
       { als: "Het is niet bekend of het in het buitenland gebeurde", vraag: "Is dit in Nederland of in het buitenland gebeurd?" },
     ],
-    gerelateerd: ["cb-aangifte", "aangifte", "cb-diefstal-afwikkeling"],
+    gerelateerd: ["cb-aangifte", "cb-diefstal-afwikkeling", "alarmcentrale"],
     controle: { status: "gecontroleerd", opmerking: "Dat de gestolen auto bij alleen WA niet is verzekerd, staat op asr.nl (WA-pagina); de WA-voorwaarden dekken wel hulpverlening bij diefstal." },
   },
 
@@ -158,7 +156,7 @@ export const PROEFARTIKELEN: Record<string, Verrijking> = {
     uitleg: "Een schadevrij jaar is een jaar zonder schade. Je schadevrije jaren staan in Roy-data, een landelijk systeem van verzekeraars. Elk jaar zonder schade komt er één bij; bij schade val je terug volgens een vaste tabel.",
     direct: [
       "Zonder schade krijg je er elk jaar 1 schadevrij jaar bij.",
-      "Bij schade val je altijd terug volgens de tabel, ook met meer dan 16 schadevrije jaren: bij 1 schade naar 10, bij 2 schades naar 5, bij 3 schades naar 0 en bij 4 of meer schades naar -5.",
+      "Bij schade val je altijd terug volgens de tabel, ook met meer dan 16 schadevrije jaren. Bij 1 schade val je terug naar 10, bij 2 schades naar 5, bij 3 schades naar 0 en bij 4 of meer schades naar -5.",
     ],
     aandachtspunten: [
       "Bij je eerste aanvraag geef je je schadevrije jaren op. A.s.r. zoekt ze op in Roy-data. Staan er geen schadevrije jaren, dan gaat a.s.r. uit van 0.",
