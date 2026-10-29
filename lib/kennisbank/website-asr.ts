@@ -43,7 +43,7 @@ export const KENNISBANK_WEBSITE: KennisItem[] = [
   {
     id: "sw-premie",
     artikelen: ALLE_PAGINAS("Wat kost een autoverzekering?"),
-    trefwoorden: ["wat kost mijn verzekering", "wat kost de verzekering", "wat kost de autoverzekering", "wat kost een auto", "wat kost een wa", "wat kost een casco", "wat kost een allrisk", "hoeveel kost mijn verzekering", "hoeveel kost de verzekering", "hoeveel kost een auto", "prijs verzekering", "prijs autoverzekering", "prijs van de verzekering", "premie berekenen", "bereken je premie", "bereken premie", "waar hangt de premie van af", "waarvan hangt de premie af", "hoe wordt de premie berekend", "premie bepaald", "wat betaal ik per maand", "kosten verzekering", "hoe duur is", "premie afhankelijk", "leeftijd bestuurder premie"],
+    trefwoorden: ["waar hangt mijn premie van af", "hangt mijn premie van af", "hoe wordt mijn premie berekend", "hoe wordt de premie berekend", "premie berekend", "wat kost mijn verzekering", "wat kost de verzekering", "wat kost de autoverzekering", "wat kost een auto", "wat kost een wa", "wat kost een casco", "wat kost een allrisk", "hoeveel kost mijn verzekering", "hoeveel kost de verzekering", "hoeveel kost een auto", "prijs verzekering", "prijs autoverzekering", "prijs van de verzekering", "premie berekenen", "bereken je premie", "bereken premie", "waar hangt de premie van af", "waarvan hangt de premie af", "hoe wordt de premie berekend", "premie bepaald", "wat betaal ik per maand", "kosten verzekering", "hoe duur is", "premie afhankelijk", "leeftijd bestuurder premie"],
     tekst:
       "De premie hangt af van een aantal dingen. Bij het berekenen van de premie kijkt a.s.r. bijvoorbeeld naar de leeftijd van de bestuurder, het merk, model, type en bouwjaar van je auto, je woonplaats en het aantal schadevrije jaren dat je hebt opgebouwd. Binnen 1 minuut bereken je je premie en sluit je direct online af.",
   },
@@ -179,7 +179,7 @@ export const KENNISBANK_WEBSITE: KennisItem[] = [
   {
     id: "sw-nieuwwaarde-aankoopwaarde",
     artikelen: BEIDE_CASCO("Extra opties: nieuwwaarderegeling en aankoopwaarderegeling"),
-    trefwoorden: ["nieuwwaarderegeling", "aankoopwaarderegeling", "nieuwwaarde meeverzekeren", "aankoopwaarde meeverzekeren", "eerste eigenaar", "nieuwe auto verzekeren", "tweedehands gekocht", "in het buitenland gekocht", "3 jaar meeverzekeren", "tot 3 jaar", "extra opties", "nieuwwaarde of aankoopwaarde", "wat is de nieuwwaarderegeling", "wat is de aankoopwaarderegeling", "welke extra opties", "vergoeding nieuwwaarde"],
+    trefwoorden: ["nieuwwaarde langer", "langer meeverzekeren", "aankoopwaarde langer", "nieuwwaarderegeling", "aankoopwaarderegeling", "nieuwwaarde meeverzekeren", "aankoopwaarde meeverzekeren", "eerste eigenaar", "nieuwe auto verzekeren", "tweedehands gekocht", "in het buitenland gekocht", "3 jaar meeverzekeren", "tot 3 jaar", "extra opties", "nieuwwaarde of aankoopwaarde", "wat is de nieuwwaarderegeling", "wat is de aankoopwaarderegeling", "welke extra opties", "vergoeding nieuwwaarde"],
     tekst:
       "Nieuwwaarderegeling: ben je de eerste eigenaar van een nieuwe auto, dan kun je de nieuwwaarde tot 3 jaar meeverzekeren. Aankoopwaarderegeling: heb je je auto tweedehands of in het buitenland gekocht, dan kun je de aankoopwaarde tot 3 jaar meeverzekeren. Met WA + Casco beperkt of WA + Casco allrisk krijg je standaard 1 jaar nieuwwaarde. Je kunt ook je eigen risico aanpassen: hoe hoger je eigen risico, hoe lager je premie. Hoe de waarde precies wordt bepaald staat in de voorwaarden.",
   },
