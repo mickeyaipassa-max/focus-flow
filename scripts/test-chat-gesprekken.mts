@@ -83,7 +83,7 @@ const gesprekken: Gesprek[] = [
 ];
 
 const woorden = (t: string) => t.split(/\s+/).filter(Boolean);
-const zinnen = (t: string) => t.split(/(?<=[.!?])\s+/).filter((z) => /\w/.test(z));
+const zinnen = (t: string) => t.replace(/a\.s\.r\./gi, "asr").split(/(?<=[.!?])\s+/).filter((z) => /\w/.test(z));
 const normaal = (t: string) => ` ${t.toLowerCase().replace(/[^a-z0-9€ ]+/g, " ").replace(/\s+/g, " ").trim()} `;
 // Alleen de brontekst telt als "letterlijk overnemen": de uitleg is zelf al geschreven in klantentaal, die mag het model gebruiken.
 const KENNISTEKSTEN = KENNISBANK.map((item) => normaal(item.tekst));
