@@ -13,6 +13,8 @@ import { RadioCardBottomGroup, type RadioCardBottomOption } from "@/components/R
 import { RadioGroup } from "@/components/RadioGroup";
 import { Tag } from "@/components/Tag";
 import { formatDatum } from "@/lib/datum";
+import type { Product } from "@/lib/kennisbank";
+import { zoekInKennisbank } from "@/lib/kennisbank/zoek";
 import { ChatWidget, type ChatMessageData } from "../aichat/ChatWidget";
 import { MinimizedChatButton } from "../aichat/MinimizedChatButton";
 
@@ -99,17 +101,33 @@ const AANVULLENDE_DEKKINGEN = [
 const HULP_OPENINGSVRAAG = "Je hebt help nodig bij het kiezen van een juiste dekking, waar kan ik je mee helpen?";
 const HULP_ONDERWERPEN = ["Meer over WA", "Meer over WA+", "Meer over All-Risk", "Vervangend vervoer", "Garage keuze bij pech", "Stormschade"];
 
-/** Antwoord op de dekking-onderwerpen, uit de kenmerken van de kaarten op deze pagina; voor de rest de eerlijke terugval. */
-function hulpAntwoord(tekst: string): string {
+/** Antwoord op de drie "Meer over …"-onderwerpen, uit de kenmerken van de kaarten op deze pagina; `null` bij elke andere vraag. */
+function kaartAntwoord(tekst: string): string | null {
   const dekkingVoorOnderwerp: Record<string, string> = { "Meer over WA": "wa", "Meer over WA+": "wa-casco-beperkt", "Meer over All-Risk": "wa-casco-allrisk" };
   const optie = DEKKING_OPTIONS.find((kaart) => kaart.value === dekkingVoorOnderwerp[tekst]);
-  if (!optie?.features) return HULP_FALLBACK;
+  if (!optie?.features) return null;
   const gedekt = optie.features.filter((kenmerk) => kenmerk.included).map((kenmerk) => kenmerk.text.toLowerCase());
   const nietGedekt = optie.features.filter((kenmerk) => !kenmerk.included).map((kenmerk) => kenmerk.text.toLowerCase());
   const lijst = (items: string[]) => items.join(", ").replace(/, ([^,]*)$/, " en $1");
   return nietGedekt.length > 0
     ? `${optie.title} dekt: ${lijst(gedekt)}. Niet gedekt: ${lijst(nietGedekt)}.`
     : `${optie.title} dekt: ${lijst(gedekt)}.`;
+}
+
+/** Welke voorwaarden en asr.nl-pagina's bij welke basisdekking horen (de Algemene voorwaarden gelden altijd). */
+const VOORWAARDEN_PER_DEKKING: Record<DekkingKeuze, Product[]> = {
+  wa: ["site-wa", "wa"],
+  "wa-casco-beperkt": ["site-wa", "wa", "site-casco-beperkt", "casco-beperkt"],
+  "wa-casco-allrisk": ["site-wa", "wa", "site-casco-allrisk", "casco-allrisk"],
+};
+
+/** Eerst de kaartkenmerken, dan de kennisbank met de voorwaarden van de gekozen dekking (lib/kennisbank), anders de eerlijke terugval. */
+function hulpAntwoord(tekst: string, dekking: DekkingKeuze | ""): Pick<ChatMessageData, "text" | "sources"> {
+  const uitKaart = kaartAntwoord(tekst);
+  if (uitKaart) return { text: uitKaart };
+  const uitKennisbank = zoekInKennisbank(tekst, { producten: dekking ? VOORWAARDEN_PER_DEKKING[dekking] : undefined });
+  if (uitKennisbank) return { text: uitKennisbank.tekst, sources: uitKennisbank.bronnen };
+  return { text: HULP_FALLBACK };
 }
 
 /** Zelfde eerlijke terugval als de /aichat-demo: er hangt geen echt taalmodel achter deze chat. */
@@ -189,7 +207,7 @@ export default function WorkshopPage() {
     setChatTyping(true);
     setTimeout(() => {
       setChatTyping(false);
-      setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "assistant", text: hulpAntwoord(text) }]);
+      setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "assistant", ...hulpAntwoord(text, dekking) }]);
     }, 800);
   }
 

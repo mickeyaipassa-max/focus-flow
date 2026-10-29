@@ -77,10 +77,28 @@ function ChatMessage({ message, showAvatar }: { message: ChatMessageData; showAv
     <div className="flex flex-col items-start gap-2 pr-6">
       {showAvatar && <AssistantAvatar />}
       <div className="max-w-full rounded-md bg-white px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
-        <p className="break-words text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+        <p className="whitespace-pre-line break-words text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
           <span className="sr-only">AI-assistent zei: </span>
           {message.text}
         </p>
+        {message.sources && message.sources.length > 0 && (
+          <p className="mt-2 break-words text-[#565656] text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+            Bron:{" "}
+            {message.sources.map((source, index) => (
+              <span key={source.title}>
+                {index > 0 && "; "}
+                {source.url ? (
+                  <a href={source.url} target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">
+                    {source.title}
+                    <span className="sr-only"> (opent in een nieuw tabblad)</span>
+                  </a>
+                ) : (
+                  source.title
+                )}
+              </span>
+            ))}
+          </p>
+        )}
       </div>
     </div>
   );
