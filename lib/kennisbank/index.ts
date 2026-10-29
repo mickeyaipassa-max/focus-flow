@@ -1,6 +1,7 @@
 import { KENNISBANK_ALGEMEEN } from "./algemene-voorwaarden";
 import { PROEFARTIKELEN } from "./proefartikelen";
 import { VERRIJKING_ALGEMEEN } from "./verrijking-algemeen";
+import { VERRIJKING_CASCO_ALLRISK } from "./verrijking-casco-allrisk";
 import { VERRIJKING_CASCO_BEPERKT } from "./verrijking-casco-beperkt";
 import { VERRIJKING_WA } from "./verrijking-wa";
 import { KENNISBANK_WEBSITE } from "./website-asr";
@@ -117,6 +118,7 @@ export const VERRIJKING_GROEPEN: Record<string, Record<string, Verrijking>> = {
   "algemene-voorwaarden": VERRIJKING_ALGEMEEN,
   wa: VERRIJKING_WA,
   "casco-beperkt": VERRIJKING_CASCO_BEPERKT,
+  "casco-allrisk": VERRIJKING_CASCO_ALLRISK,
 };
 const VERRIJKINGEN: Record<string, Verrijking> = Object.assign({}, ...Object.values(VERRIJKING_GROEPEN));
 

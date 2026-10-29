@@ -104,6 +104,23 @@ const gevallen: { vraag: string; verwacht: string[]; producten?: readonly string
   { vraag: "Ik ben het niet eens met de schadevaststelling", verwacht: ["cb-schade-vaststellen"], producten: BEPERKT },
   { vraag: "Mijn auto start niet meer door slijtage, is dat gedekt?", verwacht: ["cb-onderhoud-slijtage", "cb-pechhulp"], producten: BEPERKT },
   { vraag: "Ik reed in een leenauto en kreeg schade", verwacht: ["cb-leenauto"], producten: BEPERKT },
+  // Casco allrisk
+  { vraag: "Ik ben met mijn auto geslipt en tegen een vangrail gereden", verwacht: ["ca-aanrijding"], producten: ALLRISK },
+  { vraag: "Mijn auto is te water geraakt", verwacht: ["ca-aanrijding"], producten: ALLRISK },
+  { vraag: "Mijn zoon van 20 heeft een aanrijding gehad, moet ik extra betalen?", verwacht: ["ca-jeugd-eigen-risico"], producten: ALLRISK },
+  { vraag: "Wat is het extra eigen risico voor jonge bestuurders?", verwacht: ["ca-jeugd-eigen-risico"], producten: ALLRISK },
+  { vraag: "Mijn versnellingsbak is kapot, vergoeden jullie dat?", verwacht: ["ca-motor"], producten: ALLRISK },
+  { vraag: "Mijn motor heeft een defect, auto is 2 jaar oud", verwacht: ["ca-motor"], producten: ALLRISK },
+  { vraag: "Er is een fabricagefout in mijn auto", verwacht: ["ca-materiaalfouten"], producten: ALLRISK },
+  { vraag: "Iemand heeft mijn auto bekrast", verwacht: ["ca-rellen-vandalisme"], producten: ALLRISK },
+  { vraag: "Mijn auto is door vandalisme beschadigd, wat moet ik doen?", verwacht: ["ca-rellen-vandalisme"], producten: ALLRISK },
+  { vraag: "Mijn auto heeft hagelschade", verwacht: ["ca-natuurramp"], producten: ALLRISK },
+  { vraag: "Mijn auto is beschadigd tijdens vervoer per autotrein", verwacht: ["ca-transport"], producten: ALLRISK },
+  { vraag: "Mijn ruit is gebarsten, betaal ik eigen risico?", verwacht: ["ca-ruitschade", "ca-eigen-risico"], producten: ALLRISK },
+  { vraag: "Telt een schade door een fietser mee voor mijn no-claim?", verwacht: ["ca-noclaim-geen-gevolg"], producten: ALLRISK },
+  { vraag: "Welke schade telt niet mee voor mijn schadevrije jaren?", verwacht: ["ca-noclaim-geen-gevolg"], producten: ALLRISK },
+  { vraag: "Heeft schade aan een ander gevolgen voor mijn no-claim?", verwacht: ["ca-noclaim-wa-schade", "schade-zonder-schuld", "noclaim-geen-gevolg", "noclaim-uitleg"], producten: ALLRISK },
+  { vraag: "Wat betekent eigen gebrek?", verwacht: ["ca-begrippen", "ca-materiaalfouten"], producten: ALLRISK },
 ];
 
 let mislukt = 0;
