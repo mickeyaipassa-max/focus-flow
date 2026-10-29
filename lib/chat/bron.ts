@@ -22,6 +22,9 @@ function gewicht(woord: string): number {
   return Math.log((KENNISBANK.length + 1) / ((documentFrequentie.get(woord) ?? 0) + 1)) ** 2;
 }
 
+/** Een onderdeel uit de voorwaarden van een andere dekking dan die van de klant is zelden de bron die hij verwacht. */
+const ANDERE_DEKKING = 0.6;
+
 /** Een onderdeel dat de zoekfunctie hoger zette, krijgt een kleine voorsprong; het eerste onderdeel het meest. */
 const RANGBONUS = [1.25, 1.1, 1];
 
@@ -49,7 +52,7 @@ export function bronVanAntwoord(tekst: string, context: KennisContext[]): ChatSo
     const woorden = onderdeelWoorden(onderdeel);
     const gemeen = [...antwoord].filter((woord) => woorden.has(woord));
     if (gemeen.length < 3) return;
-    const score = (gemeen.reduce((som, woord) => som + gewicht(woord), 0) / Math.sqrt(woorden.size || 1)) * (RANGBONUS[rang] ?? 1);
+    const score = (gemeen.reduce((som, woord) => som + gewicht(woord), 0) / Math.sqrt(woorden.size || 1)) * (RANGBONUS[rang] ?? 1) * (onderdeel.bijGekozenDekking ? 1 : ANDERE_DEKKING);
     if (score > beste.score) beste = { score, bronnen: onderdeel.bronnen };
   });
   return beste.bronnen;

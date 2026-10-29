@@ -55,6 +55,12 @@ const gevallen: { vraag: string; antwoord: string; producten: never; verwacht: s
     antwoord: "Wat vervelend. Doe nog vandaag aangifte bij de politie, of de volgende ochtend als het 's avonds of 's nachts gebeurde. Stuur ons daarna het bewijs van de aangifte. Weet je zeker dat je auto gestolen is, en niet bijvoorbeeld weggesleept?" },
   { vraag: "Ik wil mijn verzekering stoppen. Ik heb hem 3 maanden geleden afgesloten", producten: BEPERKT, verwacht: ["al-opzeggen-jij"],
     antwoord: "Dan zit je nog in je eerste verzekeringsjaar, dus gewoon opzeggen kan nu niet. Dat kan pas als er een jaar voorbij is sinds je ingangsdatum, dus over ongeveer 9 maanden. Heb je je auto verkocht, of ben je het niet eens met een wijziging van je premie of voorwaarden?" },
+  { vraag: "Ik heb een ree aangereden. Krijg ik de schade vergoed?", producten: BEPERKT, verwacht: ["cb-dieren"],
+    antwoord: "Wat vervelend, maar schade door een botsing met een ree is verzekerd met WA + Casco beperkt. Botste je daarna nog tegen iets anders, dan krijg je die schade niet vergoed. Op je polisblad zie je of er een eigen risico geldt. Raakte je alleen de ree, of ook bijvoorbeeld een boom?" },
+  { vraag: "Ik ben tegen een paal gereden, krijg ik dat vergoed?", producten: BEPERKT, verwacht: ["cb-dekking-overzicht", "sw-cb-verzekerd", "sw-vergelijken", "ca-aanrijding"],
+    antwoord: "Nee, helaas niet. Met WA + Casco beperkt is schade aan je eigen auto door een botsing of aanrijding niet verzekerd. Die schade is wel gedekt met Casco allrisk, maar dat is een andere dekking dan die jij nu bekijkt." },
+  { vraag: "Mijn auto heeft deuken door hagel. Is dat gedekt?", producten: ALLRISK, verwacht: ["ca-natuurramp", "storm-natuur", "cb-natuurramp", "sw-vergelijken"],
+    antwoord: "Ja, met WA + Casco allrisk is schade door hagel aan je eigen auto verzekerd. Dat geldt ook bij Casco beperkt. Heb je alleen WA, dan krijg je geen vergoeding voor deuken in je eigen auto." },
 ];
 
 let fouten = 0;
