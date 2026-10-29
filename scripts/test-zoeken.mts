@@ -88,6 +88,22 @@ const gevallen: { vraag: string; verwacht: string[]; producten?: readonly string
   { vraag: "Wat doet de alarmcentrale?", verwacht: ["alarmcentrale"] },
   { vraag: "Wat is een waarborgsom?", verwacht: ["waarborgsom"] },
   { vraag: "Iemand heeft mij aansprakelijk gesteld, moet ik zelf betalen?", verwacht: ["schadevergoeding-benadeelde"] },
+  // Casco beperkt: weer, dieren, ruit, sleutels, afhandeling
+  { vraag: "Er is een boom op mijn auto gevallen tijdens de storm", verwacht: ["cb-storm"], producten: BEPERKT },
+  { vraag: "Mijn auto heeft hagelschade", verwacht: ["cb-natuurramp"], producten: BEPERKT },
+  { vraag: "Ik heb een ree aangereden", verwacht: ["cb-dieren"], producten: BEPERKT },
+  { vraag: "Mijn voorruit heeft een steenslag", verwacht: ["cb-ruitschade"], producten: BEPERKT },
+  { vraag: "Mijn autosleutels zijn kwijt, wat vergoeden jullie?", verwacht: ["cb-sleutels"], producten: BEPERKT },
+  { vraag: "Mijn auto is in brand gevlogen", verwacht: ["cb-brand"], producten: BEPERKT },
+  { vraag: "Mijn auto is total loss, hoeveel krijg ik?", verwacht: ["cb-total-loss", "cb-uitbetaling"], producten: BEPERKT },
+  { vraag: "Naar welke garage mag ik voor reparatie?", verwacht: ["cb-herstelbedrijf", "cb-vergoeding-reparatie"], producten: BEPERKT },
+  { vraag: "Krijg ik een leenauto tijdens de reparatie?", verwacht: ["cb-vervangend-vervoer", "sw-vervangend-vervoer"], producten: BEPERKT },
+  { vraag: "Ik krijg de aankoopwaarde, wat betekent dat?", verwacht: ["cb-waarde-aankoopwaarde", "cb-aankoopwaarde-keuze"], producten: BEPERKT },
+  { vraag: "Ik ga in het buitenland wonen, wat moet ik doen met mijn verzekering?", verwacht: ["cb-buitenland-verhuizen"], producten: BEPERKT },
+  { vraag: "Ik verhuis volgend jaar naar België, blijft mijn autoverzekering lopen?", verwacht: ["cb-buitenland-verhuizen", "al-uitwonend-buitenland"], producten: BEPERKT },
+  { vraag: "Ik ben het niet eens met de schadevaststelling", verwacht: ["cb-schade-vaststellen"], producten: BEPERKT },
+  { vraag: "Mijn auto start niet meer door slijtage, is dat gedekt?", verwacht: ["cb-onderhoud-slijtage", "cb-pechhulp"], producten: BEPERKT },
+  { vraag: "Ik reed in een leenauto en kreeg schade", verwacht: ["cb-leenauto"], producten: BEPERKT },
 ];
 
 let mislukt = 0;

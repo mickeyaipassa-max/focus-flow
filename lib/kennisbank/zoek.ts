@@ -164,7 +164,7 @@ const SYNONIEMEN: [RegExp, string][] = [
   [/\b(start niet|wil niet starten|accu is leeg|accu leeg|stilgevallen|staat stil|lekke band|motor slaat af)\b/, "pech pechhulp"],
   [/\b(in brand|in de fik|vlammen)\b/, "brand"],
   [/\b(vriend|vriendin|buurman|zoon|dochter|broer|zus|kennis|collega|partner)\b.{0,20}\b(rijdt|reed|rijden|geleend|leent|lenen|gereden)\b/, "lenen iemand anders rijden"],
-  [/\bverhuiz\w*\b.{0,25}\b(duitsland|belgie|frankrijk|spanje|italie|engeland|portugal|polen|turkije|marokko|amerika|buitenland)\b|\b(duitsland|belgie|frankrijk|spanje|italie|engeland|portugal|polen|turkije|marokko|amerika)\b.{0,25}\bverhuiz\w*/, "naar het buitenland verhuizen buitenland wonen"],
+  [/\bverhui[sz]\w*\b.{0,25}\b(duitsland|belgie|frankrijk|spanje|italie|engeland|portugal|polen|turkije|marokko|amerika|buitenland)\b|\b(duitsland|belgie|frankrijk|spanje|italie|engeland|portugal|polen|turkije|marokko|amerika)\b.{0,25}\bverhui[sz]\w*/, "naar het buitenland verhuizen buitenland wonen"],
   [/\b(op kamers|op zichzelf|uit huis|uitwonend)\b/, "uitwonend"],
   [/\bpremie\b.{0,15}\b(duurder|hoger|omhoog|gestegen|verhoogd|stijgt|stijgen)\b|\b(duurder|hoger)\b.{0,10}\bpremie\b/, "premie verhoging premieverhoging"],
   [/\b(jullie|a s r|asr|de verzekeraar|verzekeraar)\b.{0,30}\b(opzeggen|opzegt|beeindigen|beeindigt|stopzetten)\b/, "opzegging door ons"],
