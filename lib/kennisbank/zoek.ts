@@ -168,3 +168,51 @@ export function zoekInKennisbank(vraag: string, { producten }: ZoekOpties = {}):
       : "";
   return { tekst: metOpmerking(`${beste.item.tekst}${zieOok}`, productenVan(beste.item), producten), bronnen: bronnen(beste.item, producten) };
 }
+
+export type KennisContext = {
+  /** De tekst van het onderdeel, in de woorden van het document of de pagina. */
+  tekst: string;
+  /** Waar de tekst staat, bv. "Voorwaarden Autoverzekering Casco Beperkt, D AU-CB 2017-01, 3.1 Gebeurtenis 17 - storm". */
+  herkomst: string;
+  /** Klopt dit bij de dekking die de klant bekijkt? `false`: het staat in de voorwaarden van een andere dekking. */
+  bijGekozenDekking: boolean;
+  bronnen: ChatSource[];
+};
+
+/**
+ * De best passende onderdelen als context voor een taalmodel (zie app/api/chat): hetzelfde zoeken en rangschikken als
+ * `zoekInKennisbank`, maar met de `aantal` beste onderdelen in plaats van één antwoord. Een vraag naar een trede,
+ * schadevrije jaren of nieuwwaarde in een bepaalde maand levert daarnaast het exacte tabelantwoord, vooraan.
+ */
+export function zoekContext(vraag: string, { producten }: ZoekOpties = {}, aantal = 5): KennisContext[] {
+  const genormaliseerd = normaliseer(vraag);
+  const context: KennisContext[] = [];
+
+  const tabelAntwoord = antwoordTrede(genormaliseerd) ?? antwoordSchadevrijeJaren(genormaliseerd) ?? antwoordNieuwwaarde(genormaliseerd);
+  if (tabelAntwoord) context.push({ tekst: tabelAntwoord.tekst, herkomst: tabelAntwoord.bronnen.map((bron) => bron.title).join("; "), bijGekozenDekking: true, bronnen: tabelAntwoord.bronnen });
+
+  const gezien = new Set<string>();
+  const gerangschikt = GENORMALISEERD.map(({ item, trefwoorden }) => {
+    const basis = score(genormaliseerd, trefwoorden);
+    const aanvullend = producten?.[producten.length - 1];
+    const bonus = basis > 0 && producten && hoortBijDekking(item, producten) ? VOORKEUR_BONUS + (aanvullend && item.artikelen[aanvullend] ? AANVULLEND_BONUS : 0) : 0;
+    return { item, basis, score: basis + bonus };
+  })
+    .filter(({ basis }) => basis >= MIN_SCORE)
+    .sort((a, b) => b.score - a.score);
+
+  for (const { item } of gerangschikt) {
+    if (context.length >= aantal) break;
+    // Dezelfde passage in twee documenten hoeft maar één keer mee.
+    if (gezien.has(item.tekst)) continue;
+    gezien.add(item.tekst);
+    const itemBronnen = bronnen(item, producten);
+    context.push({
+      tekst: item.tekst,
+      herkomst: itemBronnen.slice(0, 2).map((bron) => bron.title).join("; "),
+      bijGekozenDekking: !producten || hoortBijDekking(item, producten),
+      bronnen: itemBronnen,
+    });
+  }
+  return context;
+}
