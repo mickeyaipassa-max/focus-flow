@@ -120,12 +120,13 @@ const aantalWoorden = (tekst: string) => tekst.split(/\s+/).filter(Boolean).leng
 const zinnenVan = (tekst: string) => tekst.replace(/a\.s\.r\./gi, "asr").split(/(?<=[.!?])\s+/).filter((zin) => /\w/.test(zin));
 const aantalZinnen = (tekst: string) => zinnenVan(tekst).length;
 const langsteZin = (tekst: string) => Math.max(0, ...zinnenVan(tekst).map(aantalWoorden));
+const aantalVragen = (tekst: string) => (tekst.match(/\?/g) ?? []).length;
 /** Een antwoord langer dan dit wordt één keer laten inkorten. */
 const MAX_WOORDEN = 70;
 const MAX_ZINNEN = 4;
-/** Ook een antwoord met één zin langer dan dit aantal woorden wordt laten inkorten. */
+/** Ook een antwoord met meer dan één vraag, of met één zin langer dan dit aantal woorden, wordt laten inkorten. */
 const MAX_ZINLENGTE = 25;
-const INKORT_OPDRACHT = "Dat is te lang. Schrijf je antwoord opnieuw: maximaal 4 korte zinnen en ongeveer 50 woorden, elke zin maximaal 20 woorden. Laat elk bedrag, elke deadline en elke uitzondering staan die voor de klant telt, en voeg niets nieuws toe.";
+const INKORT_OPDRACHT = "Dat is te lang of bevat te veel vragen. Schrijf je antwoord opnieuw: maximaal 4 korte zinnen en ongeveer 50 woorden, elke zin maximaal 20 woorden, en hooguit één vraag. Laat elk bedrag, elke deadline en elke uitzondering staan die voor de klant telt, en voeg niets nieuws toe.";
 
 export async function POST(request: NextRequest) {
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ fout: "niet-geconfigureerd" }, { status: 503 });
@@ -173,8 +174,8 @@ export async function POST(request: NextRequest) {
 
     const tekstVan = (antwoord: Anthropic.Message) => antwoord.content.flatMap((blok) => (blok.type === "text" ? [blok.text] : [])).join("\n").trim();
     let ruw = tekstVan(response);
-    // Te lang (meer dan 4 zinnen of 70 woorden, of een zin van meer dan 25 woorden)? Dan één keer laten inkorten, als er nog tijd is.
-    if ((aantalWoorden(ruw) > MAX_WOORDEN || aantalZinnen(ruw) > MAX_ZINNEN || langsteZin(ruw) > MAX_ZINLENGTE) && Date.now() - gestart < 15_000) {
+    // Te lang (meer dan 4 zinnen of 70 woorden, een zin van meer dan 25 woorden) of meer dan één vraag? Dan één keer laten inkorten, als er nog tijd is.
+    if ((aantalWoorden(ruw) > MAX_WOORDEN || aantalZinnen(ruw) > MAX_ZINNEN || langsteZin(ruw) > MAX_ZINLENGTE || aantalVragen(ruw) > 1) && Date.now() - gestart < 15_000) {
       const korter = await client.messages.create({ model: MODEL, max_tokens: MAX_TOKENS, system: systeemInstructie(dekking), messages: [...messages, { role: "assistant", content: ruw }, { role: "user", content: INKORT_OPDRACHT }], output_config: { effort: "low" } });
       const kortAntwoord = tekstVan(korter);
       if (korter.stop_reason !== "refusal" && kortAntwoord && aantalWoorden(kortAntwoord) < aantalWoorden(ruw)) ruw = kortAntwoord;

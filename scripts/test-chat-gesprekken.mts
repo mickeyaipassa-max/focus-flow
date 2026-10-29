@@ -88,8 +88,8 @@ const gesprekken: Gesprek[] = [
   ] },
   { onderwerp: "Opzegging door a.s.r.", naam: "Mag a.s.r. opzeggen", dekking: "wa-casco-beperkt", beurten: [{ klant: "Mag a.s.r. mijn verzekering opzeggen als ik veel schade heb gehad?", controles: [bevat("30 dagen", /30/), bevat("dat het kan", /kan|mag|kunnen/i)] }] },
   { onderwerp: "Klacht", naam: "Klacht indienen", dekking: "wa-casco-beperkt", beurten: [{ klant: "Ik ben ontevreden over hoe mijn schade is afgehandeld en wil klagen", controles: [bevat("het klachtenformulier of KiFiD", /klachtenformulier|kifid/i)] }] },
-  { onderwerp: "Fraude", naam: "Wat is fraude", dekking: "wa-casco-beperkt", beurten: [{ klant: "Wat is fraude eigenlijk?", controles: [bevat("een voorbeeld", /meer claimen|nota|niet eerlijk|afgewezen/i)] }] },
-  { onderwerp: "Telefoongesprekken", naam: "Gesprek terugluisteren", dekking: "wa-casco-beperkt", beurten: [{ klant: "Kan ik een telefoongesprek met jullie terugluisteren?", controles: [bevat("dat het bij een geschil kan", /geschil/i)] }] },
+  { onderwerp: "Fraude", naam: "Wat is fraude", dekking: "wa-casco-beperkt", beurten: [{ klant: "Wat is fraude eigenlijk?", controles: [bevat("wat fraude is", /oneerlijk|misbruik|niet eerlijk|meer claimen|nota|bewust/i), bevat("het gevolg", /geen vergoeding|niet vergoed|terug/i)] }] },
+  { onderwerp: "Telefoongesprekken", naam: "Gesprek terugluisteren", dekking: "wa-casco-beperkt", beurten: [{ klant: "Kan ik een telefoongesprek met jullie terugluisteren?", controles: [bevat("dat het bij een geschil kan", /geschil|onenigheid|meningsverschil/i)] }] },
   // Randgevallen
   { onderwerp: "Randgeval", naam: "Onduidelijke vraag", dekking: "wa-casco-beperkt", beurten: [
     { klant: "Ik heb een vraag over mijn auto", controles: [stelt("onduidelijke vraag"), bevatNiet("feiten over dekking", /€|\d+ dagen|verzekerd voor/i)] },
@@ -101,7 +101,7 @@ const gesprekken: Gesprek[] = [
 
 const woorden = (t: string) => t.split(/\s+/).filter(Boolean);
 const zinnen = (t: string) => t.replace(/a\.s\.r\./gi, "asr").split(/(?<=[.!?])\s+/).filter((z) => /\w/.test(z));
-const normaal = (t: string) => ` ${t.toLowerCase().replace(/[^a-z0-9€ ]+/g, " ").replace(/\s+/g, " ").trim()} `;
+const normaal = (t: string) => ` ${t.toLowerCase().replace(/a\.s\.r\./g, "asr").replace(/[^a-z0-9€ ]+/g, " ").replace(/\s+/g, " ").trim()} `;
 // Alleen de brontekst telt als "letterlijk overnemen": de uitleg is zelf al geschreven in klantentaal, die mag het model gebruiken.
 const KENNISTEKSTEN = KENNISBANK.map((item) => normaal(item.tekst));
 
