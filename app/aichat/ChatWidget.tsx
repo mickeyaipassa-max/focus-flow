@@ -90,10 +90,16 @@ function ChatWelcome({
   onTagClick,
   selectedTag,
   showTags,
+  welcomeText,
+  topics,
+  topicStyle,
 }: {
   onTagClick: (tag: string) => void;
   selectedTag: string | null;
   showTags: boolean;
+  welcomeText: string;
+  topics: string[];
+  topicStyle: "outline" | "bubble";
 }) {
   return (
     <div className="flex w-full flex-col gap-4">
@@ -102,13 +108,35 @@ function ChatWelcome({
         <div className="max-w-full rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
           <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
             <span className="sr-only">AI-assistent zei: </span>
-            {WELCOME_TEXT}
+            {welcomeText}
           </p>
         </div>
       </div>
-      {showTags && (
+      {showTags && topicStyle === "bubble" && (
+        // Figma "Tag Group" (Autoverzekering, 9358:1704): witte pillen met een spraakballon, rechts uitgelijnd, 4px ertussen.
+        <div className="flex w-full max-w-[480px] flex-wrap items-center justify-end gap-1 drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]">
+          {topics.map((label) => (
+            <button
+              key={label}
+              type="button"
+              aria-pressed={selectedTag === label}
+              onClick={() => onTagClick(label)}
+              className={[
+                "flex h-8 items-center justify-center gap-1 rounded-full py-1 pr-3 pl-2 hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black",
+                selectedTag === label ? "bg-[#eef4e3]" : "bg-white",
+              ].join(" ")}
+            >
+              <Icon name="comment-sm" size="sm" />
+              <span className="whitespace-nowrap text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+                {label}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+      {showTags && topicStyle === "outline" && (
         <div className="flex max-w-[480px] flex-wrap gap-2">
-          {TOPIC_LABELS.map((label) => (
+          {topics.map((label) => (
             <button
               key={label}
               type="button"
@@ -205,6 +233,14 @@ type ChatWidgetProps = {
   onSend: (text: string) => void;
   returnFocusOnMinimize?: RefObject<HTMLButtonElement | null>;
   returnFocusOnClose?: RefObject<HTMLButtonElement | null>;
+  /** Opt-in: eigen openingstekst i.p.v. de zorgverzekering-tekst van /aichat. */
+  welcomeText?: string;
+  /** Opt-in: eigen onderwerpen onder de openingstekst. */
+  topics?: string[];
+  /** Opt-in: "bubble" = witte pillen met spraakballon, rechts uitgelijnd (Figma Autoverzekering). Standaard "outline" (/aichat). */
+  topicStyle?: "outline" | "bubble";
+  /** Opt-in: wat er als bericht wordt gestuurd bij een klik op een onderwerp. Standaard "Ik heb een vraag over …". */
+  topicMessage?: (label: string) => string;
 };
 
 /**
@@ -231,6 +267,10 @@ export function ChatWidget({
   onSend,
   returnFocusOnMinimize,
   returnFocusOnClose,
+  welcomeText = WELCOME_TEXT,
+  topics = TOPIC_LABELS,
+  topicStyle = "outline",
+  topicMessage = (label: string) => `Ik heb een vraag over ${label.toLowerCase()}`,
 }: ChatWidgetProps) {
   const messagesLogRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -342,7 +382,7 @@ export function ChatWidget({
     try {
       const { buildChatPdf, downloadPdf } = await import("@/lib/chatPdf");
       const [result] = await Promise.all([
-        buildChatPdf([{ role: "assistant", text: WELCOME_TEXT }, ...messages.map(({ role, text, sources }) => ({ role, text, sources }))]),
+        buildChatPdf([{ role: "assistant", text: welcomeText }, ...messages.map(({ role, text, sources }) => ({ role, text, sources }))]),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]);
       downloadPdf(result);
@@ -355,7 +395,7 @@ export function ChatWidget({
 
   function handleTagClick(label: string) {
     setSelectedTag(label);
-    onSend(`Ik heb een vraag over ${label.toLowerCase()}`);
+    onSend(topicMessage(label));
   }
 
   if (!visible) return null;
@@ -540,7 +580,7 @@ export function ChatWidget({
           aria-live="polite"
           className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto scroll-smooth p-6"
         >
-          <ChatWelcome onTagClick={handleTagClick} selectedTag={selectedTag} showTags={!hasMessages} />
+          <ChatWelcome onTagClick={handleTagClick} selectedTag={selectedTag} showTags={!hasMessages} welcomeText={welcomeText} topics={topics} topicStyle={topicStyle} />
           {messages.map((message, index) => {
             const previous = messages[index - 1];
             const showAvatar = message.role === "assistant" && (index === 0 || previous?.role !== "assistant");
