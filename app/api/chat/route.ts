@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { ChatSource } from "@/lib/chatPdf";
 import { zoekContext, type KennisContext } from "@/lib/kennisbank/zoek";
 import type { Product } from "@/lib/kennisbank";
+import { bronVanAntwoord } from "@/lib/chat/bron";
 import { GEEN_BRON, STIJLHERINNERING, systeemInstructie } from "@/lib/chat/systeem-instructie";
 
 /**
@@ -93,26 +94,6 @@ function kennisbankBlok(context: KennisContext[]): string {
       `<onderdeel nummer="${index + 1}" bij-gekozen-dekking="${onderdeel.bijGekozenDekking ? "ja" : "nee"}"${onderdeel.aanvullend ? ' aanvullend="ja"' : ""} herkomst="${onderdeel.herkomst.replace(/"/g, "'")}">\n${onderdeelTekst(onderdeel)}\n</onderdeel>`,
   );
   return `<kennisbank>\n${onderdelen.join("\n")}\n</kennisbank>`;
-}
-
-const inhoudswoorden = (tekst: string) => new Set(tekst.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/[a-z0-9]{5,}/g) ?? []);
-
-/**
- * De bron onder het antwoord is die van het onderdeel waar het antwoord het meest op lijkt (de meeste woorden gemeen,
- * gecorrigeerd voor de lengte van het onderdeel), niet automatisch die van het eerst gevonden onderdeel. Lijkt het op
- * niets, dan geen bron.
- */
-function bronVanAntwoord(tekst: string, context: KennisContext[]): ChatSource[] {
-  const antwoord = inhoudswoorden(tekst);
-  let beste = { score: 0, bronnen: [] as ChatSource[] };
-  for (const onderdeel of context) {
-    const v = onderdeel.verrijking;
-    const woorden = inhoudswoorden([onderdeel.tekst, v?.uitleg, ...(v?.direct ?? []), ...(v?.aandachtspunten ?? [])].filter(Boolean).join(" "));
-    const gemeen = [...antwoord].filter((woord) => woorden.has(woord)).length;
-    const score = gemeen / Math.sqrt(woorden.size || 1);
-    if (gemeen >= 3 && score > beste.score) beste = { score, bronnen: onderdeel.bronnen };
-  }
-  return beste.bronnen;
 }
 
 const aantalWoorden = (tekst: string) => tekst.split(/\s+/).filter(Boolean).length;
