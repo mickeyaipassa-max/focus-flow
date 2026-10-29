@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useId, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./Icon";
 
 export type CarouselCardFeature = { text: string; included: boolean };
@@ -25,6 +25,8 @@ type RadioCardBottomCarouselProps = {
   /** Zelfde patroon als `RadioCardBottomGroup`'s eigen `error`-prop. */
   error?: string;
   name?: string;
+  /** Opt-in: element rechts naast het label (en sterretje), bv. een "Hulp nodig?"-tag. */
+  labelAction?: ReactNode;
   className?: string;
   /** Zelfde patroon en reden als `RadioCardBottomGroup`'s eigen `contentTopClassName` — de fieldset's `gap` werkt niet tussen `<legend>` en de scroll-container. Genegeerd zodra `hasHighlight` al zijn eigen `mt-4` toepast. */
   contentTopClassName?: string;
@@ -77,6 +79,7 @@ export function RadioCardBottomCarousel({
   onMoreInfoClick,
   error,
   name,
+  labelAction,
   className,
   contentTopClassName,
 }: RadioCardBottomCarouselProps) {
@@ -124,6 +127,7 @@ export function RadioCardBottomCarousel({
             *
           </span>
         )}
+        {labelAction && <span className="ml-3 inline-flex">{labelAction}</span>}
       </legend>
 
       <div
