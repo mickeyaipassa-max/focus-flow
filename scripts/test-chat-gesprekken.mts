@@ -121,6 +121,21 @@ const gesprekken: Gesprek[] = [
   { onderwerp: "Casco beperkt", naam: "Schade vaststellen: te laag", dekking: "wa-casco-beperkt", beurten: [{ klant: "Het schadebedrag dat jullie noemen is mij te laag. Wat kan ik doen?", controles: [bevat("een tweede deskundige", /tweede (deskundige|expert)/i)] }] },
   { onderwerp: "Casco beperkt", naam: "Slijtage en onderhoud", dekking: "wa-casco-beperkt", beurten: [{ klant: "Mijn remschijven zijn versleten, vergoeden jullie die?", controles: [bevat("dat slijtage niet vergoed wordt", /niet|geen/i)] }] },
   { onderwerp: "Casco beperkt", naam: "Verhuizen naar het buitenland (Casco)", dekking: "wa-casco-beperkt", beurten: [{ klant: "Ik verhuis volgend jaar naar België. Blijft mijn autoverzekering dan gewoon lopen?", controles: [bevat("EU en verlengingsdatum", /europese unie|eu\b|verlengingsdatum/i)] }] },
+  // Casco allrisk
+  { onderwerp: "Casco allrisk", naam: "Slippen: vangrail", dekking: "wa-casco-allrisk", beurten: [{ klant: "Ik ben geslipt en tegen een vangrail gereden. Wordt dat vergoed?", controles: [bevat("dat het gedekt is", /verzekerd|gedekt|\bja\b|vergoed/i)] }] },
+  { onderwerp: "Casco allrisk", naam: "Jeugd eigen risico: zoon van 22", dekking: "wa-casco-allrisk", beurten: [
+    { klant: "Mijn zoon van 22 had een aanrijding met mijn auto. Betaal ik extra eigen risico?", controles: [stelt("hoe oud de vaste bestuurder is")] },
+    { klant: "Ik sta zelf als vaste bestuurder op de polis, ik ben 45.", controles: [bevat("het extra eigen risico van 250 euro", /250/)] },
+  ] },
+  { onderwerp: "Casco allrisk", naam: "Motor kapot zonder details", dekking: "wa-casco-allrisk", beurten: [{ klant: "Mijn motor is kapotgegaan. Krijg ik dat vergoed?", controles: [bevat("een voorwaarde over leeftijd of kilometers", /36|100\.000|kilometer|maanden/i)] }] },
+  { onderwerp: "Casco allrisk", naam: "Versnellingsbak bij oude auto", dekking: "wa-casco-allrisk", beurten: [{ klant: "Mijn versnellingsbak is kapot. De auto is 5 jaar oud en heeft 80.000 kilometer gereden.", controles: [bevat("de grens van 36 maanden", /36 maanden|3 jaar|drie jaar/i)] }] },
+  { onderwerp: "Casco allrisk", naam: "Vandalisme: aangifte", dekking: "wa-casco-allrisk", beurten: [{ klant: "Iemand heeft mijn auto bekrast. Wat moet ik doen?", controles: [bevat("aangifte", /aangifte/i), bevat("de termijn van 14 dagen", /14/)] }] },
+  { onderwerp: "Casco allrisk", naam: "Hagelschade", dekking: "wa-casco-allrisk", beurten: [{ klant: "Mijn auto heeft deuken door hagel. Is dat gedekt?", controles: [bevat("dat het gedekt is", /verzekerd|gedekt|\bja\b|vergoed/i)] }] },
+  { onderwerp: "Casco allrisk", naam: "Aardbeving", dekking: "wa-casco-allrisk", beurten: [{ klant: "Mijn auto is beschadigd door een aardbeving. Is dat gedekt?", controles: [bevat("dat het niet in de lijst staat", /niet|geen/i)] }] },
+  { onderwerp: "Casco allrisk", naam: "Ruit vervangen: eigen risico", dekking: "wa-casco-allrisk", beurten: [{ klant: "Mijn voorruit moet vervangen worden. Betaal ik eigen risico?", controles: [bevat("dat het eigen risico bij vervangen wel geldt", /vervang/i, /wel|ja/i)] }] },
+  { onderwerp: "Casco allrisk", naam: "No-claim: fietser aangereden", dekking: "wa-casco-allrisk", beurten: [{ klant: "Ik heb een fietser aangereden en jullie betalen de schade. Telt dat mee voor mijn no-claim?", controles: [bevat("dat het afhangt van of de bestuurder iets te verwijten valt", /niets te verwijten|aantonen|verwijten/i)] }] },
+  { onderwerp: "Casco allrisk", naam: "Takelen en krassen", dekking: "wa-casco-allrisk", beurten: [{ klant: "Mijn auto is getakeld en nu zitten er krassen in de lak. Vergoeden jullie dat?", controles: [bevat("dat krassen niet vergoed worden", /niet|geen/i)] }] },
+  { onderwerp: "Casco allrisk", naam: "Eigen risico: hoeveel", dekking: "wa-casco-allrisk", beurten: [{ klant: "Hoeveel eigen risico betaal ik bij schade?", controles: [bevat("het polisblad", /polisblad/i)] }] },
   { onderwerp: "Randgeval", naam: "Onduidelijke vraag", dekking: "wa-casco-beperkt", beurten: [
     { klant: "Ik heb een vraag over mijn auto", controles: [stelt("onduidelijke vraag"), bevatNiet("feiten over dekking", /€|\d+ dagen|verzekerd voor/i)] },
     { klant: "Er zit een kras in", controles: [bevatNiet("herhaling van de eerste vraag", /vraag over (je|jouw) auto/i)] },

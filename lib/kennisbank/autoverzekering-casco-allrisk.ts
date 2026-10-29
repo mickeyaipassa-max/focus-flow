@@ -18,7 +18,7 @@ export const KENNISBANK_CASCO_ALLRISK: KennisItem[] = [
   {
     id: "ca-aanrijding",
     artikelen: { "casco-allrisk": "3.1 Gebeurtenis 1 - aanrijding, botsing, in het water raken, omslaan, slippen of van de weg raken" },
-    trefwoorden: ["aanrijding", "aangereden", "botsing", "botsen", "ongeluk", "ongeval", "in het water raken", "water in gereden", "omslaan", "omgeslagen", "slippen", "geslipt", "van de weg raken", "van de weg af", "uit de bocht", "tegen een paal", "tegen een muur", "tegen een boom", "tegen een andere auto", "aanrijding met een andere auto", "dier", "dieren", "een ree", "een hert", "wild aangereden", "eigen schuld", "zelf schuld", "schade door aanrijding", "frontale botsing", "flankschade"],
+    trefwoorden: ["te water geraakt", "te water", "in de sloot", "sloot ingereden", "in het water beland", "aanrijding", "aangereden", "botsing", "botsen", "ongeluk", "ongeval", "in het water raken", "water in gereden", "omslaan", "omgeslagen", "slippen", "geslipt", "van de weg raken", "van de weg af", "uit de bocht", "tegen een paal", "tegen een muur", "tegen een boom", "tegen een andere auto", "aanrijding met een andere auto", "dier", "dieren", "een ree", "een hert", "wild aangereden", "eigen schuld", "zelf schuld", "schade door aanrijding", "frontale botsing", "flankschade"],
     tekst:
       "Je bent verzekerd voor schade door een aanrijding, een botsing, in het water raken, omslaan, slippen of van de weg raken, ook als dit is ontstaan door een eigen gebrek van de auto. Met eigen gebrek bedoelen wij een gebrek van de auto zelf, bijvoorbeeld door een natuurlijke eigenschap of slechte kwaliteit; een eigen gebrek heeft niets te maken met normale slijtage, overbelasting of onvoldoende onderhoud. Je krijgt geen vergoeding voor het onderdeel zelf waarin het eigen gebrek zit. Bij een botsing met vogels of loslopende dieren geldt het extra jeugd eigen risico niet, wel voor schade doordat de bestuurder door die botsing tegen iets anders botst of iets anders raakt.",
   },
@@ -59,7 +59,7 @@ export const KENNISBANK_CASCO_ALLRISK: KennisItem[] = [
   {
     id: "ca-rellen-vandalisme",
     artikelen: { "casco-allrisk": "3.1 Gebeurtenis 17 en 22 - rellen en vandalisme" },
-    trefwoorden: ["rellen", "relletjes", "opstootjes", "vandalisme", "vernieling", "opzettelijke beschadiging", "kras gekrast", "autosleutel over de lak", "beschadigd door een buurman", "vandalisme auto", "gekrast"],
+    trefwoorden: ["bekrast", "bekrassen", "auto bekrast", "lak bekrast", "rellen", "relletjes", "opstootjes", "vandalisme", "vernieling", "opzettelijke beschadiging", "kras gekrast", "autosleutel over de lak", "beschadigd door een buurman", "vandalisme auto", "gekrast"],
     tekst:
       "Je bent verzekerd voor schade door rellen, relletjes en opstootjes, en voor schade door vandalisme. Met vandalisme bedoelen wij opzettelijke beschadiging door een derde. Bij vandalisme moet je direct, maar uiterlijk binnen 14 dagen, aangifte doen bij de politie.",
   },
@@ -108,7 +108,7 @@ export const KENNISBANK_CASCO_ALLRISK: KennisItem[] = [
   {
     id: "ca-noclaim-wa-schade",
     artikelen: { "casco-allrisk": "7.4 Schade die valt onder de WA-verzekering" },
-    trefwoorden: ["wa schade allrisk", "wa-schade allrisk", "schade aan anderen allrisk", "invloed wa schade", "wa schade no-claim allrisk"],
+    trefwoorden: ["schade aan een ander no-claim", "schade aan anderen no-claim", "wa schade no-claim", "gevolgen voor mijn no-claim", "wa schade allrisk", "wa-schade allrisk", "schade aan anderen allrisk", "invloed wa schade", "wa schade no-claim allrisk"],
     tekst:
       "Vergoeden wij een schade die valt onder de Autoverzekering Wettelijke Aansprakelijkheid (WA) van je auto, dus schade die met of door de auto aan anderen en hun spullen is toegebracht, dan kan dat gevolgen hebben voor je trede op de no-claimladder (en dus voor je premie voor Casco Allrisk) en voor je schadevrije jaren. Of die WA-schade gevolgen heeft staat in de WA-voorwaarden, in het hoofdstuk 'Hoe werkt de no-claimregeling?'.",
   },
