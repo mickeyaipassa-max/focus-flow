@@ -53,6 +53,8 @@ const gevallen: { vraag: string; antwoord: string; producten: never; verwacht: s
     antwoord: "Dan mag je zelf een tweede expert inschakelen, in overleg met onze expert. Komen zij er samen niet uit, dan kiezen ze een derde expert. Zijn besluit geldt voor jou en voor ons. De kosten van jouw expert betalen wij tot hetzelfde bedrag als wat onze expert kost." },
   { vraag: "Mijn auto is weg.", producten: BEPERKT, verwacht: ["cb-diefstal", "cb-aangifte"],
     antwoord: "Wat vervelend. Doe nog vandaag aangifte bij de politie, of de volgende ochtend als het 's avonds of 's nachts gebeurde. Stuur ons daarna het bewijs van de aangifte. Weet je zeker dat je auto gestolen is, en niet bijvoorbeeld weggesleept?" },
+  { vraag: "Ik wil mijn verzekering stoppen. Ik heb hem 3 maanden geleden afgesloten", producten: BEPERKT, verwacht: ["al-opzeggen-jij"],
+    antwoord: "Dan zit je nog in je eerste verzekeringsjaar, dus gewoon opzeggen kan nu niet. Dat kan pas als er een jaar voorbij is sinds je ingangsdatum, dus over ongeveer 9 maanden. Heb je je auto verkocht, of ben je het niet eens met een wijziging van je premie of voorwaarden?" },
 ];
 
 let fouten = 0;

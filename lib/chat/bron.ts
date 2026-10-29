@@ -26,13 +26,24 @@ function gewicht(woord: string): number {
 const RANGBONUS = [1.25, 1.1, 1];
 
 /**
+ * De vervolgvraag aan het eind ("Heb je je auto verkocht, of ben je het niet eens met een wijziging?") somt opties op
+ * en bevat geen feiten uit het onderdeel; die telt niet mee. Blijft er te weinig over, dan telt de hele tekst.
+ */
+function zonderVervolgvraag(tekst: string): string {
+  const zinnen = tekst.replace(/a\.s\.r\./gi, "asr").split(/(?<=[.!?])\s+/);
+  while (zinnen.length > 1 && zinnen[zinnen.length - 1].trim().endsWith("?")) zinnen.pop();
+  const rest = zinnen.join(" ");
+  return rest.split(/\s+/).length >= 8 ? rest : tekst;
+}
+
+/**
  * De bron onder het antwoord is die van het onderdeel waar het antwoord het meest op lijkt, niet automatisch die van het
  * eerst gevonden onderdeel. Woorden die in weinig onderdelen voorkomen ("hagel", "sleutels") tellen zwaarder dan woorden
  * die overal staan ("schade", "casco", "voorwaarden"), en de rangorde van de zoekfunctie telt licht mee. Lijkt het
  * antwoord op niets, dan geen bron.
  */
 export function bronVanAntwoord(tekst: string, context: KennisContext[]): ChatSource[] {
-  const antwoord = inhoudswoorden(tekst);
+  const antwoord = inhoudswoorden(zonderVervolgvraag(tekst));
   let beste = { score: 0, bronnen: [] as ChatSource[] };
   context.forEach((onderdeel, rang) => {
     const woorden = onderdeelWoorden(onderdeel);
