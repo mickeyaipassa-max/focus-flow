@@ -45,6 +45,23 @@ const gevallen: { vraag: string; verwacht: string[]; producten?: readonly string
   { vraag: "Mijn vriend heeft gedronken en reed mijn auto, ben ik verzekerd?", verwacht: ["uitsluiting-alcohol"] },
   { vraag: "Hoeveel promille mag ik hebben?", verwacht: ["uitsluiting-alcohol"] },
   { vraag: "Wanneer krijg ik geen vergoeding?", verwacht: ["sw-geen-vergoeding", "algemene-uitsluitingen"] },
+  // Algemene voorwaarden
+  { vraag: "Ik heb mijn premie niet betaald", verwacht: ["al-premie-betalen"] },
+  { vraag: "Wat gebeurt er als ik niet betaal?", verwacht: ["al-premie-betalen"] },
+  { vraag: "Wanneer gaat mijn verzekering in?", verwacht: ["al-begin"] },
+  { vraag: "Is mijn verzekering al ingegaan?", verwacht: ["al-begin"] },
+  { vraag: "Ik ga naar Duitsland verhuizen", verwacht: ["al-uitwonend-buitenland", "cb-buitenland-verhuizen"] },
+  { vraag: "Mijn zoon gaat op kamers wonen", verwacht: ["al-uitwonend-buitenland"] },
+  { vraag: "Mijn premie wordt duurder, mag dat?", verwacht: ["al-premie-wijzigen"] },
+  { vraag: "Mag a.s.r. mijn verzekering opzeggen als ik schade heb gehad?", verwacht: ["al-opzeggen-wij"] },
+  { vraag: "Ik wil een klacht indienen", verwacht: ["al-klacht"] },
+  { vraag: "Wat is fraude?", verwacht: ["al-fraude"] },
+  { vraag: "Kan ik een telefoongesprek terugluisteren?", verwacht: ["al-telefoongesprekken"] },
+  { vraag: "Wat doen jullie met mijn gegevens?", verwacht: ["al-persoonsgegevens"] },
+  { vraag: "Ik ben ooit failliet geweest, is dat erg?", verwacht: ["al-verklaring-financieel"] },
+  { vraag: "Mijn auto is total loss, wat gebeurt er met mijn verzekering?", verwacht: ["al-geen-belang"] },
+  { vraag: "Ik wil mijn afschrijving laten terugboeken", verwacht: ["al-storneren"] },
+  { vraag: "Welk recht geldt er voor mijn verzekering?", verwacht: ["al-recht"] },
 ];
 
 let mislukt = 0;

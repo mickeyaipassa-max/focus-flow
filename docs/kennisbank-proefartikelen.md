@@ -1,6 +1,8 @@
-# Kennisbank: de tien proefartikelen
+# Kennisbank: proefartikelen
 
-10 van 174 kennisblokken hebben nu de klantvriendelijke laag. De overige 164 blijven ongewijzigd tot jij de proefartikelen hebt goedgekeurd. Per onderwerp staat links wat er was (alleen een brontekst met zoekwoorden en bron) en daaronder wat erbij is gekomen.
+10 kennisblokken in deze groep (van in totaal 174; 35 hebben nu de klantvriendelijke laag). Per blok staat eerst wat er was (brontekst met zoekwoorden en bron) en daaronder wat erbij is gekomen. Blokken met controlestatus "handmatig controleren" zijn hieronder bovenaan gemeld.
+
+**Handmatig controleren (3):** wa-dekking, cb-dekking-overzicht, cb-eigen-risico
 
 ## 1. wa-dekking
 

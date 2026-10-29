@@ -15,7 +15,7 @@ export const KENNISBANK_ALGEMEEN: KennisItem[] = [
   {
     id: "al-begin",
     artikelen: { algemeen: "1 Wanneer begint je verzekering?" },
-    trefwoorden: ["wanneer begint", "ingangsdatum", "wanneer gaat mijn verzekering in", "dezelfde dag", "begin verzekering", "start verzekering", "vandaag verzekerd", "direct verzekerd", "wanneer ben ik verzekerd"],
+    trefwoorden: ["al ingegaan", "ingegaan", "vanaf wanneer ben ik verzekerd", "vanaf wanneer verzekerd", "wanneer begint", "ingangsdatum", "wanneer gaat mijn verzekering in", "dezelfde dag", "begin verzekering", "start verzekering", "vandaag verzekerd", "direct verzekerd", "wanneer ben ik verzekerd"],
     tekst:
       "De verzekering begint op de ingangsdatum die op je polisblad staat. Moet de verzekering ingaan op dezelfde dag dat deze bij ons wordt aangevraagd, dan begint de verzekering op het tijdstip waarop jouw aanvraag door ons wordt geaccepteerd. Let op: zolang je je eerste premie niet betaalt, ben je niet verzekerd.",
   },
@@ -35,14 +35,14 @@ export const KENNISBANK_ALGEMEEN: KennisItem[] = [
   {
     id: "al-opzeggen-wij",
     artikelen: { algemeen: "3 Opzegging door ons (3.2 t/m 3.4)" },
-    trefwoorden: ["opzegging door a.s.r.", "opzeggen door a.s.r.", "kan a.s.r. mijn verzekering opzeggen", "verzekering geweigerd", "polis beëindigd door", "polis beeindigd door", "60 dagen", "jaarlijkse verlengingsdatum", "veel schades", "veel schade claimen", "premie niet betaald", "aanmaning", "misleiden", "niet alle informatie", "ontdekt", "beëindigen door a.s.r.", "mag a.s.r. opzeggen", "opzegging door ons"],
+    trefwoorden: ["mag a.s.r. mijn verzekering opzeggen", "opzegging door a.s.r.", "opzeggen door a.s.r.", "kan a.s.r. mijn verzekering opzeggen", "verzekering geweigerd", "polis beëindigd door", "polis beeindigd door", "60 dagen", "jaarlijkse verlengingsdatum", "veel schades", "veel schade claimen", "premie niet betaald", "aanmaning", "misleiden", "niet alle informatie", "ontdekt", "beëindigen door a.s.r.", "mag a.s.r. opzeggen", "opzegging door ons"],
     tekst:
       "Wij kunnen de verzekering beëindigen als je ons bij de aanvraag niet alle of niet de juiste informatie hebt gegeven met de bedoeling ons te misleiden, of als wij de verzekering niet zouden hebben gesloten als wij de juiste informatie meteen hadden gehad (beide binnen 60 dagen nadat wij dit hebben ontdekt), als je over een gebeurtenis of schade fraude hebt gepleegd of ons opzettelijk hebt misleid, of als je de premie niet volledig betaalt, niet op tijd betaalt of weigert te betalen nadat wij je hebben aangemaand. De verzekering eindigt dan om 24.00 uur op de datum die wij je in ons bericht van opzegging noemen. Wij kunnen de verzekering ook beëindigen met ingang van de jaarlijkse verlengingsdatum (steeds een jaar na de ingangsdatum op je polisblad), met een opzegtermijn van 60 dagen. Meld je een schade, dan beoordelen wij de omstandigheden; zien wij daarvoor aanleiding, bijvoorbeeld als je veel schades claimt in een korte tijd, dan kunnen wij besluiten de verzekering te beëindigen. Dat besluiten we binnen 30 dagen na je schademelding, nadat wij je schade vergoed hebben of nadat wij je verzoek om schadevergoeding hebben afgewezen, en wij laten je weten wanneer de verzekering eindigt.",
   },
   {
     id: "al-geen-belang",
     artikelen: { algemeen: "3.5 Geen belang meer" },
-    trefwoorden: ["geen belang meer", "total loss verzekering eindigt", "overlijden", "overleden", "erfgenamen", "verkoop auto verzekering eindigt", "overdracht eigendom", "wanneer eindigt mijn verzekering", "verzekering eindigt", "onder curatele", "nalatenschap"],
+    trefwoorden: ["wat gebeurt er met mijn verzekering", "verzekering total loss", "geen belang meer", "total loss verzekering eindigt", "overlijden", "overleden", "erfgenamen", "verkoop auto verzekering eindigt", "overdracht eigendom", "wanneer eindigt mijn verzekering", "verzekering eindigt", "onder curatele", "nalatenschap"],
     tekst:
       "De verzekering eindigt direct wanneer je geen belang meer hebt bij de verzekering, bijvoorbeeld bij verkoop, diefstal of total loss van de verzekerde bezittingen (total loss is beschadiging waarbij zowel gebruik als reparatie niet meer mogelijk is); bij verkoop eindigt de verzekering direct bij de overdracht van de eigendom. Ook als een officiële instantie bepaalt dat je niet meer zelfstandig over je bezittingen kunt beschikken, en bij je overlijden. Bij overlijden blijft de verzekering van je inboedel of woonhuis nog een jaar geldig voor de erfgenamen, totdat de nalatenschap is geregeld; wij kunnen de verzekering binnen dat jaar beëindigen met een opzegtermijn van 30 dagen. De verzekering van je motorrijtuig eindigt niet; je erfgenamen moeten je overlijden zo snel mogelijk aan ons doorgeven.",
   },
@@ -56,7 +56,7 @@ export const KENNISBANK_ALGEMEEN: KennisItem[] = [
   {
     id: "al-premie-betalen",
     artikelen: { algemeen: "4 Wanneer moet je de premie betalen? (4.1 en 4.2)" },
-    trefwoorden: ["premie betalen", "wanneer betalen", "wanneer moet ik betalen", "wanneer moet ik de premie betalen", "moet ik betalen", "premie per maand", "maandelijks betalen", "vooruit betalen", "premie niet betaald", "betaling vergeten", "niet meer verzekerd", "eerste premie", "aanmaning", "14 dagen betalen", "cis", "stichting cis", "dekking weer ingaan", "premie te laat", "niet op tijd betaald", "achterstand"],
+    trefwoorden: ["niet betaal", "niet betalen", "betaling vergeten", "betaling mislukt", "premie betalen", "wanneer betalen", "wanneer moet ik betalen", "wanneer moet ik de premie betalen", "moet ik betalen", "premie per maand", "maandelijks betalen", "vooruit betalen", "premie niet betaald", "betaling vergeten", "niet meer verzekerd", "eerste premie", "aanmaning", "14 dagen betalen", "cis", "stichting cis", "dekking weer ingaan", "premie te laat", "niet op tijd betaald", "achterstand"],
     tekst:
       "Je moet de premie per maand vooruit betalen. Hebben wij de verschuldigde premie niet tijdig of niet volledig ontvangen, dan manen wij je aan. Betaal je de premie niet binnen de termijn van 14 dagen die wij in de aanmaning noemen, dan ben je niet meer verzekerd vanaf de dag dat je de premie verschuldigd was; je blijft wel verplicht de premie alsnog te betalen. De dekking gaat weer in 1 dag nadat wij je betaling hebben ontvangen en geaccepteerd. Let op: zolang je je eerste premie niet betaalt, ben je niet verzekerd. Wij kunnen je gegevens vastleggen bij de Stichting Centraal Informatie Systeem van in Nederland werkzame verzekeringsmaatschappijen (CIS); meer informatie en het privacyreglement vind je op www.stichtingcis.nl.",
   },
@@ -161,7 +161,7 @@ export const KENNISBANK_ALGEMEEN: KennisItem[] = [
   {
     id: "al-telefoongesprekken",
     artikelen: { algemeen: "8.4 Opname van telefoongesprekken" },
-    trefwoorden: ["telefoongesprekken", "gesprek opnemen", "opgenomen", "opname gesprek", "gesprek beluisteren", "transcriptie", "wordt mijn gesprek opgenomen", "telefoon opnemen"],
+    trefwoorden: ["terugluisteren", "terug luisteren", "gesprek terugluisteren", "opname terugluisteren", "telefoongesprekken", "gesprek opnemen", "opgenomen", "opname gesprek", "gesprek beluisteren", "transcriptie", "wordt mijn gesprek opgenomen", "telefoon opnemen"],
     tekst:
       "Wij kunnen telefoongesprekken opnemen voor trainings- en coachingsdoeleinden, ter verificatie van en onderzoek naar opdrachten en transacties, voor fraudebestrijding en integriteitsbewaking binnen financiële instellingen en om te kunnen voldoen aan wettelijke verplichtingen. De opgenomen gesprekken worden niet langer bewaard dan noodzakelijk is voor deze doeleinden. Bij een geschil over de inhoud van opgenomen telefoongesprekken heb jij het recht het gesprek te beluisteren of er een transcriptie van te ontvangen.",
   },
