@@ -343,14 +343,14 @@ export const KENNISBANK_WA: KennisItem[] = [
   {
     id: "aangifte",
     artikelen: { wa: "7.2 Aangifte doen" },
-    trefwoorden: ["aangifte", "diefstal", "politie", "inbraak", "vandalisme", "diefstal melden", "aangifte doen", "binnen 24 uur", "vbv", "waarborgfonds motorverkeer"],
+    trefwoorden: ["aangifte", "diefstal", "auto gestolen", "wat moet ik doen bij diefstal", "politie", "inbraak", "vandalisme", "diefstal melden", "aangifte doen", "binnen 24 uur", "vbv", "waarborgfonds motorverkeer"],
     tekst:
       "Doe direct aangifte bij de politie bij diefstal of inbraak, beschadiging door onbekenden, vandalisme, joyrijden, doorrijden na een ongeval door een tegenpartij, en bij een aanrijding door onbekenden waardoor je vervolgens schade veroorzaakt aan een ander. De termijn van 14 dagen is belangrijk voor het verhalen van de schade bij het Waarborgfonds Motorverkeer. Bij diefstal of joyrijden doe je nog dezelfde dag aangifte, of de volgende ochtend als het 's avonds of 's nachts gebeurde. Gebeurt het in het buitenland, doe dan aangifte in dat land; bij diefstal van de auto doe je ook aangifte in Nederland binnen 24 uur na thuiskomst. Stuur het bewijs van de aangifte zo snel mogelijk naar ons. Met vandalisme bedoelen we opzettelijke beschadiging door een derde.",
   },
   {
     id: "schade-melden",
     artikelen: { wa: "7.3 Schade melden" },
-    trefwoorden: ["schade melden", "melden", "schademelding", "hoe meld ik", "wanneer melden", "bewijsstukken", "36 maanden melden", "verjaringstermijn", "verzekeringsbureau voertuigcriminaliteit", "071"],
+    trefwoorden: ["schade melden", "ik heb schade", "schade gehad", "schade gemaakt", "melden", "schademelding", "hoe meld ik", "wanneer melden", "bewijsstukken", "36 maanden melden", "verjaringstermijn", "verzekeringsbureau voertuigcriminaliteit", "071"],
     tekst:
       "Meld de schade zodra je ervan op de hoogte bent. Stelt iemand jou aansprakelijk voor schade met of door je auto binnen de wettelijke verjaringstermijn, dan heb je nog 36 maanden de tijd om bij ons een schadevergoeding te vragen. Doe je dit niet op tijd, dan kan dat gevolgen hebben voor de vergoeding; bij een melding na 36 maanden krijg je geen schadevergoeding meer. Meld bij diefstal de gegevens van de auto zo snel mogelijk bij de helpdesk van het Verzekeringsbureau Voertuigcriminaliteit (VbV), telefoon 071 - 3641777 (dag en nacht bereikbaar). Geef ons alle informatie die we nodig hebben en stuur originele bewijsstukken zo snel mogelijk naar ons of de deskundige(n) die we hebben ingeschakeld; op verzoek ook naar de Alarmcentrale. Je bent verplicht om bij het melden de juiste gegevens te verstrekken.",
   },

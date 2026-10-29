@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 import { zoekContext, type KennisContext } from "@/lib/kennisbank/zoek";
 import type { Product } from "@/lib/kennisbank";
-import { GEEN_BRON, systeemInstructie } from "@/lib/chat/systeem-instructie";
+import { GEEN_BRON, STIJLHERINNERING, systeemInstructie } from "@/lib/chat/systeem-instructie";
 
 /**
  * Taalmodel achter de chat op /workshop. De klant stelt een vraag, de kennisbank (lib/kennisbank) levert de
@@ -21,7 +21,10 @@ const MAX_TOKENS = 4000;
 
 const MAX_BERICHTEN = 20;
 const MAX_TEKENS = 1000;
-const AANTAL_ONDERDELEN = 5;
+/** Hoeveel kennisbankonderdelen maximaal meegaan; minder tekst geeft kortere, gerichtere antwoorden. */
+const AANTAL_ONDERDELEN = 3;
+/** Een vervolgvraag korter dan dit aantal woorden ("en bij allrisk?") zoekt ook op de vraag ervoor. */
+const KORTE_VRAAG_WOORDEN = 5;
 
 /** Welke voorwaarden en pagina's bij welke basisdekking horen; hetzelfde als op /workshop. */
 const PRODUCTEN_PER_DEKKING: Record<string, Product[]> = {
@@ -61,9 +64,33 @@ function leesBerichten(body: unknown): Bericht[] | null {
   return resultaat.length > 0 && resultaat[resultaat.length - 1].role === "user" ? resultaat : null;
 }
 
+const lijst = (regels: string[]) => regels.map((regel) => `- ${regel}`).join("\n");
+
+/**
+ * Eén onderdeel voor het model. Heeft het een klantvriendelijke laag, dan krijgt het model die als bouwsteen voor het
+ * antwoord en de brontekst alleen ter controle; zonder die laag is de brontekst de enige bron.
+ */
+function onderdeelTekst({ verrijking, tekst }: KennisContext): string {
+  if (!verrijking) return tekst;
+  const soort = verrijking.brontekstSoort === "samenvatting" ? "een samenvatting, geen letterlijke voorwaardentekst" : "volgt de voorwaarden";
+  return [
+    `Uitleg: ${verrijking.uitleg}`,
+    verrijking.direct.length > 0 ? `Noem direct (deadlines en veiligheidsstappen):\n${lijst(verrijking.direct)}` : "",
+    verrijking.aandachtspunten.length > 0 ? `Let ook op (noem alleen wat voor deze klant telt):\n${lijst(verrijking.aandachtspunten)}` : "",
+    verrijking.klantinfo.length > 0 ? `Dit moet je van de klant weten voor een juist antwoord:\n${lijst(verrijking.klantinfo)}` : "",
+    verrijking.vervolgvragen.length > 0 ? `Logische vervolgvraag (hooguit één, alleen als die informatie nog ontbreekt):\n${lijst(verrijking.vervolgvragen.map(({ als, vraag }) => `Als ${als.charAt(0).toLowerCase()}${als.slice(1)}: "${vraag}"`))}` : "",
+    `Brontekst, alleen om je antwoord te controleren (${soort}); neem er niets letterlijk uit over:\n${tekst}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
 function kennisbankBlok(context: KennisContext[]): string {
   if (context.length === 0) return "<kennisbank>\nEr is geen passend onderdeel gevonden.\n</kennisbank>";
-  const onderdelen = context.map((onderdeel, index) => `<onderdeel nummer="${index + 1}" bij-gekozen-dekking="${onderdeel.bijGekozenDekking ? "ja" : "nee"}" herkomst="${onderdeel.herkomst.replace(/"/g, "'")}">\n${onderdeel.tekst}\n</onderdeel>`);
+  const onderdelen = context.map(
+    (onderdeel, index) =>
+      `<onderdeel nummer="${index + 1}" bij-gekozen-dekking="${onderdeel.bijGekozenDekking ? "ja" : "nee"}"${onderdeel.aanvullend ? ' aanvullend="ja"' : ""} herkomst="${onderdeel.herkomst.replace(/"/g, "'")}">\n${onderdeelTekst(onderdeel)}\n</onderdeel>`,
+  );
   return `<kennisbank>\n${onderdelen.join("\n")}\n</kennisbank>`;
 }
 
@@ -83,14 +110,16 @@ export async function POST(request: NextRequest) {
   if (!berichten) return NextResponse.json({ fout: "ongeldig-verzoek" }, { status: 400 });
   const dekking = typeof (body as { dekking?: unknown }).dekking === "string" ? (body as { dekking: string }).dekking : undefined;
 
-  // Zoek op de laatste vraag en de vraag daarvoor, zodat een korte vervolgvraag ("en bij allrisk?") toch iets vindt.
-  const vragen = berichten.filter((bericht) => bericht.role === "user").slice(-2);
-  const context = zoekContext(vragen.map((vraag) => vraag.text).join(" "), { producten: dekking ? PRODUCTEN_PER_DEKKING[dekking] : undefined }, AANTAL_ONDERDELEN);
+  // Zoek op de laatste vraag. Is die heel kort ("en bij allrisk?"), zoek dan ook op de vraag ervoor.
+  const vragen = berichten.filter((bericht) => bericht.role === "user");
+  const laatsteVraag = vragen[vragen.length - 1].text;
+  const zoekvraag = laatsteVraag.split(/\s+/).length < KORTE_VRAAG_WOORDEN && vragen.length > 1 ? `${vragen[vragen.length - 2].text} ${laatsteVraag}` : laatsteVraag;
+  const context = zoekContext(zoekvraag, { producten: dekking ? PRODUCTEN_PER_DEKKING[dekking] : undefined }, AANTAL_ONDERDELEN);
 
   const laatste = berichten[berichten.length - 1];
   const messages: Anthropic.MessageParam[] = [
     ...berichten.slice(0, -1).map((bericht): Anthropic.MessageParam => ({ role: bericht.role, content: bericht.text })),
-    { role: "user", content: `${kennisbankBlok(context)}\n\nVraag van de klant:\n<klantbericht>\n${laatste.text}\n</klantbericht>` },
+    { role: "user", content: `${kennisbankBlok(context)}\n\nVraag van de klant:\n<klantbericht>\n${laatste.text}\n</klantbericht>\n\n${STIJLHERINNERING}` },
   ];
 
   try {
@@ -107,11 +136,11 @@ export async function POST(request: NextRequest) {
 
     const ruw = response.content.flatMap((blok) => (blok.type === "text" ? [blok.text] : [])).join("\n").trim();
     const zonderBron = ruw.includes(GEEN_BRON);
-    const tekst = ruw.replace(GEEN_BRON, "").trim();
+    const tekst = ruw.replaceAll(GEEN_BRON, "").trim();
     if (!tekst) return NextResponse.json({ fout: "leeg-antwoord" }, { status: 502 });
 
     // De bron is die van het best passende onderdeel; bij een antwoord zonder kennisbank (begroeting, vervolgvraag) geen bron.
-    const bronnen = zonderBron || context.length === 0 ? [] : context[0].bronnen;
+    const bronnen = zonderBron || context.length === 0 ? [] : context.find((onderdeel) => !onderdeel.aanvullend)?.bronnen ?? [];
     return NextResponse.json({ tekst, bronnen });
   } catch (error) {
     if (error instanceof Anthropic.RateLimitError) return NextResponse.json({ fout: "te-druk" }, { status: 429 });

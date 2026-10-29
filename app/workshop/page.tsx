@@ -15,7 +15,7 @@ import { Tag } from "@/components/Tag";
 import { formatDatum } from "@/lib/datum";
 import type { ChatSource } from "@/lib/chatPdf";
 import type { Product } from "@/lib/kennisbank";
-import { zoekInKennisbank } from "@/lib/kennisbank/zoek";
+import { zoekKortAntwoord } from "@/lib/kennisbank/zoek";
 import { ChatWidget, type ChatMessageData } from "../aichat/ChatWidget";
 import { MinimizedChatButton } from "../aichat/MinimizedChatButton";
 
@@ -122,18 +122,21 @@ const VOORWAARDEN_PER_DEKKING: Record<DekkingKeuze, Product[]> = {
   "wa-casco-allrisk": ["site-wa", "wa", "site-casco-allrisk", "casco-allrisk"],
 };
 
-/** Eerst de kaartkenmerken, dan de kennisbank met de voorwaarden van de gekozen dekking (lib/kennisbank), anders de eerlijke terugval. */
+/**
+ * Het antwoord zonder taalmodel: eerst de kaartkenmerken, dan een kort, gecontroleerd antwoord uit de kennisbank
+ * (alleen bij een duidelijke match; nooit een lange voorwaardentekst), anders de eerlijke terugval.
+ */
 function hulpAntwoord(tekst: string, dekking: DekkingKeuze | ""): Pick<ChatMessageData, "text" | "sources"> {
   const uitKaart = kaartAntwoord(tekst);
   if (uitKaart) return { text: uitKaart };
-  const uitKennisbank = zoekInKennisbank(tekst, { producten: dekking ? VOORWAARDEN_PER_DEKKING[dekking] : undefined });
+  const uitKennisbank = zoekKortAntwoord(tekst, { producten: dekking ? VOORWAARDEN_PER_DEKKING[dekking] : undefined });
   if (uitKennisbank) return { text: uitKennisbank.tekst, sources: uitKennisbank.bronnen };
   return { text: HULP_FALLBACK };
 }
 
 /**
  * Vraagt het taalmodel (app/api/chat) om een antwoord op het gesprek. `null` als dat niet lukt (er staat geen sleutel
- * ingesteld, het duurt te lang, een fout of een weigering): dan gebruikt de chat het trefwoordenantwoord.
+ * ingesteld, het duurt te lang, een fout of een weigering): dan gebruikt de chat `hulpAntwoord`.
  */
 async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: string }[], dekking: DekkingKeuze | ""): Promise<Pick<ChatMessageData, "text" | "sources"> | null> {
   try {
@@ -151,8 +154,8 @@ async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: str
   }
 }
 
-/** Zelfde eerlijke terugval als de /aichat-demo, voor als het taalmodel er niet is. */
-const HULP_FALLBACK = "Daar heb ik nu helaas geen pasklaar antwoord op. Neem voor de zekerheid contact op met onze klantenservice via (0800) 00 00 000.";
+/** Eerlijke terugval voor als het taalmodel er niet is en er geen betrouwbaar kort antwoord is. */
+const HULP_FALLBACK = "Ik kan je vraag op dit moment niet goed beantwoorden. Probeer het straks nog een keer, of neem contact op met de klantenservice van a.s.r.";
 
 let nextMessageId = 1;
 

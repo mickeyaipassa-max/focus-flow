@@ -1,4 +1,5 @@
 import { KENNISBANK_ALGEMEEN } from "./algemene-voorwaarden";
+import { PROEFARTIKELEN } from "./proefartikelen";
 import { KENNISBANK_WEBSITE } from "./website-asr";
 import { KENNISBANK_CASCO_ALLRISK } from "./autoverzekering-casco-allrisk";
 import { KENNISBANK_CASCO_BEPERKT } from "./autoverzekering-casco-beperkt";
@@ -7,7 +8,7 @@ import type { KennisItem } from "./types";
 
 export { NIEUWWAARDE_STANDAARD } from "./autoverzekering-casco-beperkt";
 export { NO_CLAIM_LADDER, SCHADEVRIJE_JAREN } from "./autoverzekering-wa";
-export { PRODUCT_BRON, PRODUCT_NAAM, PRODUCT_URL, type KennisItem, type Product } from "./types";
+export { PRODUCT_BRON, PRODUCT_NAAM, PRODUCT_URL, type KennisItem, type Product, type Verrijking } from "./types";
 
 /**
  * Onderdelen die in de WA-voorwaarden en in de Casco Beperkt-voorwaarden met dezelfde tekst staan: id van het
@@ -108,4 +109,6 @@ const CASCO_BEPERKT_MET_ALLRISK: KennisItem[] = KENNISBANK_CASCO_BEPERKT.map((it
  * Alle onderdelen: de vier voorwaardendocumenten (WA, Casco Beperkt, Casco Allrisk met de gedeelde teksten, Algemene
  * voorwaarden) en de productpagina's op asr.nl. De website staat als laatste: bij gelijke score wint de voorwaardentekst.
  */
-export const KENNISBANK: KennisItem[] = [...WA_MET_CASCO, ...CASCO_BEPERKT_MET_ALLRISK, ...KENNISBANK_CASCO_ALLRISK, ...KENNISBANK_ALGEMEEN, ...KENNISBANK_WEBSITE];
+export const KENNISBANK: KennisItem[] = [...WA_MET_CASCO, ...CASCO_BEPERKT_MET_ALLRISK, ...KENNISBANK_CASCO_ALLRISK, ...KENNISBANK_ALGEMEEN, ...KENNISBANK_WEBSITE].map((item) =>
+  PROEFARTIKELEN[item.id] ? { ...item, verrijking: PROEFARTIKELEN[item.id] } : item,
+);

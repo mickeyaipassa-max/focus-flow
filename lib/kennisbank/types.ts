@@ -51,7 +51,40 @@ export type KennisItem = {
   id: string;
   artikelen: Partial<Record<Product, string>>;
   trefwoorden: string[];
+  /**
+   * De brontekst van dit onderdeel: de tekst waarop het antwoord gebaseerd is. Hij volgt de voorwaarden of de pagina,
+   * maar is niet altijd een letterlijke kopie; zie `verrijking.brontekstSoort`.
+   */
   tekst: string;
   /** Links naar documenten die bij dit onderdeel horen (bv. de PDF's van de voorwaarden); ze komen bij de bronnen. */
   links?: ChatSource[];
+  /** Klantvriendelijke laag bovenop de brontekst (fase 1 van het kennisbankplan); nog niet voor elk onderdeel gevuld. */
+  verrijking?: Verrijking;
+};
+
+/**
+ * De klantvriendelijke laag bij een onderdeel. De chat gebruikt deze velden om kort en menselijk te antwoorden en
+ * gebruikt de brontekst (`KennisItem.tekst`) om te controleren dat de inhoud klopt. Alles hier is geschreven op
+ * B1-niveau, maar mag de betekenis van een voorwaarde nooit veranderen.
+ */
+export type Verrijking = {
+  /**
+   * Wat de brontekst is. "bijna-letterlijk": volgt de woorden van het document. "samenvatting": een samenvatting of
+   * samenvoeging door de kennisbankmaker van meerdere passages en/of de website; geen letterlijke voorwaardentekst.
+   */
+  brontekstSoort: "bijna-letterlijk" | "samenvatting";
+  /** 1 tot 3 korte zinnen op B1-niveau: de kern van het onderdeel. */
+  uitleg: string;
+  /** Deadlines en veiligheidsstappen die de chat meteen noemt, in het eerste antwoord. */
+  direct: string[];
+  /** Overige bedragen, voorwaarden, beperkingen en uitzonderingen; de chat noemt wat voor de klant telt. */
+  aandachtspunten: string[];
+  /** Welke gegevens van de klant nodig zijn om een juist antwoord te geven. */
+  klantinfo: string[];
+  /** Per ontbrekend gegeven de logische vervolgvraag (één per bericht, alleen als het echt nodig is). */
+  vervolgvragen: { als: string; vraag: string }[];
+  /** Ids van onderdelen die bij een vraag over dit onderwerp mee moeten (bv. aangifte bij diefstal). */
+  gerelateerd?: string[];
+  /** Controlestatus. "gecontroleerd": uitleg en punten zijn naast de bron gelegd. "handmatig-controleren": een mens moet het nakijken. */
+  controle: { status: "gecontroleerd" | "handmatig-controleren"; opmerking?: string };
 };
