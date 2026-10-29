@@ -121,6 +121,19 @@ const gevallen: { vraag: string; verwacht: string[]; producten?: readonly string
   { vraag: "Welke schade telt niet mee voor mijn schadevrije jaren?", verwacht: ["ca-noclaim-geen-gevolg"], producten: ALLRISK },
   { vraag: "Heeft schade aan een ander gevolgen voor mijn no-claim?", verwacht: ["ca-noclaim-wa-schade", "schade-zonder-schuld", "noclaim-geen-gevolg", "noclaim-uitleg"], producten: ALLRISK },
   { vraag: "Wat betekent eigen gebrek?", verwacht: ["ca-begrippen", "ca-materiaalfouten"], producten: ALLRISK },
+  // asr.nl-pagina's
+  { vraag: "Wat kost een autoverzekering ongeveer?", verwacht: ["sw-premie"] },
+  { vraag: "Wat kost mijn autoverzekering per maand?", verwacht: ["sw-premie"] },
+  { vraag: "Kan ik later mijn dekking nog veranderen?", verwacht: ["sw-dekking-aanpassen"], producten: WA },
+  { vraag: "Waar hangt mijn premie van af?", verwacht: ["sw-premie"] },
+  { vraag: "Welke dekking moet ik kiezen voor mijn auto van 8 jaar?", verwacht: ["sw-adviseur", "sw-cb-verzekerd", "sw-vergelijken"] },
+  { vraag: "Kan ik van WA naar allrisk overstappen?", verwacht: ["sw-dekking-aanpassen"] },
+  { vraag: "Mag mijn vriendin mijn auto lenen?", verwacht: ["sw-iemand-anders-rijdt", "uitsluiting-toestemming"] },
+  { vraag: "Welke extra dekkingen kan ik erbij nemen?", verwacht: ["sw-aanvullende-dekkingen"] },
+  { vraag: "Waar vind ik de polisvoorwaarden?", verwacht: ["sw-documenten"] },
+  { vraag: "Wat is het verschil tussen WA plus en allrisk?", verwacht: ["sw-vergelijken"] },
+  { vraag: "Hoeveel vergoedt WA als ik iemand verwond heb?", verwacht: ["sw-wa-bedragen"] },
+  { vraag: "Kan ik de nieuwwaarde langer dan een jaar meeverzekeren?", verwacht: ["sw-nieuwwaarde-aankoopwaarde"] },
 ];
 
 let mislukt = 0;
