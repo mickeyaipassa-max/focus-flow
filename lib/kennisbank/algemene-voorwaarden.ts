@@ -181,7 +181,7 @@ export const KENNISBANK_ALGEMEEN: KennisItem[] = [
   {
     id: "al-klacht",
     artikelen: { algemeen: "11 Wat kun je doen als je een klacht hebt?" },
-    trefwoorden: ["klacht", "klachten", "klacht indienen", "ik wil klagen", "klachtenformulier", "kifid", "klachteninstituut", "ontevreden", "niet tevreden", "klacht niet goed afgehandeld", "3 maanden", "rechter", "geschil"],
+    trefwoorden: ["klacht", "klachten", "klacht indienen", "ik wil klagen", "klachtenformulier", "kifid", "klachteninstituut", "ontevreden", "niet tevreden", "klacht niet goed afgehandeld", "binnen 3 maanden klacht", "rechter", "geschil"],
     tekst:
       "Heb je klachten over dit product of deze verzekering, of over onze dienstverlening, neem dan contact met ons op; dan zoeken wij naar een passende oplossing. Biedt het overleg geen oplossing, dan kun je online een klacht indienen via het klachtenformulier op www.asr.nl. Vind je dat je klacht niet goed is afgehandeld, dan kun je die voorleggen aan de Stichting Klachteninstituut Financiële Dienstverlening (KiFiD, www.kifid.nl), binnen 3 maanden nadat je een definitieve reactie van ons op je klacht hebt gekregen. Wil je van deze mogelijkheden geen gebruik maken, dan kun je het geschil voorleggen aan de bevoegde rechter.",
   },

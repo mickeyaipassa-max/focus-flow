@@ -179,11 +179,12 @@ export const PROEFARTIKELEN: Record<string, Verrijking> = {
     brontekstSoort: "samenvatting",
     uitleg: "Heb je een nieuwe auto rechtstreeks bij een Nederlandse dealer gekocht en ben je de eerste eigenaar? Dan wordt je auto bij schade of diefstal de eerste tijd vergoed op basis van de nieuwwaarde. Na het eerste jaar wordt dat bedrag elke maand een stukje lager.",
     direct: [
-      "Standaard krijg je 100% van de nieuwwaarde in maand 1 tot en met 12 na de afgiftedatum. Daarna daalt het, tot 64% (over de eerste € 12.500) en 52% (over het meerdere) in maand 36.",
-      "Met Nieuwwaarde 2 jaar blijft het 100% in maand 1 tot en met 24, met Nieuwwaarde 3 jaar in maand 1 tot en met 36. Dat moet op je polisblad staan.",
+      "Standaard krijg je 100% van de nieuwwaarde in maand 1 tot en met 12 na de afgiftedatum; daarna daalt het elke maand.",
       "Na de 36e maand, of bij een cataloguswaarde boven € 80.000 inclusief BTW, geldt de dagwaarde.",
     ],
     aandachtspunten: [
+      "In maand 36 is het nog 64% over de eerste € 12.500 van de nieuwwaarde en 52% over het meerdere.",
+      "Met Nieuwwaarde 2 jaar blijft het 100% in maand 1 tot en met 24, met Nieuwwaarde 3 jaar in maand 1 tot en met 36. Dat moet op je polisblad staan.",
       "De nieuwwaarde is het maximum van 110% van de cataloguswaarde op je polisblad.",
       "Het geldt alleen voor een auto die je nieuw rechtstreeks bij een Nederlandse dealer kocht en waarvan je de eerste eigenaar bent. Anders gelden de aankoopwaarde (als die op je polisblad staat) of de dagwaarde.",
       "Het is total loss op basis van nieuwwaarde als de reparatiekosten hoger zijn dan 2/3 van de vastgestelde waarde van de auto.",

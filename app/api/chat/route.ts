@@ -116,10 +116,15 @@ function bronVanAntwoord(tekst: string, context: KennisContext[]): ChatSource[] 
 }
 
 const aantalWoorden = (tekst: string) => tekst.split(/\s+/).filter(Boolean).length;
-const aantalZinnen = (tekst: string) => tekst.split(/(?<=[.!?])\s+/).filter((zin) => /\w/.test(zin)).length;
+/** Zinnen tellen zonder "a.s.r." als zinseinde. */
+const zinnenVan = (tekst: string) => tekst.replace(/a\.s\.r\./gi, "asr").split(/(?<=[.!?])\s+/).filter((zin) => /\w/.test(zin));
+const aantalZinnen = (tekst: string) => zinnenVan(tekst).length;
+const langsteZin = (tekst: string) => Math.max(0, ...zinnenVan(tekst).map(aantalWoorden));
 /** Een antwoord langer dan dit wordt één keer laten inkorten. */
 const MAX_WOORDEN = 70;
 const MAX_ZINNEN = 4;
+/** Ook een antwoord met één zin langer dan dit aantal woorden wordt laten inkorten. */
+const MAX_ZINLENGTE = 25;
 const INKORT_OPDRACHT = "Dat is te lang. Schrijf je antwoord opnieuw: maximaal 4 korte zinnen en ongeveer 50 woorden, elke zin maximaal 20 woorden. Laat elk bedrag, elke deadline en elke uitzondering staan die voor de klant telt, en voeg niets nieuws toe.";
 
 export async function POST(request: NextRequest) {
@@ -168,8 +173,8 @@ export async function POST(request: NextRequest) {
 
     const tekstVan = (antwoord: Anthropic.Message) => antwoord.content.flatMap((blok) => (blok.type === "text" ? [blok.text] : [])).join("\n").trim();
     let ruw = tekstVan(response);
-    // Te lang (veel meer dan 4 zinnen of 70 woorden)? Dan één keer laten inkorten, als er nog tijd is.
-    if ((aantalWoorden(ruw) > MAX_WOORDEN || aantalZinnen(ruw) > MAX_ZINNEN) && Date.now() - gestart < 12_000) {
+    // Te lang (meer dan 4 zinnen of 70 woorden, of een zin van meer dan 25 woorden)? Dan één keer laten inkorten, als er nog tijd is.
+    if ((aantalWoorden(ruw) > MAX_WOORDEN || aantalZinnen(ruw) > MAX_ZINNEN || langsteZin(ruw) > MAX_ZINLENGTE) && Date.now() - gestart < 15_000) {
       const korter = await client.messages.create({ model: MODEL, max_tokens: MAX_TOKENS, system: systeemInstructie(dekking), messages: [...messages, { role: "assistant", content: ruw }, { role: "user", content: INKORT_OPDRACHT }], output_config: { effort: "low" } });
       const kortAntwoord = tekstVan(korter);
       if (korter.stop_reason !== "refusal" && kortAntwoord && aantalWoorden(kortAntwoord) < aantalWoorden(ruw)) ruw = kortAntwoord;
