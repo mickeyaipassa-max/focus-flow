@@ -157,7 +157,7 @@ const SYNONIEMEN: [RegExp, string][] = [
   [/\b(schade|claim)\b.{0,15}\b(doorgeven|doorgeef|aanmelden|indienen|claimen|aangeven)\b|\bclaimen\b|\b(geef|geven|geeft|meld|melden)\b.{0,15}\bschade\b.{0,10}\bdoor\b/, "schade melden"],
   [/\b(niet|nooit|vergeten|te laat)\b.{0,15}\b(gemeld|melden|doorgegeven)\b|\bvorig jaar\b.{0,25}\bschade\b/, "schade melden 36 maanden"],
   [/\b(nieuwe auto|auto is nieuw|nieuw gekocht|nieuwprijs|net gekocht|pas gekocht|vers van de dealer)\b/, "nieuwwaarde nieuwwaarderegeling"],
-  [/\b(eigen bijdrage|zelf bijbetalen|zelf betalen|excess|franchise)\b/, "eigen risico"],
+  [/\b(eigen bijdrage|zelf bijbetalen|excess|franchise)\b/, "eigen risico"],
   [/\b(aangereden|bumper|parkeerschade|gebotst|geschampt|tegen .{0,15} (aan )?gereden)\b/, "aanrijding"],
   [/\b(voorruit|ruit|raam|zonnedak)\b.{0,20}\b(stuk|gebarsten|gescheurd|kapot|gebroken|barst|gesprongen)\b|\bsterretje\b|\bsteenslag\b/, "ruitschade"],
   [/\b(boom|tak|dakpan)\b.{0,15}\b(op|tegen)\b.{0,10}\b(auto|wagen)\b|\bwindvlaag\b|\borkaan\b|\bonweer\b/, "storm"],

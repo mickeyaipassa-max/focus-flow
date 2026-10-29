@@ -87,6 +87,7 @@ const gevallen: { vraag: string; verwacht: string[]; producten?: readonly string
   { vraag: "Mijn partner is gewond geraakt als bestuurder", verwacht: ["wa-bestuurder"] },
   { vraag: "Wat doet de alarmcentrale?", verwacht: ["alarmcentrale"] },
   { vraag: "Wat is een waarborgsom?", verwacht: ["waarborgsom"] },
+  { vraag: "Iemand heeft mij aansprakelijk gesteld, moet ik zelf betalen?", verwacht: ["schadevergoeding-benadeelde"] },
 ];
 
 let mislukt = 0;

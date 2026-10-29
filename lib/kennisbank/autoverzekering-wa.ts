@@ -266,7 +266,7 @@ export const KENNISBANK_WA: KennisItem[] = [
   {
     id: "schadevergoeding-benadeelde",
     artikelen: { wa: "4.1 Schadevergoeding aan de benadeelde" },
-    trefwoorden: ["benadeelde", "schade afhandelen", "wie betaalt", "schikking", "tegenpartij", "verhalen", "regres", "hoe wordt schade vergoed"],
+    trefwoorden: ["aansprakelijk gesteld", "aansprakelijkheidsstelling", "iemand stelt mij aansprakelijk", "aansprakelijk voor schade van een ander", "moet ik zelf betalen", "claim van een ander", "tegenpartij claimt", "benadeelde", "schade afhandelen", "wie betaalt", "schikking", "tegenpartij", "verhalen", "regres", "hoe wordt schade vergoed"],
     tekst:
       "Ben je aansprakelijk gesteld voor schade van een ander (de benadeelde), dan handelen we de schade rechtstreeks af met die benadeelde. We kunnen de schade rechtstreeks vergoeden of een schikking treffen en houden daarbij rekening met je belangen. Per gebeurtenis vergoeden wij maximaal de bedragen op je polisblad. Moeten wij volgens de W.A.M. of een soortgelijke buitenlandse wet een vergoeding betalen waar je op deze verzekering geen dekking voor hebt, dan hebben wij het recht dat bedrag op jou te verhalen.",
   },

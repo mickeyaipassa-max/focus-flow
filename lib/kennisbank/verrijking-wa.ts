@@ -181,7 +181,6 @@ export const VERRIJKING_WA: Record<string, Verrijking> = {
 
   "uitsluiting-zakelijk": b({
     uitleg: "Wordt de auto zakelijk gebruikt, dan krijg je geen vergoeding voor schade. Zakelijk betekent gebruik voor een bedrijf, zoals vervoer van personen of vracht tegen betaling of gebruik als lesauto.",
-    direct: ["Bij zakelijk gebruik staat in deze voorwaarden geen uitzondering."],
     aandachtspunten: ["Voorbeelden van zakelijk gebruik: beroepsmatig vervoer van personen of van vracht tegen betaling, en gebruik van de auto als lesauto."],
     klantinfo: ["Of de klant de auto voor een bedrijf of tegen betaling gebruikt."],
     vervolgvragen: [q("Het is niet duidelijk hoe de auto wordt gebruikt", "Gebruik je de auto ook voor werk, of om tegen betaling mensen of spullen te vervoeren?")],
