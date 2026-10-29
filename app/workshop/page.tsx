@@ -95,8 +95,22 @@ const AANVULLENDE_DEKKINGEN = [
   },
 ];
 
-/** Eerste bericht van de assistent als je op "Hulp nodig?" klikt. */
-const HULP_OPENINGSVRAAG = "Je hebt hulp nodig bij het kiezen van een dekking, wat is je vraag?";
+/** Openingstekst en onderwerpen van de chat, letterlijk uit Figma (Autoverzekering, node 9358:1686; "help nodig" staat daar zo). */
+const HULP_OPENINGSVRAAG = "Je hebt help nodig bij het kiezen van een juiste dekking, waar kan ik je mee helpen?";
+const HULP_ONDERWERPEN = ["Meer over WA", "Meer over WA+", "Meer over All-Risk", "Vervangend vervoer", "Garage keuze bij pech", "Stormschade"];
+
+/** Antwoord op de dekking-onderwerpen, uit de kenmerken van de kaarten op deze pagina; voor de rest de eerlijke terugval. */
+function hulpAntwoord(tekst: string): string {
+  const dekkingVoorOnderwerp: Record<string, string> = { "Meer over WA": "wa", "Meer over WA+": "wa-casco-beperkt", "Meer over All-Risk": "wa-casco-allrisk" };
+  const optie = DEKKING_OPTIONS.find((kaart) => kaart.value === dekkingVoorOnderwerp[tekst]);
+  if (!optie?.features) return HULP_FALLBACK;
+  const gedekt = optie.features.filter((kenmerk) => kenmerk.included).map((kenmerk) => kenmerk.text.toLowerCase());
+  const nietGedekt = optie.features.filter((kenmerk) => !kenmerk.included).map((kenmerk) => kenmerk.text.toLowerCase());
+  const lijst = (items: string[]) => items.join(", ").replace(/, ([^,]*)$/, " en $1");
+  return nietGedekt.length > 0
+    ? `${optie.title} dekt: ${lijst(gedekt)}. Niet gedekt: ${lijst(nietGedekt)}.`
+    : `${optie.title} dekt: ${lijst(gedekt)}.`;
+}
 
 /** Zelfde eerlijke terugval als de /aichat-demo: er hangt geen echt taalmodel achter deze chat. */
 const HULP_FALLBACK = "Daar heb ik nu helaas geen pasklaar antwoord op. Neem voor de zekerheid contact op met onze klantenservice via (0800) 00 00 000.";
@@ -158,7 +172,7 @@ export default function WorkshopPage() {
   const hulpTagRef = useRef<HTMLButtonElement | null>(null);
 
   function startChat() {
-    setChatMessages([{ id: nextMessageId++, role: "assistant", text: HULP_OPENINGSVRAAG }]);
+    setChatMessages([]);
     setChatTyping(false);
     setChatOpen(true);
   }
@@ -175,7 +189,7 @@ export default function WorkshopPage() {
     setChatTyping(true);
     setTimeout(() => {
       setChatTyping(false);
-      setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "assistant", text: HULP_FALLBACK }]);
+      setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "assistant", text: hulpAntwoord(text) }]);
     }, 800);
   }
 
@@ -264,9 +278,9 @@ export default function WorkshopPage() {
         title="Aankoopwaarderegeling"
         showDividerAbove
         description={
-          <p className="max-w-[640px]">
+          <span className="block max-w-[640px]">
             Als je auto gestolen wordt of total loss raakt, dan krijg je standaard de dagwaarde van je auto vergoed. Dat is het bedrag dat je auto op dat moment waard is. Wil je in plaats van de dagwaarde het aankoopbedrag vergoed krijgen? Kies dan voor de aankoopwaarderegeling.
-          </p>
+          </span>
         }
       >
         <RadioGroup
@@ -316,6 +330,10 @@ export default function WorkshopPage() {
         onSend={handleChatSend}
         returnFocusOnMinimize={minimizedButtonRef}
         returnFocusOnClose={hulpTagRef}
+        welcomeText={HULP_OPENINGSVRAAG}
+        topics={HULP_ONDERWERPEN}
+        topicStyle="bubble"
+        topicMessage={(label) => label}
       />
     </FunnelPageTemplate>
   );
