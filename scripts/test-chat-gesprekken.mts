@@ -90,6 +90,24 @@ const gesprekken: Gesprek[] = [
   { onderwerp: "Klacht", naam: "Klacht indienen", dekking: "wa-casco-beperkt", beurten: [{ klant: "Ik ben ontevreden over hoe mijn schade is afgehandeld en wil klagen", controles: [bevat("het klachtenformulier of KiFiD", /klachtenformulier|kifid/i)] }] },
   { onderwerp: "Fraude", naam: "Wat is fraude", dekking: "wa-casco-beperkt", beurten: [{ klant: "Wat is fraude eigenlijk?", controles: [bevat("wat fraude is", /oneerlijk|misbruik|niet eerlijk|meer claimen|nota|bewust/i), bevat("het gevolg", /geen vergoeding|niet vergoed|terug/i)] }] },
   { onderwerp: "Telefoongesprekken", naam: "Gesprek terugluisteren", dekking: "wa-casco-beperkt", beurten: [{ klant: "Kan ik een telefoongesprek met jullie terugluisteren?", controles: [bevat("dat het bij een geschil kan", /geschil|onenigheid|meningsverschil/i)] }] },
+  // WA-voorwaarden
+  { onderwerp: "WA Pech", naam: "Pech in Nederland met Pechhulp", dekking: "wa", beurten: [
+    { klant: "Mijn auto wil niet starten", controles: [stelt("Pechhulp op het polisblad")] },
+    { klant: "Ja, ik heb Pechhulp", bron: /WA|Casco/i, controles: [bevat("wat er vergoed wordt of de volgende stap", /noodreparatie|vervoer|berging|buitenland|nederland/i), bevatNiet("opnieuw het nummer van de Alarmcentrale geven (dat stond al in het vorige antwoord)", /030 - 6990708.*030 - 6990708/)] },
+  ] },
+  { onderwerp: "WA Buitenland", naam: "Auto gestolen op vakantie", dekking: "wa-casco-beperkt", beurten: [{ klant: "Mijn auto is gestolen in Spanje, wat nu?", controles: [bevat("aangifte", /aangifte/i), bevat("de Alarmcentrale", /alarmcentrale|030/i)] }] },
+  { onderwerp: "WA Dekking", naam: "Verzekerd in Spanje", dekking: "wa", beurten: [{ klant: "Ben ik verzekerd in Spanje?", controles: [bevat("de Groene Kaart", /groene kaart/i)] }] },
+  { onderwerp: "WA Dekking", naam: "Caravan", dekking: "wa", beurten: [{ klant: "Als mijn caravan loskomt en schade maakt, ben ik dan verzekerd?", controles: [bevat("dat het verzekerd is", /verzekerd|gedekt|ja/i)] }] },
+  { onderwerp: "WA Dekking", naam: "Eigen letsel", dekking: "wa", beurten: [{ klant: "Ik ben zelf gewond geraakt als bestuurder, vergoedt WA dat?", controles: [bevat("dat het niet onder WA valt", /niet|geen/i), bevat("Schade inzittenden", /inzittenden/i)] }] },
+  { onderwerp: "WA Uitsluiting", naam: "Rijbewijs verlopen", dekking: "wa-casco-beperkt", beurten: [
+    { klant: "Mijn rijbewijs was verlopen toen ik schade reed", controles: [bevat("1 jaar", /1 jaar|een jaar/i)] },
+    { klant: "Het was al twee jaar verlopen", controles: [bevat("dat het dan niet vergoed wordt", /geen|niet/i)] },
+  ] },
+  { onderwerp: "WA Uitsluiting", naam: "Taxi", dekking: "wa-casco-beperkt", beurten: [{ klant: "Ik rijd soms Uber met mijn auto, is dat gedekt?", controles: [bevat("dat zakelijk gebruik niet gedekt is", /niet|geen/i), bevatNiet("een eigen conclusie dat het ook niet geldt of wel geldt als je het maar soms doet", /ook niet als je het (maar )?(soms|af en toe)|ook als je het (maar )?(soms|af en toe)|maar een keer is (wel )?(niet )?(gedekt|ok)/i)] }] },
+  { onderwerp: "WA Uitsluiting", naam: "Gebruik zonder toestemming", dekking: "wa-casco-beperkt", beurten: [{ klant: "Mijn zoon reed in mijn auto zonder dat ik het wist", controles: [bevat("de uitzondering voor de verzekeringnemer", /niet wist|niets te verwijten|tegen je wil/i)] }] },
+  { onderwerp: "WA Procedure", naam: "Reageren op een besluit", dekking: "wa-casco-beperkt", beurten: [{ klant: "Ik ben het niet eens met jullie besluit over mijn schade", controles: [bevat("36 maanden", /36/)] }] },
+  { onderwerp: "WA Procedure", naam: "Aansprakelijk gesteld", dekking: "wa", beurten: [{ klant: "Iemand heeft mij aansprakelijk gesteld, moet ik zelf betalen?", controles: [bevat("dat a.s.r. dit afhandelt", /a\.s\.r\.|wij|afhandel/i), bevat("niets toezeggen", /geen toezegging|niets toezeggen|toezegging|beloof|niets (te )?(beloven|zeggen)/i)] }] },
+  { onderwerp: "WA No-claim", naam: "Schade zonder schuld", dekking: "wa", beurten: [{ klant: "Een onbekende heeft mijn auto aangereden en is doorgereden, telt dat mee voor mijn no-claim?", controles: [bevat("14 dagen", /14/), bevat("aangifte", /aangifte/i)] }] },
   // Randgevallen
   { onderwerp: "Randgeval", naam: "Onduidelijke vraag", dekking: "wa-casco-beperkt", beurten: [
     { klant: "Ik heb een vraag over mijn auto", controles: [stelt("onduidelijke vraag"), bevatNiet("feiten over dekking", /€|\d+ dagen|verzekerd voor/i)] },

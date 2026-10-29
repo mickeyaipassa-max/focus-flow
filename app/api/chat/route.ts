@@ -126,6 +126,8 @@ const MAX_WOORDEN = 70;
 const MAX_ZINNEN = 4;
 /** Ook een antwoord met meer dan één vraag, of met één zin langer dan dit aantal woorden, wordt laten inkorten. */
 const MAX_ZINLENGTE = 25;
+/** Hoeveel van de lengte- en vraagregels een antwoord overtreedt; een herschreven antwoord moet minder overtreden of korter zijn. */
+const overtredingen = (tekst: string) => Number(aantalWoorden(tekst) > MAX_WOORDEN) + Number(aantalZinnen(tekst) > MAX_ZINNEN) + Number(langsteZin(tekst) > MAX_ZINLENGTE) + Number(aantalVragen(tekst) > 1);
 const INKORT_OPDRACHT = "Dat is te lang of bevat te veel vragen. Schrijf je antwoord opnieuw: maximaal 4 korte zinnen en ongeveer 50 woorden, elke zin maximaal 20 woorden, en hooguit één vraag. Laat elk bedrag, elke deadline en elke uitzondering staan die voor de klant telt, en voeg niets nieuws toe.";
 
 export async function POST(request: NextRequest) {
@@ -178,7 +180,7 @@ export async function POST(request: NextRequest) {
     if ((aantalWoorden(ruw) > MAX_WOORDEN || aantalZinnen(ruw) > MAX_ZINNEN || langsteZin(ruw) > MAX_ZINLENGTE || aantalVragen(ruw) > 1) && Date.now() - gestart < 15_000) {
       const korter = await client.messages.create({ model: MODEL, max_tokens: MAX_TOKENS, system: systeemInstructie(dekking), messages: [...messages, { role: "assistant", content: ruw }, { role: "user", content: INKORT_OPDRACHT }], output_config: { effort: "low" } });
       const kortAntwoord = tekstVan(korter);
-      if (korter.stop_reason !== "refusal" && kortAntwoord && aantalWoorden(kortAntwoord) < aantalWoorden(ruw)) ruw = kortAntwoord;
+      if (korter.stop_reason !== "refusal" && kortAntwoord && (overtredingen(kortAntwoord) < overtredingen(ruw) || (overtredingen(kortAntwoord) === overtredingen(ruw) && aantalWoorden(kortAntwoord) < aantalWoorden(ruw)))) ruw = kortAntwoord;
     }
     const zonderBron = ruw.includes(GEEN_BRON);
     const tekst = ruw.replaceAll(GEEN_BRON, "").trim();
