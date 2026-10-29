@@ -72,9 +72,9 @@ export const PROEFARTIKELEN: Record<string, Verrijking> = {
     direct: [
       "Aangifte bij de politie: nog dezelfde dag, of de volgende ochtend als het 's avonds of 's nachts is gebeurd.",
       "Meld bij diefstal de gegevens van de auto zo snel mogelijk bij het Verzekeringsbureau Voertuigcriminaliteit (VbV): 071 - 3641777, dag en nacht bereikbaar.",
-      "Heb je hulp nodig, zoals vervoer of een huurauto? Vraag vooraf toestemming aan de Alarmcentrale: 030 - 6990708.",
     ],
     aandachtspunten: [
+      "Heb je hulp nodig, zoals vervoer of een huurauto? Vraag vooraf toestemming aan de Alarmcentrale: 030 - 6990708.",
       "Gebeurde het in het buitenland, doe dan aangifte in dat land en daarna binnen 24 uur na thuiskomst ook in Nederland.",
       "Je krijgt geen vergoeding als de auto niet was afgesloten, de sleutels erin of erop zaten, of de sleutels in de brievenbus van een garage lagen. Uitzondering: je kunt aantonen dat je het niet wist of dat het tegen je wil gebeurde.",
       "Moet je auto een beveiligingssysteem hebben (dat staat op je polisblad) en voldoe je daar niet aan, dan krijg je geen vergoeding voor diefstal.",

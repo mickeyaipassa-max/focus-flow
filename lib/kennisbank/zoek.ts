@@ -154,6 +154,7 @@ const SYNONIEMEN: [RegExp, string][] = [
   [/\b(ingebroken|inbreker|inbraak|opengebroken|geforceerd|ingeslagen|ingegooid|ingetrapt|braak\w*)\b/, "inbraak diefstal"],
   [/\b(stoppen|stopzetten|stop|beeindig\w*|annuleer\w*|opzeg\w*|opgezegd|kappen|afbreken|uitschrijven|overstappen)\b.{0,40}\b(verzekering|polis|autoverzekering|contract)\b|\b(verzekering|polis|autoverzekering|contract)\b.{0,40}\b(stoppen|stopzetten|stop|beeindig\w*|annuleer\w*|opzeg\w*|kappen|afbreken|uitschrijven|overstappen)\b/, "opzeggen opzegging beeindigen"],
   [/\b(schade|claim)\b.{0,15}\b(doorgeven|doorgeef|aanmelden|indienen|claimen|aangeven)\b|\bclaimen\b|\b(geef|geven|geeft|meld|melden)\b.{0,15}\bschade\b.{0,10}\bdoor\b/, "schade melden"],
+  [/\b(niet|nooit|vergeten|te laat)\b.{0,15}\b(gemeld|melden|doorgegeven)\b|\bvorig jaar\b.{0,25}\bschade\b/, "schade melden 36 maanden"],
   [/\b(nieuwe auto|auto is nieuw|nieuw gekocht|nieuwprijs|net gekocht|pas gekocht|vers van de dealer)\b/, "nieuwwaarde nieuwwaarderegeling"],
   [/\b(eigen bijdrage|zelf bijbetalen|zelf betalen|excess|franchise)\b/, "eigen risico"],
   [/\b(aangereden|bumper|parkeerschade|gebotst|geschampt|tegen .{0,15} (aan )?gereden)\b/, "aanrijding"],

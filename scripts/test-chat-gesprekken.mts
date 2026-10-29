@@ -35,14 +35,14 @@ const gesprekken: Gesprek[] = [
   // 3. Allrisk
   { onderwerp: "Allrisk", naam: "Allrisk: tegen een boom gereden", dekking: "wa-casco-allrisk", beurten: [{ klant: "Ik ben weggegleden en tegen een boom gereden, is dat gedekt?", bron: /Allrisk/i, controles: [bevat("ja", /\bja\b|gedekt|verzekerd/i)] }] },
   { onderwerp: "Allrisk", naam: "Allrisk: zoon van 19", dekking: "wa-casco-allrisk", beurten: [
-    { klant: "Mijn zoon van 19 rijdt soms mijn auto", controles: [] },
-    { klant: "En als hij een aanrijding krijgt?", controles: [bevat("250 euro extra eigen risico", /250/), bevatNiet("opnieuw vragen naar zijn leeftijd", /hoe oud/i)] },
+    { klant: "Mijn zoon van 19 rijdt soms mijn auto", bron: /Allrisk|Jeugd/i, controles: [bevat("de voorwaarde dat het gaat om de leeftijd van de vaste bestuurder op de polis", /polis|vaste bestuurder|regelmatige|24 of ouder/i)] },
+    { klant: "En als hij een aanrijding krijgt?", controles: [bevat("het extra eigen risico", /250|extra eigen risico/i), bevatNiet("opnieuw vragen naar zijn leeftijd", /hoe oud/i)] },
   ] },
   // 4. Diefstal
   { onderwerp: "Diefstal", naam: "Diefstal: auto is weg", dekking: "wa-casco-beperkt", beurten: [{ klant: "Mijn auto is weg.", bron: /Casco|Voorwaarden/i, controles: [bevat("aangifte", /aangifte/i), bevat("de deadline", /dezelfde dag|vandaag|volgende ochtend/i)] }] },
   { onderwerp: "Diefstal", naam: "Diefstal: aangifte al gedaan", dekking: "wa-casco-beperkt", beurten: [
     { klant: "Mijn auto is gestolen", controles: [bevat("aangifte", /aangifte/i)] },
-    { klant: "Ik heb net aangifte gedaan", controles: [bevatNiet("opnieuw vragen naar aangifte", /(heb|had) je (al )?aangifte|aangifte gedaan\?/i), bevat("de volgende stap", /meld|VbV|Alarmcentrale|a\.s\.r/i)] },
+    { klant: "Ik heb net aangifte gedaan", controles: [bevatNiet("opnieuw vragen naar aangifte", /(heb|had) je (al )?aangifte|aangifte gedaan\?/i), bevat("de volgende stap", /meld|VbV|Alarmcentrale|a\.s\.r|bewijs|stuur|ons/i)] },
   ] },
   { onderwerp: "Diefstal", naam: "Diefstal: ingebroken", dekking: "wa-casco-beperkt", beurten: [{ klant: "Er is ingebroken in mijn auto.", controles: [bevat("aangifte", /aangifte/i)] }] },
   // 5. Schade melden
@@ -71,7 +71,7 @@ const gesprekken: Gesprek[] = [
     { klant: "Hoe lang geldt dat?", controles: [bevat("de termijn", /12|eerste jaar|36|24/)] },
   ] },
   // 10. Uitsluitingen
-  { onderwerp: "Uitsluitingen", naam: "Uitsluiting: dronken vriend", dekking: "wa-casco-beperkt", beurten: [{ klant: "Als mijn vriend dronken rijdt met mijn auto, ben ik dan verzekerd?", controles: [bevat("dat er geen vergoeding is", /(geen|niet).{0,50}(vergoed|vergoeding|verzekerd)|(vergoed|vergoeding|verzekerd).{0,30}niet/i), bevat("terugvragen bij schade aan een ander", /terug|verhal/i)] }] },
+  { onderwerp: "Uitsluitingen", naam: "Uitsluiting: dronken vriend", dekking: "wa-casco-beperkt", beurten: [{ klant: "Als mijn vriend dronken rijdt met mijn auto, ben ik dan verzekerd?", bron: /3\.1 Uitsluiting 1/, controles: [bevat("dat er geen vergoeding is", /(geen|niet).{0,50}(vergoed|vergoeding|verzekerd)|(vergoed|vergoeding|verzekerd).{0,30}niet/i), bevat("terugvragen bij schade aan een ander", /terug|verhal/i)] }] },
   { onderwerp: "Uitsluitingen", naam: "Uitsluiting: verhuur", dekking: "wa-casco-beperkt", beurten: [{ klant: "Mag ik mijn auto verhuren via een deelplatform?", controles: [bevat("dat verhuur niet gedekt is", /niet|geen/i)] }] },
   // Randgevallen
   { onderwerp: "Randgeval", naam: "Onduidelijke vraag", dekking: "wa-casco-beperkt", beurten: [
@@ -85,10 +85,11 @@ const gesprekken: Gesprek[] = [
 const woorden = (t: string) => t.split(/\s+/).filter(Boolean);
 const zinnen = (t: string) => t.split(/(?<=[.!?])\s+/).filter((z) => /\w/.test(z));
 const normaal = (t: string) => ` ${t.toLowerCase().replace(/[^a-z0-9€ ]+/g, " ").replace(/\s+/g, " ").trim()} `;
-const KENNISTEKSTEN = KENNISBANK.flatMap((item) => [item.tekst, ...(item.verrijking ? [item.verrijking.uitleg, ...item.verrijking.direct, ...item.verrijking.aandachtspunten] : [])]).map(normaal);
+// Alleen de brontekst telt als "letterlijk overnemen": de uitleg is zelf al geschreven in klantentaal, die mag het model gebruiken.
+const KENNISTEKSTEN = KENNISBANK.map((item) => normaal(item.tekst));
 
 /** Staat er een stuk van `n` woorden uit het antwoord letterlijk in de kennisbank? Dan is er letterlijk overgenomen. */
-function letterlijkOvergenomen(antwoord: string, n = 8): string | null {
+function letterlijkOvergenomen(antwoord: string, n = 10): string | null {
   const w = normaal(antwoord).trim().split(" ");
   for (let i = 0; i + n <= w.length; i++) {
     const stuk = ` ${w.slice(i, i + n).join(" ")} `;
