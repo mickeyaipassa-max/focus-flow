@@ -128,6 +128,8 @@ type RadioCardBottomGroupProps = {
    */
   variant?: "detailed" | "compact";
   /** Zelfde foutmelding-patroon als `RadioGroup`'s eigen `error`-prop — nodig zodra een groep zonder standaardselectie start (bevestigd op de Auto-funnel "Jouw dekking"-stap, geen enkele kaart staat daar standaard aan). */
+  /** Opt-in: element rechts naast het label (en sterretje), bv. een "Hulp nodig?"-tag. 12px ruimte ertussen. */
+  labelAction?: ReactNode;
   error?: string;
   name?: string;
   className?: string;
@@ -173,6 +175,7 @@ export function RadioCardBottomGroup({
   onChange,
   onMoreInfoClick,
   variant = "detailed",
+  labelAction,
   error,
   name,
   className,
@@ -199,6 +202,7 @@ export function RadioCardBottomGroup({
             *
           </span>
         )}
+        {labelAction && <span className="ml-3 inline-flex">{labelAction}</span>}
       </legend>
       {description && (
         <div className="w-full text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
