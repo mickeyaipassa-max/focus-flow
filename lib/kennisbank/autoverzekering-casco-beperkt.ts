@@ -49,7 +49,7 @@ export const KENNISBANK_CASCO_BEPERKT: KennisItem[] = [
   {
     id: "cb-dieren",
     artikelen: { "casco-beperkt": "3.1 Gebeurtenis 3 - botsing met dieren" },
-    trefwoorden: ["dier", "dieren", "wild aangereden", "everzwijn", "vogel", "paard", "een ree", "een hert", "een koe", "een vos", "een das", "een hond", "een kat", "een konijn", "een haas", "een schaap", "schaap", "hond aangereden", "aanrijding met een dier", "botsing met"],
+    trefwoorden: ["dier", "dieren", "wild aangereden", "ree aangereden", "hert aangereden", "dier aangereden", "aangereden dier", "dier geraakt", "ree geraakt", "everzwijn", "vogel", "paard", "een ree", "een hert", "een koe", "een vos", "een das", "een hond", "een kat", "een konijn", "een haas", "een schaap", "schaap", "hond aangereden", "aanrijding met een dier", "botsing met"],
     tekst:
       "Je bent verzekerd voor schade door een botsing met vogels of loslopende dieren. Je krijgt geen vergoeding voor schade die ontstaat doordat je door die botsing tegen iets anders botst of iets anders raakt.",
   },
@@ -257,7 +257,7 @@ export const KENNISBANK_CASCO_BEPERKT: KennisItem[] = [
   {
     id: "cb-schade-vaststellen",
     artikelen: { "casco-beperkt": "5.1 Vaststelling van de schade" },
-    trefwoorden: ["schade vaststellen", "expert", "deskundige", "taxatie", "tweede deskundige", "derde deskundige", "bindend advies", "nivre", "schadebedrag te laag", "second opinion", "experts", "calculatie", "het schadebedrag"],
+    trefwoorden: ["schade vaststellen", "schadevaststelling", "vaststelling van de schade", "niet eens met de schade", "niet eens met de vaststelling", "niet eens met het schadebedrag", "expert", "deskundige", "taxatie", "tweede deskundige", "derde deskundige", "bindend advies", "nivre", "schadebedrag te laag", "second opinion", "experts", "calculatie", "het schadebedrag"],
     tekst:
       "Wij stellen vast hoeveel schade je hebt, of laten dat doen door een deskundige die wij aanwijzen; die berekent samen met het herstelbedrijf de schade met objectieve calculatiemodellen. Vind je het bedrag te laag, dan mag je in overleg met onze deskundige zelf een tweede deskundige kiezen. Komen die twee er niet uit, dan benoemen zij samen een derde deskundige die de omvang van de schade voor jou en voor ons bindend vaststelt, volgens de 'Richtlijn voor het uitvoeren van een bindend advies Motorvoertuigen' van het Nederlands Instituut van Register Experts (Nivre). Wij vergoeden de redelijke kosten van alle deskundigen, mits ze zich houden aan de Gedragscode Expertiseorganisaties of vergelijkbaar deskundig zijn; de kosten van de deskundige die jij kiest tot maximaal de kosten van de deskundige die wij hebben ingeschakeld.",
   },
@@ -320,7 +320,7 @@ export const KENNISBANK_CASCO_BEPERKT: KennisItem[] = [
   {
     id: "cb-leenauto",
     artikelen: { "casco-beperkt": "8.1 Schade met een leenauto van de garage" },
-    trefwoorden: ["leenauto garage", "leenauto beschadigd", "schade aan leenauto", "onderhoudsbeurt", "geleende auto", "tijdelijke auto", "auto van de garage", "schade aan de geleende auto"],
+    trefwoorden: ["in een leenauto", "reed in een leenauto", "leenauto schade", "leenauto kreeg schade", "leenauto garage", "leenauto beschadigd", "schade aan leenauto", "onderhoudsbeurt", "geleende auto", "tijdelijke auto", "auto van de garage", "schade aan de geleende auto"],
     tekst:
       "Deze verzekering geldt ook voor een auto die je tijdelijk meekrijgt van de garage als je eigen auto een onderhoudsbeurt krijgt of gerepareerd wordt. Op het moment dat je verzekering eindigt, is ook de leenauto niet meer bij ons verzekerd. Dit geldt alleen als er door de garage geen verzekering voor die auto is afgesloten, of als de schade niet gedekt is op de eigen verzekering van de garage. Bij een schade aan de geleende auto vergoeden wij maximaal de dagwaarde van je eigen auto. Wij handelen de schade af volgens jouw verzekering, dus het eigen risico en de no-claimregeling zijn van toepassing.",
   },

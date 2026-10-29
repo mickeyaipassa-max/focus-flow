@@ -1,3 +1,4 @@
+import { b, HANDMATIG, q } from "./verrijking-hulp";
 import type { Verrijking } from "./types";
 
 /**
@@ -11,18 +12,6 @@ import type { Verrijking } from "./types";
  * Veel WA-blokken hebben dezelfde tekst in de voorwaarden van Casco Beperkt en Allrisk (zie `OOK_IN_CASCO_BEPERKT` in
  * index.ts); de laag hieronder is daarom zo geschreven dat hij voor al die documenten klopt.
  */
-const b = (x: Partial<Verrijking> & Pick<Verrijking, "uitleg">): Verrijking => ({
-  brontekstSoort: "bijna-letterlijk",
-  direct: [],
-  aandachtspunten: [],
-  klantinfo: [],
-  vervolgvragen: [],
-  controle: { status: "gecontroleerd" },
-  ...x,
-});
-const q = (als: string, vraag: string) => ({ als, vraag });
-const HANDMATIG = (opmerking: string) => ({ status: "handmatig-controleren" as const, opmerking });
-
 const DEKKING_VRAAG = "Welke dekking heb je: alleen WA, WA + Casco beperkt of WA + Casco allrisk?";
 const PECH_VRAAG = "Staat Pechhulp op je polisblad?";
 const UITSLUITING_UITZONDERING = "Uitzondering: je krijgt wel een vergoeding als je kunt bewijzen dat je er niets van wist, dat het tegen je wil gebeurde en dat jou niets te verwijten valt.";
