@@ -13,6 +13,7 @@ import { RadioCardBottomGroup, type RadioCardBottomOption } from "@/components/R
 import { RadioGroup } from "@/components/RadioGroup";
 import { Tag } from "@/components/Tag";
 import { formatDatum } from "@/lib/datum";
+import type { ChatSource } from "@/lib/chatPdf";
 import type { Product } from "@/lib/kennisbank";
 import { zoekInKennisbank } from "@/lib/kennisbank/zoek";
 import { ChatWidget, type ChatMessageData } from "../aichat/ChatWidget";
@@ -130,7 +131,27 @@ function hulpAntwoord(tekst: string, dekking: DekkingKeuze | ""): Pick<ChatMessa
   return { text: HULP_FALLBACK };
 }
 
-/** Zelfde eerlijke terugval als de /aichat-demo: er hangt geen echt taalmodel achter deze chat. */
+/**
+ * Vraagt het taalmodel (app/api/chat) om een antwoord op het gesprek. `null` als dat niet lukt (er staat geen sleutel
+ * ingesteld, het duurt te lang, een fout of een weigering): dan gebruikt de chat het trefwoordenantwoord.
+ */
+async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: string }[], dekking: DekkingKeuze | ""): Promise<Pick<ChatMessageData, "text" | "sources"> | null> {
+  try {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ berichten, dekking }),
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (!response.ok) return null;
+    const { tekst, bronnen } = (await response.json()) as { tekst?: string; bronnen?: ChatSource[] };
+    return tekst ? { text: tekst, sources: bronnen && bronnen.length > 0 ? bronnen : undefined } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Zelfde eerlijke terugval als de /aichat-demo, voor als het taalmodel er niet is. */
 const HULP_FALLBACK = "Daar heb ik nu helaas geen pasklaar antwoord op. Neem voor de zekerheid contact op met onze klantenservice via (0800) 00 00 000.";
 
 let nextMessageId = 1;
@@ -202,13 +223,16 @@ export default function WorkshopPage() {
     else startChat();
   }
 
-  function handleChatSend(text: string) {
+  async function handleChatSend(text: string) {
+    const gesprek = [...chatMessages.map(({ role, text: bericht }) => ({ role, text: bericht })), { role: "user" as const, text }];
     setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "user", text }]);
     setChatTyping(true);
-    setTimeout(() => {
-      setChatTyping(false);
-      setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "assistant", ...hulpAntwoord(text, dekking) }]);
-    }, 800);
+    // De drie "Meer over …"-onderwerpen blijven het vaste antwoord uit de kaarten; de rest gaat naar het taalmodel,
+    // en als dat er niet is (geen sleutel, fout, weigering) naar het trefwoordenantwoord uit de kennisbank.
+    const uitTaalmodel = kaartAntwoord(text) ? null : await vraagTaalmodel(gesprek, dekking);
+    if (!uitTaalmodel) await new Promise((resolve) => setTimeout(resolve, 800));
+    setChatTyping(false);
+    setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "assistant", ...(uitTaalmodel ?? hulpAntwoord(text, dekking)) }]);
   }
 
   const hulpTag = (
