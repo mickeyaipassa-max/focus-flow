@@ -100,6 +100,7 @@ const gevallen: { vraag: string; verwacht: string[]; producten?: readonly string
   { vraag: "Krijg ik een leenauto tijdens de reparatie?", verwacht: ["cb-vervangend-vervoer", "sw-vervangend-vervoer"], producten: BEPERKT },
   { vraag: "Ik krijg de aankoopwaarde, wat betekent dat?", verwacht: ["cb-waarde-aankoopwaarde", "cb-aankoopwaarde-keuze"], producten: BEPERKT },
   { vraag: "Ik ga in het buitenland wonen, wat moet ik doen met mijn verzekering?", verwacht: ["cb-buitenland-verhuizen"], producten: BEPERKT },
+  { vraag: "Ik verhuis volgend jaar naar België, blijft mijn autoverzekering lopen?", verwacht: ["cb-buitenland-verhuizen", "al-uitwonend-buitenland"], producten: BEPERKT },
   { vraag: "Ik ben het niet eens met de schadevaststelling", verwacht: ["cb-schade-vaststellen"], producten: BEPERKT },
   { vraag: "Mijn auto start niet meer door slijtage, is dat gedekt?", verwacht: ["cb-onderhoud-slijtage", "cb-pechhulp"], producten: BEPERKT },
   { vraag: "Ik reed in een leenauto en kreeg schade", verwacht: ["cb-leenauto"], producten: BEPERKT },
