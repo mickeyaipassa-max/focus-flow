@@ -27,11 +27,12 @@ const TOPIC_LABELS = ["Vergoedingen", "Eigen risico", "Collectieve zorg", "Conta
  */
 export type ChatWindowStyle = "gold" | "cream";
 
+/** "cream": de avatar staat alleen in de header (56px, Figma Home 11571:159); boven de berichten komt hij daar niet meer voor. */
 function AssistantAvatar({ windowStyle }: { windowStyle: ChatWindowStyle }) {
   if (windowStyle === "cream") {
     return (
-      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white p-2" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
-        <img src="/icons/logo-asr-a.svg" alt="" className="w-8" />
+      <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-white p-2" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
+        <img src="/icons/logo-asr-a.svg" alt="" className="w-10" />
       </span>
     );
   }
@@ -45,7 +46,7 @@ function AssistantAvatar({ windowStyle }: { windowStyle: ChatWindowStyle }) {
 function TypingIndicator({ windowStyle }: { windowStyle: ChatWindowStyle }) {
   return (
     <div className="flex items-start gap-2 pr-6">
-      <AssistantAvatar windowStyle={windowStyle} />
+      {windowStyle !== "cream" && <AssistantAvatar windowStyle={windowStyle} />}
       <div
         role="status"
         aria-label="Assistent is aan het typen"
@@ -88,8 +89,8 @@ function ChatMessage({ message, showAvatar, windowStyle }: { message: ChatMessag
   }
 
   return (
-    <div className={`flex flex-col items-start pr-6 ${windowStyle === "cream" ? "gap-3" : "gap-2"}`}>
-      {showAvatar && <AssistantAvatar windowStyle={windowStyle} />}
+    <div className="flex flex-col items-start gap-2 pr-6">
+      {showAvatar && windowStyle !== "cream" && <AssistantAvatar windowStyle={windowStyle} />}
       <div className="max-w-full rounded-md bg-white px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
         <p className="whitespace-pre-line break-words text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
           <span className="sr-only">AI-assistent zei: </span>
@@ -137,8 +138,9 @@ function ChatWelcome({
 }) {
   return (
     <div className="flex w-full flex-col gap-4">
-      <div className={`flex w-full flex-col items-start pr-6 ${windowStyle === "cream" ? "gap-3" : "gap-2"}`}>
-        <AssistantAvatar windowStyle={windowStyle} />
+      <div className="flex w-full flex-col items-start gap-2 pr-6">
+        {/* Cream: geen avatar boven het openingsbericht (en ook niet boven antwoorden): de avatar staat in de header. */}
+        {windowStyle !== "cream" && <AssistantAvatar windowStyle={windowStyle} />}
         <div className="max-w-full rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
           <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
             <span className="sr-only">AI-assistent zei: </span>
@@ -469,15 +471,21 @@ export function ChatWidget({
       >
         {/* Header — relative + menuRef hier i.p.v. op de kleine knop-wrapper: het menu moet 24px minder breed zijn dan de widget aan beide kanten (op verzoek van de opdrachtgever). `left-0 right-0` bleek verkeerd — dat sluit aan op de PADDING-box van deze relative ouder, wat gelijk is aan de widget's eigen buitenrand (0px inset, want de header heeft zelf geen marge, alleen interne p-6). `left-6 right-6` (24px) is daarom nodig om echt 24px van de widget-rand af te blijven. */}
         <div className={`relative flex shrink-0 p-6 ${cream ? "items-center bg-[#fff8e3]" : "items-start bg-[#eda50f]"}`} ref={menuRef}>
-          <div className="min-w-0 flex-1">
-            <h2 className="pb-2 text-black text-[24px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
-              AI-assistent van a.s.r.
-            </h2>
-            <div className="flex items-center gap-[11px]">
-              <span className="size-[11px] shrink-0 rounded-full border border-white bg-[#0f865d]" />
-              <span className="text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                Altijd online
-              </span>
+          {/* Cream (Figma Home, 11571:155): de avatar staat links van de titel in de header en de status "Altijd online" is vervallen. */}
+          <div className={`min-w-0 flex-1 ${cream ? "flex items-center gap-3" : ""}`}>
+            {cream && <AssistantAvatar windowStyle={windowStyle} />}
+            <div className="min-w-0 flex-1">
+              <h2 className={`${cream ? "" : "pb-2 "}text-black text-[24px] leading-[1.3]`} style={{ fontFamily: "var(--font-memphis-medium)" }}>
+                AI-assistent van a.s.r.
+              </h2>
+              {!cream && (
+                <div className="flex items-center gap-[11px]">
+                  <span className="size-[11px] shrink-0 rounded-full border border-white bg-[#0f865d]" />
+                  <span className="text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                    Altijd online
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
