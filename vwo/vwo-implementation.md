@@ -122,12 +122,12 @@ Getest op een testpagina die de a.s.r.-structuur nabootst (open shadow root, Lit
 | Chat onbereikbaar | Na 8 s terugvalmelding, `asr_chat_fallback` (`timeout`), Escape sluit en focus gaat terug naar de tag |
 | Mobiel | Op 480px (testpagina): paneel bijna schermvullend met donkere achtergrond. Op 375px (echte pagina): tag onder het label |
 | Console | Geen fouten tijdens alle bovenstaande tests |
+| Echte a.s.r.-pagina met de definitieve bestanden en de deploypreview van PR #215 als chatdomein (alleen in mijn sessie) | Label en tag correct, tagklik opent het paneel, `ready`-handshake slaagt, geen CSP-melding, geen fouten. Tag in de chat en een getypte vraag ("Wat is eigen risico?") geven `first_message` (`tag`) en `first_question`; het echte taalmodel antwoordde met bronnen uit de kennisbank |
 | Echte a.s.r.-pagina (alleen in mijn sessie; een eerdere versie van het script, daarna de legenda-opmaak met de hand) | Label en tag correct, één tag, geen fouten. Breed genoeg: label, sterretje en tag op één regel en de legenda even hoog als met alleen het label. Op 375px (legendabreedte 267px) past de tag niet naast het label en staat links eronder |
 
 **Niet getest:**
 
-- De definitieve `vwo-variation.js` en `.css` zelf op de echte asr.nl-pagina (daar draaide een eerdere versie, plus de definitieve legenda-opmaak met de hand). De definitieve bestanden zijn op de testpagina getest.
-- De chat vanaf de echte asr.nl-pagina met ons productiedomein (de route is er in productie nog niet; zie 2). De terugvalmelding is wel getest. De `ready`-handshake is alleen lokaal getest, tussen een testpagina en de chat op dezelfde host, niet tussen asr.nl en ditismick.com.
+- De chat vanaf asr.nl met het echte productiedomein ditismick.com: de route staat pas na de merge op productie. Getest is dezelfde code met de deploypreview van PR #215 als chatdomein (zie hieronder).
 - Dat de events daadwerkelijk in een VWO-doel binnenkomen. Dat vraagt een campagne in jullie account (niet aangemaakt) en zou echte data in het account schrijven.
 - Preview Mode in VWO zelf, en het gedrag van VWO's anti-flicker. Het script past het label aan zodra de component klaar is met tekenen (`updateComplete`, microtaken). Naar verwachting gebeurt dat vóór de eerstvolgende weergave, maar dat is niet gemeten; kijk hier in Preview naar.
 - Safari en Firefox. Alleen de Chromium-browser in deze omgeving.
