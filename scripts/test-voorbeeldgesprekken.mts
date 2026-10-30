@@ -96,6 +96,7 @@ for (const [i, v] of VOORBEELDGESPREKKEN.entries()) {
     if (/\b(u|uw)\b/.test(b.jij)) mislukt(`${label}: u in plaats van je`);
     if (/^(goede vraag|ik help je graag|dat hangt af van verschillende factoren)/i.test(b.jij)) mislukt(`${label}: verboden opener`);
     if (/[*#|]|\[\[/.test(b.jij)) mislukt(`${label}: opmaak of marker in de tekst`);
+    if (/\?\s+Dan\b/.test(b.jij)) mislukt(`${label}: retorische vraag ("? Dan ...")`);
     if (b.geenBron && !b.jij.includes("?")) mislukt(`${label}: geenBron zonder vraag aan de klant`);
   }
 }

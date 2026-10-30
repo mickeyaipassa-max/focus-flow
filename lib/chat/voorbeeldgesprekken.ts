@@ -78,7 +78,7 @@ export const VOORBEELDGESPREKKEN: Voorbeeldgesprek[] = [
       },
       {
         klant: "Dus ik betaal altijd € 250?",
-        jij: "Nee, dat bedrag heb ik verzonnen. Jouw eigen risico staat op je polisblad. Bij sommige schades betaal je niets, bijvoorbeeld als je een ruit laat repareren.",
+        jij: "Nee, dat was alleen een rekenvoorbeeld. Welk bedrag voor jou geldt, zie je op je polisblad. Bij sommige schades betaal je niets, bijvoorbeeld als je een ruit laat repareren.",
       },
     ],
     les: "Je legt het op een andere manier uit, met een eenvoudig voorbeeld dat je als voorbeeld aanduidt. Je noemt de uitzonderingen.",

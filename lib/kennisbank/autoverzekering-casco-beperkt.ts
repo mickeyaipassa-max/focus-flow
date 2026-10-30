@@ -117,7 +117,7 @@ export const KENNISBANK_CASCO_BEPERKT: KennisItem[] = [
   {
     id: "cb-storm",
     artikelen: { "casco-beperkt": "3.1 Gebeurtenis 17 - storm" },
-    trefwoorden: ["storm", "stormschade", "windkracht", "waait om", "boom op de auto", "tak op de auto", "portier waait", "14 meter per seconde", "wind"],
+    trefwoorden: ["boom gevallen", "boom is gevallen", "boom op gevallen", "boom op mijn auto", "boom viel", "tak gevallen", "storm", "stormschade", "windkracht", "waait om", "boom op de auto", "tak op de auto", "portier waait", "14 meter per seconde", "wind"],
     tekst:
       "Je bent verzekerd voor schade door storm als de auto omwaait, er iets op of tegen de auto valt (bijvoorbeeld een boom) of het portier van je auto tegen een ander voorwerp of tegen je auto zelf waait. Met storm bedoelen wij wind met een snelheid van 14 meter per seconde of meer.",
   },

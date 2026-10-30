@@ -70,7 +70,7 @@ const GESPREKKEN: Gesprek[] = [
     { klant: "Mijn auto is beschadigd, wat nu?", vervelend: true, checks: [moet("een vraag", /\?/)] },
     { klant: "Er is een boom op gevallen.", checks: [moet("storm of dat het verzekerd is", /storm|verzekerd|gedekt|\bja\b/i), mag_niet("dezelfde vraag opnieuw", /wat is er (precies )?gebeurd/i)] },
   ] },
-  { naam: "Sleutels kwijt", dekking: "wa-casco-beperkt", beurten: [{ klant: "Ik ben mijn autosleutels kwijt.", vervelend: true, checks: [moet("dat verlies niet vergoed wordt", /geen vergoeding|niet (verzekerd|vergoed)|vergoeden (wij|we) .{0,30}niet|helaas niet/i), moet("gestolen als uitzondering", /gestolen|diefstal/i)] }] },
+  { naam: "Sleutels kwijt", dekking: "wa-casco-beperkt", beurten: [{ klant: "Ik ben mijn autosleutels kwijt.", vervelend: true, checks: [moet("dat verlies niet vergoed wordt", /geen vergoeding|niet (verzekerd|vergoed)|vergoeden (wij|we) .{0,30}niet|helaas niet/i), moet("gestolen als uitzondering", /gestolen|diefstal/i), moet("dat je het bewijs van de aangifte moet sturen", /bewijs/i)] }] },
   { naam: "Bedankje", dekking: "wa", beurten: [
     { klant: "Wat is een WA-verzekering?" },
     { klant: "Dank je wel!", checks: [{ naam: "blijft kort (maximaal 25 woorden)", ok: (t) => woorden(t).length <= 25 }, mag_niet("een nieuwe vraag", /\?/)] },
@@ -95,7 +95,7 @@ function gedeeldeReeks(antwoord: string, teksten: string[], n: number): string |
   return null;
 }
 const VERBODEN_OPENER = /^(goede vraag|ik help je graag|dat hangt af van verschillende factoren|natuurlijk,? ik help)/i;
-const BEGRIP = /\b(vervelend|jammer|balen|naar voor je|schrik|sneu|rot|lastig|spijt)/i;
+const BEGRIP = /\b(vervelend|jammer|balen|naar voor je|wat naar|schrik|sneu|rot|lastig|spijt)/i;
 const JURIDISCH = /\b(dient|conform|overeenkomstig|ingevolge|bepalingen|artikel \d)/i;
 
 type Antwoord = { tekst: string; bronnen: number; fout?: string };

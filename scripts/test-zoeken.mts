@@ -123,6 +123,8 @@ const gevallen: { vraag: string; verwacht: string[]; producten?: readonly string
   { vraag: "Wat betekent eigen gebrek?", verwacht: ["ca-begrippen", "ca-materiaalfouten"], producten: ALLRISK },
   // asr.nl-pagina's
   { vraag: "Wat kost een autoverzekering ongeveer?", verwacht: ["sw-premie"] },
+  { vraag: "Ik heb een auto van acht jaar oud. Ook diefstal en ruitschade.", verwacht: ["sw-vergelijken", "sw-wa-verzekerd", "sw-cb-verzekerd"], producten: WA },
+  { vraag: "Mijn auto is beschadigd, wat nu? Er is een boom op gevallen.", verwacht: ["cb-storm"], producten: BEPERKT },
   { vraag: "Wat kost mijn autoverzekering per maand?", verwacht: ["sw-premie"] },
   { vraag: "Kan ik later mijn dekking nog veranderen?", verwacht: ["sw-dekking-aanpassen"], producten: WA },
   { vraag: "Waar hangt mijn premie van af?", verwacht: ["sw-premie"] },
