@@ -129,6 +129,7 @@ const gevallen: { vraag: string; verwacht: string[]; producten?: readonly string
   { vraag: "Wat zijn de nadelen van alleen WA?", verwacht: ["wa-voor-en-nadelen"], producten: BEPERKT },
   { vraag: "Voor- en nadelen van WA", verwacht: ["wa-voor-en-nadelen"], producten: ALLRISK },
   { vraag: "Is alleen WA genoeg?", verwacht: ["wa-voor-en-nadelen", "sw-wa-verzekerd", "sw-vergelijken"], producten: WA },
+  { vraag: "Wat kost dat dan ongeveer per maand?", verwacht: ["sw-premie"] },
   { vraag: "Wat kost mijn autoverzekering per maand?", verwacht: ["sw-premie"] },
   { vraag: "Kan ik later mijn dekking nog veranderen?", verwacht: ["sw-dekking-aanpassen"], producten: WA },
   { vraag: "Waar hangt mijn premie van af?", verwacht: ["sw-premie"] },
