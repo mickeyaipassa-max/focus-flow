@@ -22,7 +22,7 @@ export const KENNISBANK_WEBSITE: KennisItem[] = [
   {
     id: "sw-wa-verzekerd",
     artikelen: { "site-wa": "Wat is verzekerd met de WA autoverzekering? en Wanneer kies je voor een WA autoverzekering?" },
-    trefwoorden: ["wat is verzekerd met de wa", "wat is verzekerd met wa", "wanneer kies ik wa", "wanneer kies je voor wa", "alleen wa", "alleen wa kiezen", "voor welke auto wa", "oude auto", "auto van 10 jaar", "10 jaar en ouder", "10 jaar of ouder", "lage dagwaarde", "schade aan mijn eigen auto zelf betalen", "is brand verzekerd met wa", "storm verzekerd met wa", "wa dekt geen"],
+    trefwoorden: ["diefstal en ruitschade", "diefstal en ruit", "wat is verzekerd met de wa", "wat is verzekerd met wa", "wanneer kies ik wa", "wanneer kies je voor wa", "alleen wa", "alleen wa kiezen", "voor welke auto wa", "oude auto", "auto van 10 jaar", "10 jaar en ouder", "10 jaar of ouder", "lage dagwaarde", "schade aan mijn eigen auto zelf betalen", "is brand verzekerd met wa", "storm verzekerd met wa", "wa dekt geen"],
     tekst:
       "Met WA (verplicht) is schade aan anderen verzekerd. Niet verzekerd zijn: schade door brand, storm en natuur, ruitschade, diefstal, standaard 1 jaar nieuwwaarde en schade aan je eigen auto door aanrijding of vandalisme. WA is het meest gekozen voor auto's van 10 jaar en ouder. A.s.r. kan je geen persoonlijk advies geven over welke dekking het beste bij je past, maar klanten kiezen meestal alleen voor een WA-dekking als de auto 10 jaar of ouder is en dus een lagere dagwaarde heeft, of als ze schade aan hun eigen auto zelf willen betalen.",
   },
@@ -96,7 +96,7 @@ export const KENNISBANK_WEBSITE: KennisItem[] = [
   {
     id: "sw-vergelijken",
     artikelen: ALLE_PAGINAS("Autoverzekeringen Ik kies zelf van a.s.r. vergelijken"),
-    trefwoorden: ["vergelijken", "verschil tussen wa en casco", "verschil wa casco", "verschil casco beperkt en allrisk", "verschil beperkt allrisk", "wat is het verschil", "welke dekking", "welke is beter", "vergelijking dekkingen", "wa of casco", "wa plus of allrisk", "wa vs casco", "verschillen dekkingen", "welke dekkingen zijn er", "overzicht dekkingen", "hoe oud moet mijn auto zijn"],
+    trefwoorden: ["diefstal en ruitschade", "diefstal en ruit", "ook diefstal verzekeren", "welke dekking dekt diefstal", "vergelijken", "verschil tussen wa en casco", "verschil wa casco", "verschil casco beperkt en allrisk", "verschil beperkt allrisk", "wat is het verschil", "welke dekking", "welke is beter", "vergelijking dekkingen", "wa of casco", "wa plus of allrisk", "wa vs casco", "verschillen dekkingen", "welke dekkingen zijn er", "overzicht dekkingen", "hoe oud moet mijn auto zijn"],
     tekst:
       "De drie dekkingen vergeleken. WA (verplicht), het meest gekozen voor auto's van 10 jaar en ouder: schade aan anderen is verzekerd; schade door brand, storm en natuur, ruitschade, diefstal, standaard 1 jaar nieuwwaarde en schade aan je eigen auto door aanrijding of vandalisme zijn niet verzekerd. WA + Casco beperkt, het meest gekozen voor auto's van 6 tot 10 jaar oud: schade aan anderen, schade door brand, storm en natuur, ruitschade, diefstal en standaard 1 jaar nieuwwaarde zijn verzekerd; schade aan je eigen auto door aanrijding of vandalisme is niet verzekerd. WA + Casco allrisk, het meest gekozen voor auto's van 0 tot en met 5 jaar oud: dat alles is verzekerd, inclusief schade aan je eigen auto door aanrijding of vandalisme.",
   },
