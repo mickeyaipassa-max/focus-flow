@@ -417,7 +417,7 @@ export function ChatWidget({
   }, [pdfStatus]);
 
   /**
-   * "Download als PDF": exporteert het volledige zichtbare gesprek, inclusief
+   * "Download gesprek als PDF": exporteert het volledige zichtbare gesprek, inclusief
    * de vaste welkomstboodschap bovenaan. De PDF-bibliotheek wordt pas hier
    * geladen (dynamic import), zodat de pagina zelf niet zwaarder wordt. De
    * korte minimale wachttijd voorkomt dat de voortgangsmelding bij een kort
@@ -513,7 +513,7 @@ export function ChatWidget({
               aria-haspopup="menu"
               className={`flex size-[51px] items-center justify-center rounded-[3px] ${cream ? "bg-black shadow-[0_4px_8px_rgba(0,0,0,0.12)] hover:opacity-90" : "bg-[#fff8e3] hover:brightness-95"}`}
             >
-              {/* Drie puntjes → kruisje (hergebruik van add.svg, 45° geroteerd — zelfde "sluiten"-icoon als het "Gesprek afsluiten"-menu-item) bij openen, met een zachte fade+rotate-transitie (motion-safe, 200ms — zelfde duur als elders in dit project, bv. de tile-hover-scale). */}
+              {/* Drie puntjes → kruisje (hergebruik van add.svg, 45° geroteerd — zelfde "sluiten"-icoon als het "Sluit het gesprek"-menu-item) bij openen, met een zachte fade+rotate-transitie (motion-safe, 200ms — zelfde duur als elders in dit project, bv. de tile-hover-scale). */}
               <span className="relative flex size-6 items-center justify-center">
                 <img
                   src={cream ? "/icons/more-vertical-white.svg" : "/icons/more-vertical.svg"}
@@ -552,7 +552,7 @@ export function ChatWidget({
                     <img src="/icons/refresh.svg" alt="" className="size-4" />
                   </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    Nieuw gesprek starten
+                    Start een nieuw gesprek
                   </span>
                 </button>
                 <button
@@ -566,7 +566,7 @@ export function ChatWidget({
                     <img src="/icons/download.svg" alt="" className="size-4" />
                   </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    Download als PDF
+                    Download gesprek als PDF
                   </span>
                 </button>
                 <button
@@ -584,7 +584,7 @@ export function ChatWidget({
                     <img src="/icons/chevron-down-sm.svg" alt="" className="size-4" />
                   </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    Gesprek minimaliseren
+                    Minimaliseer het gesprek
                   </span>
                 </button>
                 <button
@@ -602,7 +602,7 @@ export function ChatWidget({
                     <img src="/icons/add.svg" alt="" className="size-4 rotate-45" />
                   </span>
                   <span className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-                    Gesprek afsluiten
+                    Sluit het gesprek
                   </span>
                 </button>
               </div>
@@ -610,7 +610,7 @@ export function ChatWidget({
           </div>
         </div>
 
-        {/* Voortgang/fout van "Download als PDF": direct onder de header, buiten het scrollende berichtenvak zodat het altijd zichtbaar is. */}
+        {/* Voortgang/fout van "Download gesprek als PDF": direct onder de header, buiten het scrollende berichtenvak zodat het altijd zichtbaar is. */}
         {pdfStatus === "busy" && (
           <div role="status" className="flex shrink-0 items-center bg-white px-6 py-3" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
             <Spinner size="sm" label="PDF wordt gemaakt…" labelPosition="horizontal" />
