@@ -125,6 +125,10 @@ const gevallen: { vraag: string; verwacht: string[]; producten?: readonly string
   { vraag: "Wat kost een autoverzekering ongeveer?", verwacht: ["sw-premie"] },
   { vraag: "Ik heb een auto van acht jaar oud. Ook diefstal en ruitschade.", verwacht: ["sw-vergelijken", "sw-wa-verzekerd", "sw-cb-verzekerd"], producten: WA },
   { vraag: "Mijn auto is beschadigd, wat nu? Er is een boom op gevallen.", verwacht: ["cb-storm"], producten: BEPERKT },
+  { vraag: "Wat zijn de voordelen en de nadelen van een WA verzekering", verwacht: ["wa-voor-en-nadelen"], producten: WA },
+  { vraag: "Wat zijn de nadelen van alleen WA?", verwacht: ["wa-voor-en-nadelen"], producten: BEPERKT },
+  { vraag: "Voor- en nadelen van WA", verwacht: ["wa-voor-en-nadelen"], producten: ALLRISK },
+  { vraag: "Is alleen WA genoeg?", verwacht: ["wa-voor-en-nadelen", "sw-wa-verzekerd", "sw-vergelijken"], producten: WA },
   { vraag: "Wat kost mijn autoverzekering per maand?", verwacht: ["sw-premie"] },
   { vraag: "Kan ik later mijn dekking nog veranderen?", verwacht: ["sw-dekking-aanpassen"], producten: WA },
   { vraag: "Waar hangt mijn premie van af?", verwacht: ["sw-premie"] },
@@ -146,5 +150,19 @@ for (const { vraag, verwacht, producten } of gevallen) {
   if (!ok) mislukt++;
   console.log(`${ok ? "✓" : "✗"} ${vraag}\n    -> ${ids.join(", ") || "(niets)"}${ok ? "" : `   (verwacht: ${verwacht.join(" of ")})`}`);
 }
-console.log(`\n${gevallen.length - mislukt} van ${gevallen.length} gevonden`);
+
+// Bij sommige vragen moet het juiste blok vooraan staan, niet alleen ergens in de context: de terugvalchat (zonder taalmodel) antwoordt met het eerste blok.
+const EERST: { vraag: string; verwacht: string; producten?: readonly string[] }[] = [
+  { vraag: "Wat zijn de voordelen en de nadelen van een WA verzekering", verwacht: "wa-voor-en-nadelen", producten: WA },
+  { vraag: "Wat zijn de voordelen van een WA verzekering?", verwacht: "wa-voor-en-nadelen", producten: BEPERKT },
+  { vraag: "Wat zijn de nadelen van alleen WA?", verwacht: "wa-voor-en-nadelen", producten: ALLRISK },
+  { vraag: "Wat zijn de voordelen van Ik kies zelf?", verwacht: "sw-voordelen", producten: BEPERKT },
+];
+for (const { vraag, verwacht, producten } of EERST) {
+  const eerste = zoekContext(vraag, { producten: (producten ?? BEPERKT) as never }, 3)[0]?.id;
+  const ok = eerste === verwacht;
+  if (!ok) mislukt++;
+  console.log(`${ok ? "✓" : "✗"} (eerst) ${vraag}\n    -> ${eerste ?? "(niets)"}${ok ? "" : `   (verwacht: ${verwacht})`}`);
+}
+console.log(`\n${gevallen.length + EERST.length - mislukt} van ${gevallen.length + EERST.length} gevonden`);
 process.exit(mislukt > 0 ? 1 : 0);

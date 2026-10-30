@@ -550,6 +550,29 @@ export const VERRIJKING_WA: Record<string, Verrijking> = {
     controle: HANDMATIG("Samenvatting van een begrippenlijst; de definitie van atoomkernreactie is juridisch en hier sterk ingekort."),
   }),
 
+  "wa-voor-en-nadelen": b({
+    brontekstSoort: "samenvatting",
+    uitleg: "WA is verplicht en dekt schade die jij met je auto aan anderen veroorzaakt. Schade aan je eigen auto is er niet mee verzekerd.",
+    aandachtspunten: [
+      "Voordeel: heb je een auto op jouw naam, dan is WA wettelijk verplicht.",
+      "Voordeel: schade aan anderen en hun spullen is verzekerd als jij aansprakelijk bent, voor letsel tot € 6.450.000 per schadegeval en voor spullen tot € 2.500.000.",
+      "Voordeel: ben je niet aansprakelijk, dan kan a.s.r. namens jou verweer voeren.",
+      "Voordeel: in de WA-voorwaarden staat geen eigen risico voor schade aan anderen.",
+      "Voordeel: bij schade regelt a.s.r. de afhandeling en neemt contact op met de verzekeraar van de tegenpartij.",
+      "Nadeel: schade aan je eigen auto is niet verzekerd, ook niet door een aanrijding of vandalisme.",
+      "Nadeel: schade door brand, storm en natuur, ruitschade en diefstal is niet verzekerd, en ook niet standaard 1 jaar nieuwwaarde. Een gestolen auto zelf is met alleen WA niet verzekerd.",
+      "Nadeel: letsel van de bestuurder en schade aan zijn spullen zijn niet verzekerd. Daarvoor is de aanvullende dekking Schade inzittenden.",
+      "Klanten kiezen meestal alleen WA bij een auto van 10 jaar of ouder, met een lagere dagwaarde, of als ze schade aan hun eigen auto zelf willen betalen. A.s.r. geeft geen persoonlijk advies.",
+    ],
+    klantinfo: ["Hoe oud de auto is.", "Of de klant schade aan de eigen auto zelf wil betalen."],
+    vervolgvragen: [q("De klant vraagt naar voor- en nadelen en het is niet bekend of hij schade aan zijn eigen auto zelf wil betalen", "Wil je schade aan je eigen auto zelf betalen, of liever verzekeren?")],
+    gerelateerd: ["wa-dekking", "sw-wa-verzekerd", "sw-wa-bedragen"],
+    controle: {
+      status: "gecontroleerd",
+      opmerking: "Samenvatting, samengesteld uit wa-dekking, eigen-risico, wa-bestuurder, sw-wa-wat-is, sw-wa-verzekerd, sw-wa-bedragen, sw-wa-schade-aan-ander, cb-diefstal en sw-aanvullende-dekkingen; elke bewering is nagelopen. Bewust niet opgenomen: een premievergelijking (de kennisbank noemt geen premies).",
+    },
+  }),
+
   "contact-en-bedrijf": b({
     uitleg: "De verzekeraar is ASR Schadeverzekering N.V. in Utrecht, Archimedeslaan 10, 3584 BA Utrecht. Meer informatie vind je op www.asr.nl.",
     aandachtspunten: ["Het KVK-nummer is 30031823."],

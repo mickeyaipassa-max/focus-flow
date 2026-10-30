@@ -55,6 +55,20 @@ export const KENNISBANK_WA: KennisItem[] = [
       "Deze verzekering voldoet aan de eisen van de Wet Aansprakelijkheidsverzekering Motorrijtuigen (W.A.M.). Je bent verzekerd voor schade die met of door de auto wordt veroorzaakt aan anderen en aan hun spullen en waarvoor je aansprakelijk bent. Dat is personenschade (letsel, aantasting van de gezondheid of dood, en de schade die daar een gevolg van is) en schade aan spullen (beschadiging, vernietiging of verloren gaan van spullen en onroerende zaken, en de schade die daar een gevolg van is). Ben je niet aansprakelijk, dan kunnen wij namens jou verweer voeren.",
   },
   {
+    id: "wa-voor-en-nadelen",
+    artikelen: {
+      wa: "2.3, 3.1 en 4 - voor- en nadelen van alleen WA (samenvatting)",
+      "site-wa": "Wat is verzekerd met de WA autoverzekering? en Tot welk bedrag vergoedt een WA verzekering schade?",
+    },
+    trefwoorden: [
+      "wat zijn de voordelen en de nadelen", "voordelen en de nadelen van een wa", "voordelen en de nadelen van wa", "de voordelen en nadelen van een wa", "wat zijn de voordelen van een wa", "wat zijn de nadelen van een wa", "voordelen en nadelen wa", "voor en nadelen wa", "voordelen wa", "nadelen wa", "voordelen van een wa", "nadelen van een wa", "voordelen van wa", "nadelen van wa",
+      "voordelen en nadelen van een wa", "voordelen alleen wa", "nadelen alleen wa", "voordelen van alleen wa", "nadelen van alleen wa", "voordelen van alleen een wa", "nadelen van alleen een wa", "pro en contra wa", "plussen en minnen wa", "is alleen wa genoeg", "alleen wa goed genoeg", "waarom alleen wa",
+      "wat is er goed aan wa", "wat is er slecht aan wa", "slim om alleen wa te nemen",
+    ],
+    tekst:
+      "Samenvatting van de voor- en nadelen van alleen een WA-verzekering, uit de WA-voorwaarden en de asr.nl-pagina's. Voordelen: een WA-verzekering is wettelijk verplicht als de auto op jouw naam staat; je bent verzekerd voor schade die je met je auto aan anderen en hun spullen veroorzaakt en waarvoor je aansprakelijk bent, voor letselschade tot maximaal € 6.450.000 per schadegeval en voor schade aan spullen tot maximaal € 2.500.000; ben je niet aansprakelijk, dan kan a.s.r. namens jou verweer voeren; in de WA-voorwaarden staat geen eigen risico voor schade aan anderen; bij schade regelt a.s.r. de afhandeling en neemt contact op met de verzekeraar van de tegenpartij. Nadelen: schade aan je eigen auto is niet verzekerd, ook niet door een aanrijding of vandalisme; ook schade door brand, storm en natuur, ruitschade, diefstal en standaard 1 jaar nieuwwaarde zijn niet verzekerd, en een gestolen auto zelf is met alleen WA niet verzekerd; personenschade van de bestuurder en schade aan zijn spullen zijn niet verzekerd (daarvoor is de aanvullende dekking Schade inzittenden). Klanten kiezen meestal alleen WA bij een auto van 10 jaar of ouder, die een lagere dagwaarde heeft, of als ze schade aan hun eigen auto zelf willen betalen. A.s.r. kan je geen persoonlijk advies geven over welke dekking het beste bij je past.",
+  },
+  {
     id: "wa-aanhanger",
     artikelen: { wa: "3.1 Gebeurtenis 2 - aanhanger" },
     trefwoorden: ["aanhanger", "caravan", "vouwwagen", "aanhangwagen", "trailer", "bagagewagen"],
