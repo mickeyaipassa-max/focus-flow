@@ -319,7 +319,7 @@ export default function WorkshopPage() {
             value={dekking}
             onChange={(value) => setDekking(value as DekkingKeuze)}
             onMoreInfoClick={() => {}}
-            contentTopClassName="mt-2"
+            contentTopClassName="mt-4"
           />
         </div>
         <div className="hidden w-full min-[600px]:block">
@@ -327,7 +327,7 @@ export default function WorkshopPage() {
             labelText="Kies je basisdekking"
             labelAction={hulpTag}
             options={DEKKING_OPTIONS}
-            contentTopClassName="mt-2"
+            contentTopClassName="mt-4"
             value={dekking}
             onChange={(value) => setDekking(value as DekkingKeuze)}
             onMoreInfoClick={() => {}}
