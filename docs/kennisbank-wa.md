@@ -1,6 +1,6 @@
 # Kennisbank: wa
 
-58 kennisblokken in deze groep (van in totaal 174; 93 hebben nu de klantvriendelijke laag). Per blok staat eerst wat er was (brontekst met zoekwoorden en bron) en daaronder wat erbij is gekomen. Blokken met controlestatus "handmatig controleren" zijn hieronder bovenaan gemeld.
+59 kennisblokken in deze groep (van in totaal 175; 175 hebben nu de klantvriendelijke laag). Per blok staat eerst wat er was (brontekst met zoekwoorden en bron) en daaronder wat erbij is gekomen. Blokken met controlestatus "handmatig controleren" zijn hieronder bovenaan gemeld.
 
 **Handmatig controleren (5):** vergoeding-anderen, gevolgen-verplichtingen, buitenlandse-wet, terrorisme, begrippen
 
@@ -137,7 +137,38 @@
 - Als het is niet duidelijk wat er is gebeurd → "Wat is er precies gebeurd, en wanneer?"
 **Haalt ook op:** wa-dekking
 
-## 7. wa-aanhanger
+## 7. wa-voor-en-nadelen
+
+**Controle:** gecontroleerd tegen de bron — Samenvatting, samengesteld uit wa-dekking, eigen-risico, wa-bestuurder, sw-wa-wat-is, sw-wa-verzekerd, sw-wa-bedragen, sw-wa-schade-aan-ander, cb-diefstal en sw-aanvullende-dekkingen; elke bewering is nagelopen. Bewust niet opgenomen: een premievergelijking (de kennisbank noemt geen premies).
+
+### Oud
+**Bronverwijzing:** Voorwaarden Autoverzekering Wettelijke Aansprakelijkheid (WA), D AU-WA 2017-01, 2.3, 3.1 en 4 - voor- en nadelen van alleen WA (samenvatting); asr.nl - WA autoverzekering Ik kies zelf, Wat is verzekerd met de WA autoverzekering? en Tot welk bedrag vergoedt een WA verzekering schade?
+**Zoekwoorden (29):** wat zijn de voordelen en de nadelen, voordelen en de nadelen van een wa, voordelen en de nadelen van wa, de voordelen en nadelen van een wa, wat zijn de voordelen van een wa, wat zijn de nadelen van een wa, voordelen en nadelen wa, voor en nadelen wa, voordelen wa, nadelen wa, voordelen van een wa, nadelen van een wa, …
+**Tekst (212 woorden):** Samenvatting van de voor- en nadelen van alleen een WA-verzekering, uit de WA-voorwaarden en de asr.nl-pagina's. Voordelen: een WA-verzekering is wettelijk verplicht als de auto op jouw naam staat; je bent verzekerd voor schade die je met je auto aan anderen en hun spullen veroorzaakt en waarvoor je aansprakelijk bent, voor letselschade tot maximaal € 6.450.000 per schadegeval en voor schade aan spullen tot maximaal € 2.500.000; ben je niet aansprakelijk, dan kan a.s.r. namens jou verweer voeren; in de WA-voorwaarden staat geen eigen risico voor schade aan anderen; bij schade regelt a.s.r. de afhandeling en neemt contact op met de verzekeraar van de tegenpartij. Nadelen: schade aan je eigen auto is niet verzekerd, ook niet door een aanrijding of vandalisme; ook schade door brand, storm en natuur, ruitschade, diefstal en standaard 1 jaar nieuwwaarde zijn niet verzekerd, en een gestolen auto zelf is met alleen WA niet verzekerd; personenschade van de bestuurder en schade aan zijn spullen zijn niet verzekerd (daarvoor is de aanvullende dekking Schade inzittenden). Klanten kiezen meestal alleen WA bij een auto van 10 jaar of ouder, die een lagere dagwaarde heeft, of als ze schade aan hun eigen auto zelf willen betalen. A.s.r. kan je geen persoonlijk advies geven over welke dekking het beste bij je past.
+
+### Nieuw
+**Brontekst:** dezelfde tekst als hierboven. Soort: samenvatting door de kennisbankmaker, geen letterlijke voorwaardentekst.
+**Klantvriendelijke uitleg (24 woorden):** WA is verplicht en dekt schade die jij met je auto aan anderen veroorzaakt. Schade aan je eigen auto is er niet mee verzekerd.
+**Noem direct:**
+
+**Belangrijke aandachtspunten:**
+- Voordeel: heb je een auto op jouw naam, dan is WA wettelijk verplicht.
+- Voordeel: schade aan anderen en hun spullen is verzekerd als jij aansprakelijk bent, voor letsel tot € 6.450.000 per schadegeval en voor spullen tot € 2.500.000.
+- Voordeel: ben je niet aansprakelijk, dan kan a.s.r. namens jou verweer voeren.
+- Voordeel: in de WA-voorwaarden staat geen eigen risico voor schade aan anderen.
+- Voordeel: bij schade regelt a.s.r. de afhandeling en neemt contact op met de verzekeraar van de tegenpartij.
+- Nadeel: schade aan je eigen auto is niet verzekerd, ook niet door een aanrijding of vandalisme.
+- Nadeel: schade door brand, storm en natuur, ruitschade en diefstal is niet verzekerd, en ook niet standaard 1 jaar nieuwwaarde. Een gestolen auto zelf is met alleen WA niet verzekerd.
+- Nadeel: letsel van de bestuurder en schade aan zijn spullen zijn niet verzekerd. Daarvoor is de aanvullende dekking Schade inzittenden.
+- Klanten kiezen meestal alleen WA bij een auto van 10 jaar of ouder, met een lagere dagwaarde, of als ze schade aan hun eigen auto zelf willen betalen. A.s.r. geeft geen persoonlijk advies.
+**Benodigde klantinformatie:**
+- Hoe oud de auto is.
+- Of de klant schade aan de eigen auto zelf wil betalen.
+**Gespreksaanpak (vervolgvraag):**
+- Als de klant vraagt naar voor- en nadelen en het is niet bekend of hij schade aan zijn eigen auto zelf wil betalen → "Wil je schade aan je eigen auto zelf betalen, of liever verzekeren?"
+**Haalt ook op:** wa-dekking, sw-wa-verzekerd, sw-wa-bedragen
+
+## 8. wa-aanhanger
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -159,7 +190,7 @@
 - Als de klant noemt schade door een aanhanger zonder de situatie → "Was de aanhanger aan je auto gekoppeld?"
 
 
-## 8. wa-lading
+## 9. wa-lading
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -181,7 +212,7 @@
 - Als het is niet duidelijk of de schade onderweg of tijdens het laden ontstond → "Gebeurde het tijdens het rijden of tijdens het in- of uitladen?"
 
 
-## 9. wa-passagiers
+## 10. wa-passagiers
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -203,7 +234,7 @@
 
 
 
-## 10. wa-slepen
+## 11. wa-slepen
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -225,7 +256,7 @@
 - Als de klant vraagt over slepen en het is niet bekend of het een vriendendienst was → "Sleep je het voertuig als vriendendienst?"
 
 
-## 11. wa-eigen-voertuigen
+## 12. wa-eigen-voertuigen
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -247,7 +278,7 @@
 - Als het is niet duidelijk of het voertuig van de klant privé of van het bedrijf is → "Is dat voertuig van jou privé, of van je bedrijf?"
 
 
-## 12. wa-bestuurder
+## 13. wa-bestuurder
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -269,7 +300,7 @@
 - Als het is niet duidelijk wie gewond is → "Is de bestuurder gewond, of een passagier?"
 **Haalt ook op:** sw-aanvullende-dekkingen
 
-## 13. eigen-auto-schade
+## 14. eigen-auto-schade
 
 **Controle:** gecontroleerd tegen de bron — 'Niet de schade aan je eigen auto' volgt uit 'schade aan anderen' en wordt bevestigd op asr.nl (WA-pagina).
 
@@ -293,7 +324,7 @@
 - Als de klant noemt schade aan de eigen auto en het is niet bekend welke dekking hij heeft → "Welke dekking heb je: alleen WA, WA + Casco beperkt of WA + Casco allrisk?"
 **Haalt ook op:** sw-dekking-aanpassen
 
-## 14. storm-natuur
+## 15. storm-natuur
 
 **Controle:** gecontroleerd tegen de bron — Samenvoeging van WA 3.1/3.2 met de Casco-voorwaarden; dat WA dit niet dekt volgt uit 'schade aan anderen' en uit asr.nl.
 
@@ -316,7 +347,7 @@
 - Als de klant noemt storm-, hagel- of brandschade zonder zijn dekking te noemen → "Welke dekking heb je: alleen WA, WA + Casco beperkt of WA + Casco allrisk?"
 **Haalt ook op:** hulpverlening
 
-## 15. algemene-uitsluitingen
+## 16. algemene-uitsluitingen
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -338,7 +369,7 @@
 - Als de klant vraagt of iets is uitgesloten en het is niet bekend om welke situatie het gaat → "Om welke situatie gaat het, bijvoorbeeld alcohol, verhuur of zakelijk gebruik?"
 
 
-## 16. uitsluiting-rijbewijs
+## 17. uitsluiting-rijbewijs
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -364,7 +395,7 @@
 - Als de klant noemt een rijbewijsprobleem zonder details → "Wat is er met het rijbewijs: is het verlopen, kwijt of nog niet ontvangen?"
 
 
-## 17. uitsluiting-wedstrijden
+## 18. uitsluiting-wedstrijden
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -386,7 +417,7 @@
 - Als het is niet duidelijk om welke soort rit het gaat → "Gaat het om een snelheidsrit of wedstrijd, of om een betrouwbaarheidsrit of puzzelrit?"
 
 
-## 18. uitsluiting-verhuur
+## 19. uitsluiting-verhuur
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -408,7 +439,7 @@
 - Als het is niet duidelijk of er sprake is van verhuur → "Verhuur of lease je de auto aan iemand anders?"
 
 
-## 19. uitsluiting-zakelijk
+## 20. uitsluiting-zakelijk
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -421,7 +452,7 @@
 **Brontekst:** dezelfde tekst als hierboven. Soort: volgt de woorden van het document (bijna letterlijk).
 **Klantvriendelijke uitleg (30 woorden):** Wordt de auto zakelijk gebruikt, dan krijg je geen vergoeding voor schade. Zakelijk betekent gebruik voor een bedrijf, zoals vervoer van personen of vracht tegen betaling of gebruik als lesauto.
 **Noem direct:**
-- Bij zakelijk gebruik staat in deze voorwaarden geen uitzondering.
+
 **Belangrijke aandachtspunten:**
 - Voorbeelden van zakelijk gebruik: beroepsmatig vervoer van personen of van vracht tegen betaling, en gebruik van de auto als lesauto.
 **Benodigde klantinformatie:**
@@ -430,7 +461,7 @@
 - Als het is niet duidelijk hoe de auto wordt gebruikt → "Gebruik je de auto ook voor werk, of om tegen betaling mensen of spullen te vervoeren?"
 
 
-## 20. uitsluiting-kenteken
+## 21. uitsluiting-kenteken
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -453,7 +484,7 @@
 - Als het is niet duidelijk op wiens naam het kenteken staat → "Op wiens naam staat het kenteken van de auto?"
 
 
-## 21. uitsluiting-toestemming
+## 22. uitsluiting-toestemming
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -475,7 +506,7 @@
 - Als het is niet duidelijk of er toestemming was → "Had die persoon toestemming om in je auto te rijden?"
 
 
-## 22. hulpverlening
+## 23. hulpverlening
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -499,7 +530,7 @@
 - Als het is niet bekend of het in Nederland of in het buitenland gebeurde → "Is dit in Nederland of in het buitenland gebeurd?"
 **Haalt ook op:** alarmcentrale, hulpverlening-nederland
 
-## 23. hulpverlening-nederland
+## 24. hulpverlening-nederland
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -522,7 +553,7 @@
 - Als het is niet bekend waar de klant naartoe wil → "Naar welke plek in Nederland moet de auto?"
 **Haalt ook op:** alarmcentrale
 
-## 24. hulpverlening-diefstal-buitenland
+## 25. hulpverlening-diefstal-buitenland
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -549,7 +580,7 @@
 - Als het is niet bekend of de klant op vakantie is → "Ben je op vakantie, en wil je de vakantie voortzetten?"
 **Haalt ook op:** alarmcentrale, aangifte
 
-## 25. hulpverlening-schade-buitenland
+## 26. hulpverlening-schade-buitenland
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -574,7 +605,7 @@
 - Als het is niet bekend of de auto gerepareerd kan worden → "Weet je al of de auto gerepareerd kan worden en hoe lang dat duurt?"
 **Haalt ook op:** alarmcentrale
 
-## 26. hulpverlening-geen-recht
+## 27. hulpverlening-geen-recht
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -598,7 +629,7 @@
 - Als de klant vraagt of hulp bij diefstal is gedekt en het is niet bekend hoe de auto was achtergelaten → "Was de auto afgesloten, en zaten de sleutels er niet in of op?"
 **Haalt ook op:** hulpverlening
 
-## 27. alarmcentrale
+## 28. alarmcentrale
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -622,7 +653,7 @@
 - Als het is niet bekend wat er aan de hand is of waar de klant is → "Waar sta je, en wat is er aan de hand met je auto?"
 
 
-## 28. pechhulp
+## 29. pechhulp
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -647,7 +678,7 @@
 - Als de klant heeft pech en het is niet bekend of hij Pechhulp heeft → "Staat Pechhulp op je polisblad?"
 **Haalt ook op:** alarmcentrale, pechhulp-nederland
 
-## 29. pechhulp-nederland
+## 30. pechhulp-nederland
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -670,7 +701,7 @@
 - Als de klant heeft pech en het is niet bekend of hij Pechhulp heeft → "Staat Pechhulp op je polisblad?"
 **Haalt ook op:** alarmcentrale
 
-## 30. pechhulp-buitenland
+## 31. pechhulp-buitenland
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -695,7 +726,7 @@
 - Als de klant heeft pech in het buitenland en het is niet bekend of hij Pechhulp heeft → "Staat Pechhulp op je polisblad?"
 **Haalt ook op:** alarmcentrale
 
-## 31. pechhulp-geen-recht
+## 32. pechhulp-geen-recht
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -717,7 +748,7 @@
 
 **Haalt ook op:** pechhulp
 
-## 32. vervangend-vervoer
+## 33. vervangend-vervoer
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -740,7 +771,7 @@
 - Als het is niet duidelijk waarom de klant vervangend vervoer nodig heeft → "Waarom heb je vervangend vervoer nodig: pech, diefstal of een reparatie?"
 
 
-## 33. garage-keuze
+## 34. garage-keuze
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -764,7 +795,7 @@
 - Als het is niet duidelijk of het om een reparatie of om pech gaat → "Gaat het om een reparatie na schade, of om pech onderweg?"
 **Haalt ook op:** vervangend-vervoer
 
-## 34. ruitschade
+## 35. ruitschade
 
 **Controle:** gecontroleerd tegen de bron — Dat WA geen ruitschade vergoedt, staat op asr.nl (WA-pagina: 'Ruitschade is niet verzekerd'); de WA-voorwaarden dekken schade aan anderen.
 
@@ -788,7 +819,7 @@
 - Als de klant vraagt over ruitschade en het is niet bekend welke dekking hij heeft → "Welke dekking heb je: alleen WA, WA + Casco beperkt of WA + Casco allrisk?"
 **Haalt ook op:** sw-ruitschade
 
-## 35. eigen-risico
+## 36. eigen-risico
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -812,13 +843,13 @@
 - Als de klant vraagt naar eigen risico en het is niet bekend welke dekking hij heeft → "Welke dekking heb je: alleen WA, WA + Casco beperkt of WA + Casco allrisk?"
 **Haalt ook op:** cb-eigen-risico
 
-## 36. schadevergoeding-benadeelde
+## 37. schadevergoeding-benadeelde
 
 **Controle:** gecontroleerd tegen de bron
 
 ### Oud
 **Bronverwijzing:** Voorwaarden Autoverzekering Wettelijke Aansprakelijkheid (WA), D AU-WA 2017-01, 4.1 Schadevergoeding aan de benadeelde
-**Zoekwoorden (8):** benadeelde, schade afhandelen, wie betaalt, schikking, tegenpartij, verhalen, regres, hoe wordt schade vergoed
+**Zoekwoorden (15):** aansprakelijk gesteld, aansprakelijkheidsstelling, iemand stelt mij aansprakelijk, aansprakelijk voor schade van een ander, moet ik zelf betalen, claim van een ander, tegenpartij claimt, benadeelde, schade afhandelen, wie betaalt, schikking, tegenpartij, …
 **Tekst (81 woorden):** Ben je aansprakelijk gesteld voor schade van een ander (de benadeelde), dan handelen we de schade rechtstreeks af met die benadeelde. We kunnen de schade rechtstreeks vergoeden of een schikking treffen en houden daarbij rekening met je belangen. Per gebeurtenis vergoeden wij maximaal de bedragen op je polisblad. Moeten wij volgens de W.A.M. of een soortgelijke buitenlandse wet een vergoeding betalen waar je op deze verzekering geen dekking voor hebt, dan hebben wij het recht dat bedrag op jou te verhalen.
 
 ### Nieuw
@@ -835,7 +866,7 @@
 - Als de klant is aansprakelijk gesteld maar het is niet bekend door wie of waarvoor → "Wie heeft je aansprakelijk gesteld, en waarvoor?"
 **Haalt ook op:** medewerking
 
-## 37. kosten-vergoed
+## 38. kosten-vergoed
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -860,7 +891,7 @@
 - Als de klant vraagt naar kosten zonder te zeggen om welke → "Om welke kosten gaat het?"
 
 
-## 38. waarborgsom
+## 39. waarborgsom
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -884,7 +915,7 @@
 - Als de klant moet een waarborgsom betalen en het is niet bekend waarvoor → "Waarvoor moet je de waarborgsom betalen?"
 
 
-## 39. vergoeding-anderen
+## 40. vergoeding-anderen
 
 **Controle:** HANDMATIG CONTROLEREN — Juridisch complex (Na u-bepaling). De chat mag niet zeggen welke verzekeraar uiteindelijk betaalt.
 
@@ -907,7 +938,7 @@
 - Als het is niet bekend of een andere verzekering of garantie de schade ook dekt → "Heb je ook een andere verzekering of een garantie die deze schade kan dekken?"
 
 
-## 40. reageren
+## 41. reageren
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -929,7 +960,7 @@
 - Als de klant is het oneens met een besluit en het is niet bekend wanneer hij dat kreeg → "Wanneer heb je het besluit van a.s.r. gekregen?"
 **Haalt ook op:** al-klacht
 
-## 41. noclaim-uitleg
+## 42. noclaim-uitleg
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -954,7 +985,7 @@
 - Als de klant vraagt naar zijn korting en het is niet bekend op welke trede hij zit → "Op welke trede zit je, of hoeveel schadevrije jaren heb je?"
 **Haalt ook op:** schadevrije-jaren
 
-## 42. noclaim-geen-gevolg
+## 43. noclaim-geen-gevolg
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -978,7 +1009,7 @@
 - Als de klant vraagt of een schade meetelt en het is niet bekend om welke schade het gaat → "Om wat voor schade gaat het, en wie heeft die betaald?"
 **Haalt ook op:** schade-zonder-schuld
 
-## 43. schade-zonder-schuld
+## 44. schade-zonder-schuld
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1002,7 +1033,7 @@
 - Als het is niet bekend of er al aangifte is gedaan → "Heb je al aangifte gedaan bij de politie?"
 **Haalt ook op:** aangifte
 
-## 44. noclaim-casco
+## 45. noclaim-casco
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1024,7 +1055,7 @@
 - Als de klant vraagt naar de no-claim bij schade aan de eigen auto en het is niet bekend of hij Casco allrisk heeft → "Heb je WA + Casco allrisk, of een andere dekking?"
 **Haalt ook op:** ca-noclaim-geen-gevolg
 
-## 45. juiste-gegevens
+## 46. juiste-gegevens
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1047,7 +1078,7 @@
 - Als de klant zegt dat zijn gegevens niet kloppen maar het is niet bekend welke → "Welk gegeven klopt niet: de auto, je adres, de vaste bestuurder of het aantal kilometers?"
 **Haalt ook op:** wijzigingen-doorgeven
 
-## 46. aangifte
+## 47. aangifte
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1075,7 +1106,7 @@
 - Als het is niet bekend wat er is gebeurd → "Wat is er gebeurd?"
 
 
-## 47. medewerking
+## 48. medewerking
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1100,7 +1131,7 @@
 
 
 
-## 48. wijzigingen-doorgeven
+## 49. wijzigingen-doorgeven
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1123,7 +1154,7 @@
 - Als het is niet bekend wat er is veranderd → "Wat is er veranderd: je auto, je adres of de vaste bestuurder?"
 **Haalt ook op:** auto-verkopen
 
-## 49. gevolgen-verplichtingen
+## 50. gevolgen-verplichtingen
 
 **Controle:** HANDMATIG CONTROLEREN — Juridisch gewicht: 'kan de schade en kosten op jou verhalen' en 'beëindigen met terugwerkende kracht'. De chat mag dit niet zekerder maken dan de voorwaarden doen.
 
@@ -1147,7 +1178,7 @@
 
 **Haalt ook op:** juiste-gegevens
 
-## 50. leenauto
+## 51. leenauto
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1169,7 +1200,7 @@
 - Als het is niet bekend of de leenauto verzekerd is → "Weet je of de garage de leenauto zelf heeft verzekerd?"
 
 
-## 51. auto-verkopen
+## 52. auto-verkopen
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1192,7 +1223,7 @@
 - Als de klant verkoopt zijn auto en het is niet bekend of hij een andere auto koopt → "Koop je een andere auto, of heb je geen auto meer?"
 **Haalt ook op:** al-geen-belang
 
-## 52. buitenlandse-wet
+## 53. buitenlandse-wet
 
 **Controle:** HANDMATIG CONTROLEREN — Juridisch (W.A.M. en buitenlandse wetgeving). De chat mag niet zeggen wat de wet in een bepaald land inhoudt.
 
@@ -1214,7 +1245,7 @@
 
 
 
-## 53. opzet
+## 54. opzet
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1236,7 +1267,7 @@
 
 
 
-## 54. fraude
+## 55. fraude
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1259,7 +1290,7 @@
 
 **Haalt ook op:** al-fraude
 
-## 55. criminele-activiteiten
+## 56. criminele-activiteiten
 
 **Controle:** gecontroleerd tegen de bron
 
@@ -1281,7 +1312,7 @@
 
 
 
-## 56. terrorisme
+## 57. terrorisme
 
 **Controle:** HANDMATIG CONTROLEREN — Juridisch complex (herverzekering, beslissingsbevoegdheid NHT). De chat doet geen uitspraken over een concrete gebeurtenis.
 
@@ -1305,7 +1336,7 @@
 
 
 
-## 57. begrippen
+## 58. begrippen
 
 **Controle:** HANDMATIG CONTROLEREN — Samenvatting van een begrippenlijst; de definitie van atoomkernreactie is juridisch en hier sterk ingekort.
 
@@ -1331,7 +1362,7 @@
 - Als het is niet duidelijk welk begrip de klant bedoelt → "Welk woord wil je uitgelegd hebben?"
 
 
-## 58. contact-en-bedrijf
+## 59. contact-en-bedrijf
 
 **Controle:** gecontroleerd tegen de bron
 

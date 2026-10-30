@@ -185,4 +185,26 @@ export const VERRIJKING_CASCO_ALLRISK: Record<string, Verrijking> = {
     vervolgvragen: [q("De klant vraagt naar een begrip zonder het te noemen", "Welk woord of begrip wil je uitgelegd hebben?")],
     gerelateerd: ["ca-motor", "cb-begrippen"],
   }),
+
+  "ca-voor-en-nadelen": b({
+    brontekstSoort: "samenvatting",
+    uitleg: "Allrisk is de meest uitgebreide dekking: ook schade aan je eigen auto door een aanrijding of vandalisme is verzekerd, ook als je die zelf veroorzaakt. Een eventueel eigen risico gaat af van de vergoeding, en normaal onderhoud en slijtage zijn niet gedekt.",
+    aandachtspunten: [
+      "Voordeel: je hebt ook alles van Casco beperkt: brand, storm en natuur, ruitschade, diefstal en standaard 1 jaar nieuwwaarde.",
+      "Voordeel: schade aan motor, aandrijving, elektrische installatie en transmissie door een eigen gebrek is verzekerd, maar alleen onder strikte voorwaarden over de leeftijd en de kilometers van de auto en over het onderhoud.",
+      "Voordeel: je krijgt no-claimkorting tot 75%.",
+      "Nadeel: allrisk is niet verplicht. Een eigen risico op je polisblad gaat af van de vergoeding.",
+      "Nadeel: bij een aanrijding, botsing of slippen kan een extra jeugd eigen risico van € 250 gelden. Dat is zo als de vaste bestuurder op je polisblad 24 jaar of ouder is en de bestuurder jonger dan 24 jaar.",
+      "Nadeel: schade die je met opzet veroorzaakt is nooit verzekerd.",
+      "Nadeel: normaal onderhoud, onvoldoende onderhoud, onvoldoende zorg en slijtage zijn niet gedekt.",
+      "Klanten kiezen meestal WA + Casco allrisk bij een auto van 0 tot en met 5 jaar oud, met een hoge dagwaarde, als ze zekerheid willen bij onverwachte schade en schade aan hun eigen auto niet zelf willen betalen. A.s.r. geeft geen persoonlijk advies.",
+    ],
+    klantinfo: ["Hoe oud de auto is.", "Wie de auto bestuurt en hoe oud die persoon is."],
+    vervolgvragen: [q("De klant vraagt naar voor- en nadelen en het is niet bekend hoe oud de auto is", "Hoe oud is je auto?")],
+    gerelateerd: ["ca-dekking-overzicht", "ca-jeugd-eigen-risico", "ca-motor"],
+    controle: {
+      status: "gecontroleerd",
+      opmerking: "Samenvatting, samengesteld uit sw-ca-wat-is, sw-ca-verzekerd, sw-ca-eigen-schuld, ca-dekking-overzicht, ca-motor en ca-jeugd-eigen-risico; elke bewering is nagelopen. Bewust niet opgenomen: een premievergelijking met WA of Casco beperkt (de kennisbank noemt geen premies).",
+    },
+  }),
 };

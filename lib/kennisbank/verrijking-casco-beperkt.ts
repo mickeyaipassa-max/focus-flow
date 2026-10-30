@@ -428,4 +428,26 @@ export const VERRIJKING_CASCO_BEPERKT: Record<string, Verrijking> = {
     klantinfo: ["Welk woord de klant uitgelegd wil hebben."],
     vervolgvragen: [q("Het is niet duidelijk welk begrip de klant bedoelt", "Welk woord wil je uitgelegd hebben?")],
   }),
+
+  "cb-voor-en-nadelen": b({
+    brontekstSoort: "samenvatting",
+    uitleg: "Met WA + Casco beperkt ben je ook verzekerd voor schade aan je eigen auto door brand, storm en natuur, diefstal en ruitschade. Een aanrijding of vandalisme valt er niet onder.",
+    aandachtspunten: [
+      "Voordeel: je krijgt standaard 1 jaar nieuwwaarde en kunt de nieuwwaarde of aankoopwaarde tot 3 jaar meeverzekeren.",
+      "Voordeel: je krijgt no-claimkorting tot 75%.",
+      "Voordeel: bij ruitschade maak je direct een afspraak bij een aangesloten hersteller. Een ruit laten repareren kost geen eigen risico.",
+      "Voordeel: bij reparatie door een hersteller uit het netwerk van a.s.r. krijg je gratis vervangend vervoer. Bij total loss krijg je 5 dagen een gratis leenauto.",
+      "Nadeel: schade aan je eigen auto door een aanrijding of vandalisme is niet verzekerd, ook niet als je die zelf veroorzaakt.",
+      "Nadeel: casco beperkt is niet verplicht. Een eigen risico op je polisblad gaat af van de vergoeding. Op asr.nl kies je uit € 0, € 150, € 250 of € 500, en hoe hoger je eigen risico, hoe lager je premie.",
+      "Nadeel: normaal onderhoud en slijtage krijg je niet vergoed.",
+      "Klanten kiezen meestal WA + Casco beperkt bij een auto van 6 tot 10 jaar oud, met een lagere dagwaarde, als ze schade door ruitbreuk, diefstal en brand niet zelf willen betalen en meer zekerheid willen dan alleen WA. A.s.r. geeft geen persoonlijk advies.",
+    ],
+    klantinfo: ["Hoe oud de auto is.", "Of de klant schade door een aanrijding of vandalisme zelf wil betalen."],
+    vervolgvragen: [q("De klant vraagt naar voor- en nadelen en het is niet bekend of hij schade door een aanrijding zelf wil betalen", "Wil je schade door een aanrijding of vandalisme zelf betalen, of liever verzekeren?")],
+    gerelateerd: ["cb-dekking-overzicht", "sw-cb-verzekerd", "cb-eigen-risico"],
+    controle: {
+      status: "gecontroleerd",
+      opmerking: "Samenvatting, samengesteld uit sw-cb-wat-is, sw-cb-verzekerd, sw-ruitschade, sw-vervangend-vervoer, sw-nieuwwaarde-aankoopwaarde, sw-eigen-risico, cb-eigen-risico en cb-onderhoud-slijtage; elke bewering is nagelopen. Bewust niet opgenomen: een premievergelijking met WA of allrisk (de kennisbank noemt geen premies).",
+    },
+  }),
 };
