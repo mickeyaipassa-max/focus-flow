@@ -142,7 +142,7 @@ function ChatWelcome({
         {/* Cream: geen avatar boven het openingsbericht (en ook niet boven antwoorden): de avatar staat in de header. */}
         {windowStyle !== "cream" && <AssistantAvatar windowStyle={windowStyle} />}
         <div className="max-w-full rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
-          <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+          <p className="whitespace-pre-line text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
             <span className="sr-only">AI-assistent zei: </span>
             {welcomeText}
           </p>
@@ -158,12 +158,13 @@ function ChatWelcome({
               aria-pressed={selectedTag === label}
               onClick={() => onTagClick(label)}
               className={[
-                "flex h-8 items-center justify-center gap-1 rounded-full py-1 pr-3 pl-2 hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black",
+                // Onder 600px minimaal 44px hoog (goed aan te tikken) en met tekst die mag doorlopen op een tweede regel; vanaf 600px zoals in Figma (32px, één regel).
+                "flex max-w-full items-center justify-center gap-1 rounded-full py-1 pr-3 pl-2 hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black max-[599px]:min-h-11 min-[600px]:h-8",
                 selectedTag === label ? "bg-[#eef4e3]" : "bg-white",
               ].join(" ")}
             >
               <Icon name="comment-sm" size="sm" />
-              <span className="whitespace-nowrap text-black text-sm leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+              <span className="text-left text-black text-sm leading-[1.5] min-[600px]:whitespace-nowrap" style={{ fontFamily: "var(--font-avenir-medium)" }}>
                 {label}
               </span>
             </button>
@@ -210,9 +211,8 @@ function ChatWelcome({
  * scrollbar. De verstuurknop ernaast is meegeschaald naar 52px zodat beide
  * even hoog blijven.
  */
-function ChatInput({ onSend, windowStyle }: { onSend: (text: string) => void; windowStyle: ChatWindowStyle }) {
+function ChatInput({ onSend, windowStyle, textareaRef }: { onSend: (text: string) => void; windowStyle: ChatWindowStyle; textareaRef: RefObject<HTMLTextAreaElement | null> }) {
   const [value, setValue] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     textareaRef.current?.focus();
@@ -278,6 +278,8 @@ type ChatWidgetProps = {
   topicStyle?: "outline" | "bubble";
   /** Opt-in: wat er als bericht wordt gestuurd bij een klik op een onderwerp. Standaard "Ik heb een vraag over …". */
   topicMessage?: (label: string) => string;
+  /** Opt-in: de pagina handelt een klik op een onderwerp zelf af (bv. een vast antwoord zonder taalmodel); dan wordt `onSend` niet aangeroepen. */
+  onTopicSelect?: (label: string) => void;
   /** Opt-in: "cream" = het ontwerp van de autoverzekering (Figma Autoverzekering, 9358:1686). Standaard "gold" (/aichat). */
   windowStyle?: ChatWindowStyle;
 };
@@ -310,6 +312,7 @@ export function ChatWidget({
   topics = TOPIC_LABELS,
   topicStyle = "outline",
   topicMessage = (label: string) => `Ik heb een vraag over ${label.toLowerCase()}`,
+  onTopicSelect,
   windowStyle = "gold",
 }: ChatWidgetProps) {
   const messagesLogRef = useRef<HTMLDivElement>(null);
@@ -323,6 +326,12 @@ export function ChatWidget({
   const menuBtnRef = useRef<HTMLButtonElement>(null);
   const hasMessages = messages.length > 0 || isTyping;
   const cream = windowStyle === "cream";
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  // Eén klik op een onderwerp telt: snelle dubbele klikken sturen geen tweede bericht. Het onderwerp is weer te kiezen als het gesprek leeg is.
+  const tagGekozen = useRef(false);
+  useEffect(() => {
+    if (!hasMessages) tagGekozen.current = false;
+  }, [hasMessages]);
 
   useEffect(() => {
     if (isOpen) {
@@ -435,8 +444,13 @@ export function ChatWidget({
   }
 
   function handleTagClick(label: string) {
+    if (tagGekozen.current) return;
+    tagGekozen.current = true;
     setSelectedTag(label);
-    onSend(topicMessage(label));
+    if (onTopicSelect) onTopicSelect(label);
+    else onSend(topicMessage(label));
+    // Cursor direct in het invoerveld, zodat de klant meteen kan typen (bij de klik zelf, anders staat de mobiele browser het toetsenbord niet toe).
+    inputRef.current?.focus();
   }
 
   if (!visible) return null;
@@ -637,7 +651,7 @@ export function ChatWidget({
           {isTyping && <TypingIndicator windowStyle={windowStyle} />}
         </div>
 
-        <ChatInput onSend={onSend} windowStyle={windowStyle} />
+        <ChatInput onSend={onSend} windowStyle={windowStyle} textareaRef={inputRef} />
       </div>
     </>
   );

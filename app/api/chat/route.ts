@@ -4,6 +4,7 @@ import type { ChatSource } from "@/lib/chatPdf";
 import { zoekContext, type KennisContext } from "@/lib/kennisbank/zoek";
 import type { Product } from "@/lib/kennisbank";
 import { bronVanAntwoord } from "@/lib/chat/bron";
+import { keuzehulpTag, zoektermenVanGesprek } from "@/lib/chat/keuzehulp";
 import { GEEN_BRON, STIJLHERINNERING, systeemInstructie } from "@/lib/chat/systeem-instructie";
 
 /**
@@ -126,13 +127,19 @@ export async function POST(request: NextRequest) {
   const berichten = leesBerichten(body);
   if (!berichten) return NextResponse.json({ fout: "ongeldig-verzoek" }, { status: 400 });
   const dekking = typeof (body as { dekking?: unknown }).dekking === "string" ? (body as { dekking: string }).dekking : undefined;
+  // De keuzehulp (chat bij "Kies je basisdekking"): de klant kiest nog. De geselecteerde dekking is context, geen filter en geen voorkeur.
+  const keuzehulp = (body as { keuzehulp?: unknown }).keuzehulp === true;
 
   // Zoek op de laatste vraag. Is die heel kort ("en bij allrisk?"), zoek dan ook op de vraag ervoor.
   const vragen = berichten.filter((bericht) => bericht.role === "user");
   const laatsteVraag = vragen[vragen.length - 1].text;
   const vorigeVraag = vragen.length > 1 ? vragen[vragen.length - 2].text : "";
-  const opties = { producten: dekking ? PRODUCTEN_PER_DEKKING[dekking] : undefined };
-  let context = zoekContext(laatsteVraag.split(/\s+/).length < KORTE_VRAAG_WOORDEN && vorigeVraag ? `${vorigeVraag} ${laatsteVraag}` : laatsteVraag, opties, AANTAL_ONDERDELEN);
+  const opties = { producten: dekking && !keuzehulp ? PRODUCTEN_PER_DEKKING[dekking] : undefined };
+  const korteVraag = laatsteVraag.split(/\s+/).length < KORTE_VRAAG_WOORDEN;
+  // In de keuzehulp zoekt een kort antwoord ("5 jaar", "ja") ook op het onderwerp van de gekozen tag; de tag zelf telt niet als vraag.
+  const zoektermen = keuzehulp && korteVraag ? zoektermenVanGesprek(vragen.map((vraag) => vraag.text)) : "";
+  const vorigeOnderwerp = keuzehulp && keuzehulpTag(vorigeVraag) ? "" : vorigeVraag;
+  let context = zoekContext(korteVraag && (vorigeOnderwerp || zoektermen) ? [zoektermen, vorigeOnderwerp, laatsteVraag].filter(Boolean).join(" ") : laatsteVraag, opties, AANTAL_ONDERDELEN);
   // Vindt de laatste vraag niets ("Wat kan ik dan doen?"), zoek dan op het onderwerp van de vraag ervoor.
   if (context.length === 0 && vorigeVraag) context = zoekContext(`${vorigeVraag} ${laatsteVraag}`, opties, AANTAL_ONDERDELEN);
 
@@ -148,7 +155,7 @@ export async function POST(request: NextRequest) {
     const response = await client.messages.create({
       model: MODEL,
       max_tokens: MAX_TOKENS,
-      system: systeemInstructie(dekking),
+      system: systeemInstructie(dekking, keuzehulp),
       messages,
       output_config: { effort: "low" },
     });
@@ -159,7 +166,7 @@ export async function POST(request: NextRequest) {
     let ruw = tekstVan(response);
     // Te lang (meer dan 4 zinnen of 70 woorden, een zin van meer dan 25 woorden) of meer dan één vraag? Dan één keer laten inkorten, als er nog tijd is.
     if ((aantalWoorden(ruw) > MAX_WOORDEN || aantalZinnen(ruw) > MAX_ZINNEN || langsteZin(ruw) > MAX_ZINLENGTE || aantalVragen(ruw) > 1) && Date.now() - gestart < 15_000) {
-      const korter = await client.messages.create({ model: MODEL, max_tokens: MAX_TOKENS, system: systeemInstructie(dekking), messages: [...messages, { role: "assistant", content: ruw }, { role: "user", content: INKORT_OPDRACHT }], output_config: { effort: "low" } });
+      const korter = await client.messages.create({ model: MODEL, max_tokens: MAX_TOKENS, system: systeemInstructie(dekking, keuzehulp), messages: [...messages, { role: "assistant", content: ruw }, { role: "user", content: INKORT_OPDRACHT }], output_config: { effort: "low" } });
       const kortAntwoord = tekstVan(korter);
       if (korter.stop_reason !== "refusal" && kortAntwoord && (overtredingen(kortAntwoord) < overtredingen(ruw) || (overtredingen(kortAntwoord) === overtredingen(ruw) && aantalWoorden(kortAntwoord) < aantalWoorden(ruw)))) ruw = kortAntwoord;
     }

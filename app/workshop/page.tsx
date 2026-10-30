@@ -15,6 +15,7 @@ import { Tag } from "@/components/Tag";
 import { formatDatum } from "@/lib/datum";
 import type { ChatSource } from "@/lib/chatPdf";
 import type { Product } from "@/lib/kennisbank";
+import { KEUZEHULP_OPENING, KEUZEHULP_TAGS, keuzehulpTag } from "@/lib/chat/keuzehulp";
 import { zoekKortAntwoord } from "@/lib/kennisbank/zoek";
 import { ChatWidget, type ChatMessageData } from "../aichat/ChatWidget";
 import { MinimizedChatButton } from "../aichat/MinimizedChatButton";
@@ -98,9 +99,11 @@ const AANVULLENDE_DEKKINGEN = [
   },
 ];
 
-/** Openingstekst en onderwerpen van de chat, letterlijk uit Figma (Autoverzekering, node 9358:1686; "help nodig" staat daar zo). */
-const HULP_OPENINGSVRAAG = "Je hebt help nodig bij het kiezen van een juiste dekking, waar kan ik je mee helpen?";
-const HULP_ONDERWERPEN = ["Meer over WA", "Meer over WA+", "Meer over All-Risk", "Vervangend vervoer", "Garage keuze bij pech", "Stormschade"];
+/**
+ * De chat is de keuzehulp: een vaste openingsvraag met vier klikbare antwoorden (lib/chat/keuzehulp.ts). Een klik geeft een vast
+ * antwoord zonder taalmodel; daarna neemt het taalmodel het gesprek over.
+ */
+const KEUZEHULP_ONDERWERPEN = KEUZEHULP_TAGS.map((tag) => tag.label);
 
 /** Antwoord op de drie "Meer over …"-onderwerpen, uit de kenmerken van de kaarten op deze pagina; `null` bij elke andere vraag. */
 function kaartAntwoord(tekst: string): string | null {
@@ -143,7 +146,8 @@ async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: str
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ berichten, dekking }),
+      // `keuzehulp`: de klant kiest nog, dus de geselecteerde dekking is context en geen filter (zie app/api/chat).
+      body: JSON.stringify({ berichten, dekking, keuzehulp: true }),
       signal: AbortSignal.timeout(30_000),
     });
     if (!response.ok) return null;
@@ -212,11 +216,34 @@ export default function WorkshopPage() {
   const [chatTyping, setChatTyping] = useState(false);
   const minimizedButtonRef = useRef<HTMLButtonElement>(null);
   const hulpTagRef = useRef<HTMLButtonElement | null>(null);
+  // Het vaste antwoord op een tag verschijnt na een korte pauze; typt de klant in die pauze al, dan komt het antwoord eerst.
+  const vasteReactie = useRef<{ timer: ReturnType<typeof setTimeout>; tekst: string } | null>(null);
+
+  function wisVasteReactie() {
+    if (vasteReactie.current) clearTimeout(vasteReactie.current.timer);
+    vasteReactie.current = null;
+  }
 
   function startChat() {
+    wisVasteReactie();
     setChatMessages([]);
     setChatTyping(false);
     setChatOpen(true);
+  }
+
+  function plaatsVasteReactie(tekst: string) {
+    vasteReactie.current = null;
+    setChatTyping(false);
+    setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "assistant", text: tekst }]);
+  }
+
+  /** Klik op een van de vier tags: het gekozen antwoord komt als klantbericht in het gesprek, de chat antwoordt vast, zonder taalmodel. */
+  function handleKeuzehulpTag(label: string) {
+    const tag = keuzehulpTag(label);
+    if (!tag) return;
+    setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "user", text: tag.label }]);
+    setChatTyping(true);
+    vasteReactie.current = { timer: setTimeout(() => plaatsVasteReactie(tag.antwoord), 600), tekst: tag.antwoord };
   }
 
   function handleHulpClick(event: { currentTarget: HTMLButtonElement }) {
@@ -227,7 +254,13 @@ export default function WorkshopPage() {
   }
 
   async function handleChatSend(text: string) {
-    const gesprek = [...chatMessages.map(({ role, text: bericht }) => ({ role, text: bericht })), { role: "user" as const, text }];
+    const wachtend = vasteReactie.current;
+    if (wachtend) {
+      clearTimeout(wachtend.timer);
+      plaatsVasteReactie(wachtend.tekst);
+    }
+    const eerder = [...chatMessages.map(({ role, text: bericht }) => ({ role, text: bericht })), ...(wachtend ? [{ role: "assistant" as const, text: wachtend.tekst }] : [])];
+    const gesprek = [...eerder, { role: "user" as const, text }];
     setChatMessages((previous) => [...previous, { id: nextMessageId++, role: "user", text }]);
     setChatTyping(true);
     // De drie "Meer over …"-onderwerpen blijven het vaste antwoord uit de kaarten; de rest gaat naar het taalmodel,
@@ -366,6 +399,7 @@ export default function WorkshopPage() {
         messages={chatMessages}
         isTyping={chatTyping}
         onClose={() => {
+          wisVasteReactie();
           setChatOpen(false);
           setChatMessages([]);
           setChatTyping(false);
@@ -375,10 +409,10 @@ export default function WorkshopPage() {
         onSend={handleChatSend}
         returnFocusOnMinimize={minimizedButtonRef}
         returnFocusOnClose={hulpTagRef}
-        welcomeText={HULP_OPENINGSVRAAG}
-        topics={HULP_ONDERWERPEN}
+        welcomeText={KEUZEHULP_OPENING}
+        topics={KEUZEHULP_ONDERWERPEN}
         topicStyle="bubble"
-        topicMessage={(label) => label}
+        onTopicSelect={handleKeuzehulpTag}
         windowStyle="cream"
       />
     </FunnelPageTemplate>

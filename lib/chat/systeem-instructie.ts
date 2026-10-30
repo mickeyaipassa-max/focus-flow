@@ -138,8 +138,20 @@ const DEKKING_NAAM: Record<string, string> = {
   "wa-casco-allrisk": "WA + Casco allrisk",
 };
 
+/**
+ * Extra regels voor de keuzehulp op /workshop (chat bij "Kies je basisdekking", app/api/chat met `keuzehulp: true`): de klant kiest nog,
+ * dus de geselecteerde dekking is alleen context.
+ */
+const keuzehulpRegels = (naam?: string) => `
+Keuzehulp
+* De klant gebruikt de keuzehulp bij 'Kies je basisdekking' en is nog aan het kiezen. ${naam ? `Op de pagina staat nu ${naam} geselecteerd, maar de klant heeft nog niet gekozen.` : "Op de pagina is nog geen dekking geselecteerd."} Ga er niet van uit dat de geselecteerde dekking de beste keuze is en geef geen advies over welke dekking de klant moet nemen. Leg de verschillen uit, vraag wat voor de klant belangrijk is en laat de klant zelf kiezen.
+* Het gesprek begon met een vaste openingsvraag, een tag die de klant koos en een vast antwoord van jou. Die staan al in het gesprek. Herhaal ze niet en stel de openingsvraag niet opnieuw. Ga verder vanuit wat de klant daarna zegt en gebruik wat de klant al vertelde, zoals de leeftijd van de auto of wat belangrijk is.
+* Een onderdeel uit de kennisbank mag bij een andere dekking horen dan de geselecteerde: dat is hier normaal. Zeg dan gewoon bij welke dekking het hoort ('met WA + Casco beperkt ...') en niet dat het niet bij de klant past.
+* Noemt de klant de leeftijd van de auto, dan mag je zeggen welke dekking klanten dan meestal kiezen, zoals in de kennisbank staat, en erbij zeggen dat a.s.r. geen persoonlijk advies geeft.`;
+
 /** De volledige systeeminstructie, met de dekking die de klant op dat moment bekijkt. */
-export function systeemInstructie(dekking?: string): string {
+export function systeemInstructie(dekking?: string, keuzehulp = false): string {
   const naam = dekking ? DEKKING_NAAM[dekking] : undefined;
-  return `${KLANTVRIENDELIJKE_CHATBOT}\n\n${AANVULLING}${naam ? `\n* De klant bekijkt nu de dekking ${naam}.` : ""}\n\n${voorbeeldgesprekkenBlok(GEEN_BRON)}`;
+  const dekkingRegel = keuzehulp ? `\n${keuzehulpRegels(naam)}` : naam ? `\n* De klant bekijkt nu de dekking ${naam}.` : "";
+  return `${KLANTVRIENDELIJKE_CHATBOT}\n\n${AANVULLING}${dekkingRegel}\n\n${voorbeeldgesprekkenBlok(GEEN_BRON)}`;
 }
