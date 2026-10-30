@@ -1,5 +1,5 @@
 /**
- * PDF-export van een AI-chatgesprek ("Download als PDF" in het chatmenu).
+ * PDF-export van een AI-chatgesprek ("Download gesprek als PDF" in het chatmenu).
  *
  * Draait volledig in de browser met jsPDF (alleen geladen via `import()` op
  * het moment dat iemand daadwerkelijk downloadt — het zit dus niet in de
