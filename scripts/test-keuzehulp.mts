@@ -11,7 +11,7 @@
 import { readFileSync } from "node:fs";
 import { KENNISBANK } from "../lib/kennisbank/index";
 import { zoekContext } from "../lib/kennisbank/zoek";
-import { KEUZEHULP_OPENING, KEUZEHULP_TAGS, keuzehulpTag, zoektermenVanGesprek } from "../lib/chat/keuzehulp";
+import { KEUZEHULP_OPENING, KEUZEHULP_TAGS, keuzehulpContext, zoektermenVanGesprek } from "../lib/chat/keuzehulp";
 import { systeemInstructie } from "../lib/chat/systeem-instructie";
 
 let fouten = 0;
@@ -88,16 +88,8 @@ for (const tag of KEUZEHULP_TAGS) {
 }
 if (fouten === 0) goed("2 tot 4 zinnen, hooguit één vraag, je/jij, geen juridische taal");
 
-// 4. Zoeken bij een kort vervolgantwoord (de formule van app/api/chat) -----------------------------------------------------
-console.log("\n== 4. Een kort vervolgantwoord vindt nog kennisbankonderdelen");
-function zoekQuery(klantBerichten: string[]): string {
-  const laatste = klantBerichten[klantBerichten.length - 1];
-  const vorige = klantBerichten.length > 1 ? klantBerichten[klantBerichten.length - 2] : "";
-  const kort = laatste.split(/\s+/).length < 7;
-  const zoektermen = kort ? zoektermenVanGesprek(klantBerichten) : "";
-  const vorigeOnderwerp = keuzehulpTag(vorige) ? "" : vorige;
-  return kort && (vorigeOnderwerp || zoektermen) ? [zoektermen, vorigeOnderwerp, laatste].filter(Boolean).join(" ") : laatste;
-}
+// 4. Zoeken in het vervolggesprek (dezelfde functie als app/api/chat) -----------------------------------------------------
+console.log("\n== 4. Het vervolggesprek vindt de juiste kennisbankonderdelen");
 const VERVOLG: { naam: string; klant: string[]; verwacht: string[] }[] = [
   { naam: "lage premie, daarna 'Ja' (diefstal en ruitschade belangrijk)", klant: ["Vooral een lage premie", "Ja, dat vind ik belangrijk"], verwacht: ["sw-vergelijken", "sw-wa-verzekerd", "sw-cb-verzekerd"] },
   { naam: "lage premie, daarna 'Nee'", klant: ["Vooral een lage premie", "Nee, dat hoeft niet"], verwacht: ["sw-wa-verzekerd", "sw-wa-wat-is", "sw-vergelijken", "sw-premie"] },
@@ -105,13 +97,19 @@ const VERVOLG: { naam: string; klant: string[]; verwacht: string[] }[] = [
   { naam: "eigen auto verzekeren, daarna 'Acht jaar oud'", klant: ["Ook mijn eigen auto verzekeren", "Acht jaar oud"], verwacht: ["sw-adviseur", "sw-vergelijken", "sw-cb-verzekerd"] },
   { naam: "dat weet ik nog niet, daarna '12 jaar'", klant: ["Dat weet ik nog niet", "12 jaar"], verwacht: ["sw-adviseur", "sw-vergelijken", "sw-wa-verzekerd"] },
   { naam: "dat weet ik nog niet, '3 jaar', daarna 'Wat is het verschil?'", klant: ["Dat weet ik nog niet", "3 jaar", "Wat is het verschil?"], verwacht: ["sw-vergelijken", "sw-adviseur"] },
+  // Een korte eigen vraag na een tag mag niet worden overstemd door de zoektermen van die tag (gevonden bij de analyse van de live chat).
+  { naam: "eigen auto, daarna een eigen korte vraag over eigen risico", klant: ["Ook mijn eigen auto verzekeren", "Wat betekent eigen risico eigenlijk?"], verwacht: ["eigen-risico", "cb-eigen-risico", "sw-eigen-risico"] },
+  { naam: "dat weet ik nog niet, daarna een eigen korte vraag over eigen risico", klant: ["Dat weet ik nog niet", "Wat is eigen risico?"], verwacht: ["eigen-risico", "cb-eigen-risico", "sw-eigen-risico"] },
+  { naam: "lage premie, daarna 'Wat kost dat dan ongeveer per maand?'", klant: ["Vooral een lage premie", "Wat kost dat dan ongeveer per maand?"], verwacht: ["sw-premie"] },
+  { naam: "lage premie, ruit, daarna de prijs", klant: ["Vooral een lage premie", "Ja, ruitschade wil ik wel verzekerd hebben, maar diefstal vind ik minder belangrijk", "Wat kost dat dan ongeveer per maand?"], verwacht: ["sw-premie"] },
+  { naam: "eigen auto, 4 jaar, daarna 'Is allrisk dan niet veel te duur?'", klant: ["Ook mijn eigen auto verzekeren", "Mijn auto is 4 jaar oud", "Is allrisk dan niet veel te duur?"], verwacht: ["ca-voor-en-nadelen", "ca-dekking-overzicht", "sw-ca-verzekerd", "sw-premie"] },
 ];
 for (const v of VERVOLG) {
-  const ids = zoekContext(zoekQuery(v.klant), {}, 3).map((c) => c.id);
+  const ids = keuzehulpContext(v.klant, {}, 3).map((c) => c.id);
   if (!ids.some((id) => v.verwacht.includes(id))) mislukt(`${v.naam}: gevonden ${ids.join(", ") || "(niets)"}, verwacht een van ${v.verwacht.join(", ")}`);
 }
 // Een eigen vraag zonder tag zoekt zoals voorheen.
-if (zoekQuery(["Wat dekt WA?"]) !== "Wat dekt WA?") mislukt("een eigen vraag zonder tag wordt anders doorzocht dan voorheen");
+if (keuzehulpContext(["Wat dekt WA?"], {}, 3).map((c) => c.id).join() !== zoekContext("Wat dekt WA?", {}, 3).map((c) => c.id).join()) mislukt("een eigen vraag zonder tag wordt anders doorzocht dan voorheen");
 if (zoektermenVanGesprek(["Wat dekt WA?"]) !== "") mislukt("zoektermen zonder tag zouden leeg moeten zijn");
 if (fouten === 0) goed(`${VERVOLG.length} vervolggesprekken vinden een passend onderdeel; een eigen vraag zoekt zoals voorheen`);
 
@@ -127,6 +125,12 @@ if (!hulpZonder.includes("Op de pagina is nog geen dekking geselecteerd")) mislu
 if (!/Ga er niet van uit dat de geselecteerde dekking de beste keuze is/.test(hulp)) mislukt("de regel dat de geselecteerde dekking niet de beste keuze hoeft te zijn ontbreekt");
 if (!/stel de openingsvraag niet opnieuw/.test(hulp)) mislukt("de regel om de openingsvraag niet te herhalen ontbreekt");
 if (/De klant bekijkt nu de dekking/.test(hulp)) mislukt("de keuzehulp zegt nog 'bekijkt nu de dekking' (de klant kiest nog)");
+// Regels uit de analyse van de live chat: natuurlijker taal, prijs naar de kaarten, simpeler uitleggen.
+if (gewoon.includes("'Dat kan ik hier niet zien.'")) mislukt("de instructie laat de chat nog 'Dat kan ik hier niet zien' zeggen");
+if (!gewoon.includes("Dat staat niet in mijn informatie")) mislukt("de natuurlijker formulering voor 'dat weet ik niet' ontbreekt");
+if (!gewoon.includes("Vraagt de klant om het simpeler te zeggen")) mislukt("de regel om simpeler uit te leggen ontbreekt");
+if (!hulp.includes("op de kaarten op deze pagina staat") || !hulp.includes("Noem geen bedragen")) mislukt("de prijsregel (verwijs naar de kaarten, noem geen bedragen) ontbreekt in de keuzehulp");
+if (gewoon.includes("op de kaarten op deze pagina staat")) mislukt("de prijsregel staat ook buiten de keuzehulp, waar er geen kaarten zijn");
 if (fouten === 0) goed("keuzehulpregels alleen in de keuzehulp; geselecteerde dekking als context; geen voorkeur voor die dekking");
 
 console.log(fouten ? `\n${fouten} controle(s) mislukt` : "\nAlle controles geslaagd");

@@ -7,6 +7,11 @@
  * scripts/test-keuzehulp.mts). Wijzig je een antwoord, draai dan die test opnieuw.
  */
 
+import { zoekContext, type KennisContext, type ZoekOpties } from "@/lib/kennisbank/zoek";
+
+/** Een bericht korter dan dit aantal woorden ("en bij allrisk?") zoekt ook op de vraag ervoor. */
+export const KORTE_VRAAG_WOORDEN = 7;
+
 export const KEUZEHULP_OPENING = "Ik help je graag kiezen! 😊\nWat vind je belangrijk bij je autoverzekering?";
 
 export type KeuzehulpTag = {
@@ -50,7 +55,7 @@ export const keuzehulpTag = (label: string): KeuzehulpTag | undefined => KEUZEHU
 
 /**
  * De zoektermen van de tag die de klant eerder in dit gesprek koos (de eerste klantbericht-tag), of "" als er geen is.
- * Alleen voor de route: die zoekt er extra mee bij een kort antwoord.
+ * Alleen voor `keuzehulpContext`.
  */
 export function zoektermenVanGesprek(klantBerichten: string[]): string {
   for (const bericht of klantBerichten) {
@@ -58,4 +63,22 @@ export function zoektermenVanGesprek(klantBerichten: string[]): string {
     if (tag) return tag.zoektermen;
   }
   return "";
+}
+
+/**
+ * De kennisbankonderdelen voor het laatste klantbericht in de keuzehulp. Eerst zoeken we op het bericht zelf (met de vraag ervoor als het kort
+ * is, behalve als die vraag een tag was). Een eigen vraag als "Wat betekent eigen risico?" vindt zo zijn eigen onderdelen. Vindt dat niets, zoals
+ * bij een kort antwoord ("5 jaar", "ja"), dan zoeken we ook op het onderwerp van de tag die de klant koos. Andersom (altijd de tagtermen erbij) werd
+ * een korte eigen vraag overstemd door die termen.
+ */
+export function keuzehulpContext(klantBerichten: string[], opties: ZoekOpties, aantal: number): KennisContext[] {
+  const laatste = klantBerichten[klantBerichten.length - 1] ?? "";
+  const vorige = klantBerichten.length > 1 ? klantBerichten[klantBerichten.length - 2] : "";
+  const kort = laatste.split(/\s+/).length < KORTE_VRAAG_WOORDEN;
+  const vorigeOnderwerp = keuzehulpTag(vorige) ? "" : vorige;
+  const vraag = kort && vorigeOnderwerp ? `${vorigeOnderwerp} ${laatste}` : laatste;
+  const context = zoekContext(vraag, opties, aantal);
+  if (context.length > 0 || !kort) return context;
+  const zoektermen = zoektermenVanGesprek(klantBerichten);
+  return zoektermen ? zoekContext(`${zoektermen} ${vraag}`, opties, aantal) : context;
 }

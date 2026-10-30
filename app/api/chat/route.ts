@@ -4,7 +4,7 @@ import type { ChatSource } from "@/lib/chatPdf";
 import { zoekContext, type KennisContext } from "@/lib/kennisbank/zoek";
 import type { Product } from "@/lib/kennisbank";
 import { bronVanAntwoord } from "@/lib/chat/bron";
-import { keuzehulpTag, zoektermenVanGesprek } from "@/lib/chat/keuzehulp";
+import { keuzehulpContext, KORTE_VRAAG_WOORDEN } from "@/lib/chat/keuzehulp";
 import { GEEN_BRON, STIJLHERINNERING, systeemInstructie } from "@/lib/chat/systeem-instructie";
 
 /**
@@ -26,8 +26,6 @@ const MAX_BERICHTEN = 20;
 const MAX_TEKENS = 1000;
 /** Hoeveel kennisbankonderdelen maximaal meegaan; minder tekst geeft kortere, gerichtere antwoorden. */
 const AANTAL_ONDERDELEN = 3;
-/** Een vervolgvraag korter dan dit aantal woorden ("en bij allrisk?") zoekt ook op de vraag ervoor. */
-const KORTE_VRAAG_WOORDEN = 7;
 
 /** Welke voorwaarden en pagina's bij welke basisdekking horen; hetzelfde als op /workshop. */
 const PRODUCTEN_PER_DEKKING: Record<string, Product[]> = {
@@ -135,11 +133,10 @@ export async function POST(request: NextRequest) {
   const laatsteVraag = vragen[vragen.length - 1].text;
   const vorigeVraag = vragen.length > 1 ? vragen[vragen.length - 2].text : "";
   const opties = { producten: dekking && !keuzehulp ? PRODUCTEN_PER_DEKKING[dekking] : undefined };
-  const korteVraag = laatsteVraag.split(/\s+/).length < KORTE_VRAAG_WOORDEN;
-  // In de keuzehulp zoekt een kort antwoord ("5 jaar", "ja") ook op het onderwerp van de gekozen tag; de tag zelf telt niet als vraag.
-  const zoektermen = keuzehulp && korteVraag ? zoektermenVanGesprek(vragen.map((vraag) => vraag.text)) : "";
-  const vorigeOnderwerp = keuzehulp && keuzehulpTag(vorigeVraag) ? "" : vorigeVraag;
-  let context = zoekContext(korteVraag && (vorigeOnderwerp || zoektermen) ? [zoektermen, vorigeOnderwerp, laatsteVraag].filter(Boolean).join(" ") : laatsteVraag, opties, AANTAL_ONDERDELEN);
+  // In de keuzehulp zoekt een kort antwoord ("5 jaar", "ja") ook op het onderwerp van de gekozen tag, maar pas als het bericht zelf niets vindt.
+  let context = keuzehulp
+    ? keuzehulpContext(vragen.map((vraag) => vraag.text), opties, AANTAL_ONDERDELEN)
+    : zoekContext(laatsteVraag.split(/\s+/).length < KORTE_VRAAG_WOORDEN && vorigeVraag ? `${vorigeVraag} ${laatsteVraag}` : laatsteVraag, opties, AANTAL_ONDERDELEN);
   // Vindt de laatste vraag niets ("Wat kan ik dan doen?"), zoek dan op het onderwerp van de vraag ervoor.
   if (context.length === 0 && vorigeVraag) context = zoekContext(`${vorigeVraag} ${laatsteVraag}`, opties, AANTAL_ONDERDELEN);
 

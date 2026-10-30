@@ -34,8 +34,8 @@ const GESPREKKEN: Gesprek[] = [
     { tekst: "12 jaar", checks: [moet("wat klanten meestal kiezen bij 10 jaar of ouder", /\bWA\b/), mag_niet("opnieuw de leeftijd vragen", /hoe oud is (je|jouw) auto/i), GEEN_ADVIES] },
   ] },
   { naam: "Weet ik nog niet, daarna wat belangrijk is", dekking: "wa-casco-beperkt", tag: "Dat weet ik nog niet", klant: [
-    { tekst: "Mijn auto is 8 jaar oud", checks: [moet("6 tot 10 jaar", /6 tot 10|zes tot tien/i), mag_niet("opnieuw de leeftijd vragen", /hoe oud is (je|jouw) auto/i)] },
-    { tekst: "Ik wil vooral dat diefstal en ruitschade verzekerd zijn", checks: [moet("WA + Casco beperkt", /casco beperkt/i), mag_niet("opnieuw naar diefstal en ruitschade vragen", /diefstal en ruitschade\?/i), GEEN_ADVIES] },
+    { tekst: "Mijn auto is 8 jaar oud", checks: [mag_niet("opnieuw de leeftijd vragen", /hoe oud is (je|jouw) auto/i)] },
+    { tekst: "Ik wil vooral dat diefstal en ruitschade verzekerd zijn", checks: [moet("WA + Casco beperkt", /casco beperkt/i), moet("6 tot 10 jaar", /6 tot 10|zes tot tien/i), mag_niet("opnieuw naar diefstal en ruitschade vragen", /diefstal en ruitschade\?/i), GEEN_ADVIES] },
   ] },
   { naam: "Weet ik nog niet, vaag antwoord", dekking: "wa-casco-beperkt", tag: "Dat weet ik nog niet", klant: [
     { tekst: "Geen idee eigenlijk", checks: [mag_niet("opnieuw dezelfde vraag", /hoe oud is (je|jouw) auto\?.*hoe oud is/i)] },
@@ -50,6 +50,19 @@ const GESPREKKEN: Gesprek[] = [
     { tekst: "Hij is nog helemaal nieuw", checks: [mag_niet("opnieuw de leeftijd vragen", /hoe oud is (je|jouw) auto/i), GEEN_ADVIES] },
     { tekst: "Wat kost dat dan per maand?", checks: [mag_niet("een premiebedrag", /€\s?\d[\d.,]*\s*(per maand|p\.m\.|per jaar)|\d+\s?euro per (maand|jaar)/i)] },
   ] },
+  // Gevonden bij de analyse van de live chat (ditismick.com/workshop): deze gesprekken gingen mis.
+  { naam: "Eigen auto, daarna een korte eigen vraag over eigen risico", dekking: "wa-casco-beperkt", tag: "Ook mijn eigen auto verzekeren", klant: [
+    { tekst: "Wat betekent eigen risico eigenlijk?", checks: [moet("wat eigen risico is", /eigen risico/i, /(afhaalt|af van|zelf (betaalt|betaal)|aftrekt)/i)] },
+  ] },
+  { naam: "Lage premie, ruit, daarna prijs en 'simpeler'", dekking: "wa-casco-beperkt", tag: "Vooral een lage premie", klant: [
+    { tekst: "Ja, ruitschade wil ik wel verzekerd hebben, maar diefstal vind ik minder belangrijk" },
+    { tekst: "Wat kost dat dan ongeveer per maand?", checks: [moet("de kaarten op de pagina", /kaart/i), mag_niet("een premiebedrag (de eigen-risicokeuzes € 0 tot € 500 mogen wel)", /€\s?(?!(?:0|150|250|500)\b)\d/)] },
+    { tekst: "Ik snap het niet zo goed. Kun je het simpeler zeggen?", checks: [mag_niet("opnieuw dat hij het niet weet", /(weet|kan) ik .{0,30}niet|niet in mijn informatie|niet (te )?zien/i), mag_niet("een premiebedrag", /€\s?(?!(?:0|150|250|500)\b)\d/)] },
+  ] },
+  { naam: "Gestolen auto, daarna opzeggen", dekking: "wa-casco-beperkt", tag: "Ik heb een andere vraag", klant: [
+    { tekst: "Mijn auto is net gestolen!", checks: [moet("aangifte", /aangifte/i)] },
+    { tekst: "Moet ik mijn verzekering nu opzeggen?" },
+  ] },
   { naam: "Eigen vraag zonder tag", dekking: "wa-casco-allrisk", tag: null, klant: [
     { tekst: "Wat is het verschil tussen WA+ en allrisk?", checks: [moet("aanrijding of vandalisme", /aanrijding|vandalisme|eigen schuld/i), mag_niet("de openingsvraag", /wat vind je belangrijk bij je autoverzekering/i)] },
   ] },
@@ -63,6 +76,7 @@ const ALGEMEEN: Check[] = [
   { naam: "hooguit één vraag", ok: (t) => (t.match(/\?/g) ?? []).length <= 1 },
   { naam: "geen opmaak, marker of 'kennisbank'", ok: (t) => !/[*#|]|\[\[|kennisbank/i.test(t) },
   { naam: "je/jij, geen juridische taal", ok: (t) => !/\b(u|uw)\b/.test(t) && !/\b(dient|conform|overeenkomstig|ingevolge|bepalingen|artikel \d)/i.test(t) },
+  { naam: "zegt niet 'hier niet zien'", ok: (t) => !/hier (helaas )?niet (te )?zien|zie ik hier niet/i.test(t) },
   { naam: "herhaalt de openingsvraag niet", ok: (t) => !/wat vind je belangrijk bij je autoverzekering/i.test(t) },
 ];
 
