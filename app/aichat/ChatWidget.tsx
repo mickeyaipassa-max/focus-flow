@@ -282,6 +282,11 @@ type ChatWidgetProps = {
   onTopicSelect?: (label: string) => void;
   /** Opt-in: "cream" = het ontwerp van de autoverzekering (Figma Autoverzekering, 9358:1686). Standaard "gold" (/aichat). */
   windowStyle?: ChatWindowStyle;
+  /**
+   * Opt-in: het venster vult de hele viewport (voor de pagina in een iframe, app/embed/keuzehulp). Geen zwevende positie, geen
+   * donkere achtergrond onder 600px en geen vergrendeling van de scroll van de pagina; de pagina eromheen bepaalt grootte en positie.
+   */
+  embedded?: boolean;
 };
 
 /**
@@ -314,6 +319,7 @@ export function ChatWidget({
   topicMessage = (label: string) => `Ik heb een vraag over ${label.toLowerCase()}`,
   onTopicSelect,
   windowStyle = "gold",
+  embedded = false,
 }: ChatWidgetProps) {
   const messagesLogRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -370,7 +376,7 @@ export function ChatWidget({
    * sluiten weer terugzetten.
    */
   useEffect(() => {
-    if (!isOpen || typeof window === "undefined" || window.innerWidth >= 600) return;
+    if (embedded || !isOpen || typeof window === "undefined" || window.innerWidth >= 600) return;
     const scrollY = window.scrollY;
     const { body } = document;
     const original = { position: body.style.position, top: body.style.top, left: body.style.left, right: body.style.right };
@@ -461,27 +467,33 @@ export function ChatWidget({
   // `--y-base` is 0 op mobiel (bottom-6 + vaste hoogte bepaalt de positie al volledig) en -50% vanaf 600px (voor de top-1/2-centrering) — zo hoeft de leave-animatie in de inline style niet los per breakpoint te vertakken.
   return (
     <>
-      <div
-        aria-hidden="true"
-        onClick={() => {
-          setTimeout(() => returnFocusOnClose?.current?.focus(), 50);
-          setSelectedTag(null);
-          onClose();
-        }}
-        className="fixed inset-0 z-40 bg-black/50 min-[600px]:hidden"
-        style={{ opacity: isLeaving ? 0 : 1, transition: "opacity 200ms ease-out" }}
-      />
+      {!embedded && (
+        <div
+          aria-hidden="true"
+          onClick={() => {
+            setTimeout(() => returnFocusOnClose?.current?.focus(), 50);
+            setSelectedTag(null);
+            onClose();
+          }}
+          className="fixed inset-0 z-40 bg-black/50 min-[600px]:hidden"
+          style={{ opacity: isLeaving ? 0 : 1, transition: "opacity 200ms ease-out" }}
+        />
+      )}
       <div
         role="dialog"
         aria-label="AI-assistent van a.s.r."
         aria-modal="false"
-        className={`fixed inset-x-6 bottom-6 h-[calc(100dvh-48px)] z-50 flex flex-col overflow-hidden ${cream ? "rounded-[8px]" : "rounded-md"} bg-[#fff8e3] [--y-base:0] min-[600px]:inset-auto min-[600px]:bottom-auto min-[600px]:top-1/2 min-[600px]:right-16 min-[600px]:h-[653px] min-[600px]:w-[480px] min-[600px]:max-h-[calc(100dvh-80px)] min-[600px]:[--y-base:-50%] min-[900px]:right-[60px] min-[900px]:max-h-[calc(100dvh-48px)] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:max-h-[calc(100dvh-80px)] min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:max-h-[calc(100dvh-160px)] min-[1440px]:w-[528px]`}
-        style={{
-          boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
-          opacity: isLeaving ? 0 : 1,
-          transform: `translateY(calc(var(--y-base) + ${isLeaving ? "16px" : "0px"}))`,
-          transition: "opacity 200ms ease-out, transform 200ms ease-out",
-        }}
+        className={embedded ? "fixed inset-0 z-50 flex flex-col overflow-hidden bg-[#fff8e3]" : `fixed inset-x-6 bottom-6 h-[calc(100dvh-48px)] z-50 flex flex-col overflow-hidden ${cream ? "rounded-[8px]" : "rounded-md"} bg-[#fff8e3] [--y-base:0] min-[600px]:inset-auto min-[600px]:bottom-auto min-[600px]:top-1/2 min-[600px]:right-16 min-[600px]:h-[653px] min-[600px]:w-[480px] min-[600px]:max-h-[calc(100dvh-80px)] min-[600px]:[--y-base:-50%] min-[900px]:right-[60px] min-[900px]:max-h-[calc(100dvh-48px)] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:max-h-[calc(100dvh-80px)] min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:max-h-[calc(100dvh-160px)] min-[1440px]:w-[528px]`}
+        style={
+          embedded
+            ? undefined
+            : {
+                boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
+                opacity: isLeaving ? 0 : 1,
+                transform: `translateY(calc(var(--y-base) + ${isLeaving ? "16px" : "0px"}))`,
+                transition: "opacity 200ms ease-out, transform 200ms ease-out",
+              }
+        }
       >
         {/* Header — relative + menuRef hier i.p.v. op de kleine knop-wrapper: het menu moet 24px minder breed zijn dan de widget aan beide kanten (op verzoek van de opdrachtgever). `left-0 right-0` bleek verkeerd — dat sluit aan op de PADDING-box van deze relative ouder, wat gelijk is aan de widget's eigen buitenrand (0px inset, want de header heeft zelf geen marge, alleen interne p-6). `left-6 right-6` (24px) is daarom nodig om echt 24px van de widget-rand af te blijven. */}
         <div className={`relative flex shrink-0 p-6 ${cream ? "items-center bg-[#fff8e3]" : "items-start bg-[#eda50f]"}`} ref={menuRef}>
