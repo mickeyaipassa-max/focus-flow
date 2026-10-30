@@ -128,7 +128,9 @@ if (fouten === 0) goed("geen tegenstrijdige instructies gevonden");
 
 // 4. Tokens ----------------------------------------------------------------------------------------------------------------
 console.log("\n== 4. Omvang");
-const oud = execSync("git show main:lib/chat/systeem-instructie.ts", { encoding: "utf8" });
+// De instructie zoals die was vóór de voorbeelden (merge van #205); `main` is nu de nieuwe versie.
+const BASISLIJN = "29de6b6";
+const oud = execSync(`git show ${BASISLIJN}:lib/chat/systeem-instructie.ts`, { encoding: "utf8" });
 writeFileSync("scripts/.oud-systeem-instructie.mts", oud);
 const { systeemInstructie: oudeInstructie } = (await import("./.oud-systeem-instructie.mts")) as { systeemInstructie: (d?: string) => string };
 rmSync("scripts/.oud-systeem-instructie.mts");
