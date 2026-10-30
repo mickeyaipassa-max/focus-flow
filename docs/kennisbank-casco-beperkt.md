@@ -1,6 +1,6 @@
 # Kennisbank: casco-beperkt
 
-44 kennisblokken in deze groep (van in totaal 174; 137 hebben nu de klantvriendelijke laag). Per blok staat eerst wat er was (brontekst met zoekwoorden en bron) en daaronder wat erbij is gekomen. Blokken met controlestatus "handmatig controleren" zijn hieronder bovenaan gemeld.
+45 kennisblokken in deze groep (van in totaal 177; 177 hebben nu de klantvriendelijke laag). Per blok staat eerst wat er was (brontekst met zoekwoorden en bron) en daaronder wat erbij is gekomen. Blokken met controlestatus "handmatig controleren" zijn hieronder bovenaan gemeld.
 
 **Handmatig controleren (1):** cb-schade-vaststellen
 
@@ -337,7 +337,7 @@
 
 ### Oud
 **Bronverwijzing:** Voorwaarden Autoverzekering Casco Beperkt, D AU-CB 2017-01, 3.1 Gebeurtenis 17 - storm; Voorwaarden Autoverzekering Casco Allrisk, D AU-CA 2017-01, 3.1 Gebeurtenis 20 - storm
-**Zoekwoorden (9):** storm, stormschade, windkracht, waait om, boom op de auto, tak op de auto, portier waait, 14 meter per seconde, wind
+**Zoekwoorden (15):** boom gevallen, boom is gevallen, boom op gevallen, boom op mijn auto, boom viel, tak gevallen, storm, stormschade, windkracht, waait om, boom op de auto, tak op de auto, …
 **Tekst (53 woorden):** Je bent verzekerd voor schade door storm als de auto omwaait, er iets op of tegen de auto valt (bijvoorbeeld een boom) of het portier van je auto tegen een ander voorwerp of tegen je auto zelf waait. Met storm bedoelen wij wind met een snelheid van 14 meter per seconde of meer.
 
 ### Nieuw
@@ -1037,3 +1037,33 @@
 **Gespreksaanpak (vervolgvraag):**
 - Als het is niet duidelijk welk begrip de klant bedoelt → "Welk woord wil je uitgelegd hebben?"
 
+
+## 45. cb-voor-en-nadelen
+
+**Controle:** gecontroleerd tegen de bron — Samenvatting, samengesteld uit sw-cb-wat-is, sw-cb-verzekerd, sw-ruitschade, sw-vervangend-vervoer, sw-nieuwwaarde-aankoopwaarde, sw-eigen-risico, cb-eigen-risico en cb-onderhoud-slijtage; elke bewering is nagelopen. Bewust niet opgenomen: een premievergelijking met WA of allrisk (de kennisbank noemt geen premies).
+
+### Oud
+**Bronverwijzing:** Voorwaarden Autoverzekering Casco Beperkt, D AU-CB 2017-01, 3, 4 en 8 - voor- en nadelen van WA + Casco beperkt (samenvatting); asr.nl - WA + Casco beperkt autoverzekering Ik kies zelf, Wat is een autoverzekering WA + Casco beperkt? en Wat is verzekerd met WA + Casco beperkt?
+**Zoekwoorden (108):** voordelen en de nadelen van wa plus casco beperkt, voordelen en nadelen van wa plus casco beperkt, voordelen van wa plus casco beperkt, nadelen van wa plus casco beperkt, wat zijn de voordelen van wa plus casco beperkt, wat zijn de nadelen van wa plus casco beperkt, voor en nadelen van wa plus casco beperkt, voordelen en de nadelen van een wa plus casco beperkt, voordelen en nadelen van een wa plus casco beperkt, voordelen van een wa plus casco beperkt, nadelen van een wa plus casco beperkt, wat zijn de voordelen van een wa plus casco beperkt, …
+**Tekst (257 woorden):** Samenvatting van de voor- en nadelen van WA + Casco beperkt (WA plus), uit de Casco Beperkt-voorwaarden en de asr.nl-pagina's. Voordelen: naast schade aan anderen ben je verzekerd voor schade aan je eigen auto door brand, storm en natuur, voor diefstal en inbraak en voor ruitschade; je krijgt standaard 1 jaar nieuwwaarde, en je kunt de nieuwwaarde of aankoopwaarde tot 3 jaar meeverzekeren; je krijgt no-claimkorting tot 75%; bij ruitschade hoef je niet eerst te melden maar maak je direct een afspraak bij een aangesloten hersteller, en laat je een ruit repareren, dan heb je geen eigen risico; laat je de schade repareren door een hersteller uit het netwerk van a.s.r., dan krijg je gratis vervangend vervoer, en bij total loss krijg je 5 dagen een gratis leenauto. Nadelen: schade aan je eigen auto door een aanrijding of vandalisme is niet verzekerd, ook niet als je die zelf veroorzaakt; casco beperkt is niet verplicht; een eigen risico dat op je polisblad staat, gaat af van de vergoeding (op asr.nl kies je uit € 0, € 150, € 250 of € 500, en hoe hoger het eigen risico, hoe lager de premie); je krijgt geen vergoeding voor normaal onderhoud en slijtage. Klanten kiezen meestal WA + Casco beperkt bij een auto van 6 tot 10 jaar oud, die een lagere dagwaarde heeft, als ze schade door ruitbreuk, diefstal en brand niet zelf willen betalen en als ze meer zekerheid willen dan alleen WA. A.s.r. kan je geen persoonlijk advies geven over welke dekking het beste bij je past.
+
+### Nieuw
+**Brontekst:** dezelfde tekst als hierboven. Soort: samenvatting door de kennisbankmaker, geen letterlijke voorwaardentekst.
+**Klantvriendelijke uitleg (31 woorden):** Met WA + Casco beperkt ben je ook verzekerd voor schade aan je eigen auto door brand, storm en natuur, diefstal en ruitschade. Een aanrijding of vandalisme valt er niet onder.
+**Noem direct:**
+
+**Belangrijke aandachtspunten:**
+- Voordeel: je krijgt standaard 1 jaar nieuwwaarde en kunt de nieuwwaarde of aankoopwaarde tot 3 jaar meeverzekeren.
+- Voordeel: je krijgt no-claimkorting tot 75%.
+- Voordeel: bij ruitschade maak je direct een afspraak bij een aangesloten hersteller. Een ruit laten repareren kost geen eigen risico.
+- Voordeel: bij reparatie door een hersteller uit het netwerk van a.s.r. krijg je gratis vervangend vervoer. Bij total loss krijg je 5 dagen een gratis leenauto.
+- Nadeel: schade aan je eigen auto door een aanrijding of vandalisme is niet verzekerd, ook niet als je die zelf veroorzaakt.
+- Nadeel: casco beperkt is niet verplicht. Een eigen risico op je polisblad gaat af van de vergoeding. Op asr.nl kies je uit € 0, € 150, € 250 of € 500, en hoe hoger je eigen risico, hoe lager je premie.
+- Nadeel: normaal onderhoud en slijtage krijg je niet vergoed.
+- Klanten kiezen meestal WA + Casco beperkt bij een auto van 6 tot 10 jaar oud, met een lagere dagwaarde, als ze schade door ruitbreuk, diefstal en brand niet zelf willen betalen en meer zekerheid willen dan alleen WA. A.s.r. geeft geen persoonlijk advies.
+**Benodigde klantinformatie:**
+- Hoe oud de auto is.
+- Of de klant schade door een aanrijding of vandalisme zelf wil betalen.
+**Gespreksaanpak (vervolgvraag):**
+- Als de klant vraagt naar voor- en nadelen en het is niet bekend of hij schade door een aanrijding zelf wil betalen → "Wil je schade door een aanrijding of vandalisme zelf betalen, of liever verzekeren?"
+**Haalt ook op:** cb-dekking-overzicht, sw-cb-verzekerd, cb-eigen-risico

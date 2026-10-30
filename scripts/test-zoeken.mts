@@ -157,6 +157,14 @@ const EERST: { vraag: string; verwacht: string; producten?: readonly string[] }[
   { vraag: "Wat zijn de voordelen van een WA verzekering?", verwacht: "wa-voor-en-nadelen", producten: BEPERKT },
   { vraag: "Wat zijn de nadelen van alleen WA?", verwacht: "wa-voor-en-nadelen", producten: ALLRISK },
   { vraag: "Wat zijn de voordelen van Ik kies zelf?", verwacht: "sw-voordelen", producten: BEPERKT },
+  { vraag: "Wat zijn de voordelen en nadelen van een allrisk verzekering?", verwacht: "ca-voor-en-nadelen", producten: ALLRISK },
+  { vraag: "Wat zijn de nadelen van allrisk?", verwacht: "ca-voor-en-nadelen", producten: BEPERKT },
+  { vraag: "Is allrisk de moeite waard?", verwacht: "ca-voor-en-nadelen", producten: WA },
+  { vraag: "Voor- en nadelen van WA + Casco allrisk", verwacht: "ca-voor-en-nadelen", producten: ALLRISK },
+  { vraag: "Wat zijn de voordelen en nadelen van WA plus?", verwacht: "cb-voor-en-nadelen", producten: BEPERKT },
+  { vraag: "Voor- en nadelen van WA + Casco beperkt", verwacht: "cb-voor-en-nadelen", producten: ALLRISK },
+  { vraag: "Wat zijn de nadelen van Casco beperkt?", verwacht: "cb-voor-en-nadelen", producten: WA },
+  { vraag: "Wat zijn de voordelen van een WA verzekering?", verwacht: "wa-voor-en-nadelen", producten: ALLRISK },
 ];
 for (const { vraag, verwacht, producten } of EERST) {
   const eerste = zoekContext(vraag, { producten: (producten ?? BEPERKT) as never }, 3)[0]?.id;

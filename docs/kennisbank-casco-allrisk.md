@@ -1,6 +1,6 @@
 # Kennisbank: casco-allrisk
 
-15 kennisblokken in deze groep (van in totaal 174; 152 hebben nu de klantvriendelijke laag). Per blok staat eerst wat er was (brontekst met zoekwoorden en bron) en daaronder wat erbij is gekomen. Blokken met controlestatus "handmatig controleren" zijn hieronder bovenaan gemeld.
+16 kennisblokken in deze groep (van in totaal 177; 177 hebben nu de klantvriendelijke laag). Per blok staat eerst wat er was (brontekst met zoekwoorden en bron) en daaronder wat erbij is gekomen. Blokken met controlestatus "handmatig controleren" zijn hieronder bovenaan gemeld.
 
 **Handmatig controleren (2):** ca-motor, ca-noclaim-geen-gevolg
 
@@ -371,3 +371,33 @@
 **Gespreksaanpak (vervolgvraag):**
 - Als de klant vraagt naar een begrip zonder het te noemen → "Welk woord of begrip wil je uitgelegd hebben?"
 **Haalt ook op:** ca-motor, cb-begrippen
+
+## 16. ca-voor-en-nadelen
+
+**Controle:** gecontroleerd tegen de bron — Samenvatting, samengesteld uit sw-ca-wat-is, sw-ca-verzekerd, sw-ca-eigen-schuld, ca-dekking-overzicht, ca-motor en ca-jeugd-eigen-risico; elke bewering is nagelopen. Bewust niet opgenomen: een premievergelijking met WA of Casco beperkt (de kennisbank noemt geen premies).
+
+### Oud
+**Bronverwijzing:** Voorwaarden Autoverzekering Casco Allrisk, D AU-CA 2017-01, 3, 4 en 7 - voor- en nadelen van WA + Casco allrisk (samenvatting); asr.nl - Allrisk autoverzekering Ik kies zelf, Wat is een Allrisk autoverzekering? en Wat is verzekerd met een Allrisk autoverzekering?
+**Zoekwoorden (142):** voordelen en de nadelen van wa plus casco allrisk, voordelen en nadelen van wa plus casco allrisk, voordelen van wa plus casco allrisk, nadelen van wa plus casco allrisk, wat zijn de voordelen van wa plus casco allrisk, wat zijn de nadelen van wa plus casco allrisk, voor en nadelen van wa plus casco allrisk, voordelen en de nadelen van een wa plus casco allrisk, voordelen en nadelen van een wa plus casco allrisk, voordelen van een wa plus casco allrisk, nadelen van een wa plus casco allrisk, wat zijn de voordelen van een wa plus casco allrisk, …
+**Tekst (240 woorden):** Samenvatting van de voor- en nadelen van WA + Casco allrisk, uit de Casco Allrisk-voorwaarden en de asr.nl-pagina's. Voordelen: allrisk is de meest uitgebreide autoverzekering; naast schade aan anderen is schade aan je eigen auto verzekerd, ook als je die zelf veroorzaakt, bijvoorbeeld door een aanrijding of vandalisme, en daarnaast alles van Casco beperkt: brand, storm en natuur, ruitschade, diefstal en standaard 1 jaar nieuwwaarde; schade aan motor, aandrijving, elektrische installatie en transmissie door een eigen gebrek is onder strikte voorwaarden over de leeftijd en de kilometers van de auto en over het onderhoud verzekerd; je krijgt no-claimkorting tot 75%; ruitschade en vervangend vervoer werken zoals bij Casco beperkt. Nadelen: allrisk is niet verplicht; een eigen risico dat op je polisblad staat, gaat af van de vergoeding; bij een aanrijding, botsing of slippen kan een extra jeugd eigen risico van € 250 gelden als de vaste bestuurder op je polisblad 24 jaar of ouder is en de bestuurder jonger dan 24 jaar; schade die je met opzet veroorzaakt is nooit verzekerd; normaal onderhoud, onvoldoende onderhoud, onvoldoende zorg en slijtage zijn niet gedekt. Klanten kiezen meestal WA + Casco allrisk bij een auto van 0 tot en met 5 jaar oud, die nog een hoge dagwaarde heeft, als ze zekerheid willen bij onverwachte schade en als ze schade aan de eigen auto niet zelf willen betalen. A.s.r. kan je geen persoonlijk advies geven over welke dekking het beste bij je past.
+
+### Nieuw
+**Brontekst:** dezelfde tekst als hierboven. Soort: samenvatting door de kennisbankmaker, geen letterlijke voorwaardentekst.
+**Klantvriendelijke uitleg (42 woorden):** Allrisk is de meest uitgebreide dekking: ook schade aan je eigen auto door een aanrijding of vandalisme is verzekerd, ook als je die zelf veroorzaakt. Een eventueel eigen risico gaat af van de vergoeding, en normaal onderhoud en slijtage zijn niet gedekt.
+**Noem direct:**
+
+**Belangrijke aandachtspunten:**
+- Voordeel: je hebt ook alles van Casco beperkt: brand, storm en natuur, ruitschade, diefstal en standaard 1 jaar nieuwwaarde.
+- Voordeel: schade aan motor, aandrijving, elektrische installatie en transmissie door een eigen gebrek is verzekerd, maar alleen onder strikte voorwaarden over de leeftijd en de kilometers van de auto en over het onderhoud.
+- Voordeel: je krijgt no-claimkorting tot 75%.
+- Nadeel: allrisk is niet verplicht. Een eigen risico op je polisblad gaat af van de vergoeding.
+- Nadeel: bij een aanrijding, botsing of slippen kan een extra jeugd eigen risico van € 250 gelden. Dat is zo als de vaste bestuurder op je polisblad 24 jaar of ouder is en de bestuurder jonger dan 24 jaar.
+- Nadeel: schade die je met opzet veroorzaakt is nooit verzekerd.
+- Nadeel: normaal onderhoud, onvoldoende onderhoud, onvoldoende zorg en slijtage zijn niet gedekt.
+- Klanten kiezen meestal WA + Casco allrisk bij een auto van 0 tot en met 5 jaar oud, met een hoge dagwaarde, als ze zekerheid willen bij onverwachte schade en schade aan hun eigen auto niet zelf willen betalen. A.s.r. geeft geen persoonlijk advies.
+**Benodigde klantinformatie:**
+- Hoe oud de auto is.
+- Wie de auto bestuurt en hoe oud die persoon is.
+**Gespreksaanpak (vervolgvraag):**
+- Als de klant vraagt naar voor- en nadelen en het is niet bekend hoe oud de auto is → "Hoe oud is je auto?"
+**Haalt ook op:** ca-dekking-overzicht, ca-jeugd-eigen-risico, ca-motor
