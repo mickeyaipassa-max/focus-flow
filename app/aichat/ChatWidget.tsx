@@ -20,7 +20,21 @@ const WELCOME_TEXT =
 
 const TOPIC_LABELS = ["Vergoedingen", "Eigen risico", "Collectieve zorg", "Contact met a.s.r.", "Zorg voor kinderen", "Voorwaarden"];
 
-function AssistantAvatar() {
+/**
+ * Uiterlijk van het venster. "gold" (standaard) is het chatvenster van /aichat: gouden header, gouden avatar. "cream" is het
+ * ontwerp van de autoverzekering (Figma Autoverzekering, node 9358:1686): één crèmekleurig venster, zwarte menuknop en een
+ * witte avatar met het a.-logo.
+ */
+export type ChatWindowStyle = "gold" | "cream";
+
+function AssistantAvatar({ windowStyle }: { windowStyle: ChatWindowStyle }) {
+  if (windowStyle === "cream") {
+    return (
+      <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white p-2" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
+        <img src="/icons/logo-asr-a.svg" alt="" className="w-8" />
+      </span>
+    );
+  }
   return (
     <span className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[#eda50f] p-3">
       <img src="/icons/pictogram-chat-assistent.svg" alt="" className="size-8" />
@@ -28,10 +42,10 @@ function AssistantAvatar() {
   );
 }
 
-function TypingIndicator() {
+function TypingIndicator({ windowStyle }: { windowStyle: ChatWindowStyle }) {
   return (
     <div className="flex items-start gap-2 pr-6">
-      <AssistantAvatar />
+      <AssistantAvatar windowStyle={windowStyle} />
       <div
         role="status"
         aria-label="Assistent is aan het typen"
@@ -59,7 +73,7 @@ function TypingIndicator() {
  * RadioCardBottom.tsx) maakt dat verschil programmatisch beschikbaar
  * zonder de zichtbare weergave te raken.
  */
-function ChatMessage({ message, showAvatar }: { message: ChatMessageData; showAvatar: boolean }) {
+function ChatMessage({ message, showAvatar, windowStyle }: { message: ChatMessageData; showAvatar: boolean; windowStyle: ChatWindowStyle }) {
   if (message.role === "user") {
     return (
       <div className="flex justify-end pl-6">
@@ -74,8 +88,8 @@ function ChatMessage({ message, showAvatar }: { message: ChatMessageData; showAv
   }
 
   return (
-    <div className="flex flex-col items-start gap-2 pr-6">
-      {showAvatar && <AssistantAvatar />}
+    <div className={`flex flex-col items-start pr-6 ${windowStyle === "cream" ? "gap-3" : "gap-2"}`}>
+      {showAvatar && <AssistantAvatar windowStyle={windowStyle} />}
       <div className="max-w-full rounded-md bg-white px-4 py-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
         <p className="whitespace-pre-line break-words text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
           <span className="sr-only">AI-assistent zei: </span>
@@ -111,6 +125,7 @@ function ChatWelcome({
   welcomeText,
   topics,
   topicStyle,
+  windowStyle,
 }: {
   onTagClick: (tag: string) => void;
   selectedTag: string | null;
@@ -118,11 +133,12 @@ function ChatWelcome({
   welcomeText: string;
   topics: string[];
   topicStyle: "outline" | "bubble";
+  windowStyle: ChatWindowStyle;
 }) {
   return (
     <div className="flex w-full flex-col gap-4">
-      <div className="flex w-full flex-col items-start gap-2 pr-6">
-        <AssistantAvatar />
+      <div className={`flex w-full flex-col items-start pr-6 ${windowStyle === "cream" ? "gap-3" : "gap-2"}`}>
+        <AssistantAvatar windowStyle={windowStyle} />
         <div className="max-w-full rounded-md bg-white p-4" style={{ boxShadow: "0 4px 8px rgba(0,0,0,0.12)" }}>
           <p className="text-black text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-medium)" }}>
             <span className="sr-only">AI-assistent zei: </span>
@@ -131,8 +147,8 @@ function ChatWelcome({
         </div>
       </div>
       {showTags && topicStyle === "bubble" && (
-        // Figma "Tag Group" (Autoverzekering, 9358:1704): witte pillen met een spraakballon, rechts uitgelijnd, 4px ertussen.
-        <div className="flex w-full max-w-[480px] flex-wrap items-center justify-end gap-1 drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]">
+        // Figma "Tag Group" (Autoverzekering, 9358:1704): witte pillen met een spraakballon, rechts uitgelijnd, 4px ertussen, 24px rechts vrij (zelfde rechterrand als de berichtbubbel).
+        <div className="flex w-full max-w-[480px] flex-wrap items-center justify-end gap-1 pr-6 drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]">
           {topics.map((label) => (
             <button
               key={label}
@@ -192,7 +208,7 @@ function ChatWelcome({
  * scrollbar. De verstuurknop ernaast is meegeschaald naar 52px zodat beide
  * even hoog blijven.
  */
-function ChatInput({ onSend }: { onSend: (text: string) => void }) {
+function ChatInput({ onSend, windowStyle }: { onSend: (text: string) => void; windowStyle: ChatWindowStyle }) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -225,14 +241,15 @@ function ChatInput({ onSend }: { onSend: (text: string) => void }) {
           aria-label="Typ je vraag of bericht"
           placeholder="Typ je vraag of bericht..."
           rows={1}
-          className="h-[52px] flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 py-[13px] text-black text-base leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black"
+          // Figma Autoverzekering (desktop): invoertekst 18px (i.p.v. 16px) in een veld van 51px: 51 - 2px rand - 22px padding = 27px, precies de regelhoogte, dus geen scrollbalk. Onder 600px blijft het 16px (51 - 2 - 24 = 25px voor 24px regelhoogte): in het smalle venster past de placeholder bij 18px niet meer op één regel. Het veld van /aichat blijft 52px (zie boven).
+          className={`${windowStyle === "cream" ? "h-[51px]" : "h-[52px]"} flex-1 resize-none rounded-[3px] border border-[#565656] bg-white px-4 text-black leading-[1.5] outline-none placeholder:text-[#565656] focus:outline focus:outline-[1.5px] focus:outline-black ${windowStyle === "cream" ? "py-[12px] text-base min-[600px]:py-[11px] min-[600px]:text-[18px]" : "py-[13px] text-base"}`}
           style={{ fontFamily: "var(--font-avenir-book)" }}
         />
         <button
           type="button"
           onClick={submit}
           aria-label="Verstuur bericht"
-          className="flex size-[52px] shrink-0 items-center justify-center rounded-[3px] bg-black hover:opacity-90"
+          className={`flex shrink-0 items-center justify-center rounded-[3px] bg-black hover:opacity-90 ${windowStyle === "cream" ? "size-[51px]" : "size-[52px]"}`}
         >
           <img src="/icons/send.svg" alt="" className="size-6" />
         </button>
@@ -259,6 +276,8 @@ type ChatWidgetProps = {
   topicStyle?: "outline" | "bubble";
   /** Opt-in: wat er als bericht wordt gestuurd bij een klik op een onderwerp. Standaard "Ik heb een vraag over …". */
   topicMessage?: (label: string) => string;
+  /** Opt-in: "cream" = het ontwerp van de autoverzekering (Figma Autoverzekering, 9358:1686). Standaard "gold" (/aichat). */
+  windowStyle?: ChatWindowStyle;
 };
 
 /**
@@ -289,6 +308,7 @@ export function ChatWidget({
   topics = TOPIC_LABELS,
   topicStyle = "outline",
   topicMessage = (label: string) => `Ik heb een vraag over ${label.toLowerCase()}`,
+  windowStyle = "gold",
 }: ChatWidgetProps) {
   const messagesLogRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -300,6 +320,7 @@ export function ChatWidget({
   const menuRef = useRef<HTMLDivElement>(null);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
   const hasMessages = messages.length > 0 || isTyping;
+  const cream = windowStyle === "cream";
 
   useEffect(() => {
     if (isOpen) {
@@ -438,7 +459,7 @@ export function ChatWidget({
         role="dialog"
         aria-label="AI-assistent van a.s.r."
         aria-modal="false"
-        className="fixed inset-x-6 bottom-6 h-[calc(100dvh-48px)] z-50 flex flex-col overflow-hidden rounded-md bg-[#fff8e3] [--y-base:0] min-[600px]:inset-auto min-[600px]:bottom-auto min-[600px]:top-1/2 min-[600px]:right-16 min-[600px]:h-[653px] min-[600px]:w-[480px] min-[600px]:max-h-[calc(100dvh-80px)] min-[600px]:[--y-base:-50%] min-[900px]:right-[60px] min-[900px]:max-h-[calc(100dvh-48px)] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:max-h-[calc(100dvh-80px)] min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:max-h-[calc(100dvh-160px)] min-[1440px]:w-[528px]"
+        className={`fixed inset-x-6 bottom-6 h-[calc(100dvh-48px)] z-50 flex flex-col overflow-hidden ${cream ? "rounded-[8px]" : "rounded-md"} bg-[#fff8e3] [--y-base:0] min-[600px]:inset-auto min-[600px]:bottom-auto min-[600px]:top-1/2 min-[600px]:right-16 min-[600px]:h-[653px] min-[600px]:w-[480px] min-[600px]:max-h-[calc(100dvh-80px)] min-[600px]:[--y-base:-50%] min-[900px]:right-[60px] min-[900px]:max-h-[calc(100dvh-48px)] min-[900px]:w-[400px] min-[1200px]:right-16 min-[1200px]:max-h-[calc(100dvh-80px)] min-[1200px]:w-[480px] min-[1440px]:right-[120px] min-[1440px]:max-h-[calc(100dvh-160px)] min-[1440px]:w-[528px]`}
         style={{
           boxShadow: "0 8px 24px rgba(0,0,0,0.16)",
           opacity: isLeaving ? 0 : 1,
@@ -447,7 +468,7 @@ export function ChatWidget({
         }}
       >
         {/* Header — relative + menuRef hier i.p.v. op de kleine knop-wrapper: het menu moet 24px minder breed zijn dan de widget aan beide kanten (op verzoek van de opdrachtgever). `left-0 right-0` bleek verkeerd — dat sluit aan op de PADDING-box van deze relative ouder, wat gelijk is aan de widget's eigen buitenrand (0px inset, want de header heeft zelf geen marge, alleen interne p-6). `left-6 right-6` (24px) is daarom nodig om echt 24px van de widget-rand af te blijven. */}
-        <div className="relative flex shrink-0 items-start bg-[#eda50f] p-6" ref={menuRef}>
+        <div className={`relative flex shrink-0 p-6 ${cream ? "items-center bg-[#fff8e3]" : "items-start bg-[#eda50f]"}`} ref={menuRef}>
           <div className="min-w-0 flex-1">
             <h2 className="pb-2 text-black text-[24px] leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
               AI-assistent van a.s.r.
@@ -468,19 +489,19 @@ export function ChatWidget({
               aria-label="Menu opties"
               aria-expanded={menuOpen}
               aria-haspopup="menu"
-              className="flex size-[51px] items-center justify-center rounded-[3px] bg-[#fff8e3] hover:brightness-95"
+              className={`flex size-[51px] items-center justify-center rounded-[3px] ${cream ? "bg-black shadow-[0_4px_8px_rgba(0,0,0,0.12)] hover:opacity-90" : "bg-[#fff8e3] hover:brightness-95"}`}
             >
               {/* Drie puntjes → kruisje (hergebruik van add.svg, 45° geroteerd — zelfde "sluiten"-icoon als het "Gesprek afsluiten"-menu-item) bij openen, met een zachte fade+rotate-transitie (motion-safe, 200ms — zelfde duur als elders in dit project, bv. de tile-hover-scale). */}
               <span className="relative flex size-6 items-center justify-center">
                 <img
-                  src="/icons/more-vertical.svg"
+                  src={cream ? "/icons/more-vertical-white.svg" : "/icons/more-vertical.svg"}
                   alt=""
                   className={`absolute size-6 motion-safe:transition-all motion-safe:duration-200 ${menuOpen ? "rotate-90 opacity-0" : "rotate-0 opacity-100"}`}
                 />
                 <img
                   src="/icons/add.svg"
                   alt=""
-                  className={`absolute size-6 motion-safe:transition-all motion-safe:duration-200 ${menuOpen ? "rotate-45 opacity-100" : "rotate-0 opacity-0"}`}
+                  className={`absolute size-6 motion-safe:transition-all motion-safe:duration-200 ${cream ? "invert" : ""} ${menuOpen ? "rotate-45 opacity-100" : "rotate-0 opacity-0"}`}
                 />
               </span>
             </button>
@@ -490,7 +511,7 @@ export function ChatWidget({
                 role="menu"
                 aria-label="Chat opties"
                 // top-[79px] i.p.v. top-[calc(100%+4px)]: dat laatste stond onder de hele header (die door het H2-blok hoger is dan de 51px-knop), waardoor het menu ~37px onder de knop "zweefde" i.p.v. er duidelijk bij te horen. 79px = de knop's eigen onderrand (24px header-padding + 51px knophoogte = 75px vanaf de bovenkant van de header) + 4px marge — op verzoek van de opdrachtgever.
-                className="absolute top-[79px] left-6 right-6 z-10 flex flex-col overflow-hidden rounded-md bg-white"
+                className={`absolute left-6 right-6 z-10 flex flex-col overflow-hidden rounded-md bg-white ${cream ? "top-[calc(50%+29.5px)]" : "top-[79px]"}`}
                 style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.16)" }}
               >
                 {/* Icoon-cirkel (40px, bg-[#f6f6f7]) per item bevestigd via Figma node 63:13371: refresh / chevron-down / een 45°-geroteerd "add"-icoon (optisch een X). */}
@@ -596,18 +617,19 @@ export function ChatWidget({
           role="log"
           aria-label="Gespreksberichten"
           aria-live="polite"
-          className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto scroll-smooth p-6"
+          // Cream: header en berichten vormen één vlak (Figma: de body heeft alleen zijdelings en onderaan 24px padding, de header levert de ruimte erboven).
+          className={`flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto scroll-smooth ${cream ? "px-6 pb-6 pt-0" : "p-6"}`}
         >
-          <ChatWelcome onTagClick={handleTagClick} selectedTag={selectedTag} showTags={!hasMessages} welcomeText={welcomeText} topics={topics} topicStyle={topicStyle} />
+          <ChatWelcome onTagClick={handleTagClick} selectedTag={selectedTag} showTags={!hasMessages} welcomeText={welcomeText} topics={topics} topicStyle={topicStyle} windowStyle={windowStyle} />
           {messages.map((message, index) => {
             const previous = messages[index - 1];
             const showAvatar = message.role === "assistant" && (index === 0 || previous?.role !== "assistant");
-            return <ChatMessage key={message.id} message={message} showAvatar={showAvatar} />;
+            return <ChatMessage key={message.id} message={message} showAvatar={showAvatar} windowStyle={windowStyle} />;
           })}
-          {isTyping && <TypingIndicator />}
+          {isTyping && <TypingIndicator windowStyle={windowStyle} />}
         </div>
 
-        <ChatInput onSend={onSend} />
+        <ChatInput onSend={onSend} windowStyle={windowStyle} />
       </div>
     </>
   );

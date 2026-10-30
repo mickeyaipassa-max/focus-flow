@@ -379,6 +379,7 @@ export default function WorkshopPage() {
         topics={HULP_ONDERWERPEN}
         topicStyle="bubble"
         topicMessage={(label) => label}
+        windowStyle="cream"
       />
     </FunnelPageTemplate>
   );
