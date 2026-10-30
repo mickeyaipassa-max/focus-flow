@@ -1,0 +1,188 @@
+/*
+ * VWO-variatie "Keuzehulp-tag bij Kies je basisdekking" (a.s.r. Autoverzekering Ik kies zelf, stap 2)
+ * Plak dit in de Custom CSS-editor van de variatie (en niets anders). Hoort bij vwo-variation.js.
+ *
+ * Twee delen:
+ *   1. De tag "Hulp nodig?". De a.s.r.-kaartengroep (asr-radio-card-group) gebruikt Shadow DOM; de CSS van de pagina en van VWO bereikt
+ *      dat niet. vwo-variation.js leest daarom de regels hieronder (alle regels met ".asr-vwo-hulp") uit het stylesheet van deze pagina en
+ *      zet ze in de shadow root. Heeft het script ze niet gevonden, dan gebruikt het een ingebouwde kopie. Pas je de tag aan,
+ *      pas dan deze regels aan (en eventueel de ingebouwde kopie in het script).
+ *   2. Het chatpaneel (iframe) in de gewone pagina. Alle regels beginnen met ".asr-vwo-chat" of ".asr-vwo-scrim".
+ */
+
+/* ---- 1. De tag (komt in de shadow root) ---- */
+.asr-vwo-hulp-tag {
+  all: unset;
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  /* Negatieve marge: de tag (32px) is niet hoger dan de regel van het label (27px), zodat de kaarten eronder niet verschuiven. */
+  margin: -2.5px 0;
+  padding: 4px 12px 4px 8px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.08);
+  color: #000;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 550;
+  line-height: 1.5;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+/*
+ * De regel met het label: label, sterretje en tag op een rij die bij te weinig breedte afbreekt vóór de tag (die komt dan links onder het label).
+ * Met gewone inline-opmaak bleef het sterretje bij de tag hangen en stond het alleen op de tweede regel. Op een telefoon (legendbreedte ~267px) breekt de tag af;
+ * vanaf ~315px staat alles op één regel en blijft de hoogte gelijk aan Control.
+ */
+legend.asr-vwo-hulp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 4px;
+}
+.asr-vwo-hulp-legend .label-required {
+  margin-inline-end: 12px;
+}
+/* Groter aanraakvlak (44px) zonder dat de tag zelf groter wordt. */
+.asr-vwo-hulp-tag::after {
+  content: "";
+  position: absolute;
+  inset: -6px -4px;
+}
+.asr-vwo-hulp-tag:hover {
+  background: rgba(0, 0, 0, 0.14);
+}
+.asr-vwo-hulp-tag:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+.asr-vwo-hulp-tag svg {
+  display: block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+/* ---- 2. Het chatpaneel (gewone pagina) ---- */
+.asr-vwo-chat {
+  position: fixed;
+  z-index: 2147483000;
+  right: 24px;
+  bottom: 24px;
+  box-sizing: border-box;
+  width: 480px;
+  max-width: calc(100vw - 48px);
+  height: min(653px, calc(100vh - 48px));
+  height: min(653px, calc(100dvh - 48px));
+  overflow: hidden;
+  border-radius: 8px;
+  background: #fff8e3;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  transition: opacity 200ms ease-out, transform 200ms ease-out, visibility 0s linear 200ms;
+}
+.asr-vwo-chat[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+@media (min-width: 1440px) {
+  .asr-vwo-chat {
+    width: 528px;
+  }
+}
+.asr-vwo-chat iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff8e3;
+}
+/* Even geduld, tot de chat in het iframe klaar is. */
+.asr-vwo-chat__laden {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff8e3;
+  color: #000;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.asr-vwo-chat[data-klaar="true"] .asr-vwo-chat__laden {
+  display: none;
+}
+/* Terugval als de chat niet laadt of niet mag laden. */
+.asr-vwo-chat__fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  background: #fff8e3;
+  color: #000;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.asr-vwo-chat[data-fallback="true"] .asr-vwo-chat__fallback {
+  display: flex;
+}
+.asr-vwo-chat[data-fallback="true"] .asr-vwo-chat__laden {
+  display: none;
+}
+.asr-vwo-chat__fallback a {
+  color: #000;
+  font-weight: 550;
+}
+.asr-vwo-chat__sluit {
+  align-self: flex-end;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 3px;
+  background: #000;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Onder 600px: bijna schermvullend, met een donkere achtergrond erachter (zoals de chat op /workshop). */
+.asr-vwo-scrim {
+  display: none;
+}
+@media (max-width: 599px) {
+  .asr-vwo-chat {
+    inset: 12px;
+    width: auto;
+    max-width: none;
+    height: auto;
+  }
+  .asr-vwo-scrim[data-open="true"] {
+    position: fixed;
+    inset: 0;
+    z-index: 2147482999;
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .asr-vwo-chat,
+  .asr-vwo-chat[data-open="true"] {
+    transform: none;
+    transition: opacity 200ms ease-out, visibility 0s linear 200ms;
+  }
+}
