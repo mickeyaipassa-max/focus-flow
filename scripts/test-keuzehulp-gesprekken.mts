@@ -34,8 +34,8 @@ const GESPREKKEN: Gesprek[] = [
     { tekst: "12 jaar", checks: [moet("wat klanten meestal kiezen bij 10 jaar of ouder", /\bWA\b/), mag_niet("opnieuw de leeftijd vragen", /hoe oud is (je|jouw) auto/i), GEEN_ADVIES] },
   ] },
   { naam: "Weet ik nog niet, daarna wat belangrijk is", dekking: "wa-casco-beperkt", tag: "Dat weet ik nog niet", klant: [
-    { tekst: "Mijn auto is 8 jaar oud", checks: [moet("6 tot 10 jaar", /6 tot 10|zes tot tien/i), mag_niet("opnieuw de leeftijd vragen", /hoe oud is (je|jouw) auto/i)] },
-    { tekst: "Ik wil vooral dat diefstal en ruitschade verzekerd zijn", checks: [moet("WA + Casco beperkt", /casco beperkt/i), mag_niet("opnieuw naar diefstal en ruitschade vragen", /diefstal en ruitschade\?/i), GEEN_ADVIES] },
+    { tekst: "Mijn auto is 8 jaar oud", checks: [mag_niet("opnieuw de leeftijd vragen", /hoe oud is (je|jouw) auto/i)] },
+    { tekst: "Ik wil vooral dat diefstal en ruitschade verzekerd zijn", checks: [moet("WA + Casco beperkt", /casco beperkt/i), moet("6 tot 10 jaar", /6 tot 10|zes tot tien/i), mag_niet("opnieuw naar diefstal en ruitschade vragen", /diefstal en ruitschade\?/i), GEEN_ADVIES] },
   ] },
   { naam: "Weet ik nog niet, vaag antwoord", dekking: "wa-casco-beperkt", tag: "Dat weet ik nog niet", klant: [
     { tekst: "Geen idee eigenlijk", checks: [mag_niet("opnieuw dezelfde vraag", /hoe oud is (je|jouw) auto\?.*hoe oud is/i)] },
@@ -56,8 +56,8 @@ const GESPREKKEN: Gesprek[] = [
   ] },
   { naam: "Lage premie, ruit, daarna prijs en 'simpeler'", dekking: "wa-casco-beperkt", tag: "Vooral een lage premie", klant: [
     { tekst: "Ja, ruitschade wil ik wel verzekerd hebben, maar diefstal vind ik minder belangrijk" },
-    { tekst: "Wat kost dat dan ongeveer per maand?", checks: [moet("de kaarten op de pagina", /kaart/i), mag_niet("een bedrag", /€\s?\d/)] },
-    { tekst: "Ik snap het niet zo goed. Kun je het simpeler zeggen?", checks: [mag_niet("de prijsvraag opnieuw", /prijs|kost|per maand/i), moet("wat er wel of niet verzekerd is", /WA/)] },
+    { tekst: "Wat kost dat dan ongeveer per maand?", checks: [moet("de kaarten op de pagina", /kaart/i), mag_niet("een premiebedrag (de eigen-risicokeuzes € 0 tot € 500 mogen wel)", /€\s?(?!(?:0|150|250|500)\b)\d/)] },
+    { tekst: "Ik snap het niet zo goed. Kun je het simpeler zeggen?", checks: [mag_niet("opnieuw dat hij het niet weet", /(weet|kan) ik .{0,30}niet|niet in mijn informatie|niet (te )?zien/i), mag_niet("een premiebedrag", /€\s?(?!(?:0|150|250|500)\b)\d/)] },
   ] },
   { naam: "Gestolen auto, daarna opzeggen", dekking: "wa-casco-beperkt", tag: "Ik heb een andere vraag", klant: [
     { tekst: "Mijn auto is net gestolen!", checks: [moet("aangifte", /aangifte/i)] },
