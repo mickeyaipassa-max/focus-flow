@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { ChatSource } from "@/lib/chatPdf";
+import type { ChatActie } from "@/lib/chat/voorwaarden";
 import { KEUZEHULP_OPENING, KEUZEHULP_TAGS, keuzehulpTag } from "@/lib/chat/keuzehulp";
 import { ChatWidget, type ChatMessageData } from "../../aichat/ChatWidget";
 
@@ -26,7 +27,7 @@ const HULP_FALLBACK = "Ik kan je vraag op dit moment niet goed beantwoorden. Pro
 
 let nextMessageId = 1;
 
-async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: string }[], dekking: Dekking | undefined): Promise<Pick<ChatMessageData, "text" | "sources"> | null> {
+async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: string }[], dekking: Dekking | undefined): Promise<Pick<ChatMessageData, "text" | "sources" | "acties"> | null> {
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -35,8 +36,8 @@ async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: str
       signal: AbortSignal.timeout(30_000),
     });
     if (!response.ok) return null;
-    const { tekst, bronnen } = (await response.json()) as { tekst?: string; bronnen?: ChatSource[] };
-    return tekst ? { text: tekst, sources: bronnen && bronnen.length > 0 ? bronnen : undefined } : null;
+    const { tekst, bronnen, acties } = (await response.json()) as { tekst?: string; bronnen?: ChatSource[]; acties?: ChatActie[] };
+    return tekst ? { text: tekst, sources: bronnen && bronnen.length > 0 ? bronnen : undefined, acties: acties && acties.length > 0 ? acties : undefined } : null;
   } catch {
     return null;
   }

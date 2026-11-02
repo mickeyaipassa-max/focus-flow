@@ -14,6 +14,7 @@ import { RadioGroup } from "@/components/RadioGroup";
 import { Tag } from "@/components/Tag";
 import { formatDatum } from "@/lib/datum";
 import type { ChatSource } from "@/lib/chatPdf";
+import type { ChatActie } from "@/lib/chat/voorwaarden";
 import type { Product } from "@/lib/kennisbank";
 import { KEUZEHULP_OPENING, KEUZEHULP_TAGS, keuzehulpTag } from "@/lib/chat/keuzehulp";
 import { zoekKortAntwoord } from "@/lib/kennisbank/zoek";
@@ -129,7 +130,7 @@ const VOORWAARDEN_PER_DEKKING: Record<DekkingKeuze, Product[]> = {
  * Het antwoord zonder taalmodel: eerst de kaartkenmerken, dan een kort, gecontroleerd antwoord uit de kennisbank
  * (alleen bij een duidelijke match; nooit een lange voorwaardentekst), anders de eerlijke terugval.
  */
-function hulpAntwoord(tekst: string, dekking: DekkingKeuze | ""): Pick<ChatMessageData, "text" | "sources"> {
+function hulpAntwoord(tekst: string, dekking: DekkingKeuze | ""): Pick<ChatMessageData, "text" | "sources" | "acties"> {
   const uitKaart = kaartAntwoord(tekst);
   if (uitKaart) return { text: uitKaart };
   const uitKennisbank = zoekKortAntwoord(tekst, { producten: dekking ? VOORWAARDEN_PER_DEKKING[dekking] : undefined });
@@ -141,7 +142,7 @@ function hulpAntwoord(tekst: string, dekking: DekkingKeuze | ""): Pick<ChatMessa
  * Vraagt het taalmodel (app/api/chat) om een antwoord op het gesprek. `null` als dat niet lukt (er staat geen sleutel
  * ingesteld, het duurt te lang, een fout of een weigering): dan gebruikt de chat `hulpAntwoord`.
  */
-async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: string }[], dekking: DekkingKeuze | ""): Promise<Pick<ChatMessageData, "text" | "sources"> | null> {
+async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: string }[], dekking: DekkingKeuze | ""): Promise<Pick<ChatMessageData, "text" | "sources" | "acties"> | null> {
   try {
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -151,8 +152,8 @@ async function vraagTaalmodel(berichten: { role: "user" | "assistant"; text: str
       signal: AbortSignal.timeout(30_000),
     });
     if (!response.ok) return null;
-    const { tekst, bronnen } = (await response.json()) as { tekst?: string; bronnen?: ChatSource[] };
-    return tekst ? { text: tekst, sources: bronnen && bronnen.length > 0 ? bronnen : undefined } : null;
+    const { tekst, bronnen, acties } = (await response.json()) as { tekst?: string; bronnen?: ChatSource[]; acties?: ChatActie[] };
+    return tekst ? { text: tekst, sources: bronnen && bronnen.length > 0 ? bronnen : undefined, acties: acties && acties.length > 0 ? acties : undefined } : null;
   } catch {
     return null;
   }

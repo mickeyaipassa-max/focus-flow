@@ -5,6 +5,7 @@ import { Alert } from "@/components/Alert";
 import { Icon } from "@/components/Icon";
 import { Spinner } from "@/components/Spinner";
 import type { ChatSource } from "@/lib/chatPdf";
+import type { ChatActie } from "@/lib/chat/voorwaarden";
 
 export type ChatMessageData = {
   id: number;
@@ -12,6 +13,8 @@ export type ChatMessageData = {
   text: string;
   /** Bronnen bij een AI-antwoord; ze komen in de PDF-export direct onder dat antwoord. */
   sources?: ChatSource[];
+  /** Knoppen (tags) onder een AI-antwoord: een download (met `url`) of een keuze die als bericht van de klant wordt verstuurd. */
+  acties?: ChatActie[];
 };
 
 /** Eerste (vaste) bericht van de assistent; staat ook in de PDF-export. */
@@ -74,7 +77,7 @@ function TypingIndicator({ windowStyle }: { windowStyle: ChatWindowStyle }) {
  * RadioCardBottom.tsx) maakt dat verschil programmatisch beschikbaar
  * zonder de zichtbare weergave te raken.
  */
-function ChatMessage({ message, showAvatar, windowStyle }: { message: ChatMessageData; showAvatar: boolean; windowStyle: ChatWindowStyle }) {
+function ChatMessage({ message, showAvatar, windowStyle, onKeuze, isLaatste }: { message: ChatMessageData; showAvatar: boolean; windowStyle: ChatWindowStyle; onKeuze: (label: string) => void; isLaatste: boolean }) {
   if (message.role === "user") {
     return (
       <div className="flex justify-end pl-6">
@@ -115,6 +118,33 @@ function ChatMessage({ message, showAvatar, windowStyle }: { message: ChatMessag
           </p>
         )}
       </div>
+      {/* Een keuze (zonder url) kan alleen bij het laatste bericht: is er al geantwoord, dan verdwijnt hij. Downloads blijven staan. */}
+      {message.acties && message.acties.some((actie) => actie.url || isLaatste) && (
+        // Tags onder het antwoord, zelfde uiterlijk als de tags onder de openingsvraag (Figma "Tag Group"): een downloadlink (pdf) of een keuze.
+        <div className="flex max-w-full flex-wrap items-center gap-1 drop-shadow-[0px_4px_8px_rgba(0,0,0,0.12)]">
+          {message.acties.filter((actie) => actie.url || isLaatste).map((actie) => {
+            const klasse =
+              "flex max-w-full items-center justify-center gap-1 rounded-full bg-white py-1 pr-3 pl-2 hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black max-[599px]:min-h-11 min-[600px]:h-8";
+            const tekst = (
+              <span className="text-left text-black text-sm leading-[1.5] min-[600px]:whitespace-nowrap" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+                {actie.label}
+              </span>
+            );
+            return actie.url ? (
+              <a key={actie.label} href={actie.url} download target="_blank" rel="noopener noreferrer" className={`${klasse} pl-1`}>
+                <Icon name="download" size="md" />
+                {tekst}
+                <span className="sr-only"> (download)</span>
+              </a>
+            ) : (
+              <button key={actie.label} type="button" onClick={() => onKeuze(actie.label)} className={klasse}>
+                <Icon name="comment-sm" size="sm" />
+                {tekst}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -658,7 +688,7 @@ export function ChatWidget({
           {messages.map((message, index) => {
             const previous = messages[index - 1];
             const showAvatar = message.role === "assistant" && (index === 0 || previous?.role !== "assistant");
-            return <ChatMessage key={message.id} message={message} showAvatar={showAvatar} windowStyle={windowStyle} />;
+            return <ChatMessage key={message.id} message={message} showAvatar={showAvatar} windowStyle={windowStyle} onKeuze={onSend} isLaatste={index === messages.length - 1} />;
           })}
           {isTyping && <TypingIndicator windowStyle={windowStyle} />}
         </div>
