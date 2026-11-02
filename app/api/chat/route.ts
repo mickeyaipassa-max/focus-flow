@@ -6,6 +6,7 @@ import type { Product } from "@/lib/kennisbank";
 import { bronVanAntwoord } from "@/lib/chat/bron";
 import { keuzehulpContext, KORTE_VRAAG_WOORDEN } from "@/lib/chat/keuzehulp";
 import { GEEN_BRON, STIJLHERINNERING, systeemInstructie } from "@/lib/chat/systeem-instructie";
+import { voorwaardenAntwoord } from "@/lib/chat/voorwaarden";
 
 /**
  * Taalmodel achter de chat op /workshop. De klant stelt een vraag, de kennisbank (lib/kennisbank) levert de
@@ -111,11 +112,6 @@ const overtredingen = (tekst: string) => Number(aantalWoorden(tekst) > MAX_WOORD
 const INKORT_OPDRACHT = "Dat is te lang of bevat te veel vragen. Schrijf je antwoord opnieuw: maximaal 4 korte zinnen en ongeveer 50 woorden, elke zin maximaal 20 woorden, en hooguit één vraag. Laat elk bedrag, elke deadline en elke uitzondering staan die voor de klant telt, en voeg niets nieuws toe.";
 
 export async function POST(request: NextRequest) {
-  if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ fout: "niet-geconfigureerd" }, { status: 503 });
-
-  const ip = request.headers.get("x-nf-client-connection-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "onbekend";
-  if (teVeelVerzoeken(ip)) return NextResponse.json({ fout: "te-veel-verzoeken" }, { status: 429 });
-
   let body: unknown;
   try {
     body = await request.json();
@@ -124,6 +120,17 @@ export async function POST(request: NextRequest) {
   }
   const berichten = leesBerichten(body);
   if (!berichten) return NextResponse.json({ fout: "ongeldig-verzoek" }, { status: 400 });
+
+  // Vraagt de klant om de voorwaarden als document? Dan krijgt hij de pdf('s) als tag, of eerst de vraag voor welke dekking. Geen taalmodel nodig,
+  // dus ook zonder sleutel en zonder te tellen voor de rem hieronder.
+  const voorwaarden = voorwaardenAntwoord(berichten);
+  if (voorwaarden) return NextResponse.json({ tekst: voorwaarden.tekst, bronnen: [], acties: voorwaarden.acties });
+
+  if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ fout: "niet-geconfigureerd" }, { status: 503 });
+
+  const ip = request.headers.get("x-nf-client-connection-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "onbekend";
+  if (teVeelVerzoeken(ip)) return NextResponse.json({ fout: "te-veel-verzoeken" }, { status: 429 });
+
   const dekking = typeof (body as { dekking?: unknown }).dekking === "string" ? (body as { dekking: string }).dekking : undefined;
   // De keuzehulp (chat bij "Kies je basisdekking"): de klant kiest nog. De geselecteerde dekking is context, geen filter en geen voorkeur.
   const keuzehulp = (body as { keuzehulp?: unknown }).keuzehulp === true;
