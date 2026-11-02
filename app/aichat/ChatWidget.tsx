@@ -531,9 +531,6 @@ export function ChatWidget({
           <div className={`min-w-0 flex-1 ${cream ? "flex items-center gap-3" : ""}`}>
             {cream && <AssistantAvatar windowStyle={windowStyle} />}
             <div className="min-w-0 flex-1">
-              <h2 className={`${cream ? "" : "pb-2 "}text-black text-[24px] leading-[1.3]`} style={{ fontFamily: "var(--font-memphis-medium)" }}>
-                AI-assistent van a.s.r.
-              </h2>
               {!cream && (
                 <div className="flex items-center gap-[11px]">
                   <span className="size-[11px] shrink-0 rounded-full border border-white bg-[#0f865d]" />
