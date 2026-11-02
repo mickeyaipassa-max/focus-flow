@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Tag } from "./Tag";
 
 /** Vinkje en kruisje zoals Figma ze in de 16px-cirkel tekent: kleine glyphs (±12/10px), vinkje groen, kruisje #858585. */
@@ -20,6 +21,8 @@ function CrossGlyph() {
 export type CardProductFeature = {
   text: string;
   included: boolean;
+  /** Opt-in: een kopregel boven `text` (Zorgverzekeringen: "Ziekenhuizen" boven "100% vrije keuze"). */
+  title?: string;
 };
 
 type CardProductProps = {
@@ -33,6 +36,18 @@ type CardProductProps = {
   tag?: string;
   /** Opt-in: extra visuele nadruk (2px zwarte rand en een schaduw). */
   emphasis?: boolean;
+  /** Opt-in: pictogram boven de titel, bv. een groene cirkel van 56px met een pictogram erin (Zorgverzekeringen). */
+  icon?: ReactNode;
+  /** Opt-in: grijze prijsbalk onder de kenmerken, bv. "€ 149,80" (Zorgverzekeringen). `pricePeriod` is de regel eronder. */
+  price?: string;
+  pricePeriod?: string;
+  /** Opt-in: ondertitel in 16px i.p.v. 12px. */
+  subtitleLarge?: boolean;
+  /** Opt-in: de tweede knop als onderstreepte link van 16px i.p.v. een tekstknop van 14px. */
+  secondaryAsLink?: boolean;
+  /** Opt-in: eigen toegankelijke namen, zodat drie kaarten niet drie keer "Bereken je premie" zeggen. */
+  primaryAriaLabel?: string;
+  secondaryAriaLabel?: string;
   primaryLabel: string;
   /** Opt-in: zonder secundaire tekstknop blijft alleen de primaire knop staan. */
   secondaryLabel?: string;
@@ -63,6 +78,13 @@ export function CardProduct({
   description,
   tag,
   emphasis = false,
+  icon,
+  price,
+  pricePeriod = "per maand",
+  subtitleLarge = false,
+  secondaryAsLink = false,
+  primaryAriaLabel,
+  secondaryAriaLabel,
   primaryLabel,
   secondaryLabel,
   onPrimaryClick,
@@ -81,12 +103,13 @@ export function CardProduct({
     >
       <div className="flex flex-1 flex-col items-center gap-4 p-6">
         {tag && <Tag text={tag} color="yellow" />}
+        {icon}
         <div className="flex w-full flex-col text-center">
           <p className="-mb-0.5 text-2xl text-black leading-[1.4]" style={{ fontFamily: "var(--font-avenir-bold)" }}>
             {title}
           </p>
           {subtitle && (
-            <p className="text-[#565656] text-xs leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+            <p className={`text-[#565656] ${subtitleLarge ? "text-base" : "text-xs"} leading-[1.5]`} style={{ fontFamily: "var(--font-avenir-book)" }}>
               {subtitle}
             </p>
           )}
@@ -99,7 +122,7 @@ export function CardProduct({
 
         <ul className="flex w-full flex-col gap-2">
           {features.map((feature, index) => (
-            <li key={feature.text} className="flex flex-col gap-2">
+            <li key={`${feature.title ?? ""}${feature.text}`} className="flex flex-col gap-2">
               <div className="flex items-start gap-2">
                 <span
                   className={[
@@ -110,6 +133,11 @@ export function CardProduct({
                   {feature.included ? <CheckGlyph /> : <CrossGlyph />}
                 </span>
                 <span className="min-w-0 flex-1 pt-px text-base text-black leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+                  {feature.title && (
+                    <span className="block" style={{ fontFamily: "var(--font-avenir-medium)" }}>
+                      {feature.title}
+                    </span>
+                  )}
                   {feature.text.trim()}
                   <span className="sr-only">{feature.included ? " (inbegrepen)" : " (niet inbegrepen)"}</span>
                 </span>
@@ -126,10 +154,25 @@ export function CardProduct({
 
       <div className="h-px w-full bg-[rgba(0,0,0,0.12)]" />
 
+      {price && (
+        <>
+          <div className="flex flex-col items-center bg-[#f6f6f7] px-6 py-4 text-center">
+            <p className="text-[32px] text-black leading-[1.3]" style={{ fontFamily: "var(--font-memphis-bold)" }}>
+              {price}
+            </p>
+            <p className="text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              {pricePeriod}
+            </p>
+          </div>
+          <div className="h-px w-full bg-[rgba(0,0,0,0.12)]" />
+        </>
+      )}
+
       <div className="flex flex-col gap-4 p-6">
         <button
           type="button"
           onClick={onPrimaryClick}
+          aria-label={primaryAriaLabel}
           className="flex w-full items-center justify-center gap-2 rounded-[3px] bg-black px-6 py-3 font-[550] text-base text-white leading-[1.5] hover:bg-[#292929]"
           style={{ fontFamily: "var(--font-avenir-medium)" }}
         >
@@ -139,7 +182,8 @@ export function CardProduct({
           <button
             type="button"
             onClick={onSecondaryClick}
-            className="flex w-full items-center justify-center gap-2 rounded-[3px] font-[550] text-black text-sm leading-[1.5] hover:underline"
+            aria-label={secondaryAriaLabel}
+            className={`flex w-full items-center justify-center gap-2 rounded-[3px] font-[550] text-black leading-[1.5] ${secondaryAsLink ? "text-base underline" : "text-sm hover:underline"}`}
             style={{ fontFamily: "var(--font-avenir-medium)" }}
           >
             {secondaryLabel}
