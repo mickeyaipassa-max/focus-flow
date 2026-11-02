@@ -73,7 +73,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
                 className="flex items-center gap-1 text-black text-sm leading-[1.5] hover:underline"
                 style={{ fontFamily: "var(--font-avenir-book)" }}
               >
-                <Icon name="arrow-left" size="sm" />
+                <Icon name="arrow-left-sm" size="sm" />
                 {previous.label}
               </button>
             ) : (
@@ -81,7 +81,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
                 className="flex items-center gap-1 text-black text-sm leading-[1.5]"
                 style={{ fontFamily: "var(--font-avenir-book)" }}
               >
-                <Icon name="arrow-left" size="sm" />
+                <Icon name="arrow-left-sm" size="sm" />
                 {previous.label}
               </span>
             )}

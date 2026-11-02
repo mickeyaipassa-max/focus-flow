@@ -10,6 +10,7 @@ import { Footer, type FooterColumn } from "@/components/Footer";
 import { Icon } from "@/components/Icon";
 import { List } from "@/components/List";
 import { KaartCarousel } from "./KaartCarousel";
+import { TegelMenu } from "./TegelMenu";
 
 /**
  * Mobiele pagina Zorgverzekeringen (<600px), gebouwd uit Figma (bestand "Untitled", Frame 5, node 1:1424, 393px breed), met
@@ -18,7 +19,8 @@ import { KaartCarousel } from "./KaartCarousel";
  *
  * Bewust niet overgenomen: de zwarte balk van 64px bovenaan het Figma-frame (Rectangle 698) is de statusbalk van de
  * telefoon-mockup, geen paginainhoud. De knoppen "Bereken je premie", "Meer informatie" en de overige knoppen gaan nog nergens
- * heen: er bestaat voor zorg nog geen funnel of pagina om naartoe te sturen.
+ * heen: er bestaat voor zorg nog geen funnel of pagina om naartoe te sturen. Het tegelmenu ("Waarmee kunnen we helpen?") en de
+ * antwoorden bij de veelgestelde vragen komen van de live pagina asr.nl/zorgverzekering en linken door naar asr.nl.
  */
 
 const FONT_MEMPHIS = "var(--font-memphis-medium)";
@@ -32,7 +34,73 @@ const FOOTER_COLUMNS: FooterColumn[] = [
   { title: "a.s.r.", links: [] },
 ];
 
-const PLACEHOLDER_FAQ = Array.from({ length: 7 }, (_, i) => ({ title: "Accordion title", id: i }));
+const PLACEHOLDER_FAQ = Array.from({ length: 3 }, (_, i) => ({ title: "Accordion title", id: i }));
+
+function TekstLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a href={href} className="text-[#0064a8] underline">
+      {children}
+    </a>
+  );
+}
+
+/** De vier vragen uit het ontwerp, met de antwoorden van asr.nl/zorgverzekering. */
+const FAQ: { title: string; content: ReactNode }[] = [
+  {
+    title: "Waarom kiezen voor een gecontracteerde zorgverlener?",
+    content: (
+      <div className="flex flex-col gap-4">
+        <Body>Kiezen voor een zorgverlener met contract heeft meerdere voordelen:</Body>
+        <ul className="flex flex-col gap-2">
+          {[
+            "Je rekening vergoeden we 100%.",
+            "Je schiet geen kosten voor. De zorgverlener stuurt de rekening rechtstreeks naar a.s.r.",
+            "Wij maken afspraken over kwaliteit, maximale wachttijden en prijs.",
+          ].map((tekst) => (
+            <li key={tekst} className="flex items-start gap-2">
+              <span className="flex shrink-0 items-start pt-1">
+                <Icon name="bullet" size="sm" />
+              </span>
+              <Body className="min-w-px flex-1 text-base text-black leading-[1.5]">{tekst}</Body>
+            </li>
+          ))}
+        </ul>
+        <Body>
+          Wil je weten of wij een contract hebben met een zorgverlener? Zoek de zorgverlener dan op in onze <TekstLink href="https://zorgzoeker.asr.nl/">Zorgzoeker</TekstLink>.
+        </Body>
+      </div>
+    ),
+  },
+  {
+    title: "Wat zijn de verschillen tussen de basisverzekeringen van a.s.r.?",
+    content: (
+      <Body>
+        Bij a.s.r. kun je kiezen uit verschillende basisverzekeringen. Er zijn naturapolissen en combinatiepolissen. Bekijk en vergelijk de verschillende
+        basisverzekeringen in het{" "}
+        <TekstLink href="https://www.asr.nl/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/44027.pdf">overzicht van ons polisaanbod</TekstLink>.
+      </Body>
+    ),
+  },
+  {
+    title: "Alle wijzigingen in 2026",
+    content: (
+      <Body>
+        Op onze pagina <TekstLink href="https://www.asr.nl/zorgverzekering/wijzigingen">wijzigingen en premies</TekstLink> vind je alle wijzigingen en premies van de
+        zorgverzekeringen van a.s.r. in 2026. Zo ben je volledig op de hoogte van alle wijzigingen.
+      </Body>
+    ),
+  },
+  {
+    title: "Zijn kinderen automatisch meeverzekerd?",
+    content: (
+      <Body>
+        Bij het afsluiten van je zorgverzekering geef je aan of je je kinderen meeverzekert. Dat kost je niets extra’s. De aanvullende verzekering die jij voor
+        jezelf hebt afgesloten, geldt dan ook voor hen. Ben je al bij ons verzekerd en ben je de verzekeringsnemer? Ook dan geldt je aanvullende verzekering
+        automatisch voor je kinderen.
+      </Body>
+    ),
+  },
+];
 
 /** Het ruitjespatroon waarmee Figma een lege afbeelding toont. */
 const CHECKER =
@@ -59,7 +127,7 @@ function BlackButton({ children, ariaLabel }: { children: ReactNode; ariaLabel?:
     <button
       type="button"
       aria-label={ariaLabel}
-      className="inline-flex items-center justify-center rounded-[3px] bg-black px-6 py-3 font-[550] text-base text-white leading-[1.5] hover:bg-[#292929]"
+      className="inline-flex items-center justify-center whitespace-nowrap rounded-[3px] bg-black px-6 py-3 font-[550] text-base text-white leading-[1.5] hover:bg-[#292929]"
       style={{ fontFamily: FONT_MEDIUM }}
     >
       {children}
@@ -82,11 +150,12 @@ function Graphic({ src }: { src: string }) {
   );
 }
 
+/** Figma: Tile Group, volgorde en pictogrammen (16px-maat) zoals in het ontwerp. */
 const SNELKOPPELINGEN = [
-  { label: "Inloggen", icon: "upload" },
-  { label: "Declaratie indienen", icon: "search" },
-  { label: "Vergoedingen zoeken", icon: "injury" },
-  { label: "Zorgverlener zoeken", icon: "user" },
+  { label: "Declaratie indienen", icon: "hand-met-zak-geld-sm" },
+  { label: "Vergoedingen zoeken", icon: "search-sm" },
+  { label: "Zorgverlener zoeken", icon: "heart-sm" },
+  { label: "Inloggen", icon: "user-sm" },
 ];
 
 const kenmerken = (ggz: string, overig: string): CardProductFeature[] => [
@@ -135,8 +204,8 @@ const EXTRA_INFORMATIE = [
 ] satisfies { title: string; price: string; features: CardProductFeature[] }[];
 
 const VOORDELEN = [
-  { title: "100% vrije ziekenhuiskeuze", text: "Voor alle ziekenhuizen in Nederland" },
-  { title: "Eenvoudig declareren", text: "Snel uitbetaald" },
+  { title: "100% vrije ziekenhuiskeuze", text: "Voor alle ziekenhuizen in Nederland", icon: "/zorgverzekeringen/voordeel-ongevallen-verzekering.svg" },
+  { title: "Eenvoudig declareren", text: "Snel uitbetaald", icon: "/zorgverzekeringen/voordeel-zak-met-geld.svg" },
   {
     title: (
       <>
@@ -146,6 +215,7 @@ const VOORDELEN = [
       </>
     ),
     text: "Met elke aanvullende verzekering",
+    icon: "/zorgverzekeringen/voordeel-bewegend-persoon.svg",
   },
 ];
 
@@ -286,7 +356,7 @@ export function ZorgverzekeringenContent() {
         </section>
 
         {/* Breid je zorgverzekering uit. */}
-        <section aria-labelledby="uitbreiden-titel" className="flex flex-col items-center bg-white px-[30px] pt-6 pb-10">
+        <section aria-labelledby="uitbreiden-titel" className="flex flex-col items-center bg-white px-[30px] pt-6 pb-[58px]">
           <div className="flex w-full flex-col gap-4">
             <div className="flex flex-col">
               <SectionTitle id="uitbreiden-titel">Breid je zorgverzekering uit</SectionTitle>
@@ -313,7 +383,7 @@ export function ZorgverzekeringenContent() {
                       {kaart.titel}
                     </h3>
                   </div>
-                  <List icon="bullet" items={kaart.punten.map((text) => ({ text }))} />
+                  <List icon="check-sm" items={kaart.punten.map((text) => ({ text }))} />
                   <div>
                     <BlackButton>{kaart.knop}</BlackButton>
                   </div>
@@ -323,8 +393,11 @@ export function ZorgverzekeringenContent() {
           </div>
         </section>
 
-        {/* Extra modules: vier kaarten in een carrousel. */}
-        <section aria-label="Extra modules" className="bg-white pb-[42px]">
+        {/* Extra modules: kop en vier kaarten in een carrousel, op een gele band. */}
+        <section aria-labelledby="modules-titel" className="flex flex-col gap-3 bg-[#fff8e3] pt-[34px] pb-[35px]">
+          <div className="pr-12 pl-6">
+            <SectionTitle id="modules-titel">Extra modules bij je zorgverzekering</SectionTitle>
+          </div>
           <KaartCarousel
             label="Extra modules"
             items={EXTRA_INFORMATIE.map((module) => ({
@@ -350,7 +423,7 @@ export function ZorgverzekeringenContent() {
         </section>
 
         {/* Verplicht eigen risico. */}
-        <section className="bg-[#f6f6f7] px-6 py-10">
+        <section className="bg-[#eef4e3] px-6 py-10">
           <OutlineCard>
             <div className="flex flex-col gap-2">
               <h2 className="text-2xl text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
@@ -365,6 +438,15 @@ export function ZorgverzekeringenContent() {
               <BlackButton>Lees meer over het eigen risico</BlackButton>
             </div>
           </OutlineCard>
+        </section>
+
+        {/* Waarmee kunnen we helpen? Het tegelmenu met twee niveaus. */}
+        <section aria-labelledby="helpen-titel" className="flex flex-col gap-[10px] bg-[#f6f6f7] px-6 py-10">
+          <div className="flex flex-col">
+            <SectionTitle id="helpen-titel">Waarmee kunnen we helpen?</SectionTitle>
+            <Body>Vind snel de juiste informatie over jouw zorgverzekering.</Body>
+          </div>
+          <TegelMenu label="Waarmee kunnen we helpen?" />
         </section>
 
         {/* Collectieve zorgverzekering. */}
@@ -388,7 +470,7 @@ export function ZorgverzekeringenContent() {
             <div key={index} className="flex flex-col items-center gap-4 rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-6 text-center">
               <span className="relative flex shrink-0 items-center justify-center p-3" aria-hidden="true">
                 <img src="/zorgverzekeringen/graphic-cirkel.svg" alt="" className="absolute inset-0 size-full" />
-                <img src="/zorgverzekeringen/graphic-afbeelding.svg" alt="" className="relative size-8" />
+                <img src={voordeel.icon} alt="" className="relative size-8" />
               </span>
               <div className="flex flex-col gap-2">
                 <h2 className="text-2xl text-black leading-[1.3]" style={{ fontFamily: FONT_MEMPHIS }}>
@@ -419,7 +501,7 @@ export function ZorgverzekeringenContent() {
         </section>
 
         {/* Wat vergoedt je zorgverzekering? */}
-        <section aria-labelledby="vergoedt-titel" className="bg-[#f6f6f7] px-[30px] py-10">
+        <section aria-labelledby="vergoedt-titel" className="bg-[#eef4e3] px-[30px] py-10">
           <div className="flex w-full flex-col gap-4">
             <div className="flex flex-col">
               <SectionTitle id="vergoedt-titel">Wat vergoedt je zorgverzekering?</SectionTitle>
@@ -453,15 +535,15 @@ export function ZorgverzekeringenContent() {
         </section>
 
         {/* Veelgestelde vragen. */}
-        <section className="flex flex-col gap-4 bg-white px-6 py-10">
+        <section className="flex flex-col gap-4 bg-white px-6 pt-10 pb-12">
           <SectionTitle>Veelgestelde vragen</SectionTitle>
-          <Accordion items={PLACEHOLDER_FAQ.map((item) => ({ title: item.title }))} />
+          <Accordion items={FAQ} />
         </section>
 
         {/* Extra informatie en documenten. */}
         <section className="flex flex-col gap-4 bg-[#f6f6f7] px-6 py-10">
           <SectionTitle>Extra informatie en documenten</SectionTitle>
-          <Accordion items={PLACEHOLDER_FAQ.slice(0, 3).map((item) => ({ title: item.title }))} />
+          <Accordion items={PLACEHOLDER_FAQ.map((item) => ({ title: item.title }))} />
         </section>
 
         {/* Drie fototegels. */}
