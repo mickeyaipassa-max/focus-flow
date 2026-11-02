@@ -3,7 +3,7 @@
  * Plak dit in de Custom CSS-editor van de variatie (en niets anders). Hoort bij vwo-variation.js.
  *
  * Twee delen:
- *   1. De tag "Hulp nodig?". De a.s.r.-kaartengroep (asr-radio-card-group) gebruikt Shadow DOM; de CSS van de pagina en van VWO bereikt
+ *   1. De tag "Hulp nodig met kiezen?". De a.s.r.-kaartengroep (asr-radio-card-group) gebruikt Shadow DOM; de CSS van de pagina en van VWO bereikt
  *      dat niet. vwo-variation.js leest daarom de regels hieronder (alle regels met ".asr-vwo-hulp") uit het stylesheet van deze pagina en
  *      zet ze in de shadow root. Heeft het script ze niet gevonden, dan gebruikt het een ingebouwde kopie. Pas je de tag aan,
  *      pas dan deze regels aan (en eventueel de ingebouwde kopie in het script).
