@@ -6,7 +6,7 @@
  * Wat de code doet (MODE = 'variation'):
  *   1. Zoekt de kaartengroep van stap 2 (asr-radio-card-group[formcontrolname="baseCoverage"]) en vervangt het label
  *      "Kies je basisverzekering (WA/WA+/Allrisk)" door "Kies je basisdekking".
- *   2. Zet de tag "Hulp nodig?" achter het label, in de shadow root van die groep (daar staat het label; gewone CSS en selectors bereiken het niet).
+ *   2. Zet de tag "Hulp nodig met kiezen?" achter het label, in de shadow root van die groep (daar staat het label; gewone CSS en selectors bereiken het niet).
  *   3. Een klik op de tag opent de keuzehulp-chat (de bestaande chat, app/embed/keuzehulp) in een iframe-paneel, met de gekozen dekking als context.
  *   4. Meet de interacties met VWO.event (zie TRACKING hieronder).
  * Wat de code doet (MODE = 'control'): niets aan de pagina; alleen de meting van klikken op de kaarten en op "Verder naar".
@@ -25,7 +25,7 @@
   var user = window.__ASR_KEUZEHULP_CONFIG__ || {}; // optioneel, voor Preview/test: { chatOrigin: 'https://…', debug: true }
   var CFG = {
     labelNieuw: 'Kies je basisdekking',
-    tagTekst: 'Hulp nodig?',
+    tagTekst: 'Hulp nodig met kiezen?',
     chatPad: '/embed/keuzehulp',
     readyTimeoutMs: 8000,
     debug: !!user.debug || /[?&]asr_vwo_debug=1/.test(location.search)
@@ -86,7 +86,7 @@
    * zet VWO.push(['event', naam, eigenschappen]) hem in de wachtrij (zo schrijft VWO's eigen snippet het ook).
    * Elk event bevat variant ('variation' | 'control'). Eenmalige events worden per paginaweergave maar één keer verstuurd.
    *
-   *   asr_hulp_tag_click        klik op de tag "Hulp nodig?"                (alleen variation)
+   *   asr_hulp_tag_click        klik op de tag "Hulp nodig met kiezen?"                (alleen variation)
    *   asr_chat_opened           de chat is geladen en zichtbaar (eenmalig)  (alleen variation)
    *   asr_chat_first_message    eerste klantbericht, tag of getypt (eenmalig)
    *   asr_chat_first_question   eerste getypte vraag (eenmalig)

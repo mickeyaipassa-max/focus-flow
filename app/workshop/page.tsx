@@ -279,7 +279,7 @@ export default function WorkshopPage() {
       aria-haspopup="dialog"
       className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
     >
-      <Tag text="Hulp nodig?" icon iconName="ai-agent" />
+      <Tag text="Hulp nodig met kiezen?" icon iconName="ai-agent" />
     </button>
   );
 

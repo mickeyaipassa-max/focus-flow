@@ -1,5 +1,5 @@
 /**
- * De keuzehulp op /workshop: de chat die opent via "Hulp nodig?" bij "Kies je basisdekking". De chat begint met een vaste
+ * De keuzehulp op /workshop: de chat die opent via "Hulp nodig met kiezen?" bij "Kies je basisdekking". De chat begint met een vaste
  * openingsvraag en vier klikbare antwoorden (tags). Elk antwoord krijgt een vast antwoord zonder aanroep van het taalmodel;
  * daarna neemt het taalmodel het gesprek over (app/api/chat, met `keuzehulp: true`).
  *

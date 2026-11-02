@@ -17,7 +17,7 @@ Hoort bij `vwo-variation.js` en `vwo-variation.css` in deze map. Alles hieronder
 
 **Onze codebase:**
 
-- De chat bestaat alleen op ditismick.com: `/workshop` met `ChatWidget` (`app/aichat/ChatWidget.tsx`) en `/api/chat` met de kennisbank (`lib/kennisbank`, de voorwaarden). De "Hulp nodig?"-tag en de vier keuzehulp-tags (`lib/chat/keuzehulp.ts`) horen daarbij. Op asr.nl bestaat niets daarvan.
+- De chat bestaat alleen op ditismick.com: `/workshop` met `ChatWidget` (`app/aichat/ChatWidget.tsx`) en `/api/chat` met de kennisbank (`lib/kennisbank`, de voorwaarden). De "Hulp nodig met kiezen?"-tag en de vier keuzehulp-tags (`lib/chat/keuzehulp.ts`) horen daarbij. Op asr.nl bestaat niets daarvan.
 - De chat is dus **niet bereikbaar vanuit VWO**: er is geen script of component op asr.nl om aan te roepen.
 
 ## 2. Oplossing en de enige extra integratie die nodig is
@@ -45,7 +45,7 @@ Control (50%): niets verandert op de pagina.
 Variation (50%):
 
 1. Het label wordt "Kies je basisdekking" (attribuut `label`, na `updateComplete`).
-2. Achter het label (na het sterretje) komt een tag "Hulp nodig?" met het AI-icoon, in dezelfde stijl als op `/workshop` (neutraal grijs, 32px hoog, volledig afgerond, 14px). Alleen dit ene label wordt aangeraakt (de groep `baseCoverage`).
+2. Achter het label (na het sterretje) komt een tag "Hulp nodig met kiezen?" met het AI-icoon, in dezelfde stijl als op `/workshop` (neutraal grijs, 32px hoog, volledig afgerond, 14px). Alleen dit ene label wordt aangeraakt (de groep `baseCoverage`).
 3. Klik op de tag opent het chatpaneel rechtsonder (onder 600px bijna schermvullend met donkere achtergrond). De klik doet `preventDefault` en `stopPropagation`: er wordt geen kaart gekozen en geen link gevolgd.
 4. De chat opent met de openingsvraag en de vier tags. De gekozen dekking gaat mee (`?dekking=` in de iframe-URL en als `context`-bericht). Kiest de bezoeker daarna een andere kaart, dan gaat de nieuwe dekking 0,4 seconde later mee.
 5. Sluiten kan met het menu in de chat (Minimaliseer / Sluit), met Escape of door buiten het paneel te tikken (mobiel). De focus gaat terug naar de tag. Heropenen laat het lopende gesprek zien.
@@ -71,7 +71,7 @@ Het script stuurt de gebeurtenissen met `VWO.event(naam, eigenschappen)` als die
 
 | Doel in VWO | Gebeurtenis | Wanneer | Eigenschappen | Variant |
 |---|---|---|---|---|
-| Klik op de tag | `asr_hulp_tag_click` | Elke klik op "Hulp nodig?" (dubbelklikken binnen 0,4 s telt één keer) | `dekking`, `kaart` | variation |
+| Klik op de tag | `asr_hulp_tag_click` | Elke klik op "Hulp nodig met kiezen?" (dubbelklikken binnen 0,4 s telt één keer) | `dekking`, `kaart` | variation |
 | Chat echt geopend | `asr_chat_opened` | Het iframe is geladen en heeft `ready` gemeld. Anders dan de tagklik: een klik zonder werkende chat telt hier niet mee. Eenmalig per paginaweergave | - | variation |
 | Eerste bericht | `asr_chat_first_message` | Eerste klantbericht, via tag of getypt. Eenmalig | `via` (`tag` of `getypt`) | variation |
 | Eerste getypte vraag | `asr_chat_first_question` | Eerste zelf getypte vraag (niet een tag). Eenmalig | - | variation |
