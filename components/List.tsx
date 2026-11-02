@@ -14,8 +14,11 @@ export type ListItemData = {
 };
 
 type ListProps = {
-  /** "bullet" = groene stip (Figma's "icon=bullet"), "check" = groen vinkje (Figma's "icon=check"). */
-  icon: "bullet" | "check";
+  /**
+   * "bullet" = groene stip (Figma's "icon=bullet"), "check" = groen vinkje (Figma's "icon=check").
+   * "check-sm" is hetzelfde vinkje in de 16px-maat van Figma (glyph 13,4 × 10,6); "check" is de grotere glyph (20 × 16).
+   */
+  icon: "bullet" | "check" | "check-sm";
   items: ListItemData[];
   className?: string;
 };
