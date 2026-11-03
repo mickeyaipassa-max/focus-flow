@@ -173,7 +173,7 @@ const ZORGVERZEKERINGEN = [
 ];
 
 /**
- * Figma: frame "Extra modules" (node 40:5344), vier kaarten van 332px. De teksten staan er letterlijk in, ook de afwijkingen van het ontwerp
+ * Figma: frame "Extra modules" (node 40:5344), vier kaarten (Figma 332px, hier 320px zoals de zorgkaarten erboven). De teksten staan er letterlijk in, ook de afwijkingen van het ontwerp
  * ("0,75- per maand", "v€ 200"). `titel` is de kop in één of twee regels; bij één regel houdt de kaart toch de hoogte van twee, zoals in Figma.
  */
 const EXTRA_MODULES: { prijs: string; titel: [string, string?]; punten: string[] }[] = [
@@ -207,7 +207,7 @@ function ModuleKaart({ prijs, titel, punten }: (typeof EXTRA_MODULES)[number]) {
   const naam = titel.filter(Boolean).join(" ");
   return (
     <div className="flex w-full flex-col overflow-clip rounded-md border border-[rgba(0,0,0,0.12)] bg-white">
-      {/* p-[23px]: Figma tekent de rand van 1px binnen het kader, dus de inhoud is 284px breed (332 − 2×24). */}
+      {/* p-[23px]: Figma tekent de rand van 1px binnen het kader, dus de inhoud is 272px breed (320 − 2×24). */}
       <div className="flex flex-1 flex-col gap-4 p-[23px]">
         <div className="flex flex-col gap-4">
           <p className="h-[23px] text-base text-[#565656] leading-[1.5]" style={{ fontFamily: FONT_BOOK }}>
@@ -442,7 +442,6 @@ export function ZorgverzekeringenContent() {
           </div>
           <KaartCarousel
             label="Extra modules"
-            kaartBreedte={332}
             items={EXTRA_MODULES.map((module) => {
               const naam = module.titel.filter(Boolean).join(" ");
               return { key: naam, label: naam, content: <ModuleKaart {...module} /> };

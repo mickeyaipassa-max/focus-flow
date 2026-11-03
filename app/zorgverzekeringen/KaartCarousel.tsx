@@ -6,8 +6,6 @@ type KaartCarouselProps = {
   /** Naam van de carrousel voor schermlezers, bv. "Zorgverzekeringen". */
   label: string;
   items: { key: string; label: string; content: ReactNode }[];
-  /** Breedte van een kaart in px; standaard 320. De modulekaarten zijn 332px (Figma). Het scrollgedrag blijft hetzelfde. */
-  kaartBreedte?: number;
 };
 
 /**
@@ -16,7 +14,7 @@ type KaartCarouselProps = {
  * scroll-snap, de bolletjes volgen de scrollpositie en een tik op een bolletje scrollt naar die kaart. De eerste kaart staat links,
  * de laatste rechts en de rest gecentreerd.
  */
-export function KaartCarousel({ label, items, kaartBreedte = 320 }: KaartCarouselProps) {
+export function KaartCarousel({ label, items }: KaartCarouselProps) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
 
@@ -59,8 +57,7 @@ export function KaartCarousel({ label, items, kaartBreedte = 320 }: KaartCarouse
         {items.map((item, index) => (
           <li
             key={item.key}
-            style={{ width: kaartBreedte }}
-            className={["flex shrink-0", index === 0 ? "snap-start" : index === items.length - 1 ? "snap-end" : "snap-center"].join(" ")}
+            className={["flex w-[320px] shrink-0", index === 0 ? "snap-start" : index === items.length - 1 ? "snap-end" : "snap-center"].join(" ")}
             aria-roledescription="dia"
             aria-label={`${index + 1} van ${items.length}: ${item.label}`}
           >
