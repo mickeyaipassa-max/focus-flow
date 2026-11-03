@@ -42,7 +42,7 @@ export function Accordion({ items, className, compactTitles = false }: Accordion
               type="button"
               onClick={() => setOpenIndex(isOpen ? null : index)}
               aria-expanded={isOpen}
-              className="flex w-full items-center gap-4 py-4 text-left"
+              className="flex w-full items-center gap-4 pt-4 pb-[15px] text-left"
             >
               <span className={`flex-1 text-black ${compactTitles ? "text-base" : "text-lg"} leading-[1.5]`} style={{ fontFamily: "var(--font-avenir-bold)" }}>
                 {item.title}
