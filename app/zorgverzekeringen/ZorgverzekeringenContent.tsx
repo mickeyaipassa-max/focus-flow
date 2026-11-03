@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Breadcrumb } from "@/components/Breadcrumb";
+import { Button } from "@/components/Button";
 import { Accordion } from "@/components/Accordion";
 import { CardProduct, type CardProductFeature } from "@/components/CardProduct";
 import { Footer, type FooterColumn } from "@/components/Footer";
@@ -171,37 +172,78 @@ const ZORGVERZEKERINGEN = [
   { title: "Eigen Keuze", subtitle: "Combinatieverzekering", icon: "/zorgverzekeringen/pictogram-hart-met-plus.svg", price: "€ 185", features: kenmerken("80% van de gemiddeld afgesproken prijs", "100% van de marktconforme of wettelijke prijs") },
 ];
 
-const EXTRA_INFORMATIE = [
-  { title: "Ongevallendekking Fysio & Tand", price: "+ € 0,75", features: [{ title: "Extra vergoeding na een ongeval", text: "Tot € 20.000 voor fysiotherapie en tandartskosten", included: true }] },
+/**
+ * Figma: frame "Extra modules" (node 40:5344), vier kaarten van 332px. De teksten staan er letterlijk in, ook de afwijkingen van het ontwerp
+ * ("0,75- per maand", "v€ 200"). `titel` is de kop in één of twee regels; bij één regel houdt de kaart toch de hoogte van twee, zoals in Figma.
+ */
+const EXTRA_MODULES: { prijs: string; titel: [string, string?]; punten: string[] }[] = [
   {
-    title: "Ongevallendekking Fysio & Tand + Buitenland",
-    price: "+ € 1,50",
-    features: [
-      { title: "Extra vergoeding na een ongeval", text: "Tot € 20.000 voor fysiotherapie en tandartskosten", included: true },
-      {
-        title: "Buitenland (spoedeisende zorg)",
-        text: "Maximaal € 20.000 extra vergoeding voor fysiotherapie en tandartskosten na een ongeval. 100% vergoeding voor spoedeisende zorg wereldwijd.",
-        included: true,
-      },
+    prijs: "+ € 0,75- per maand",
+    titel: ["Ongevallendekking", "Fysio & Tand"],
+    punten: ["Extra vergoeding tot € 20.000 voor fysiotherapie en tandartskosten  na een ongeval"],
+  },
+  {
+    prijs: "+ € 1,50- per maand",
+    titel: ["Ongevallendekking", "Fysio & Tand + buitenland"],
+    punten: [
+      "Extra vergoeding tot € 20.000 voor fysiotherapie en tandartskosten  na een ongeval",
+      "Maximaal € 20.000 extra vergoeding voor fysiotherapie en tandartskosten na een ongeval in het buitenland. 100% vergoeding voor spoedeisende zorg wereldwijd.",
     ],
   },
   {
-    title: "Bril en lenzen € 100",
-    price: "+ € 3,95",
-    features: [
-      { title: "Bril en lenzen", text: "€ 100 vergoeding per jaar voor brillen en lenzen op sterkte", included: true },
-      { title: "Exclusief", text: "Via Pearle en GrandOptical", included: true },
-    ],
+    prijs: "+ € 7,95- per maand",
+    titel: ["Bril en lenzen € 100"],
+    punten: ["€ 100 vergoeding per jaar voor brillen en lenzen op sterkte", "Exclusief via Pearle en GrandOptical"],
   },
   {
-    title: "Bril en lenzen € 200",
-    price: "+ € 7,95",
-    features: [
-      { title: "Bril en lenzen", text: "€ 200 vergoeding per jaar voor brillen en lenzen op sterkte", included: true },
-      { title: "Exclusief", text: "Via Pearle en GrandOptical", included: true },
-    ],
+    prijs: "+ € 3,95- per maand",
+    titel: ["Bril en lenzen € 200"],
+    punten: ["v€ 200 vergoeding per jaar voor brillen en lenzen op sterkte", "Exclusief via Pearle en GrandOptical"],
   },
-] satisfies { title: string; price: string; features: CardProductFeature[] }[];
+];
+
+/** Kaart van "Extra modules": prijsregel, kop, vinkjeslijst en een compacte "Meer informatie"-knop die onderaan blijft staan. */
+function ModuleKaart({ prijs, titel, punten }: (typeof EXTRA_MODULES)[number]) {
+  const naam = titel.filter(Boolean).join(" ");
+  return (
+    <div className="flex w-full flex-col overflow-clip rounded-md border border-[rgba(0,0,0,0.12)] bg-white">
+      {/* p-[23px]: Figma tekent de rand van 1px binnen het kader, dus de inhoud is 284px breed (332 − 2×24). */}
+      <div className="flex flex-1 flex-col gap-4 p-[23px]">
+        <div className="flex flex-col gap-4">
+          <p className="h-[23px] text-base text-[#565656] leading-[1.5]" style={{ fontFamily: FONT_BOOK }}>
+            {prijs}
+          </p>
+          <h3 className="min-h-14 text-xl text-black leading-[1.4]" style={{ fontFamily: FONT_MEMPHIS }}>
+            {titel[0]}
+            {titel[1] && (
+              <>
+                <br />
+                {titel[1]}
+              </>
+            )}
+          </h3>
+        </div>
+        <ul className="flex flex-col gap-2">
+          {punten.map((punt) => (
+            <li key={punt} className="flex items-start gap-2">
+              <span className="flex shrink-0 items-start pt-1">
+                <Icon name="check-sm" size="sm" />
+              </span>
+              <span className="min-w-px flex-1 text-base text-black leading-[1.5]" style={{ fontFamily: FONT_BOOK }}>
+                {punt}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-auto">
+          <Button type="secondary" compact fullWidth ariaLabel={`Meer informatie over ${naam}`}>
+            Meer informatie
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const VOORDELEN = [
   { title: "100% vrije ziekenhuiskeuze", text: "Voor alle ziekenhuizen in Nederland", icon: "/zorgverzekeringen/voordeel-ongevallen-verzekering.svg" },
@@ -256,13 +298,13 @@ export function ZorgverzekeringenContent() {
           <img src="/zorgverzekeringen/hero.jpg" alt="" className="block h-[131px] w-full object-cover object-top" />
 
           <div className="relative -mt-[51px] mx-auto flex w-[343px] max-w-[calc(100%-32px)] flex-col gap-10">
-            <div className="flex flex-col gap-4 rounded-md bg-white p-6 shadow-[0_4px_8px_rgba(0,0,0,0.12)]">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-4 rounded-md bg-white p-6 shadow-[0_4px_16px_rgba(0,0,0,0.12)]">
+              <div className="flex h-6 items-center gap-2">
                 <div className="flex items-center gap-1">
                   <Icon name="star-full" size="md" />
                   <div className="flex items-baseline leading-[1.5]">
                     <span className="text-base text-black" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-                      8,1
+                      7,6
                     </span>
                     <span className="ml-1 text-base text-[#565656]" style={{ fontFamily: FONT_MEDIUM }}>
                       /10
@@ -288,10 +330,10 @@ export function ZorgverzekeringenContent() {
                 </div>
 
                 <ul className="flex flex-col gap-2">
-                  {["3 jaar nieuw- of aankoopwaarde vergoed", "No-claimkorting tot 75%", "Snelle hulp en betrouwbare service"].map((tekst) => (
+                  {["100% vrije ziekenhuiskeuze", "Eenvoudig declareren en snel uitbetaald", "Inclusief Vitality en de Zorg voor jezelf app"].map((tekst) => (
                     <li key={tekst} className="flex items-start gap-2">
                       <span className="flex items-start pt-0.5">
-                        <Icon name="check" size="sm" />
+                        <Icon name="check-sm" size="sm" />
                       </span>
                       <Body className="min-w-0 flex-1 text-black text-sm leading-[1.5]">{tekst}</Body>
                     </li>
@@ -300,7 +342,7 @@ export function ZorgverzekeringenContent() {
 
                 <button
                   type="button"
-                  className="flex h-[51px] w-full items-center justify-center rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] px-6 font-[550] text-base text-black leading-[1.5] hover:bg-[#f0b335]"
+                  className="flex h-12 w-full items-center justify-center rounded-[3px] border-[rgba(0,0,0,0.08)] border-b-2 bg-[#eda50f] px-6 font-[550] text-base text-black leading-[1.5] hover:bg-[#f0b335]"
                   style={{ fontFamily: FONT_MEDIUM }}
                 >
                   Bereken je premie
@@ -326,7 +368,7 @@ export function ZorgverzekeringenContent() {
         </section>
 
         {/* Zorgverzekeringen van a.s.r.: gele band met de drie zorgverzekeringen. */}
-        <section aria-labelledby="zorgverzekeringen-titel" className="mt-[61px] flex flex-col gap-4 bg-[#fff8e3] pt-10 pb-9">
+        <section aria-labelledby="zorgverzekeringen-titel" className="mt-[67px] flex flex-col gap-4 bg-[#fff8e3] pt-10 pb-[53px]">
           <div className="flex flex-col px-6">
             <SectionTitle id="zorgverzekeringen-titel">Zorgverzekeringen van a.s.r.</SectionTitle>
           </div>
@@ -356,9 +398,9 @@ export function ZorgverzekeringenContent() {
         </section>
 
         {/* Breid je zorgverzekering uit. */}
-        <section aria-labelledby="uitbreiden-titel" className="flex flex-col items-center bg-white px-[30px] pt-6 pb-[58px]">
+        <section aria-labelledby="uitbreiden-titel" className="flex flex-col items-center bg-white px-[30.5px] pt-6 pb-[58px]">
           <div className="flex w-full flex-col gap-4">
-            <div className="flex flex-col">
+            <div className="flex flex-col px-0.5">
               <SectionTitle id="uitbreiden-titel">Breid je zorgverzekering uit</SectionTitle>
               <Body>
                 Niet alle zorg is verzekerd vanuit de basisverzekering. Denk bijvoorbeeld aan fysiotherapie, orthodontie of tandartskosten vanaf 18 jaar.
@@ -394,31 +436,17 @@ export function ZorgverzekeringenContent() {
         </section>
 
         {/* Extra modules: kop en vier kaarten in een carrousel, op een gele band. */}
-        <section aria-labelledby="modules-titel" className="flex flex-col gap-3 bg-[#fff8e3] pt-[34px] pb-[35px]">
+        <section aria-labelledby="modules-titel" className="flex flex-col gap-3 bg-[#fff8e3] pt-[34px] pb-[37px]">
           <div className="pr-12 pl-6">
             <SectionTitle id="modules-titel">Extra modules bij je zorgverzekering</SectionTitle>
           </div>
           <KaartCarousel
             label="Extra modules"
-            items={EXTRA_INFORMATIE.map((module) => ({
-              key: module.title,
-              label: module.title,
-              content: (
-                <CardProduct
-                  title={module.title}
-                  subtitle="Module"
-                  subtitleLarge
-                  features={module.features}
-                  price={module.price}
-                  primaryLabel="Bereken je premie"
-                  primaryAriaLabel={`Bereken je premie voor ${module.title}`}
-                  secondaryLabel="Meer informatie"
-                  secondaryAriaLabel={`Meer informatie over ${module.title}`}
-                  secondaryAsLink
-                  className={kaartKlasse}
-                />
-              ),
-            }))}
+            kaartBreedte={332}
+            items={EXTRA_MODULES.map((module) => {
+              const naam = module.titel.filter(Boolean).join(" ");
+              return { key: naam, label: naam, content: <ModuleKaart {...module} /> };
+            })}
           />
         </section>
 
@@ -467,7 +495,7 @@ export function ZorgverzekeringenContent() {
         {/* Drie voordelen op een gele band. */}
         <section aria-label="Voordelen" className="flex flex-col gap-[10px] bg-[#fff8e3] px-6 py-10">
           {VOORDELEN.map((voordeel, index) => (
-            <div key={index} className="flex flex-col items-center gap-4 rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-6 text-center">
+            <div key={index} className="flex flex-col items-center gap-4 rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-[23px] text-center">
               <span className="relative flex shrink-0 items-center justify-center p-3" aria-hidden="true">
                 <img src="/zorgverzekeringen/graphic-cirkel.svg" alt="" className="absolute inset-0 size-full" />
                 <img src={voordeel.icon} alt="" className="relative size-8" />
@@ -501,9 +529,9 @@ export function ZorgverzekeringenContent() {
         </section>
 
         {/* Wat vergoedt je zorgverzekering? */}
-        <section aria-labelledby="vergoedt-titel" className="bg-[#eef4e3] px-[30px] py-10">
+        <section aria-labelledby="vergoedt-titel" className="bg-[#eef4e3] px-[30.5px] py-10">
           <div className="flex w-full flex-col gap-4">
-            <div className="flex flex-col">
+            <div className="flex flex-col px-0.5">
               <SectionTitle id="vergoedt-titel">Wat vergoedt je zorgverzekering?</SectionTitle>
               {/* Zo staat het in Figma: de vraag staat daar nog een keer als eerste regel van de tekst. */}
               <Body>
@@ -537,13 +565,13 @@ export function ZorgverzekeringenContent() {
         {/* Veelgestelde vragen. */}
         <section className="flex flex-col gap-4 bg-white px-6 pt-10 pb-12">
           <SectionTitle>Veelgestelde vragen</SectionTitle>
-          <Accordion items={FAQ} />
+          <Accordion className="flex w-full flex-col gap-1" items={FAQ} />
         </section>
 
         {/* Extra informatie en documenten. */}
         <section className="flex flex-col gap-4 bg-[#f6f6f7] px-6 py-10">
           <SectionTitle>Extra informatie en documenten</SectionTitle>
-          <Accordion items={PLACEHOLDER_FAQ.map((item) => ({ title: item.title }))} />
+          <Accordion className="flex w-full flex-col gap-1" items={PLACEHOLDER_FAQ.map((item) => ({ title: item.title }))} />
         </section>
 
         {/* Drie fototegels. */}
@@ -567,7 +595,7 @@ export function ZorgverzekeringenContent() {
 
         {/* Link-lijst. */}
         <section className="bg-white px-[33px] py-10">
-          <Accordion compactTitles items={LINKLIJST.map((title) => ({ title }))} />
+          <Accordion compactTitles className="flex w-full flex-col gap-1" items={LINKLIJST.map((title) => ({ title }))} />
         </section>
       </main>
 

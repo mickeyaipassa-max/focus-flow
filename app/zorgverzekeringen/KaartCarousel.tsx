@@ -6,15 +6,17 @@ type KaartCarouselProps = {
   /** Naam van de carrousel voor schermlezers, bv. "Zorgverzekeringen". */
   label: string;
   items: { key: string; label: string; content: ReactNode }[];
+  /** Breedte van een kaart in px; standaard 320. De modulekaarten zijn 332px (Figma). Het scrollgedrag blijft hetzelfde. */
+  kaartBreedte?: number;
 };
 
 /**
- * Horizontale carrousel met kaarten van 320px (Figma: 8px ertussen, 24px marge links) en de bolletjes eronder (actieve bol is een
+ * Horizontale carrousel met kaarten van 320px (Figma: 8px ertussen, 24px marge links) en de bolletjes eronder (16px onder de kaarten; actieve bol is een
  * pil van 32×12, de andere cirkels van 12px in #ccc, 8px ertussen). Zelfde opzet als app/automobiel/DekkingCarousel: native
  * scroll-snap, de bolletjes volgen de scrollpositie en een tik op een bolletje scrollt naar die kaart. De eerste kaart staat links,
  * de laatste rechts en de rest gecentreerd.
  */
-export function KaartCarousel({ label, items }: KaartCarouselProps) {
+export function KaartCarousel({ label, items, kaartBreedte = 320 }: KaartCarouselProps) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
 
@@ -52,12 +54,13 @@ export function KaartCarousel({ label, items }: KaartCarouselProps) {
   }
 
   return (
-    <div className="flex w-full flex-col items-center gap-[21px]" role="group" aria-roledescription="carrousel" aria-label={label}>
+    <div className="flex w-full flex-col items-center gap-[15px]" role="group" aria-roledescription="carrousel" aria-label={label}>
       <ul ref={trackRef} className="relative flex w-full snap-x snap-mandatory scroll-px-6 gap-2 overflow-x-auto px-6 pb-px [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {items.map((item, index) => (
           <li
             key={item.key}
-            className={["flex w-[320px] shrink-0", index === 0 ? "snap-start" : index === items.length - 1 ? "snap-end" : "snap-center"].join(" ")}
+            style={{ width: kaartBreedte }}
+            className={["flex shrink-0", index === 0 ? "snap-start" : index === items.length - 1 ? "snap-end" : "snap-center"].join(" ")}
             aria-roledescription="dia"
             aria-label={`${index + 1} van ${items.length}: ${item.label}`}
           >
