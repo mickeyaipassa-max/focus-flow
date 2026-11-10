@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { ROUTES } from "./routes";
 
 /**
  * Gedeelde state tussen de stappen van het bewindvoerdersformulier: alleen React Context, bewust zonder
@@ -12,13 +13,7 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 /** Stappen van de stappenindicator (Figma "Bewindvoerdersformulier", section "bewindsvoerderformulier"). */
 export const BEWIND_STEPS = ["Bewindvoerder", "Bewindgegevens", "Klant", "Samenvatting"];
 
-export const ROUTES = {
-  bewindvoerder: "/bewindsvoerder",
-  bewindgegevens: "/bewindsvoerder/bewindgegevens",
-  klant: "/bewindsvoerder/klant",
-  samenvatting: "/bewindsvoerder/samenvatting",
-  gelukt: "/bewindsvoerder/gelukt",
-} as const;
+export { ROUTES };
 
 export type SoortBewindvoerder = "particulier" | "zakelijk" | "";
 export type Betaalvoorkeur = "incasso" | "email";
