@@ -84,7 +84,7 @@ export default function BewindvoeringHubPage() {
             <h2 className={H2_KLASSE} style={MEMPHIS}>
               Wat wil je regelen?
             </h2>
-            <TileMenu label="Wat wil je regelen?" items={MENU_ITEMS} kolommen={2} standaardOpen={[0]} className="w-full" />
+            <TileMenu label="Wat wil je regelen?" items={MENU_ITEMS} kolommen={2}className="w-full" />
           </div>
         </section>
 
