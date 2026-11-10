@@ -4,7 +4,8 @@ type CardGraphicProps = {
   /** Pad naar een pictogram van 32px (bv. /bewindsvoerder/pictogram-bel.svg). */
   pictogram: string;
   title: string;
-  description: string;
+  /** Optioneel: sinds de aanpassing in Figma (Service hub, "Veel voorkomende situaties") hebben de kaarten daar geen omschrijving meer. */
+  description?: string;
   actionLabel: string;
   onActionClick?: () => void;
   className?: string;
@@ -28,9 +29,11 @@ export function CardGraphic({ pictogram, title, description, actionLabel, onActi
           <h3 className="w-full text-2xl leading-[1.3]" style={{ fontFamily: "var(--font-memphis-medium)" }}>
             {title}
           </h3>
-          <p className="w-full text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
-            {description}
-          </p>
+          {description && (
+            <p className="w-full text-lg leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+              {description}
+            </p>
+          )}
         </div>
         <div className="flex items-start gap-2">
           <Button type="primary" onClick={onActionClick}>
