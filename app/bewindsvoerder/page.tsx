@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { Accordion, type AccordionItem } from "@/components/Accordion";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { CardContact } from "@/components/CardContact";
-import { CardGraphic } from "@/components/CardGraphic";
 import { Footer } from "@/components/Footer";
 import { SiteHeader } from "@/components/SiteHeader";
 import { TileMenu, type TileMenuItem } from "@/components/TileMenu";
 import { ROUTES } from "./routes";
 import { FOOTER_COLUMNS } from "./footer-kolommen";
+import { SituatieKaarten } from "./situatie-kaarten";
 
 export const metadata: Metadata = { title: "Bewindvoering bij a.s.r." };
 
@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: "Bewindvoering bij a.s.r." };
  * node 14150:28464): SiteHeader, kruimelpad, hero, "Wat wil je regelen?" met de Tile Menu (twee kolommen), de crème band
  * "Veel voorkomende situaties", "Veelgestelde vragen", "Liever echt contact?" en de footer.
  * Het aanmeldformulier staat sinds deze pagina op /bewindsvoerder/bewindvoerder (stap 1).
- * Waar Figma nog placeholdertekst heeft ("Button", "Description", "Availability", "Description bottom", kruimelnamen)
+ * Waar Figma nog placeholdertekst heeft ("Availability", "Description bottom", kruimelnamen)
  * staat die hier letterlijk zo.
  */
 
@@ -53,13 +53,6 @@ const MENU_ITEMS: TileMenuItem[] = [
   { label: "Polis opvragen", pictogram: "/bewindsvoerder/pictogram-polisblad.svg", href: "#", toonChevron: true },
   { label: "Bewindvoering beëindigen", pictogram: "/bewindsvoerder/pictogram-hand-zwaaien.svg", href: "#", toonChevron: true },
   { label: "Situatie van het eigen risico opvragen", pictogram: "/bewindsvoerder/pictogram-euroteken.svg", href: "#", toonChevron: true },
-];
-
-const SITUATIES = [
-  { pictogram: "/bewindsvoerder/pictogram-muntgeld-euro.svg", title: "Mijn cliënt heeft een betalingsachterstand", description: "Ik herken een rekening van mijn cliënt niet" },
-  { pictogram: "/bewindsvoerder/pictogram-hand-schudden.svg", title: "Ik neem de bewindvoering van een cliënt over", description: "Description" },
-  { pictogram: "/bewindsvoerder/pictogram-bel.svg", title: "Ik herken een rekening van mijn cliënt niet", description: "Ik herken een rekening van mijn cliënt niet" },
-  { pictogram: "/bewindsvoerder/pictogram-hand-stop.svg", title: "De bewindvoering van mijn cliënt stopt", description: "Description" },
 ];
 
 // Figma toont alleen de dichte staat; de antwoorden zijn niet ontworpen, dus klapt een item niet open.
@@ -107,11 +100,7 @@ export default function BewindvoeringHubPage() {
             <h2 className={H2_KLASSE} style={MEMPHIS}>
               Veel voorkomende situaties
             </h2>
-            <div className="grid grid-cols-1 gap-4 min-[900px]:grid-cols-2">
-              {SITUATIES.map((situatie) => (
-                <CardGraphic key={situatie.title} pictogram={situatie.pictogram} title={situatie.title} description={situatie.description} actionLabel="Button" />
-              ))}
-            </div>
+            <SituatieKaarten />
           </div>
         </section>
 
