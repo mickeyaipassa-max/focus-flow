@@ -26,6 +26,8 @@ export type TileMenuItem = {
   pictogram?: string;
   /** Link voor een eindpunt (een item zonder `children`). */
   href?: string;
+  /** Toon ook bij een eindpunt de chevron (Figma toont die bij elk item van het eerste niveau, ook als het submenu nog niet is ingevuld). */
+  toonChevron?: boolean;
   /** Het volgende niveau (maximaal drie niveaus in totaal). */
   children?: TileMenuItem[];
 };
@@ -34,6 +36,10 @@ type TileMenuProps = {
   /** Toegankelijke naam van de navigatie. */
   label: string;
   items: TileMenuItem[];
+  /** Aantal kolommen op desktop: 3 (standaard) of 2 ("Tile Menu Desktop, columns=2": twee even brede kolommen, bv. op de Service hub). */
+  kolommen?: 2 | 3;
+  /** Welke items bij het laden al open staan, per niveau (bv. `[0]` = eerste item van kolom 1 geselecteerd, zoals in de Service hub-pagina). */
+  standaardOpen?: number[];
   className?: string;
 };
 
@@ -84,8 +90,9 @@ function Rij({
   controls?: string;
 }) {
   const heeftVervolg = Boolean(item.children?.length);
+  const toonIcoon = heeftVervolg || Boolean(item.toonChevron);
   const klasse = [RIJ, actief ? `gap-6 ${ACTIEF}` : `gap-4 hover:gap-6 focus-visible:gap-6 ${HOVER}`].join(" ");
-  const inhoud = <RijInhoud item={item} toonPictogram={niveau === 0} actief={actief} heeftVervolg={heeftVervolg} />;
+  const inhoud = <RijInhoud item={item} toonPictogram={niveau === 0} actief={actief} heeftVervolg={toonIcoon} />;
 
   if (!heeftVervolg) {
     return (
@@ -101,44 +108,56 @@ function Rij({
   );
 }
 
-export function TileMenu({ label, items, className }: TileMenuProps) {
+export function TileMenu({ label, items, kolommen: aantalKolommen = 3, standaardOpen = [], className }: TileMenuProps) {
   const basisId = useId();
   // Gekozen index per niveau, bv. [1, 3] = tweede item in kolom 1 en daarbinnen het vierde item in kolom 2.
-  const [pad, setPad] = useState<number[]>([]);
+  const [pad, setPad] = useState<number[]>(standaardOpen);
+  // `standaardOpen` geldt alleen voor desktop (daar zie je het submenu naast het menu staan); de mobiele kaart begint altijd op niveau 1.
+  const [aangeraakt, setAangeraakt] = useState(false);
 
-  // De lijsten die op dit moment zichtbaar zijn: altijd niveau 1, plus de kinderen van elk gekozen item.
-  const kolommen: TileMenuItem[][] = [items];
-  for (const index of pad) {
-    const kinderen = kolommen[kolommen.length - 1][index]?.children;
-    if (!kinderen?.length) break;
-    kolommen.push(kinderen);
+  // De lijsten die bij een pad zichtbaar zijn: altijd niveau 1, plus de kinderen van elk gekozen item.
+  function bouwKolommen(gekozen: number[]): TileMenuItem[][] {
+    const lijsten: TileMenuItem[][] = [items];
+    for (const index of gekozen) {
+      const kinderen = lijsten[lijsten.length - 1][index]?.children;
+      if (!kinderen?.length) break;
+      lijsten.push(kinderen);
+    }
+    return lijsten;
   }
+  const kolommen = bouwKolommen(pad);
+  const mobielPad = aangeraakt ? pad : [];
+  const mobieleKolommen = bouwKolommen(mobielPad);
 
   const rijId = (niveau: number, index: number, plek: "d" | "m") => `${basisId}-${plek}-${niveau}-${index}`;
   const kolomId = (niveau: number) => `${basisId}-kolom-${niveau}`;
   const terugId = `${basisId}-terug`;
 
   function open(niveau: number, index: number, mobiel = false) {
-    setPad([...pad.slice(0, niveau), index]);
+    // Mobiel start op een leeg pad; desktop kan al een standaardpad hebben, dus bouw verder op het pad van de eigen weergave.
+    const basis = mobiel ? mobielPad : pad;
+    setAangeraakt(true);
+    setPad([...basis.slice(0, niveau), index]);
     // Mobiel wisselt de kaart van inhoud: zet de focus op de nieuwe terugregel.
     if (mobiel) requestAnimationFrame(() => document.getElementById(terugId)?.focus());
   }
 
   function terug() {
-    const vorige = pad[pad.length - 1];
-    const niveau = pad.length - 1;
-    setPad(pad.slice(0, -1));
+    const vorige = mobielPad[mobielPad.length - 1];
+    const niveau = mobielPad.length - 1;
+    setAangeraakt(true);
+    setPad(mobielPad.slice(0, -1));
     requestAnimationFrame(() => document.getElementById(rijId(niveau, vorige, "m"))?.focus());
   }
 
-  const diepte = kolommen.length - 1;
-  const ouder = diepte > 0 ? kolommen[diepte - 1][pad[diepte - 1]] : null;
+  const diepte = mobieleKolommen.length - 1;
+  const ouder = diepte > 0 ? mobieleKolommen[diepte - 1][mobielPad[diepte - 1]] : null;
 
   return (
     <nav aria-label={label} className={className}>
-      {/* Desktop: drie even brede kolommen; niet-geopende kolommen blijven leeg (Figma: lege "Container"). */}
-      <div className="hidden grid-cols-3 lg:grid">
-        {[0, 1, 2].map((niveau) => {
+      {/* Desktop: twee of drie even brede kolommen; niet-geopende kolommen blijven leeg (Figma: lege "Container"). */}
+      <div className={`hidden lg:grid ${aantalKolommen === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+        {Array.from({ length: aantalKolommen }, (_, niveau) => niveau).map((niveau) => {
           const lijst = kolommen[niveau];
           if (!lijst) return <div key={niveau} />;
           const laatste = niveau === kolommen.length - 1;
@@ -178,7 +197,7 @@ export function TileMenu({ label, items, className }: TileMenuProps) {
           </>
         )}
         <ul className="flex flex-col py-2">
-          {kolommen[diepte].map((item, index) => (
+          {mobieleKolommen[diepte].map((item, index) => (
             <li key={`${item.label}-${index}`}>
               <Rij item={item} niveau={diepte} onOpen={() => open(diepte, index, true)} id={rijId(diepte, index, "m")} />
             </li>

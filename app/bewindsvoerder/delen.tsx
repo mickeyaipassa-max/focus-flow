@@ -5,10 +5,11 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { Button } from "@/components/Button";
 import { CardContact } from "@/components/CardContact";
 import { FaqAccordion, type FaqItem } from "@/components/FaqAccordion";
-import { Footer, type FooterColumn } from "@/components/Footer";
+import { Footer } from "@/components/Footer";
 import { RadioGroup } from "@/components/RadioGroup";
 import { SiteHeader } from "@/components/SiteHeader";
 import { StepIndicator } from "@/components/StepIndicator";
+import { FOOTER_COLUMNS } from "./footer-kolommen";
 import { BEWIND_STEPS, useBewindFunnel, type BewindState } from "./funnel-context";
 import type { Fouten } from "./validatie";
 
@@ -45,12 +46,6 @@ const H2_KLASSE = "text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]"
 const KAART_KLASSE = "flex w-full max-w-[784px] flex-col items-start overflow-hidden rounded-md bg-white shadow-[0px_4px_8px_rgba(0,0,0,0.12)]";
 const BACK_BUTTON_CLASS =
   "inline-flex items-center justify-center gap-2 py-0 pl-px text-black text-lg leading-[1.5] font-[550] underline whitespace-nowrap";
-
-const FOOTER_COLUMNS: FooterColumn[] = [
-  { title: "Klantenservice", links: ["Inloggen", "Schade melden", "Gegevens wijzigen", "Financieel advies", "Onze apps", "Contact"] },
-  { title: "Onze impact", links: ["Duurzaamheid", "Maatschappij", "Toegankelijkheid", "a.s.r. Vitality", "Doenkracht", "De raad van doen"] },
-  { title: "a.s.r.", links: ["Over a.s.r.", "Blogs", "Nieuws en financiële publicaties", "Werken bij a.s.r.", "Fondsen en koersen"] },
-];
 
 const FAQ_ITEMS: FaqItem[] = Array.from({ length: 7 }, () => ({ question: "Accordion title", answer: "" }));
 

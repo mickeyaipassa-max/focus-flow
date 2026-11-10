@@ -11,6 +11,8 @@ type CardContactProps = {
   onActionClick?: () => void;
   /** Optionele grijze voettekst, bv. "Werkdagen 08.30 – 17.30 uur" — niet elke kaart heeft die (bevestigd: alleen de telefoon-variant in Figma). */
   footerText?: string;
+  /** Zet de voettekst binnen dezelfde stapel als titel en actie (16px ertussen) i.p.v. 32px eronder — zo staat "Description bottom" in de Service hub (Figma node 14150:28499). Standaard `false`. */
+  footerInSection?: boolean;
   className?: string;
 };
 
@@ -21,7 +23,7 @@ type CardContactProps = {
  * reactietijd kunnen verwachten." Twee instances (telefoon/contactformulier)
  * worden in stap 1 samen in een `CardContactCollage` getoond.
  */
-export function CardContact({ title, availability, actionIcon, actionLabel, onActionClick, footerText, className }: CardContactProps) {
+export function CardContact({ title, availability, actionIcon, actionLabel, onActionClick, footerText, footerInSection = false, className }: CardContactProps) {
   return (
     <div className={className ?? "flex min-w-px flex-1 flex-col items-start gap-8 self-stretch bg-white p-6"}>
       {/*
@@ -67,8 +69,13 @@ export function CardContact({ title, availability, actionIcon, actionLabel, onAc
             </span>
           </button>
         </div>
+        {footerText && footerInSection && (
+          <p className="w-full text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
+          {footerText}
+        </p>
+        )}
       </div>
-      {footerText && (
+      {footerText && !footerInSection && (
         <p className="w-full text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
           {footerText}
         </p>
