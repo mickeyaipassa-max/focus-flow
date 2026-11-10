@@ -161,9 +161,10 @@ export function TileMenu({ label, items, kolommen: aantalKolommen = 3, standaard
           const lijst = kolommen[niveau];
           if (!lijst) return <div key={niveau} />;
           const laatste = niveau === kolommen.length - 1;
+          // Bij twee kolommen (Service hub, Figma 14160:3974) rekt het eerste menu niet mee met een hoger submenu: dat steekt eronder uit.
           const hoeken = [niveau === 0 ? "rounded-l-md" : "", laatste ? "rounded-r-md" : ""].join(" ");
           return (
-            <ul key={niveau} id={kolomId(niveau)} className={`flex flex-col bg-white py-2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.12)] ${hoeken}`}>
+            <ul key={niveau} id={kolomId(niveau)} className={`flex flex-col bg-white py-2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.12)] ${hoeken} ${niveau === 0 && aantalKolommen === 2 ? "self-start" : ""}`}>
               {lijst.map((item, index) => (
                 <li key={`${item.label}-${index}`}>
                   <Rij

@@ -35,7 +35,20 @@ const MENU_ITEMS: TileMenuItem[] = [
       { label: "Aanmelden voor een andere verzekering", href: ROUTES.bewindvoerder },
     ],
   },
-  { label: "Betalingsregeling aanvragen", pictogram: "/bewindsvoerder/pictogram-muntgeld-euro.svg", href: "#", toonChevron: true },
+  {
+    label: "Betalingsregeling aanvragen",
+    pictogram: "/bewindsvoerder/pictogram-muntgeld-euro.svg",
+    // Figma (Tile Menu naast het template, node 14160:3974): de drie "???" zijn placeholders en staan er letterlijk zo.
+    children: [
+      { label: "Voor een Zorgverzekering", href: "#" },
+      { label: "Voor een Schadeverzekering", href: "#" },
+      { label: "Voor een Reisverzekering", href: "#" },
+      { label: "Voor een Hypotheek", href: "#" },
+      { label: "???", href: "#" },
+      { label: "???", href: "#" },
+      { label: "???", href: "#" },
+    ],
+  },
   { label: "Betalingensachterstand opvragen", pictogram: "/bewindsvoerder/pictogram-geld-en-mensen.svg", href: "#", toonChevron: true },
   { label: "Polis opvragen", pictogram: "/bewindsvoerder/pictogram-polisblad.svg", href: "#", toonChevron: true },
   { label: "Bewindvoering beëindigen", pictogram: "/bewindsvoerder/pictogram-hand-zwaaien.svg", href: "#", toonChevron: true },
