@@ -9,6 +9,8 @@ type CardContactProps = {
   actionIcon: string;
   actionLabel: string;
   onActionClick?: () => void;
+  /** Maakt van de actie een echte link (bv. `tel:0800000000` of `mailto:…`) i.p.v. een knop. */
+  actionHref?: string;
   /** Optionele grijze voettekst, bv. "Werkdagen 08.30 – 17.30 uur" — niet elke kaart heeft die (bevestigd: alleen de telefoon-variant in Figma). */
   footerText?: string;
   /** Zet de voettekst binnen dezelfde stapel als titel en actie (16px ertussen) i.p.v. 32px eronder — zo staat "Description bottom" in de Service hub (Figma node 14150:28499). Standaard `false`. */
@@ -23,7 +25,7 @@ type CardContactProps = {
  * reactietijd kunnen verwachten." Twee instances (telefoon/contactformulier)
  * worden in stap 1 samen in een `CardContactCollage` getoond.
  */
-export function CardContact({ title, availability, actionIcon, actionLabel, onActionClick, footerText, footerInSection = false, className }: CardContactProps) {
+export function CardContact({ title, availability, actionIcon, actionLabel, onActionClick, actionHref, footerText, footerInSection = false, className }: CardContactProps) {
   return (
     <div className={className ?? "flex min-w-px flex-1 flex-col items-start gap-8 self-stretch bg-white p-6"}>
       {/*
@@ -57,17 +59,31 @@ export function CardContact({ title, availability, actionIcon, actionLabel, onAc
             waarneembaar te grote afstand (10,3px gemeten) tot de tekst.
           */}
           {/* `text-left`: native <button>-elementen hebben een browserdefault van `text-align: center`, die anders naar de flex-1 tekst-span erft en "(0800) 00 00 000" centreert i.p.v. links tegen het icoon laat aansluiten. */}
-          <button type="button" onClick={onActionClick} className="flex w-full items-start gap-1 rounded-[3px] text-left">
-            <span className="flex shrink-0 items-start">
-              <Icon name={actionIcon} size="md" />
-            </span>
-            <span
-              className="min-w-px flex-1 font-[550] text-black text-base underline decoration-solid decoration-from-font [text-underline-position:from-font] leading-[1.5]"
-              style={{ fontFamily: "var(--font-avenir-medium)" }}
-            >
-              {actionLabel}
-            </span>
-          </button>
+          {actionHref ? (
+            <a href={actionHref} className="flex w-full items-start gap-1 rounded-[3px] text-left">
+              <span className="flex shrink-0 items-start">
+                <Icon name={actionIcon} size="md" />
+              </span>
+              <span
+                className="min-w-px flex-1 font-[550] text-black text-base underline decoration-solid decoration-from-font [text-underline-position:from-font] leading-[1.5]"
+                style={{ fontFamily: "var(--font-avenir-medium)" }}
+              >
+                {actionLabel}
+              </span>
+            </a>
+          ) : (
+            <button type="button" onClick={onActionClick} className="flex w-full items-start gap-1 rounded-[3px] text-left">
+              <span className="flex shrink-0 items-start">
+                <Icon name={actionIcon} size="md" />
+              </span>
+              <span
+                className="min-w-px flex-1 font-[550] text-black text-base underline decoration-solid decoration-from-font [text-underline-position:from-font] leading-[1.5]"
+                style={{ fontFamily: "var(--font-avenir-medium)" }}
+              >
+                {actionLabel}
+              </span>
+            </button>
+          )}
         </div>
         {footerText && footerInSection && (
           <p className="w-full text-[#565656] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>

@@ -26,6 +26,8 @@ export type TileMenuItem = {
   pictogram?: string;
   /** Link voor een eindpunt (een item zonder `children`). */
   href?: string;
+  /** Actie voor een eindpunt dat geen pagina opent maar bv. een dialog (Service hub: "Voor een Schadeverzekering"); dan rendert de rij een knop i.p.v. een link. */
+  onClick?: () => void;
   /** Toon ook bij een eindpunt de chevron (Figma toont die bij elk item van het eerste niveau, ook als het submenu nog niet is ingevuld). */
   toonChevron?: boolean;
   /** Het volgende niveau (maximaal drie niveaus in totaal). */
@@ -94,6 +96,13 @@ function Rij({
   const klasse = [RIJ, actief ? `gap-6 ${ACTIEF}` : `gap-4 hover:gap-6 focus-visible:gap-6 ${HOVER}`].join(" ");
   const inhoud = <RijInhoud item={item} toonPictogram={niveau === 0} actief={actief} heeftVervolg={toonIcoon} />;
 
+  if (!heeftVervolg && item.onClick) {
+    return (
+      <button id={id} type="button" onClick={item.onClick} aria-haspopup="dialog" className={klasse}>
+        {inhoud}
+      </button>
+    );
+  }
   if (!heeftVervolg) {
     return (
       <a id={id} href={item.href ?? "#"} className={klasse}>
