@@ -4,9 +4,8 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { CardContact } from "@/components/CardContact";
 import { Footer } from "@/components/Footer";
 import { SiteHeader } from "@/components/SiteHeader";
-import { TileMenu, type TileMenuItem } from "@/components/TileMenu";
-import { ROUTES } from "./routes";
 import { FOOTER_COLUMNS } from "./footer-kolommen";
+import { HubMenu } from "./hub-menu";
 import { SituatieKaarten } from "./situatie-kaarten";
 
 export const metadata: Metadata = { title: "Bewindvoering bij a.s.r." };
@@ -25,35 +24,6 @@ const MEMPHIS = { fontFamily: "var(--font-memphis-medium)" } as const;
 const AVENIR = { fontFamily: "var(--font-avenir-book)" } as const;
 // pb-2: de Figma-".Heading" is 42px tekst + 8px onderpadding (50px hoog).
 const H2_KLASSE = "pb-2 text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]";
-
-const MENU_ITEMS: TileMenuItem[] = [
-  {
-    label: "Aanmelden als bewindvoerder",
-    pictogram: "/bewindsvoerder/pictogram-persoon-man.svg",
-    children: [
-      { label: "Aanmelden voor een zorgverzekering", href: ROUTES.bewindvoerder },
-      { label: "Aanmelden voor een andere verzekering", href: ROUTES.bewindvoerder },
-    ],
-  },
-  {
-    label: "Betalingsregeling aanvragen",
-    pictogram: "/bewindsvoerder/pictogram-muntgeld-euro.svg",
-    // Figma (Tile Menu naast het template, node 14160:3974): de drie "???" zijn placeholders en staan er letterlijk zo.
-    children: [
-      { label: "Voor een Zorgverzekering", href: "#" },
-      { label: "Voor een Schadeverzekering", href: "#" },
-      { label: "Voor een Reisverzekering", href: "#" },
-      { label: "Voor een Hypotheek", href: "#" },
-      { label: "???", href: "#" },
-      { label: "???", href: "#" },
-      { label: "???", href: "#" },
-    ],
-  },
-  { label: "Betalingensachterstand opvragen", pictogram: "/bewindsvoerder/pictogram-geld-en-mensen.svg", href: "#", toonChevron: true },
-  { label: "Polis opvragen", pictogram: "/bewindsvoerder/pictogram-polisblad.svg", href: "#", toonChevron: true },
-  { label: "Bewindvoering beëindigen", pictogram: "/bewindsvoerder/pictogram-hand-zwaaien.svg", href: "#", toonChevron: true },
-  { label: "Situatie van het eigen risico opvragen", pictogram: "/bewindsvoerder/pictogram-euroteken.svg", href: "#", toonChevron: true },
-];
 
 // Figma toont alleen de dichte staat; de antwoorden zijn niet ontworpen, dus klapt een item niet open.
 const VRAGEN: AccordionItem[] = [
@@ -90,7 +60,7 @@ export default function BewindvoeringHubPage() {
             <h2 className={H2_KLASSE} style={MEMPHIS}>
               Wat wil je regelen?
             </h2>
-            <TileMenu label="Wat wil je regelen?" items={MENU_ITEMS} kolommen={2}className="w-full" />
+            <HubMenu />
           </div>
         </section>
 
