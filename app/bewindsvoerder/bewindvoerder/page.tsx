@@ -41,7 +41,8 @@ export default function BewindvoerderPage() {
     >
       <FunnelSection intro title="Bewindvoerder" showRequiredFieldsNote requiredFieldsNote={<VerplichteVelden />} />
 
-      <SectieTitel>Gegevens</SectieTitel>
+      {/* Figma "1 Bewindvoerder – variant Zakelijk" noemt de secties "Gegevens Bewindvoerder" en "Postadres Bewindvoerder". */}
+      <SectieTitel>{state.soort === "zakelijk" ? "Gegevens Bewindvoerder" : "Gegevens"}</SectieTitel>
 
       <RadioGroup
         labelText="Particulier/Zakelijk"
@@ -144,7 +145,7 @@ export default function BewindvoerderPage() {
       />
 
       <Scheidingslijn />
-      <SectieTitel>Postadres</SectieTitel>
+      <SectieTitel>{state.soort === "zakelijk" ? "Postadres Bewindvoerder" : "Postadres"}</SectieTitel>
 
       <div className="flex w-full flex-col items-start gap-6">
         <Checkbox
