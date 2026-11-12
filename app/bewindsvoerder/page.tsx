@@ -55,7 +55,8 @@ export default function BewindvoeringHubPage() {
           </div>
         </section>
 
-        <section className={`w-full ${SECTIE_PADDING}`}>
+        {/* Geel-100 band achter "Wat wil je regelen?". */}
+        <section className={`w-full bg-[#fff8e3] py-6 min-[600px]:py-12 ${SECTIE_PADDING}`}>
           <div className="mx-auto flex max-w-[1200px] flex-col gap-6">
             <h2 className={H2_KLASSE} style={MEMPHIS}>
               Wat wil je regelen?
@@ -64,8 +65,8 @@ export default function BewindvoeringHubPage() {
           </div>
         </section>
 
-        {/* Crème band: Figma geeft deze sectie een eigen breedte van 1200px (marge 120px) in plaats van het paginaraster (128px). */}
-        <section className="w-full bg-[#fff8e3] px-6 py-6 min-[600px]:px-12 min-[600px]:py-12 min-[900px]:px-16 min-[1200px]:px-[120px]">
+        {/* Lichtgrijze band: Figma geeft deze sectie een eigen breedte van 1200px (marge 120px) in plaats van het paginaraster (128px). */}
+        <section className="w-full bg-[#f6f6f7] px-6 py-6 min-[600px]:px-12 min-[600px]:py-12 min-[900px]:px-16 min-[1200px]:px-[120px]">
           <div className="mx-auto flex max-w-[1200px] flex-col gap-4">
             <h2 className={H2_KLASSE} style={MEMPHIS}>
               Veel voorkomende situaties
