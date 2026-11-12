@@ -3,8 +3,6 @@
 import { useState, type ReactNode } from "react";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { Button } from "@/components/Button";
-import { CardContact } from "@/components/CardContact";
-import { FaqAccordion, type FaqItem } from "@/components/FaqAccordion";
 import { Footer } from "@/components/Footer";
 import { RadioGroup } from "@/components/RadioGroup";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -32,9 +30,9 @@ export function useStap() {
 
 /*
  * Servicepagina met inline funnel, naar Figma "Bewindvoerdersformulier" (section "bewindsvoerderformulier"):
- * SiteHeader, kruimelpad, hero, de crème funnelband met stappenindicator en kaart, "Veel gestelde vragen",
- * "Hulp nodig?", op de samenvatting "We zijn benieuwd naar je mening", en de footer. De FAQ- en
- * contactteksten zijn in Figma nog placeholders en staan hier letterlijk zo.
+ * SiteHeader, kruimelpad, hero, de crème funnelband met stappenindicator en kaart, op de samenvatting en
+ * succespagina "We zijn benieuwd naar je mening", en de footer. "Veel gestelde vragen" en "Hulp nodig?"
+ * staan bewust niet in de funnel.
  */
 
 const SECTIE_PADDING = "px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-32";
@@ -46,11 +44,6 @@ const H2_KLASSE = "text-black text-[24px] leading-[1.3] min-[600px]:text-[32px]"
 const KAART_KLASSE = "flex w-full max-w-[784px] flex-col items-start overflow-hidden rounded-md bg-white shadow-[0px_4px_8px_rgba(0,0,0,0.12)]";
 const BACK_BUTTON_CLASS =
   "inline-flex items-center justify-center gap-2 py-0 pl-px text-black text-lg leading-[1.5] font-[550] underline whitespace-nowrap";
-
-const FAQ_ITEMS: FaqItem[] = Array.from({ length: 7 }, () => ({ question: "Accordion title", answer: "" }));
-
-const HULP_TEKST =
-  "Nulla porttitor accumsan tincidunt. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. This line is slightly longer to test the constraints. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.";
 
 /** "* Verplichte velden" zoals Figma het tekent (asterisk eerst), rechts boven het formulier. */
 export function VerplichteVelden() {
@@ -184,37 +177,6 @@ export function BewindScherm({
             </div>
           </div>
         </section>
-
-        <Sectie className="flex flex-col gap-6">
-          <h2 className={H2_KLASSE} style={MEMPHIS}>
-            Veel gestelde vragen
-          </h2>
-          <FaqAccordion items={FAQ_ITEMS} />
-        </Sectie>
-
-        <Sectie className="flex flex-col gap-6">
-          <div className="flex max-w-[880px] flex-col gap-2">
-            <h2 className={H2_KLASSE} style={MEMPHIS}>
-              Hulp nodig?
-            </h2>
-            <p className="text-black text-base leading-[1.5] min-[600px]:text-lg" style={AVENIR}>
-              {HULP_TEKST}
-            </p>
-          </div>
-          <div className="grid w-full grid-cols-1 gap-4 min-[600px]:grid-cols-2 min-[1200px]:grid-cols-3">
-            {[0, 1, 2].map((i) => (
-              <CardContact
-                key={i}
-                title="Telefoon"
-                availability="Availability"
-                actionIcon="phone"
-                actionLabel="(0800) 00 00 000"
-                footerText="Description bottom"
-                className="flex w-full flex-col items-start gap-8 self-start rounded-md border border-[rgba(0,0,0,0.12)] bg-white p-[23px]"
-              />
-            ))}
-          </div>
-        </Sectie>
 
         {feedback && <Feedback />}
       </main>
