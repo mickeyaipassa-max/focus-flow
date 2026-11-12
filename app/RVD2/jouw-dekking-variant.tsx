@@ -41,7 +41,7 @@ const EXTRA_OPTIES = EXTRA_DEKKINGEN.filter((extra) => extra.value !== "extras-b
 
 /**
  * Variant van "Jouw dekking" (stap 2 van 5) naar Figma "Untitled" (6pTuBCHupEW7rq3Ir4mJow), node 144:30187:
- * één staat met alle vragen direct zichtbaar, kaarten zonder "Diefstal"-regel en met de badge "Meest gekozen",
+ * één staat met alle vragen direct zichtbaar, kaarten zonder "Diefstal"-regel (en zonder badge),
  * één grijs voorwaardenvak onder de kaarten, het eigen risico als dropdown, drie aanvullende dekkingen en de
  * nieuwwaarderegeling met Ja/Nee. De navigatie heeft "Bewaar voor later" als knop en "Je zit nergens aan vast".
  * Hergebruikt de data, dialogs en de zwevende Receipt Bar van `/RVD`.
