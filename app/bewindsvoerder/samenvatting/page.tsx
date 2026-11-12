@@ -17,9 +17,15 @@ const naam = (...delen: string[]) => tekst(delen.map((d) => d.trim()).filter(Boo
 const bestanden = (files: File[]) => (files.length ? files.map((f) => f.name).join(", ") : "-");
 const jaNee = (waarde: string) => (waarde === "ja" ? "Ja" : waarde === "nee" ? "Nee" : "-");
 
-function postadres(s: BewindState) {
-  if (s.postbus) return tekst([`Postbus ${s.postbusnummer.trim()}`, `${s.postcode.trim()} ${s.plaats.trim()}`.trim()].join(", "));
-  return adres(s.straat, s.huisnummer, s.toevoeging, s.postcode, s.woonplaats);
+/** Postbus: drie losse rijen (Figma "4 Samenvatting – variant Postbusadres"); anders één rij "Postadres". */
+function postadresRijen(s: BewindState): DetailRowData[] {
+  if (s.postbus)
+    return [
+      { label: "Postbus", value: tekst(s.postbusnummer) },
+      { label: "Postcode", value: tekst(s.postcode) },
+      { label: "Plaatsnaam", value: tekst(s.plaats) },
+    ];
+  return [{ label: "Postadres", value: adres(s.straat, s.huisnummer, s.toevoeging, s.postcode, s.woonplaats) }];
 }
 
 /** "Archimedeslaan 10, 3584 BA Utrecht"; zonder opgehaalde straat alleen postcode en huisnummer. */
@@ -51,7 +57,7 @@ export default function SamenvattingPage() {
         ]),
     { label: "E-mailadres", value: tekst(s.email) },
     { label: "Telefoonnummer", value: s.telefoon.trim() ? `+31 ${s.telefoon.trim()}` : "-" },
-    { label: "Postadres", value: postadres(s) },
+    ...postadresRijen(s),
   ];
 
   const bewindgegevens: DetailRowData[] = [
