@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Icon } from "./Icon";
 
 type AlertType = "info" | "warning" | "success" | "error" | "neutral";
@@ -6,7 +7,8 @@ type AlertProps = {
   /** Titeltekst — verplicht tenzij `showTitle={false}` (dan wordt hij toch niet gerenderd). Figma's eigen "Alert title" is placeholder-demodata, dus geen default. */
   title?: string;
   /** Beschrijvingstekst — Figma's eigen voorbeeldtekst is placeholder-demodata, dus geen default. */
-  description: string;
+  /** Tekst, of opmaak met een ingesloten link (bv. "Ga terug naar stap 1" op de RVD-pagina). */
+  description: ReactNode;
   type?: AlertType;
   /** Toont/verbergt de titelregel, los van `description` (bevestigde losse `title`-boolean in Figma). */
   showTitle?: boolean;

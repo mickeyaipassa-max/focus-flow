@@ -82,7 +82,10 @@ export function FormNavigation({
           "flex w-full bg-white rounded-b-md",
           stacked
             ? "flex-col items-start px-6 py-4"
-            : "flex-col items-start px-6 py-4 min-[600px]:flex-row min-[600px]:px-10 min-[600px]:py-6",
+            : saveForLater
+              ? // "Bewaar voor later" staat op een eigen regel boven de knoppenrij (Figma), dus ook ≥600px een kolom.
+                "flex-col items-start px-6 py-4 min-[600px]:px-10 min-[600px]:py-6"
+              : "flex-col items-start px-6 py-4 min-[600px]:flex-row min-[600px]:px-10 min-[600px]:py-6",
         ].join(" ")
       }
     >
