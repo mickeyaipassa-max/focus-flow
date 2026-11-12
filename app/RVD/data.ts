@@ -274,3 +274,19 @@ export const EXTRA_INFO: Record<ExtraKeuze, ExtraInfo> = {
     },
   },
 };
+
+/* ---------- Variant /RVD2 (Figma node 144:30187) ---------- */
+
+/** Zelfde kaarten, maar zonder "Diefstal"-regel en met de badge "Meest gekozen" op WA + Casco beperkt. */
+export const DEKKING_OPTIONS_V2: RadioCardBottomOption[] = DEKKING_OPTIONS.map((option) => ({
+  ...option,
+  features: option.features?.filter((feature) => feature.text !== "Diefstal"),
+  highlightLines: option.value === "wa-casco-beperkt" ? ["Meest gekozen"] : undefined,
+}));
+
+/** De dropdown-opties staan niet in Figma; hier dezelfde bedragen als de kaarten op /RVD. */
+export const EIGEN_RISICO_SELECT_OPTIONS = ["0", "150", "250", "500"].map((bedrag) => ({ value: bedrag, label: `€ ${bedrag}` }));
+
+export const NIEUWWAARDE_DIALOG_TITEL = "Nieuwwaarderegeling";
+export const NIEUWWAARDE_DIALOG_TEKST =
+  "Ben je de eerste eigenaar van een auto van maximaal 1 jaar oud? \nMet onze Cascodekking krijg je standaard 1 jaar de nieuwwaarde vergoed bij diefstal of total loss. Dit is het bedrag waarmee je dezelfde auto nieuw kunt kopen. \n\nMet de nieuwwaarderegeling kun je dit verlengen tot 2 of 3 jaar.";
