@@ -11,7 +11,7 @@ const BOOK = { fontFamily: "var(--font-avenir-book)" } as const;
 const BOLD = { fontFamily: "var(--font-avenir-bold)" } as const;
 
 /** Figma "Highlight" (gray): grijs vak met info-icoon, 8px padding, rand-radius 3px. */
-function Highlight({ children }: { children: ReactNode }) {
+export function Highlight({ children }: { children: ReactNode }) {
   return (
     <div className="flex w-full items-start gap-2 rounded-[3px] bg-[#f6f6f7] p-2">
       <div className="flex min-w-px flex-1 items-start gap-2 p-2">
@@ -24,7 +24,7 @@ function Highlight({ children }: { children: ReactNode }) {
   );
 }
 
-function PdfLink({ naam, href }: { naam: string; href?: string }) {
+export function PdfLink({ naam, href }: { naam: string; href?: string }) {
   return (
     <div className="flex items-start gap-2">
       <Icon name="file-md" size="md" />

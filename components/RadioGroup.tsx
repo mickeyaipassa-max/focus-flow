@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import { Icon } from "./Icon";
 
 export type RadioOption = { value: string; label: string };
@@ -21,6 +21,8 @@ type RadioGroupProps = {
    * bestaat niet als eigen Figma-variant.
    */
   horizontal?: boolean;
+  /** Opt-in: element rechts naast het label (en sterretje), bv. een info-knop. Zelfde patroon als `RadioCardBottomGroup`. */
+  labelAction?: ReactNode;
   error?: string;
   name?: string;
   className?: string;
@@ -52,6 +54,7 @@ export function RadioGroup({
   onChange,
   required = true,
   horizontal = false,
+  labelAction,
   error,
   name,
   className,
@@ -72,6 +75,7 @@ export function RadioGroup({
             *
           </span>
         )}
+        {labelAction && <span className="ml-1 inline-flex">{labelAction}</span>}
       </legend>
       {description && (
         <p className="mb-1 w-full text-[#2a292e] text-base leading-[1.5]" style={{ fontFamily: "var(--font-avenir-book)" }}>
