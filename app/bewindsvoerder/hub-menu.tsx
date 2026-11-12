@@ -38,10 +38,8 @@ export function HubMenu() {
     {
       label: "Aanmelden als bewindvoerder",
       pictogram: "/bewindsvoerder/pictogram-persoon-man.svg",
-      children: [
-        { label: "Aanmelden voor een zorgverzekering", href: ROUTES.bewindvoerder },
-        { label: "Aanmelden voor een andere verzekering", href: ROUTES.bewindvoerder },
-      ],
+      // Geen diepere lagen: gaat direct naar de funnel, zonder chevron.
+      href: ROUTES.bewindvoerder,
     },
     {
       label: "Betalingsregeling aanvragen",
