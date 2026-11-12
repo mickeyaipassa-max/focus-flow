@@ -277,11 +277,10 @@ export const EXTRA_INFO: Record<ExtraKeuze, ExtraInfo> = {
 
 /* ---------- Variant /RVD2 (Figma node 144:30187) ---------- */
 
-/** Zelfde kaarten, maar zonder "Diefstal"-regel en met de badge "Meest gekozen" op WA + Casco beperkt. */
+/** Zelfde kaarten, maar zonder "Diefstal"-regel. */
 export const DEKKING_OPTIONS_V2: RadioCardBottomOption[] = DEKKING_OPTIONS.map((option) => ({
   ...option,
   features: option.features?.filter((feature) => feature.text !== "Diefstal"),
-  highlightLines: option.value === "wa-casco-beperkt" ? ["Meest gekozen"] : undefined,
 }));
 
 /** De dropdown-opties staan niet in Figma; hier dezelfde bedragen als de kaarten op /RVD. */
