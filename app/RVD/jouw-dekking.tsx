@@ -27,6 +27,7 @@ import {
   type DekkingKeuze,
   type ExtraKeuze,
 } from "./data";
+import { DekkingKiezer } from "./dekking-kiezer";
 import { DekkingDialog, ExtraDialog } from "./info-dialogs";
 import { PremieKassabon } from "./premie-kassabon";
 
@@ -148,10 +149,8 @@ export function JouwDekkingStap() {
 
         <FunnelSection title="Stel je autoverzekering samen">
           <div className="flex w-full flex-col items-start gap-6">
-            <RadioCardBottomGroup
-              labelText="Kies je basisdekking"
+            <DekkingKiezer
               options={DEKKING_OPTIONS}
-              contentTopClassName="mt-2"
               value={dekking}
               onChange={kiesDekking}
               onMoreInfoClick={(value) => setDekkingInfo(value as DekkingKeuze)}

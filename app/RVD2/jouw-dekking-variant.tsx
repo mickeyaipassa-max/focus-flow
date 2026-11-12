@@ -8,7 +8,6 @@ import { Dialog } from "@/components/Dialog";
 import { FunnelPageTemplate } from "@/components/FunnelPageTemplate";
 import { FunnelSection } from "@/components/FunnelSection";
 import { Icon } from "@/components/Icon";
-import { RadioCardBottomGroup } from "@/components/RadioCardBottom";
 import { RadioGroup } from "@/components/RadioGroup";
 import { Select } from "@/components/Select";
 import {
@@ -25,6 +24,7 @@ import {
   type DekkingKeuze,
   type ExtraKeuze,
 } from "../RVD/data";
+import { DekkingKiezer } from "../RVD/dekking-kiezer";
 import { DekkingDialog, ExtraDialog, Highlight, PdfLink } from "../RVD/info-dialogs";
 import { PremieKassabon } from "../RVD/premie-kassabon";
 
@@ -109,10 +109,8 @@ export function JouwDekkingVariant() {
 
         <FunnelSection title="Stel je autoverzekering samen">
           <div className="flex w-full flex-col items-start gap-6">
-            <RadioCardBottomGroup
-              labelText="Kies je basisdekking"
+            <DekkingKiezer
               options={DEKKING_OPTIONS_V2}
-              contentTopClassName="mt-2"
               value={dekking}
               onChange={(waarde) => setDekking(waarde as DekkingKeuze)}
               onMoreInfoClick={(waarde) => setDekkingInfo(waarde as DekkingKeuze)}
