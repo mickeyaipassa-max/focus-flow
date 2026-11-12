@@ -59,7 +59,8 @@ export default function BewindvoeringHubPage() {
         <div className="flex w-full flex-col">
           {/* Geel-100 band achter "Wat wil je regelen?". */}
           <section className={`w-full bg-[#fff8e3] py-6 min-[600px]:py-12 ${SECTIE_PADDING}`}>
-            <div className="mx-auto flex max-w-[1200px] flex-col gap-6">
+            {/* 16px tussen kop en Tile Menu: gap-2 (8px) + de pb-2 (8px) van de kop. */}
+            <div className="mx-auto flex max-w-[1200px] flex-col gap-2">
               <h2 className={H2_KLASSE} style={MEMPHIS}>
                 Wat wil je regelen?
               </h2>
