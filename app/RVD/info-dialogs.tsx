@@ -45,8 +45,19 @@ export function PdfLink({ naam, href }: { naam: string; href?: string }) {
   );
 }
 
-/** Basisdekking-dialog: "Wat is verzekerd met …?" (en "Wat is niet verzekerd met …?") + voorwaarden-vak. */
-export function DekkingDialog({ keuze, onClose }: { keuze: DekkingKeuze | null; onClose: () => void }) {
+/**
+ * Basisdekking-dialog: "Wat is verzekerd met …?" (en "Wat is niet verzekerd met …?") + voorwaarden-vak.
+ * `metVoorwaarden={false}` laat het voorwaarden-vak weg, voor pagina's die de voorwaarden al onder de kaarten tonen (/RVD2).
+ */
+export function DekkingDialog({
+  keuze,
+  onClose,
+  metVoorwaarden = true,
+}: {
+  keuze: DekkingKeuze | null;
+  onClose: () => void;
+  metVoorwaarden?: boolean;
+}) {
   const info = keuze ? DEKKING_INFO[keuze] : null;
   return (
     <Dialog open={Boolean(info)} onClose={onClose} title={info?.delen[0].titel ?? ""} size="md">
@@ -75,17 +86,19 @@ export function DekkingDialog({ keuze, onClose }: { keuze: DekkingKeuze | null; 
             </div>
           ))}
 
-          <Highlight>
-            <div className="flex w-full flex-col gap-1">
-              <p className="font-bold text-black text-lg leading-[1.5]" style={BOLD}>
-                Voorwaarden en dekking
-              </p>
-              <p className="text-black text-base leading-[1.5]" style={BOOK}>
-                Lees de voorwaarden en ontdek wat verzekerd is, welke uitzonderingen gelden en welke afspraken bij jouw dekking horen.
-              </p>
-            </div>
-            <PdfLink naam={info.pdf.naam} href={info.pdf.href} />
-          </Highlight>
+          {metVoorwaarden && (
+            <Highlight>
+              <div className="flex w-full flex-col gap-1">
+                <p className="font-bold text-black text-lg leading-[1.5]" style={BOLD}>
+                  Voorwaarden en dekking
+                </p>
+                <p className="text-black text-base leading-[1.5]" style={BOOK}>
+                  Lees de voorwaarden en ontdek wat verzekerd is, welke uitzonderingen gelden en welke afspraken bij jouw dekking horen.
+                </p>
+              </div>
+              <PdfLink naam={info.pdf.naam} href={info.pdf.href} />
+            </Highlight>
+          )}
         </div>
       )}
     </Dialog>
