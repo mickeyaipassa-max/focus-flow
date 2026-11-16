@@ -12,6 +12,7 @@ import { RadioGroup } from "@/components/RadioGroup";
 import { Select } from "@/components/Select";
 import {
   AUTO_STEPS,
+  DEKKING_INFO,
   DEKKING_OPTIONS_V2,
   DEKKING_PRIJS_CENTEN,
   DEKKING_TITEL,
@@ -125,7 +126,11 @@ export function JouwDekkingVariant() {
                   Lees de voorwaarden en ontdek wat verzekerd is, welke uitzonderingen gelden en welke afspraken bij jouw dekking horen.
                 </p>
               </div>
-              <PdfLink naam="Polisvoorwaarden WA, WA+ en Allrisk" />
+              <div className="flex flex-col gap-1">
+                {(Object.keys(DEKKING_INFO) as DekkingKeuze[]).map((keuze) => (
+                  <PdfLink key={keuze} naam={`Voorwaarden ${DEKKING_TITEL[keuze]}`} href={DEKKING_INFO[keuze].pdf.href} />
+                ))}
+              </div>
             </Highlight>
 
             <Select
