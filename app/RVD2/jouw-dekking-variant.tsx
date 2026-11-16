@@ -181,7 +181,7 @@ export function JouwDekkingVariant() {
         eigenRisico={eigenRisico}
         extras={gekozenExtras.map((extra) => ({ titel: extra.title, centen: extra.centen }))}
       />
-      <DekkingDialog keuze={dekkingInfo} onClose={() => setDekkingInfo(null)} />
+      <DekkingDialog keuze={dekkingInfo} onClose={() => setDekkingInfo(null)} metVoorwaarden={false} />
       <ExtraDialog keuze={extraInfo} onClose={() => setExtraInfo(null)} />
       <Dialog open={nieuwwaardeInfoOpen} onClose={() => setNieuwwaardeInfoOpen(false)} title={NIEUWWAARDE_DIALOG_TITEL} size="md">
         <p className="whitespace-pre-line">{NIEUWWAARDE_DIALOG_TEKST}</p>
