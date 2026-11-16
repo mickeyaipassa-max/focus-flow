@@ -184,7 +184,7 @@ export const DEKKING_INFO: Record<DekkingKeuze, DekkingInfo> = {
     ],
     pdf: {
       naam: "Polisvoorwaarden a.s.r. IKZ Voorwaarden Auto Wettelijke Aansprakelijkheid",
-      href: "https://www.asr.nl/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/57654.pdf",
+      href: "/voorwaarden/gecombineerd/auto-wa.pdf",
     },
   },
   "wa-casco-beperkt": {
@@ -194,7 +194,7 @@ export const DEKKING_INFO: Record<DekkingKeuze, DekkingInfo> = {
     ],
     pdf: {
       naam: "Polisvoorwaarden a.s.r. IKZ Voorwaarden Auto Casco Beperkt",
-      href: "https://www.asr.nl/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/57653.pdf",
+      href: "/voorwaarden/gecombineerd/auto-wa-casco-beperkt.pdf",
     },
   },
   "wa-casco-allrisk": {
@@ -203,7 +203,7 @@ export const DEKKING_INFO: Record<DekkingKeuze, DekkingInfo> = {
     ],
     pdf: {
       naam: "Polisvoorwaarden a.s.r. IKZ Voorwaarden Auto Casco Allrisk",
-      href: "https://www.asr.nl/asr/api/asrnl/pod/getpdf?uri=/POD/r/Pdf/57652.pdf",
+      href: "/voorwaarden/gecombineerd/auto-wa-casco-allrisk.pdf",
     },
   },
 };
