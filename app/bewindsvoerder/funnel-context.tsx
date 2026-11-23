@@ -57,7 +57,6 @@ export type BewindState = {
   beschikking: File[];
   identiteitsbewijs: File[];
   betaalvoorkeur: Betaalvoorkeur;
-  emailBetaalmail: string;
   iban: string;
   kenmerk: string;
   // Stap 3: Klant
@@ -107,7 +106,6 @@ export const LEGE_STATE: BewindState = {
   beschikking: [],
   identiteitsbewijs: [],
   betaalvoorkeur: "incasso",
-  emailBetaalmail: "",
   iban: "",
   kenmerk: "",
   klantVoornamen: "",

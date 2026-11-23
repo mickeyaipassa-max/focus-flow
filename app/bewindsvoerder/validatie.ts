@@ -38,7 +38,6 @@ export const FOUT = {
   identiteitsbewijsLeeg: "Je hebt niets gekozen. Voeg je identiteitsbewijs toe.",
   betaalvoorkeurLeeg: "Je hebt niets gekozen. Kies hoe je wilt betalen.",
   correspondentieEmailLeeg: "Je hebt niets ingevuld. Vul het e-mailadres voor de correspondentie over deze cliënt in.",
-  betaalmailLeeg: "Je hebt niets ingevuld. Vul het e-mailadres voor de betaalmail in.",
   ibanLeeg: "Je hebt niets ingevuld. Vul je rekeningnummer (IBAN) in.",
   ibanOngeldig: "Je hebt iets niet goed ingevuld. Vul een Nederlands rekeningnummer (IBAN) in.",
   klantVoornamenLeeg: "Je hebt niets ingevuld. Vul de voornamen van je cliënt in.",
@@ -178,11 +177,6 @@ export function valideerBewindgegevens(s: BewindState): Fouten {
   else if (s.einddatum && s.startdatum && fromIsoDatum(s.einddatum) <= fromIsoDatum(s.startdatum)) f.einddatum = FOUT.einddatumVoorStart;
   if (!s.beschikking.length) f.beschikking = FOUT.beschikkingLeeg;
   if (s.soort === "particulier" && !s.identiteitsbewijs.length) f.identiteitsbewijs = FOUT.identiteitsbewijsLeeg;
-  if (s.betaalvoorkeur === "email") {
-    const mail = s.emailBetaalmail.trim();
-    if (!mail) f.emailBetaalmail = FOUT.betaalmailLeeg;
-    else if (!EMAIL.test(mail)) f.emailBetaalmail = FOUT.emailOngeldig;
-  }
   if (!s.iban.trim()) f.iban = FOUT.ibanLeeg;
   else if (!isNederlandseIban(s.iban)) f.iban = FOUT.ibanOngeldig;
   return f;

@@ -5,7 +5,6 @@ import { FormNavigation } from "@/components/FormNavigation";
 import { FunnelSection } from "@/components/FunnelSection";
 import { Input } from "@/components/Input";
 import { InputDate } from "@/components/InputDate";
-import { InputEmail } from "@/components/InputEmail";
 import { InputFile } from "@/components/InputFile";
 import { RadioGroup } from "@/components/RadioGroup";
 import { fromIsoDatum, toIsoDatum } from "@/lib/datum";
@@ -22,7 +21,7 @@ const UPLOAD_KNOP = "Kies documenten";
 /**
  * Stap 2, "Bewindgegevens" (Figma frames "2 Bewindgegevens" en de varianten "Betaalmail", "Zakelijk" en
  * "Zakelijk + Betaalmail"). "Upload Identiteitsbewijs" staat er alleen bij een particuliere bewindvoerder;
- * "E-mailadres betaalmail" alleen bij Betaalvoorkeur "Rekening via e-mail".
+ * Bij Betaalvoorkeur "Zelf overmaken, rekening via e-mail" wordt geen e-mailadres meer gevraagd: dat staat al in stap 1.
  */
 export default function BewindgegevensPage() {
   const router = useRouter();
@@ -109,18 +108,8 @@ export default function BewindgegevensPage() {
           { value: "email", label: "Zelf overmaken, rekening via e-mail" },
         ]}
         value={state.betaalvoorkeur}
-        onChange={(value) => wijzig({ betaalvoorkeur: value as Betaalvoorkeur, emailBetaalmail: "" })}
+        onChange={(value) => wijzig({ betaalvoorkeur: value as Betaalvoorkeur })}
       />
-
-      {state.betaalvoorkeur === "email" && (
-        <InputEmail
-          labelText="E-mailadres betaalmail"
-          className="flex w-full max-w-[272px] flex-col items-start gap-2"
-          value={state.emailBetaalmail}
-          error={fouten.emailBetaalmail}
-          onChange={(value) => wijzig({ emailBetaalmail: value })}
-        />
-      )}
 
       <Input
         labelText="Rekeningnummer"
