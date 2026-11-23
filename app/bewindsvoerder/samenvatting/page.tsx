@@ -55,7 +55,7 @@ export default function SamenvattingPage() {
           { label: "Statutaire naam", value: tekst(s.statutaireNaam) },
           { label: "KvK-nummer", value: tekst(s.kvkNummer) },
         ]),
-    { label: "E-mailadres", value: tekst(s.email) },
+    { label: "E-mailadres bewindvoerder", value: tekst(s.email) },
     { label: "Telefoonnummer", value: s.telefoon.trim() ? `+31 ${s.telefoon.trim()}` : "-" },
     ...postadresRijen(s),
   ];

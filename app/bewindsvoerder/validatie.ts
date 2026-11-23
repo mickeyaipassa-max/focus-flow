@@ -9,7 +9,7 @@ import type { BewindState } from "./funnel-context";
  * "voorstel" staan, zijn nog niet afgestemd.
  */
 export const FOUT = {
-  soortLeeg: "Je hebt niets gekozen. Kies of je particulier of zakelijk bewindvoerder bent.",
+  soortLeeg: "Je hebt niets gekozen. Kies de soort bewindvoerder.",
   voornamenLeeg: "Je hebt niets ingevuld. Vul je voornamen in.",
   achternaamLeeg: "Je hebt niets ingevuld. Vul je achternaam in.",
   tekens: "Je hebt iets niet goed ingevuld. Gebruik alleen letters, spaties, komma’s, punten, apostroffen ' of streepjes -.",
@@ -18,7 +18,7 @@ export const FOUT = {
   geboortedatumFormaat: "Je hebt iets niet goed ingevuld. Vul een geldige geboortedatum in. Bijvoorbeeld: dd-mm-jjjj.",
   jongerDan18: "Je hebt iets niet goed ingevuld. Je mag niet jonger dan 18 jaar zijn.",
   ouderDan120: "Je hebt iets niet goed ingevuld. Je moet jonger dan 121 jaar zijn.",
-  emailLeeg: "Je hebt niets ingevuld. Vul je e-mailadres in.",
+  emailLeeg: "Je hebt niets ingevuld. Vul het e-mailadres van de bewindvoerder in.",
   emailOngeldig: "Je hebt iets niet goed ingevuld. Vul een geldig e-mailadres in. Voorbeeld: naam@voorbeeld.nl.",
   telefoonOngeldig: "Je hebt iets niet goed ingevuld. Vul een geldig telefoonnummer in. Bijvoorbeeld: 06 10 10 10 10.",
   postcodeLeeg: "Je hebt niets ingevuld. Vul je postcode in.",
@@ -37,6 +37,7 @@ export const FOUT = {
   beschikkingLeeg: "Je hebt niets gekozen. Voeg de beschikking toe.",
   identiteitsbewijsLeeg: "Je hebt niets gekozen. Voeg je identiteitsbewijs toe.",
   betaalvoorkeurLeeg: "Je hebt niets gekozen. Kies hoe je wilt betalen.",
+  correspondentieEmailLeeg: "Je hebt niets ingevuld. Vul het e-mailadres voor de correspondentie over deze cliënt in.",
   betaalmailLeeg: "Je hebt niets ingevuld. Vul het e-mailadres voor de betaalmail in.",
   ibanLeeg: "Je hebt niets ingevuld. Vul je rekeningnummer (IBAN) in.",
   ibanOngeldig: "Je hebt iets niet goed ingevuld. Vul een Nederlands rekeningnummer (IBAN) in.",
@@ -136,6 +137,12 @@ export function valideerBewindvoerder(s: BewindState): Fouten {
     const kvk = s.kvkNummer.trim();
     if (!kvk) f.kvkNummer = FOUT.kvkLeeg;
     else if (!KVK.test(kvk)) f.kvkNummer = FOUT.kvkOngeldig;
+    if (!s.anderEmail) f.anderEmail = FOUT.jaNeeLeeg;
+    else if (s.anderEmail === "ja") {
+      const mail = s.emailCorrespondentie.trim();
+      if (!mail) f.emailCorrespondentie = FOUT.correspondentieEmailLeeg;
+      else if (!EMAIL.test(mail)) f.emailCorrespondentie = FOUT.emailOngeldig;
+    }
   }
 
   const email = s.email.trim();

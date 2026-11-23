@@ -12,15 +12,21 @@ import { RadioGroup } from "@/components/RadioGroup";
 import { fromIsoDatum, toIsoDatum } from "@/lib/datum";
 import { AdresBlok } from "../adres";
 import { BewindScherm, Scheidingslijn, SectieTitel, useStap, VerplichteVelden } from "../delen";
-import { ROUTES, type SoortBewindvoerder } from "../funnel-context";
+import { ROUTES, type JaNee, type SoortBewindvoerder } from "../funnel-context";
 import { isGeldig, valideerBewindvoerder } from "../validatie";
 
 /**
  * Stap 1, "Bewindvoerder" (Figma frames "1 Bewindvoerder" en de varianten "Zakelijk" en "Postbusadres").
  * Particulier toont voornamen, achternaam en geboortedatum; Zakelijk toont statutaire naam en KvK-nummer.
+ * Zakelijk heeft een Ja/Nee-vraag over een apart correspondentie-e-mailadres, met bij "Ja" een extra veld.
  * "Dit adres is een postbusadres" wisselt huisnummer/toevoeging voor postbusnummer en plaats (Figma
  * "Fieldset Address P.O. Box"). Validatie bij "Volgende stap" (regels in `./validatie.ts`).
  */
+const JA_NEE = [
+  { value: "ja", label: "Ja" },
+  { value: "nee", label: "Nee" },
+];
+
 export default function BewindvoerderPage() {
   const router = useRouter();
   const { state, setState, fouten, setFouten, wijzig } = useStap();
@@ -45,7 +51,8 @@ export default function BewindvoerderPage() {
       <SectieTitel>{state.soort === "zakelijk" ? "Gegevens Bewindvoerder" : "Gegevens"}</SectieTitel>
 
       <RadioGroup
-        labelText="Particulier/Zakelijk"
+        labelText="Soort bewindvoerder"
+        description="Kies zakelijk als u een bewindvoerder bent voor een bedrijf of organisatie. Particulier als u dit alleen doet voor een familielid of kennis."
         horizontal
         options={[
           { value: "particulier", label: "Particulier" },
@@ -128,12 +135,37 @@ export default function BewindvoerderPage() {
       )}
 
       <InputEmail
-        labelText="E-mailadres"
+        labelText="E-mailadres bewindvoerder"
         className="flex w-full max-w-[272px] flex-col items-start gap-2"
         value={state.email}
         error={fouten.email}
         onChange={(value) => wijzig({ email: value })}
       />
+
+      {/* Figma "Form section" (14275:24933): alleen Zakelijk; bij "Ja" volgt een extra e-mailveld. */}
+      {state.soort === "zakelijk" && (
+        <>
+          <RadioGroup
+            labelText="E-mails over deze cliënt op een ander e-mailadres ontvangen?"
+            description="Je kunt een apart e-mailadres opgeven voor de correspondentie over deze cliënt. Bijvoorbeeld als je voor iedere cliënt een eigen postvak gebruikt."
+            horizontal
+            options={JA_NEE}
+            value={state.anderEmail}
+            error={fouten.anderEmail}
+            onChange={(value) => wijzig({ anderEmail: value as JaNee, ...(value !== "ja" && { emailCorrespondentie: "" }) })}
+          />
+          {state.anderEmail === "ja" && (
+            <InputEmail
+              labelText="E-mailadres voor correspondentie over deze cliënt"
+              description="We sturen e-mails over deze cliënt naar dit e-mailadres."
+              className="flex w-full max-w-[480px] flex-col items-start gap-2"
+              value={state.emailCorrespondentie}
+              error={fouten.emailCorrespondentie}
+              onChange={(value) => wijzig({ emailCorrespondentie: value })}
+            />
+          )}
+        </>
+      )}
 
       <InputPhone
         labelText="Telefoonnummer"

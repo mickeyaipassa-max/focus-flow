@@ -32,6 +32,10 @@ export type BewindState = {
   statutaireNaam: string;
   kvkNummer: string;
   email: string;
+  /** Zakelijk: "E-mails over deze cliënt op een ander e-mailadres ontvangen?" (Figma "Form section" 14275:24933). */
+  anderEmail: JaNee;
+  /** Alleen bij `anderEmail === "ja"`: "E-mailadres voor correspondentie over deze cliënt". */
+  emailCorrespondentie: string;
   telefoon: string;
   postbus: boolean;
   postcode: string;
@@ -84,6 +88,8 @@ export const LEGE_STATE: BewindState = {
   statutaireNaam: "",
   kvkNummer: "",
   email: "",
+  anderEmail: "",
+  emailCorrespondentie: "",
   telefoon: "",
   postbus: false,
   postcode: "",
