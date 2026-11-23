@@ -24,8 +24,8 @@ export default function GeluktPage() {
     isGeldig(valideerBewindvoerder(state)) && isGeldig(valideerBewindgegevens(state)) && isGeldig(valideerKlant(state));
 
   useEffect(() => {
-    if (!compleet) router.replace(ROUTES.bewindvoerder);
-  }, [compleet, router]);
+    if (!compleet && !state.viaStapkiezer) router.replace(ROUTES.bewindvoerder);
+  }, [compleet, state.viaStapkiezer, router]);
 
   return (
     <BewindScherm activeStep={BEWIND_STEPS.length + 1} feedback>

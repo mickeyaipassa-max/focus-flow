@@ -20,6 +20,8 @@ export type Betaalvoorkeur = "incasso" | "email";
 export type JaNee = "ja" | "nee" | "";
 
 export type BewindState = {
+  /** Test: gezet zodra iemand met de stapkiezer (rechtsboven) naar een stap springt; de succespagina stuurt dan niet terug naar het begin. */
+  viaStapkiezer: boolean;
   // Stap 1: Bewindvoerder
   soort: SoortBewindvoerder;
   voornamen: string;
@@ -76,6 +78,7 @@ export type BewindState = {
 
 /** Particulier/Zakelijk is bij binnenkomst niet gekozen; Automatische incasso staat in Figma voorgeselecteerd. */
 export const LEGE_STATE: BewindState = {
+  viaStapkiezer: false,
   soort: "",
   voornamen: "",
   tussenvoegsel: "",
