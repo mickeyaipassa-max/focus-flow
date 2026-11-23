@@ -11,10 +11,13 @@ import { ROUTES, useBewindFunnel, type BewindState } from "../funnel-context";
 
 const AVENIR = { fontFamily: "var(--font-avenir-book)" } as const;
 
-const datum = (iso: string) => (iso ? formatDatum(fromIsoDatum(iso)) : "-");
-const tekst = (waarde: string) => waarde.trim() || "-";
+/** Wat er in de samenvatting staat bij alles wat (nog) niet is ingevuld, ook bij optionele velden. */
+const NIET_INGEVULD = "Nog niet ingevuld";
+
+const datum = (iso: string) => (iso ? formatDatum(fromIsoDatum(iso)) : NIET_INGEVULD);
+const tekst = (waarde: string) => waarde.trim() || NIET_INGEVULD;
 const naam = (...delen: string[]) => tekst(delen.map((d) => d.trim()).filter(Boolean).join(" "));
-const bestanden = (files: File[]) => (files.length ? files.map((f) => f.name).join(", ") : "-");
+const bestanden = (files: File[]) => (files.length ? files.map((f) => f.name).join(", ") : NIET_INGEVULD);
 
 /** Postbus: drie losse rijen (Figma "4 Samenvatting – variant Postbusadres"); anders één rij "Postadres". */
 function postadresRijen(s: BewindState): DetailRowData[] {
@@ -42,21 +45,24 @@ export default function SamenvattingPage() {
   const router = useRouter();
   const { state: s } = useBewindFunnel();
   const particulier = s.soort === "particulier";
+  const zakelijk = s.soort === "zakelijk";
 
   const bewindvoerder: DetailRowData[] = [
-    { label: "Soort bewindvoerder", value: particulier ? "Particulier" : "Zakelijk" },
+    { label: "Soort bewindvoerder", value: particulier ? "Particulier" : zakelijk ? "Zakelijk" : NIET_INGEVULD },
     ...(particulier
       ? [
           { label: "Naam", value: naam(s.voornamen, s.tussenvoegsel, s.achternaam) },
           { label: "Geboortedatum", value: datum(s.geboortedatum) },
         ]
-      : [
-          { label: "Statutaire naam", value: tekst(s.statutaireNaam) },
-          { label: "KvK-nummer", value: tekst(s.kvkNummer) },
-        ]),
+      : zakelijk
+        ? [
+            { label: "Statutaire naam", value: tekst(s.statutaireNaam) },
+            { label: "KvK-nummer", value: tekst(s.kvkNummer) },
+          ]
+        : []),
     { label: "E-mailadres bewindvoerder", value: tekst(s.email) },
-    ...(!particulier && s.anderEmail === "ja" ? [{ label: "E-mailadres correspondentie", value: tekst(s.emailCorrespondentie) }] : []),
-    { label: "Telefoonnummer", value: s.telefoon.trim() ? `+31 ${s.telefoon.trim()}` : "-" },
+    ...(zakelijk && s.anderEmail === "ja" ? [{ label: "E-mailadres correspondentie", value: tekst(s.emailCorrespondentie) }] : []),
+    { label: "Telefoonnummer", value: s.telefoon.trim() ? `+31 ${s.telefoon.trim()}` : NIET_INGEVULD },
     ...postadresRijen(s),
   ];
 
