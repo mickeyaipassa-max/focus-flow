@@ -18,6 +18,8 @@ type InputEmailProps = {
   name?: string;
   id?: string;
   className?: string;
+  /** Optionele maximale breedte van alleen het invoerveld (bv. "max-w-80"), los van de breedte van label en uitleg. */
+  fieldClassName?: string;
 };
 
 /**
@@ -49,6 +51,7 @@ export function InputEmail({
   name,
   id,
   className,
+  fieldClassName,
 }: InputEmailProps) {
   return (
     <div className={className ?? "flex w-full max-w-[480px] flex-col items-start gap-2"}>
@@ -96,6 +99,7 @@ export function InputEmail({
         className={[
           "h-[51px] w-full rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
           error ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
+          fieldClassName ?? "",
         ].join(" ")}
         style={{ fontFamily: "var(--font-avenir-book)" }}
       />
