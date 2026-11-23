@@ -136,7 +136,7 @@ export default function BewindvoerderPage() {
 
       <InputEmail
         labelText="E-mailadres bewindvoerder"
-        className="flex w-full max-w-[272px] flex-col items-start gap-2"
+        className="flex w-full max-w-80 flex-col items-start gap-2"
         value={state.email}
         error={fouten.email}
         onChange={(value) => wijzig({ email: value })}
@@ -157,8 +157,9 @@ export default function BewindvoerderPage() {
           {state.anderEmail === "ja" && (
             <InputEmail
               labelText="E-mailadres voor correspondentie over deze cliënt"
-              description="We sturen e-mails over deze cliënt naar dit e-mailadres."
-              className="flex w-full max-w-[480px] flex-col items-start gap-2"
+              description="Wij gebruiken dit e-mailadres bij voor correspondentie voor deze cliënt. Denk hierbij aan informatie over de verzekering(en), betalingen en andere relevante communicatie. Is dit voor een specifieke verzekering die de klant bij ons heeft niet mogelijk, dan nemen wij contact met u op om een alternatief af te stemmen."
+              className="flex w-full max-w-[606px] flex-col items-start gap-2"
+              fieldClassName="max-w-80"
               value={state.emailCorrespondentie}
               error={fouten.emailCorrespondentie}
               onChange={(value) => wijzig({ emailCorrespondentie: value })}
