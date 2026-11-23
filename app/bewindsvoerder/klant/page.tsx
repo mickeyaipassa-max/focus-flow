@@ -1,23 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Alert } from "@/components/Alert";
 import { FormNavigation } from "@/components/FormNavigation";
 import { FunnelSection } from "@/components/FunnelSection";
 import { Input } from "@/components/Input";
 import { InputDate } from "@/components/InputDate";
-import { RadioGroup } from "@/components/RadioGroup";
 import { fromIsoDatum, toIsoDatum } from "@/lib/datum";
 import { AdresBlok } from "../adres";
-import { BewindScherm, Scheidingslijn, SectieTitel, useStap, VerplichteVelden } from "../delen";
-import { ROUTES, type JaNee } from "../funnel-context";
+import { BewindScherm, SectieTitel, useStap, VerplichteVelden } from "../delen";
+import { ROUTES } from "../funnel-context";
 import { isGeldig, valideerKlant } from "../validatie";
 
-const JA_NEE = [
-  { value: "ja", label: "Ja" },
-  { value: "nee", label: "Nee" },
-];
-
-/** Stap 3, "Klant" (Figma frame "3 Klant"): gegevens van de cliënt en het verzoek (twee ja/nee-vragen). */
+/** Stap 3, "Klant" (Figma frame "3 Klant"): gegevens van de cliënt en een infoblok over verzekeringen en betalingen. */
 export default function KlantPage() {
   const router = useRouter();
   const { state, setState, fouten, setFouten, wijzig } = useStap();
@@ -44,8 +39,8 @@ export default function KlantPage() {
       <div className="flex w-full max-w-[480px] flex-col items-start gap-6">
         <div className="flex w-full flex-wrap items-end gap-x-2 gap-y-6">
           <Input
-            labelText="Voornamen"
-            description="Officiële voornamen zoals op ID"
+            labelText="Voornaam"
+            description="Zoals op het identiteitsbewijs."
             className="flex min-w-[min(312px,100%)] flex-1 flex-col items-start gap-2"
             autoComplete="off"
             value={state.klantVoornamen}
@@ -107,25 +102,11 @@ export default function KlantPage() {
         }
       />
 
-      <Scheidingslijn />
-      <SectieTitel>Verzoek</SectieTitel>
-
-      <RadioGroup
-        labelText="Overzicht betalingsachterstand"
-        horizontal
-        options={JA_NEE}
-        value={state.betalingsachterstand}
-        error={fouten.betalingsachterstand}
-        onChange={(value) => wijzig({ betalingsachterstand: value as JaNee })}
-      />
-
-      <RadioGroup
-        labelText="Polisblad ontvangen"
-        horizontal
-        options={JA_NEE}
-        value={state.polisblad}
-        error={fouten.polisblad}
-        onChange={(value) => wijzig({ polisblad: value as JaNee })}
+      <Alert
+        type="neutral"
+        closable={false}
+        title="Informatie over verzekeringen en betalingen"
+        description="Na je aanmelding ontvang je automatisch informatie over de verzekeringen of contracten van deze cliënt en over een eventuele betalingsachterstand. Je hoeft deze informatie niet apart aan te vragen."
       />
     </BewindScherm>
   );

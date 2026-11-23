@@ -15,7 +15,6 @@ const datum = (iso: string) => (iso ? formatDatum(fromIsoDatum(iso)) : "-");
 const tekst = (waarde: string) => waarde.trim() || "-";
 const naam = (...delen: string[]) => tekst(delen.map((d) => d.trim()).filter(Boolean).join(" "));
 const bestanden = (files: File[]) => (files.length ? files.map((f) => f.name).join(", ") : "-");
-const jaNee = (waarde: string) => (waarde === "ja" ? "Ja" : waarde === "nee" ? "Nee" : "-");
 
 /** Postbus: drie losse rijen (Figma "4 Samenvatting – variant Postbusadres"); anders één rij "Postadres". */
 function postadresRijen(s: BewindState): DetailRowData[] {
@@ -77,8 +76,6 @@ export default function SamenvattingPage() {
     { label: "Naam", value: naam(s.klantVoornamen, s.klantTussenvoegsel, s.klantAchternaam) },
     { label: "Geboortedatum", value: datum(s.klantGeboortedatum) },
     { label: "Adres", value: adres(s.klantStraat, s.klantHuisnummer, s.klantToevoeging, s.klantPostcode, s.klantWoonplaats) },
-    { label: "Overzicht betalingsachterstand", value: jaNee(s.betalingsachterstand) },
-    { label: "Polisblad ontvangen", value: jaNee(s.polisblad) },
   ];
 
   return (

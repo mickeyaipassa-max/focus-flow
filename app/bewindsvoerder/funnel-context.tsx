@@ -73,8 +73,6 @@ export type BewindState = {
   klantWoonplaats: string;
   klantHandmatig: boolean;
   klantAdresGevonden: boolean;
-  betalingsachterstand: JaNee;
-  polisblad: JaNee;
 };
 
 /** Particulier/Zakelijk is bij binnenkomst niet gekozen; Automatische incasso staat in Figma voorgeselecteerd. */
@@ -124,8 +122,6 @@ export const LEGE_STATE: BewindState = {
   klantWoonplaats: "",
   klantHandmatig: false,
   klantAdresGevonden: false,
-  betalingsachterstand: "",
-  polisblad: "",
 };
 
 type FunnelContextValue = {
