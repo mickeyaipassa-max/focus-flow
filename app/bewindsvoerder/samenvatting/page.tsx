@@ -35,7 +35,7 @@ function adres(straat: string, huisnummer: string, toevoeging: string, postcode:
 
 /**
  * Stap 4, "Controleren en verzenden" (Figma frame "4 Samenvatting" en de varianten): één "Card Details" per
- * stap, met de rijen die bij de gemaakte keuzes horen (soort bewindvoerder, e-mailadres correspondentie, betaalmail). "Wijzig" gaat
+ * stap, met de rijen die bij de gemaakte keuzes horen (soort bewindvoerder, e-mailadres correspondentie). "Wijzig" gaat
  * terug naar de juiste stap; alles wat is ingevuld blijft staan.
  */
 export default function SamenvattingPage() {
@@ -67,7 +67,6 @@ export default function SamenvattingPage() {
     { label: "Beschikking", value: bestanden(s.beschikking) },
     ...(particulier ? [{ label: "Identiteitsbewijs", value: bestanden(s.identiteitsbewijs) }] : []),
     { label: "Betaalvoorkeur", value: s.betaalvoorkeur === "email" ? "Zelf overmaken, rekening via e-mail" : "Automatisch betalen" },
-    ...(s.betaalvoorkeur === "email" ? [{ label: "E-mailadres betaalmail", value: tekst(s.emailBetaalmail) }] : []),
     { label: "Rekeningnummer", value: tekst(s.iban) },
     { label: "Klantnaam, klantnummer of dossiernummer", value: tekst(s.kenmerk) },
   ];
