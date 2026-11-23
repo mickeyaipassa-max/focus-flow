@@ -35,7 +35,7 @@ function adres(straat: string, huisnummer: string, toevoeging: string, postcode:
 
 /**
  * Stap 4, "Controleren en verzenden" (Figma frame "4 Samenvatting" en de varianten): één "Card Details" per
- * stap, met de rijen die bij de gemaakte keuzes horen (Particulier/Zakelijk, betaalmail). "Wijzig" gaat
+ * stap, met de rijen die bij de gemaakte keuzes horen (soort bewindvoerder, e-mailadres correspondentie, betaalmail). "Wijzig" gaat
  * terug naar de juiste stap; alles wat is ingevuld blijft staan.
  */
 export default function SamenvattingPage() {
@@ -44,7 +44,7 @@ export default function SamenvattingPage() {
   const particulier = s.soort === "particulier";
 
   const bewindvoerder: DetailRowData[] = [
-    { label: "Particulier/Zakelijk", value: particulier ? "Particulier" : "Zakelijk" },
+    { label: "Soort bewindvoerder", value: particulier ? "Particulier" : "Zakelijk" },
     ...(particulier
       ? [
           { label: "Naam", value: naam(s.voornamen, s.tussenvoegsel, s.achternaam) },
@@ -55,24 +55,25 @@ export default function SamenvattingPage() {
           { label: "KvK-nummer", value: tekst(s.kvkNummer) },
         ]),
     { label: "E-mailadres bewindvoerder", value: tekst(s.email) },
+    ...(!particulier && s.anderEmail === "ja" ? [{ label: "E-mailadres correspondentie", value: tekst(s.emailCorrespondentie) }] : []),
     { label: "Telefoonnummer", value: s.telefoon.trim() ? `+31 ${s.telefoon.trim()}` : "-" },
     ...postadresRijen(s),
   ];
 
   const bewindgegevens: DetailRowData[] = [
-    { label: "Zaaknummer Rechtbank", value: tekst(s.zaaknummer) },
-    { label: "Startdatum Bewind", value: datum(s.startdatum) },
-    { label: "Einddatum Bewind", value: datum(s.einddatum) },
+    { label: "Zaaknummer rechtbank", value: tekst(s.zaaknummer) },
+    { label: "Startdatum bewind", value: datum(s.startdatum) },
+    { label: "Einddatum bewind", value: datum(s.einddatum) },
     { label: "Beschikking", value: bestanden(s.beschikking) },
     ...(particulier ? [{ label: "Identiteitsbewijs", value: bestanden(s.identiteitsbewijs) }] : []),
-    { label: "Betaalvoorkeur", value: s.betaalvoorkeur === "email" ? "Rekening via e-mail" : "Automatische incasso" },
+    { label: "Betaalvoorkeur", value: s.betaalvoorkeur === "email" ? "Zelf overmaken, rekening via e-mail" : "Automatisch betalen" },
     ...(s.betaalvoorkeur === "email" ? [{ label: "E-mailadres betaalmail", value: tekst(s.emailBetaalmail) }] : []),
     { label: "Rekeningnummer", value: tekst(s.iban) },
-    { label: "Kenmerk Cliënt", value: tekst(s.kenmerk) },
+    { label: "Klantnaam, klantnummer of dossiernummer", value: tekst(s.kenmerk) },
   ];
 
   const klant: DetailRowData[] = [
-    { label: "Voornamen", value: tekst(s.klantVoornamen) },
+    { label: "Voornaam", value: tekst(s.klantVoornamen) },
     { label: "Naam", value: naam(s.klantVoornamen, s.klantTussenvoegsel, s.klantAchternaam) },
     { label: "Geboortedatum", value: datum(s.klantGeboortedatum) },
     { label: "Adres", value: adres(s.klantStraat, s.klantHuisnummer, s.klantToevoeging, s.klantPostcode, s.klantWoonplaats) },
@@ -106,8 +107,7 @@ export default function SamenvattingPage() {
       <CardDetails title="Klant" rows={klant} onEdit={() => router.push(ROUTES.klant)} />
 
       <p className="w-full text-black text-lg leading-[1.5]" style={AVENIR}>
-        Door dit formulier in te dienen, meld je je aan als bewindvoerder van je cliënt. <br />
-        Je verklaart dat je alle gegevens naar waarheid hebt ingevuld.
+        Met dit formulier meld je jezelf aan als bewindvoerder van jouw cliënt. Je bevestigt dat je alle gegevens eerlijk en juist invulde.
       </p>
     </BewindScherm>
   );
