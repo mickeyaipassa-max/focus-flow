@@ -203,8 +203,6 @@ export function valideerKlant(s: BewindState): Fouten {
     if (!s.klantStraat.trim()) f.klantStraat = FOUT.klantStraatLeeg;
     if (!s.klantWoonplaats.trim()) f.klantWoonplaats = FOUT.klantWoonplaatsLeeg;
   }
-  if (!s.betalingsachterstand) f.betalingsachterstand = FOUT.jaNeeLeeg;
-  if (!s.polisblad) f.polisblad = FOUT.jaNeeLeeg;
   return f;
 }
 
