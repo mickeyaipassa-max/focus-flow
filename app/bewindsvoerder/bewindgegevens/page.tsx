@@ -14,7 +14,10 @@ import { ROUTES, type Betaalvoorkeur } from "../funnel-context";
 import { isGeldig, valideerBewindgegevens } from "../validatie";
 
 /** Helpertekst van "Input File" letterlijk uit Figma. */
-const UPLOAD_TEKST = "Je bestanden mogen samen niet groter dan 20mb zijn. Zorg dat je bestanden eindigen op .doc, .docx, .jpg of .pdf.";
+const UPLOAD_TEKST = "Je documenten mogen samen niet groter dan 20mb zijn. Zorg dat je documenten eindigen op .doc, .docx, .jpg of .pdf.";
+
+/** Knoptekst van "Input File" in Figma. */
+const UPLOAD_KNOP = "Kies documenten";
 
 /**
  * Stap 2, "Bewindgegevens" (Figma frames "2 Bewindgegevens" en de varianten "Betaalmail", "Zakelijk" en
@@ -43,7 +46,7 @@ export default function BewindgegevensPage() {
       <FunnelSection intro title="Bewindgegevens" showRequiredFieldsNote requiredFieldsNote={<VerplichteVelden />} />
 
       <Input
-        labelText="Zaaknummer Rechtbank"
+        labelText="Zaaknummer rechtbank"
         className="flex w-full flex-col items-start gap-2"
         fieldWidth="lg"
         autoComplete="off"
@@ -54,7 +57,7 @@ export default function BewindgegevensPage() {
 
       <InputDate
         className="relative isolate flex w-full max-w-[333px] flex-col items-start gap-2"
-        labelText="Startdatum Bewind"
+        labelText="Startdatum bewind"
         showPickerButton
         placeholder="dd-mm-jjjj"
         value={state.startdatum ? fromIsoDatum(state.startdatum) : null}
@@ -65,7 +68,7 @@ export default function BewindgegevensPage() {
 
       <InputDate
         className="relative isolate flex w-full max-w-[333px] flex-col items-start gap-2"
-        labelText="Einddatum Bewind"
+        labelText="Einddatum bewind"
         required={false}
         showPickerButton
         placeholder="dd-mm-jjjj"
@@ -76,8 +79,9 @@ export default function BewindgegevensPage() {
       />
 
       <InputFile
-        labelText="Upload Beschikking"
+        labelText="Upload beschikking"
         required
+        buttonText={UPLOAD_KNOP}
         description={UPLOAD_TEKST}
         className="flex w-full max-w-[479px] flex-col items-start gap-2"
         defaultValue={state.beschikking}
@@ -87,8 +91,9 @@ export default function BewindgegevensPage() {
 
       {state.soort === "particulier" && (
         <InputFile
-          labelText="Upload Identiteitsbewijs"
+          labelText="Upload identiteitsbewijs"
           required
+          buttonText={UPLOAD_KNOP}
           description={UPLOAD_TEKST}
           className="flex w-full max-w-[479px] flex-col items-start gap-2"
           defaultValue={state.identiteitsbewijs}
@@ -100,8 +105,8 @@ export default function BewindgegevensPage() {
       <RadioGroup
         labelText="Betaalvoorkeur"
         options={[
-          { value: "incasso", label: "Automatische incasso" },
-          { value: "email", label: "Rekening via e-mail" },
+          { value: "incasso", label: "Automatisch betalen" },
+          { value: "email", label: "Zelf overmaken, rekening via e-mail" },
         ]}
         value={state.betaalvoorkeur}
         onChange={(value) => wijzig({ betaalvoorkeur: value as Betaalvoorkeur, emailBetaalmail: "" })}
@@ -130,9 +135,9 @@ export default function BewindgegevensPage() {
       />
 
       <Input
-        labelText="Kenmerk Cliënt"
+        labelText="Klantnaam, klantnummer of dossiernummer"
         required={false}
-        description="Je eigen kenmerk of dossiernummer waarmee je deze klant herkent."
+        description="Hiermee herken je de klant in je eigen administratie."
         className="flex w-full flex-col items-start gap-2"
         fieldWidth="lg"
         autoComplete="off"
