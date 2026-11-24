@@ -50,6 +50,7 @@ export const FOUT = {
   klantStraatLeeg: "Je hebt niets ingevuld. Vul de straatnaam van je cliënt in.",
   klantWoonplaatsLeeg: "Je hebt niets ingevuld. Vul de plaats van je cliënt in.",
   jaNeeLeeg: "Je hebt niets gekozen. Kies ja of nee.",
+  bevestigingLeeg: "Je hebt niets gekozen. Bevestig dat je de bewindvoerder van deze cliënt bent en alle gegevens naar waarheid hebt ingevuld.",
 } as const;
 
 export type Fouten = Partial<Record<string, string>>;

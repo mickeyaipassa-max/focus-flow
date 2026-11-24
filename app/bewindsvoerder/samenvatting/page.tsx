@@ -1,15 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CardDetails, type DetailRowData } from "@/components/CardDetails";
+import { CheckboxGroup } from "@/components/CheckboxGroup";
 import { FormNavigation } from "@/components/FormNavigation";
 import { FunnelSection } from "@/components/FunnelSection";
 import { formatDatum, fromIsoDatum } from "@/lib/datum";
 import { straatEnHuisnummer } from "../adres";
 import { BewindScherm, VerplichteVelden } from "../delen";
 import { ROUTES, useBewindFunnel, type BewindState } from "../funnel-context";
-
-const AVENIR = { fontFamily: "var(--font-avenir-book)" } as const;
+import { FOUT } from "../validatie";
 
 /** Wat er in de samenvatting staat bij alles wat (nog) niet is ingevuld, ook bij optionele velden. */
 const NIET_INGEVULD = "Nog niet ingevuld";
@@ -39,11 +40,14 @@ function adres(straat: string, huisnummer: string, toevoeging: string, postcode:
 /**
  * Stap 4, "Controleren en verzenden" (Figma frame "4 Samenvatting" en de varianten): één "Card Details" per
  * stap, met de rijen die bij de gemaakte keuzes horen (soort bewindvoerder, e-mailadres correspondentie). "Wijzig" gaat
- * terug naar de juiste stap; alles wat is ingevuld blijft staan.
+ * terug naar de juiste stap; alles wat is ingevuld blijft staan. Onderaan staat de verplichte bevestiging (Figma
+ * "Checkbox Group" "Bevestiging"); "Indienen" werkt pas als die is aangevinkt.
  */
 export default function SamenvattingPage() {
   const router = useRouter();
   const { state: s } = useBewindFunnel();
+  const [bevestigd, setBevestigd] = useState<string[]>([]);
+  const [bevestigingFout, setBevestigingFout] = useState<string | undefined>();
   const particulier = s.soort === "particulier";
   const zakelijk = s.soort === "zakelijk";
 
@@ -84,6 +88,14 @@ export default function SamenvattingPage() {
     { label: "Adres", value: adres(s.klantStraat, s.klantHuisnummer, s.klantToevoeging, s.klantPostcode, s.klantWoonplaats) },
   ];
 
+  function handleSubmit() {
+    if (!bevestigd.length) {
+      setBevestigingFout(FOUT.bevestigingLeeg);
+      return;
+    }
+    router.push(ROUTES.gelukt);
+  }
+
   return (
     <BewindScherm
       activeStep={4}
@@ -91,7 +103,7 @@ export default function SamenvattingPage() {
       onTerug={() => router.push(ROUTES.klant)}
       feedback
       navigation={
-        <FormNavigation previousStep previousLabel="Klant" nextStep={false} submit submitLabel="Indienen" onPrevious={() => router.push(ROUTES.klant)} onSubmit={() => router.push(ROUTES.gelukt)} />
+        <FormNavigation previousStep previousLabel="Klant" nextStep={false} submit submitLabel="Indienen" onPrevious={() => router.push(ROUTES.klant)} onSubmit={handleSubmit} />
       }
     >
       <FunnelSection
@@ -111,9 +123,17 @@ export default function SamenvattingPage() {
       <CardDetails title="Bewindgegevens" rows={bewindgegevens} onEdit={() => router.push(ROUTES.bewindgegevens)} />
       <CardDetails title="Klant" rows={klant} onEdit={() => router.push(ROUTES.klant)} />
 
-      <p className="w-full text-black text-lg leading-[1.5]" style={AVENIR}>
-        Met dit formulier meld je jezelf aan als bewindvoerder van jouw cliënt. Je bevestigt dat je alle gegevens eerlijk en juist invulde.
-      </p>
+      <CheckboxGroup
+        className="m-0 flex w-full flex-col items-start gap-2 border-0 p-0"
+        labelText="Bevestiging"
+        options={[{ value: "bevestigd", label: "Ik bevestig dat ik de bewindvoerder van deze cliënt ben en alle gegevens naar waarheid heb ingevuld." }]}
+        values={bevestigd}
+        error={bevestigingFout}
+        onChange={(waarden) => {
+          setBevestigd(waarden);
+          setBevestigingFout(undefined);
+        }}
+      />
     </BewindScherm>
   );
 }
