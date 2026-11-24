@@ -13,10 +13,13 @@ import { ROUTES, type Betaalvoorkeur } from "../funnel-context";
 import { isGeldig, valideerBewindgegevens } from "../validatie";
 
 /** Helpertekst van "Input File" letterlijk uit Figma. */
-const UPLOAD_TEKST = "Je documenten mogen samen niet groter dan 20mb zijn. Zorg dat je documenten eindigen op .doc, .docx, .jpg of .pdf.";
+const UPLOAD_TEKST = "Je documenten mogen samen niet groter dan 20MB zijn. Zorg dat je documenten eindigen op .doc, .docx, .jpg of .pdf.";
 
 /** Knoptekst van "Input File" in Figma. */
 const UPLOAD_KNOP = "Kies documenten";
+
+/** De regels uit de helpertekst, ook echt afgedwongen: meerdere documenten, samen maximaal 20MB, alleen deze extensies. */
+const UPLOAD_REGELS = { multiple: true, accept: ".doc,.docx,.jpg,.pdf", maxFileSizeTotal: 20 } as const;
 
 /**
  * Stap 2, "Bewindgegevens" (Figma frames "2 Bewindgegevens" en de varianten "Betaalmail", "Zakelijk" en
@@ -82,6 +85,7 @@ export default function BewindgegevensPage() {
         required
         buttonText={UPLOAD_KNOP}
         description={UPLOAD_TEKST}
+        {...UPLOAD_REGELS}
         className="flex w-full max-w-[479px] flex-col items-start gap-2"
         defaultValue={state.beschikking}
         error={fouten.beschikking}
@@ -94,6 +98,7 @@ export default function BewindgegevensPage() {
           required
           buttonText={UPLOAD_KNOP}
           description={UPLOAD_TEKST}
+          {...UPLOAD_REGELS}
           className="flex w-full max-w-[479px] flex-col items-start gap-2"
           defaultValue={state.identiteitsbewijs}
           error={fouten.identiteitsbewijs}
@@ -114,7 +119,6 @@ export default function BewindgegevensPage() {
       <Input
         labelText="Rekeningnummer"
         description="Bijvoorbeeld NL12BANK0123456789"
-        showInfo
         className="flex w-full max-w-[288px] flex-col items-start gap-2"
         autoComplete="off"
         maxLength={22}
