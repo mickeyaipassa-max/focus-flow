@@ -19,6 +19,7 @@ import { isGeldig, valideerBewindvoerder } from "../validatie";
  * Stap 1, "Bewindvoerder" (Figma frames "1 Bewindvoerder" en de varianten "Zakelijk" en "Postbusadres").
  * Particulier toont voornamen, achternaam en geboortedatum; Zakelijk toont statutaire naam en KvK-nummer.
  * Zakelijk heeft een Ja/Nee-vraag over een apart correspondentie-e-mailadres, met bij "Ja" een extra veld.
+ * Labels en sectietitels volgen Figma: overal "… bewindvoerder" (kleine b), ongeacht het gekozen soort.
  * "Dit adres is een postbusadres" wisselt huisnummer/toevoeging voor postbusnummer en plaats (Figma
  * "Fieldset Address P.O. Box"). Validatie bij "Volgende stap" (regels in `./validatie.ts`).
  */
@@ -47,8 +48,7 @@ export default function BewindvoerderPage() {
     >
       <FunnelSection intro title="Bewindvoerder" showRequiredFieldsNote requiredFieldsNote={<VerplichteVelden />} />
 
-      {/* Figma "1 Bewindvoerder – variant Zakelijk" noemt de secties "Gegevens Bewindvoerder" en "Postadres Bewindvoerder". */}
-      <SectieTitel>{state.soort === "zakelijk" ? "Gegevens Bewindvoerder" : "Gegevens"}</SectieTitel>
+      <SectieTitel>Gegevens bewindvoerder</SectieTitel>
 
       <RadioGroup
         labelText="Soort bewindvoerder"
@@ -69,7 +69,7 @@ export default function BewindvoerderPage() {
           <div className="flex w-full max-w-[480px] flex-col items-start gap-6">
             <div className="flex w-full flex-wrap items-end gap-x-2 gap-y-6">
               <Input
-                labelText="Voornamen Bewindvoerder"
+                labelText="Voornamen bewindvoerder"
                 description="Officiële voornamen zoals op ID"
                 className="flex min-w-[min(312px,100%)] flex-1 flex-col items-start gap-2"
                 autoComplete="off"
@@ -88,7 +88,7 @@ export default function BewindvoerderPage() {
               />
             </div>
             <Input
-              labelText="Achternaam Bewindvoerder"
+              labelText="Achternaam bewindvoerder"
               className="flex w-full flex-col items-start gap-2"
               autoComplete="off"
               value={state.achternaam}
@@ -99,7 +99,7 @@ export default function BewindvoerderPage() {
 
           <InputDate
             className="relative isolate flex w-full max-w-[333px] flex-col items-start gap-2"
-            labelText="Geboortedatum"
+            labelText="Geboortedatum bewindvoerder"
             showPickerButton
             placeholder="dd-mm-jjjj"
             value={state.geboortedatum ? fromIsoDatum(state.geboortedatum) : null}
@@ -112,7 +112,7 @@ export default function BewindvoerderPage() {
       {state.soort === "zakelijk" && (
         <>
           <Input
-            labelText="Statutaire naam"
+            labelText="Statutaire naam bewindvoerder"
             className="flex w-full flex-col items-start gap-2"
             fieldWidth="lg"
             autoComplete="organization"
@@ -121,7 +121,7 @@ export default function BewindvoerderPage() {
             onChange={(value) => wijzig({ statutaireNaam: value })}
           />
           <Input
-            labelText="KvK-nummer"
+            labelText="KvK-nummer bewindvoerder"
             className="flex w-full flex-col items-start gap-2"
             fieldWidth="sm"
             inputMode="numeric"
@@ -136,7 +136,7 @@ export default function BewindvoerderPage() {
 
       <InputEmail
         labelText="E-mailadres bewindvoerder"
-        className="flex w-full max-w-80 flex-col items-start gap-2"
+        className="flex w-full max-w-[272px] flex-col items-start gap-2"
         value={state.email}
         error={fouten.email}
         onChange={(value) => wijzig({ email: value })}
@@ -146,7 +146,7 @@ export default function BewindvoerderPage() {
       {state.soort === "zakelijk" && (
         <>
           <RadioGroup
-            labelText="E-mails over deze cliënt op een ander e-mailadres ontvangen?"
+            labelText="E-mails over deze cliënt op een ander e-mailadres ontvangen? (bewindvoerder)"
             description="Je kunt een apart e-mailadres opgeven voor de correspondentie over deze cliënt. Bijvoorbeeld als je voor iedere cliënt een eigen postvak gebruikt."
             horizontal
             options={JA_NEE}
@@ -169,7 +169,7 @@ export default function BewindvoerderPage() {
       )}
 
       <InputPhone
-        labelText="Telefoonnummer"
+        labelText="Telefoonnummer bewindvoerder"
         required={false}
         className="flex w-full max-w-[272px] flex-col items-start gap-2"
         value={state.telefoon}
@@ -178,7 +178,7 @@ export default function BewindvoerderPage() {
       />
 
       <Scheidingslijn />
-      <SectieTitel>{state.soort === "zakelijk" ? "Postadres Bewindvoerder" : "Postadres"}</SectieTitel>
+      <SectieTitel>Postadres bewindvoerder</SectieTitel>
 
       <div className="flex w-full flex-col items-start gap-6">
         <Checkbox
@@ -192,7 +192,7 @@ export default function BewindvoerderPage() {
         {state.postbus ? (
           <>
             <Input
-              labelText="Postcode"
+              labelText="Postcode bewindvoerder"
               className="flex w-[112px] flex-col items-start gap-2"
               autoComplete="postal-code"
               maxLength={7}
@@ -201,7 +201,7 @@ export default function BewindvoerderPage() {
               onChange={(value) => wijzig({ postcode: value })}
             />
             <Input
-              labelText="Postbusnummer"
+              labelText="Postbusnummer bewindvoerder"
               className="flex w-40 max-w-full flex-col items-start gap-2"
               inputMode="numeric"
               autoComplete="off"
@@ -210,7 +210,7 @@ export default function BewindvoerderPage() {
               onChange={(value) => wijzig({ postbusnummer: value })}
             />
             <Input
-              labelText="Plaats"
+              labelText="Plaats bewindvoerder"
               className="flex w-40 max-w-full flex-col items-start gap-2"
               autoComplete="address-level2"
               value={state.plaats}
@@ -220,6 +220,7 @@ export default function BewindvoerderPage() {
           </>
         ) : (
           <AdresBlok
+            postcodeLabel="Postcode bewindvoerder"
             waarde={{
               postcode: state.postcode,
               huisnummer: state.huisnummer,

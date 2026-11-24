@@ -59,10 +59,13 @@ export function AdresBlok({
   waarde,
   fouten,
   onChange,
+  postcodeLabel,
 }: {
   waarde: AdresWaarde;
   fouten: AdresFouten;
   onChange: (update: Partial<AdresWaarde>) => void;
+  /** Label van het postcodeveld; standaard "Postcode". */
+  postcodeLabel?: string;
 }) {
   const [status, setStatus] = useState<Status>("leeg");
   const [toevoegingen, setToevoegingen] = useState<SelectOption[]>([]);
@@ -114,6 +117,7 @@ export function AdresBlok({
         errors={{ postalCode: fouten.postcode, houseNumber: fouten.huisnummer }}
         onChange={(v) => onChange({ postcode: v.postalCode, huisnummer: v.houseNumber, toevoeging: v.addition })}
         additionOptions={toevoegingen}
+        postalCodeLabel={postcodeLabel}
         additionAsText={handmatig}
         isLoading={status === "laden" && !handmatig}
         helperText={status === "leeg" && !handmatig ? undefined : ""}

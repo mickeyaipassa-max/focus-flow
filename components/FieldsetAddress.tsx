@@ -25,6 +25,8 @@ type FieldsetAddressProps = {
    * dezelfde toevoeging-reeks hebben). Leeg totdat de lookup iets teruggeeft.
    */
   additionOptions?: SelectOption[];
+  /** Label van het postcodeveld; standaard "Postcode". */
+  postalCodeLabel?: string;
   helperText?: string;
   isLoading?: boolean;
   loadingText?: string;
@@ -71,6 +73,7 @@ export function FieldsetAddress({
   onChange,
   errors,
   additionOptions = [],
+  postalCodeLabel = "Postcode",
   helperText = "Straatnaam en plaats worden automatisch opgehaald",
   isLoading = false,
   loadingText = "Straatnaam en plaats ophalen",
@@ -95,7 +98,7 @@ export function FieldsetAddress({
         <div className="flex w-fit flex-col items-start gap-2">
           <label htmlFor={`${fieldName}-postal-code`} className="flex items-center gap-1 text-lg leading-[1.5]">
             <span className="font-bold text-black" style={{ fontFamily: "var(--font-avenir-bold)" }}>
-              Postcode
+              {postalCodeLabel}
             </span>
             <span className="text-[#ce0a1e]" style={{ fontFamily: "var(--font-avenir)" }}>
               *
