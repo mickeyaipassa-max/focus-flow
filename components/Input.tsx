@@ -35,6 +35,8 @@ type InputProps = {
   maxLength?: number;
   autoComplete?: string;
   className?: string;
+  /** Optionele maximale breedte van alleen het invoerveld (bv. "max-w-72"), voor een maat die niet in `fieldWidth` zit. */
+  fieldClassName?: string;
 };
 
 /**
@@ -63,6 +65,7 @@ export function Input({
   maxLength,
   autoComplete,
   className,
+  fieldClassName,
 }: InputProps) {
   return (
     <div className={className ?? "flex w-full max-w-[480px] flex-col items-start gap-2"}>
@@ -110,6 +113,7 @@ export function Input({
         className={[
           "h-[51px] w-full rounded-[3px] border bg-white px-4 py-3 text-black text-lg leading-[1.5] outline-none",
           fieldWidth ? fieldWidthClass[fieldWidth] : "",
+          fieldClassName ?? "",
           error ? "border-[#ce0a1e]" : "border-[#565656] focus:border-black",
         ].join(" ")}
         style={{ fontFamily: "var(--font-avenir-book)" }}

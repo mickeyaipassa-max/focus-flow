@@ -125,7 +125,8 @@ export default function BewindgegevensPage() {
       <Input
         labelText={REKENINGNUMMER_LABEL[state.betaalvoorkeur]}
         description="Bijvoorbeeld NL12BANK0123456789"
-        className="flex w-full max-w-[288px] flex-col items-start gap-2"
+        className="flex w-full flex-col items-start gap-2"
+        fieldClassName="max-w-72"
         autoComplete="off"
         maxLength={22}
         value={state.iban}
