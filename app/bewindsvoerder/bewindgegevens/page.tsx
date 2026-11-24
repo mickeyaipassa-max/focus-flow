@@ -18,6 +18,12 @@ const UPLOAD_TEKST = "Je documenten mogen samen niet groter dan 20MB zijn. Zorg 
 /** Knoptekst van "Input File" in Figma. */
 const UPLOAD_KNOP = "Kies documenten";
 
+/** Label van het rekeningnummer volgt de betaalvoorkeur (Figma: variant "Betaalmail" versus de andere frames). */
+const REKENINGNUMMER_LABEL: Record<Betaalvoorkeur, string> = {
+  incasso: "Rekeningnummer voor betalingen en om geld op te ontvangen",
+  email: "Rekeningnummer om geld op te ontvangen",
+};
+
 /** De regels uit de helpertekst, ook echt afgedwongen: meerdere documenten, samen maximaal 20MB, alleen deze extensies. */
 const UPLOAD_REGELS = { multiple: true, accept: ".doc,.docx,.jpg,.pdf", maxFileSizeTotal: 20 } as const;
 
@@ -117,7 +123,7 @@ export default function BewindgegevensPage() {
       />
 
       <Input
-        labelText="Rekeningnummer"
+        labelText={REKENINGNUMMER_LABEL[state.betaalvoorkeur]}
         description="Bijvoorbeeld NL12BANK0123456789"
         className="flex w-full max-w-[288px] flex-col items-start gap-2"
         autoComplete="off"
