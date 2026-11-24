@@ -34,12 +34,12 @@ export default function KlantPage() {
     >
       <FunnelSection intro title="Klant" showRequiredFieldsNote requiredFieldsNote={<VerplichteVelden />} />
 
-      <SectieTitel>Gegevens</SectieTitel>
+      <SectieTitel>Gegevens klant</SectieTitel>
 
       <div className="flex w-full max-w-[480px] flex-col items-start gap-6">
         <div className="flex w-full flex-wrap items-end gap-x-2 gap-y-6">
           <Input
-            labelText="Voornaam"
+            labelText="Voornaam klant"
             description="Zoals op het identiteitsbewijs."
             className="flex min-w-[min(312px,100%)] flex-1 flex-col items-start gap-2"
             autoComplete="off"
@@ -58,7 +58,7 @@ export default function KlantPage() {
           />
         </div>
         <Input
-          labelText="Achternaam"
+          labelText="Achternaam klant"
           className="flex w-full flex-col items-start gap-2"
           autoComplete="off"
           value={state.klantAchternaam}
@@ -69,7 +69,8 @@ export default function KlantPage() {
 
       <InputDate
         className="relative isolate flex w-full max-w-[333px] flex-col items-start gap-2"
-        labelText="Geboortedatum"
+        labelText="Geboortedatum klant"
+        maxDate={new Date()}
         showPickerButton
         placeholder="dd-mm-jjjj"
         value={state.klantGeboortedatum ? fromIsoDatum(state.klantGeboortedatum) : null}
@@ -79,6 +80,7 @@ export default function KlantPage() {
       />
 
       <AdresBlok
+        postcodeLabel="Postcode klant"
         waarde={{
           postcode: state.klantPostcode,
           huisnummer: state.klantHuisnummer,

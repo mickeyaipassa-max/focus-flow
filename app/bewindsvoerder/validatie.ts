@@ -40,7 +40,7 @@ export const FOUT = {
   correspondentieEmailLeeg: "Je hebt niets ingevuld. Vul het e-mailadres voor de correspondentie over deze cliënt in.",
   ibanLeeg: "Je hebt niets ingevuld. Vul je rekeningnummer (IBAN) in.",
   ibanOngeldig: "Je hebt iets niet goed ingevuld. Vul een Nederlands rekeningnummer (IBAN) in.",
-  klantVoornamenLeeg: "Je hebt niets ingevuld. Vul de voornamen van je cliënt in.",
+  klantVoornamenLeeg: "Je hebt niets ingevuld. Vul de voornaam van je cliënt in.",
   klantAchternaamLeeg: "Je hebt niets ingevuld. Vul de achternaam van je cliënt in.",
   klantGeboortedatumLeeg: "Je hebt niets ingevuld. Vul de geboortedatum van je cliënt in.",
   klantPostcodeLeeg: "Je hebt niets ingevuld. Vul de postcode van je cliënt in.",
@@ -188,6 +188,8 @@ export function valideerKlant(s: BewindState): Fouten {
   if (s.klantTussenvoegsel.trim() && !NAAM.test(s.klantTussenvoegsel.trim())) f.klantTussenvoegsel = FOUT.tekens;
   zet(f, "klantAchternaam", naam(s.klantAchternaam, FOUT.klantAchternaamLeeg));
   zet(f, "klantGeboortedatum", datumFout(s.klantGeboortedatum, s.klantGeboortedatumTekst, FOUT.klantGeboortedatumLeeg, true));
+  // Een geboortedatum in de toekomst bestaat niet (de datumkiezer blokkeert die ook al).
+  if (!f.klantGeboortedatum && fromIsoDatum(s.klantGeboortedatum) > vandaag()) f.klantGeboortedatum = FOUT.datumOngeldig;
   const postcode = s.klantPostcode.trim();
   if (!postcode) f.klantPostcode = FOUT.klantPostcodeLeeg;
   else if (!POSTCODE.test(postcode)) f.klantPostcode = FOUT.postcodeOngeldig;
