@@ -1,5 +1,6 @@
 "use client";
 
+import NextLink from "next/link";
 import { Fragment, useRef, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { CATEGORIEEN } from "./categorieen-data";
@@ -106,22 +107,28 @@ export function VergoedingenCategorieen() {
                         {kolom.kop}
                       </h4>
                       <ul className="m-0 flex list-none flex-col gap-1 p-0">
-                        {kolom.links.map((tekst) => (
-                          <li key={tekst} className="flex items-start gap-2">
-                            <span className="flex h-[27px] shrink-0 items-center">
-                              <Icon name="chevron-right-sm" size="sm" />
-                            </span>
-                            {/* Geen bestemming bekend (zie categorieen-data.ts): de link scrolt niet naar boven. */}
-                            <a
-                              href="#"
-                              onClick={(event) => event.preventDefault()}
-                              className="text-[#0064a8] text-lg leading-[1.5] underline hover:no-underline"
-                              style={AVENIR}
-                            >
-                              {tekst}
-                            </a>
-                          </li>
-                        ))}
+                        {kolom.links.map((link) => {
+                          const tekst = typeof link === "string" ? link : link.tekst;
+                          const href = typeof link === "string" ? undefined : link.href;
+                          const className = "text-[#0064a8] text-lg leading-[1.5] underline hover:no-underline";
+                          return (
+                            <li key={tekst} className="flex items-start gap-2">
+                              <span className="flex h-[27px] shrink-0 items-center">
+                                <Icon name="chevron-right-sm" size="sm" />
+                              </span>
+                              {href ? (
+                                <NextLink href={href} className={className} style={AVENIR}>
+                                  {tekst}
+                                </NextLink>
+                              ) : (
+                                /* Geen bestemming bekend (zie categorieen-data.ts): de link scrolt niet naar boven. */
+                                <a href="#" onClick={(event) => event.preventDefault()} className={className} style={AVENIR}>
+                                  {tekst}
+                                </a>
+                              )}
+                            </li>
+                          );
+                        })}
                       </ul>
                     </div>
                   ))}

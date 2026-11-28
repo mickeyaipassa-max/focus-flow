@@ -1,10 +1,12 @@
-export type Kolom = { kop: string; links: string[] };
+/** Een link is alleen tekst (bestemming nog onbekend) of tekst met bestemming. */
+export type Link = string | { tekst: string; href: string };
+export type Kolom = { kop: string; links: Link[] };
 export type Categorie = { label: string; pictogram: string; kolommen: Kolom[] };
 
 /**
  * Inhoud van de opgeklapte categorieën, overgenomen van de live pagina asr.nl/zorgverzekering/vergoedingen
  * (november 2026). Figma tekent alleen de dichte staat; de bestemmingen van de links zijn op de live pagina niet
- * uit te lezen, dus de links navigeren nog nergens heen. Alleen "Laboratoriumonderzoek" is rechtgezet
+ * uit te lezen, dus de meeste links navigeren nog nergens heen (alleen "Oefentherapie bij knie- en heupartrose" wijst naar de gebouwde pagina). Alleen "Laboratoriumonderzoek" is rechtgezet
  * (live: "Labaratoriumonderzoek").
  */
 export const CATEGORIEEN: Categorie[] = [
@@ -53,7 +55,7 @@ export const CATEGORIEEN: Categorie[] = [
           "Ergotherapie",
           "Fysio- en oefentherapie bij COPD stadium II of hoger",
           "Fysio- en oefentherapie bij etalagebenen",
-          "Oefentherapie bij knie- en heupartrose",
+          { tekst: "Oefentherapie bij knie- en heupartrose", href: "/vergoedingen/oefentherapie-knie-en-heupartrose" },
           "Valpreventieve beweeginterventie voor ouderen",
         ],
       },
