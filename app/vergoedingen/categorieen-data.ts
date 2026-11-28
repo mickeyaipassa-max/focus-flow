@@ -55,7 +55,7 @@ export const CATEGORIEEN: Categorie[] = [
           "Ergotherapie",
           "Fysio- en oefentherapie bij COPD stadium II of hoger",
           "Fysio- en oefentherapie bij etalagebenen",
-          { tekst: "Oefentherapie bij knie- en heupartrose", href: "/vergoedingen/oefentherapie-knie-en-heupartrose" },
+          { tekst: "Oefentherapie bij knie- en heupartrose", href: "/vergoedingen/Oefentherapieknie-%20enheupartrose" },
           "Valpreventieve beweeginterventie voor ouderen",
         ],
       },
