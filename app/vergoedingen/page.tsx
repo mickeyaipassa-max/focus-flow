@@ -47,7 +47,11 @@ export default function VergoedingenPage() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-white">
       <SiteHeader />
-      <Breadcrumb items={[{ label: "home" }, { label: "zorgverzekering" }, { label: "vergoedingen" }]} />
+      <Breadcrumb
+        items={[{ label: "home" }, { label: "zorgverzekering" }, { label: "vergoedingen" }]}
+        // Figma: 24px hoog zonder boven- of onderpadding en op desktop 120px marge (het standaard kruimelpad heeft 24px erboven en eronder).
+        className="w-full px-6 min-[600px]:px-12 min-[900px]:px-16 min-[1200px]:px-[120px]"
+      />
 
       <main className="flex w-full flex-col items-start">
         <section className={`w-full ${PADDING}`}>
@@ -92,7 +96,7 @@ export default function VergoedingenPage() {
               <p className="text-black text-lg leading-[1.5]" style={AVENIR}>
                 Vind eenvoudig een gecontracteerde zorgverlener bij jou in de buurt. Zoek op zorgsoort of op naam.
               </p>
-              <Button type="secondary" iconPrepend="search">
+              <Button type="secondary" iconPrepend="search" fullWidth="mobile" wrap>
                 Naar de Zorgzoeker van a.s.r.
               </Button>
             </div>

@@ -24,7 +24,7 @@ export function VergoedingenZoeken() {
         <h2 className="text-black text-[24px] leading-[1.3]" style={MEMPHIS}>
           Welke vergoeding zoek je?
         </h2>
-        <InputSearch labelText="Zoeken" placeholder="Zoek je vergoeding" value={zoekterm} onChange={setZoekterm} onClear={() => setZoekterm("")} />
+        <InputSearch labelText="Zoeken" required={false} placeholder="Zoek je vergoeding" value={zoekterm} onChange={setZoekterm} onClear={() => setZoekterm("")} />
         <div className="flex w-full flex-wrap items-center gap-x-2 gap-y-1">
           <p className="text-black text-lg leading-[1.5]" style={AVENIR}>
             Veel gezocht:
